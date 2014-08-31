@@ -1,0 +1,19 @@
+html {
+  width: 400px;
+  height: 300px;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.string { color: #aed581; }
+.number { color: #81d4fa; }
+.boolean { color: #ce93d8; }
+.null { color: #f69988; }
+.key { color: #ff8a65; }

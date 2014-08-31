@@ -1,0 +1,31 @@
+{
+  "opts": {
+    "destination": "./doc/",
+    "recurse": true
+  },
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "exclude": [
+      "lib/",
+      "doc/"
+    ],
+    "include": [
+      "README.md",
+      "./"
+    ],
+    "includePattern": ".+\\.js$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "markdown": {
+    "parser": "gfm"
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}

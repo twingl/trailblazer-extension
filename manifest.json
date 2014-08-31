@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+
+  "name": "Trailblazer \"Wash\"",
+  "version": "0.0.1",
+
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "storage",
+    "tabs",
+    "windows"
+  ],
+  "icons": {
+    "16": "ui/icons/16.png",
+    "48": "ui/icons/48.png",
+    "128": "ui/icons/128.png"
+  },
+  "background": {
+    "scripts": [
+      "lib/underscore.js",
+      "model/node.js",
+      "model/tree.js",
+      "adapter/chrome_storage_adapter.js",
+      "adapter/chrome_event_adapter.js",
+      "core/state_manager.js",
+      "background.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": {
+      "19": "ui/icons/19.png",
+      "38": "ui/icons/38.png"
+    },
+    "default_popup": "ui/popup/default.html"
+  }
+}
