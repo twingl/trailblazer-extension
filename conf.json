@@ -2,7 +2,7 @@
   "opts": {
     "destination": "./doc/",
     "recurse": true,
-    "private": true
+    "private": false
   },
   "tags": {
     "allowUnknownTags": true
