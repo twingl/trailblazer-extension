@@ -83,6 +83,53 @@
   };
 
   /**
+   * Start recording the activity of a Tab.
+   *
+   * This method is intended to start recording on Tabs "manually" - that is,
+   * not a child of a recorded tab.
+   *
+   * @function StateManager#startRecording
+   * @param {number} tabId - the ID of the Tab to stop monitoring
+   * @param {number} projectId - the ID of the Project to record to
+   */
+  context.StateManager.prototype.startRecording = function(tabId, projectId) {};
+
+  /**
+   * Stop recording a Tab's activity.
+   *
+   * @function StateManager#stopRecording
+   * @param {number} tabId - the ID of the Tab to stop monitoring
+   */
+  context.StateManager.prototype.stopRecording = function(tabId) {};
+
+  /**
+   * Use the specified Tab to navigate to a Node within the Project's history
+   *
+   * @function StateManager#navigateTo
+   * @param {number} tabId - The ID of the Tab to use
+   * @param {number} nodeId - The ID of the Node to navigate to
+   */
+  context.StateManager.prototype.navigateTo = function(tabId, nodeId) {};
+
+  /**
+   * Get info about the specified tab, including its recording state, which
+   * Node it corresponds to and which Project it belongs to (if applicable).
+   *
+   * ```javascript
+   * {
+   *   recording: true,
+   *   projectId: 4,
+   *   nodeId: 82
+   * }
+   * ```
+   *
+   * @function StateManager#getTabInfo
+   * @param {number} tabId - The ID of the Tab to get information about
+   * @returns {Object}
+   */
+  context.StateManager.prototype.getTabInfo = function(tabId) {};
+
+  /**
    * Returns a Node corresponding to the given Tab ID, creating one if it does
    * not exist.
    *
