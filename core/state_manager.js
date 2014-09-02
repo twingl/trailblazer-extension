@@ -1,40 +1,36 @@
-/**
- * Creates a new StateManager
- * @name StateManager
- *
- * @class
- * @classdesc
- * Receives events through an instance of {@link ChromeEventAdapter} and
- * manages the recording state associated with each tab.
- * When a tab is recording, it uses events received to build the data
- * structures necessary to represent a browsing trail.
- *
- * This class should not have any browser-specific code in it—that is
- * restricted to concrete adapter implementations such as {@link
- * ChromeEventAdapter}.
- *
- * @param {EventAdapter} eventAdapter - The event adapter **class** to use for
- * receiving events. Currently this only supports Google Chrome through {@link
- * ChromeEventAdapter}
- *
- * @property {Map<number, Tree>} trees - Trees that are or have been referenced by
- * nodes in this session.
- *
- * @property {Map<number, Node>} nodes - Nodes that have been visited during this
- * session
- */
 (function (context) {
   'use strict';
 
   /**
-   * @const {number} DEBOUNCE_MS - The length of time to de-bounce {@link
+   * @const {number} StateManager.DEBOUNCE_MS - The length of time to de-bounce {@link
    * _flushBuffer} in milliseconds
    * @private
    */
   var DEBOUNCE_MS = 700;
 
   /**
-   * @lends StateManager
+   * Creates a new StateManager
+   *
+   * @class StateManager
+   * @classdesc
+   * Receives events through an instance of {@link ChromeEventAdapter} and
+   * manages the recording state associated with each tab.
+   * When a tab is recording, it uses events received to build the data
+   * structures necessary to represent a browsing trail.
+   *
+   * This class should not have any browser-specific code in it—that is
+   * restricted to concrete adapter implementations such as {@link
+   * ChromeEventAdapter}.
+   *
+   * @param {EventAdapter} eventAdapter - The event adapter **class** to use for
+   * receiving events. Currently this only supports Google Chrome through {@link
+   * ChromeEventAdapter}
+   *
+   * @property {Map<number, Tree>} trees - Trees that are or have been referenced by
+   * nodes in this session.
+   *
+   * @property {Map<number, Node>} nodes - Nodes that have been visited during this
+   * session
    */
   context.StateManager = function(eventAdapter) {
 
@@ -87,12 +83,14 @@
   };
 
   /**
-   * Returns a Node corresponding to the given Tab ID, creating one if it does not
-   * exist.
-   * @param {number} tabId - The tabId whose Node should be retrieved
-   * @returns {Node}
+   * Returns a Node corresponding to the given Tab ID, creating one if it does
+   * not exist.
    *
    * TODO factor out into Node.find(OrCreate)ByTabId();
+   *
+   * @function StateManager#getNode
+   * @param {number} tabId - The tabId whose Node should be retrieved
+   * @returns {Node}
    */
   context.StateManager.prototype.getNode = function(tabId) {
     var node = undefined,
@@ -113,10 +111,12 @@
 
   /**
    * Returns the Node corresponding to the currently focused tab.
-   * @returns {Node}
+   *
+   * @function StateManager#getCurrentNode
+   * @returns {Node} Returns the node if found, otherwise `null`
    */
   context.StateManager.prototype.getCurrentNode = function() {
-    return (this._tabIdMap[this._currentTabId]) ? this.getNode(this._currentTabId) : undefined;
+    return (this._tabIdMap[this._currentTabId]) ? this.getNode(this._currentTabId) : null;
   };
 
   /**
@@ -124,6 +124,8 @@
    * into the tree data where appropriate.
    * De-bounced.
    * TODO Re-evaluate whether buffering these events is necessary
+   *
+   * @function StateManager#_flushBuffer
    * @private
    */
   context.StateManager.prototype._flushBuffer = _.debounce( function() {
@@ -157,6 +159,9 @@
 
   /**
    * Called when a tab creation event is processed by _flushBuffer.
+   *
+   * @function StateManager#createdTab
+   * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.createdTab = function(evt) {
@@ -184,6 +189,9 @@
 
   /**
    * Called when a tab updated event is processed by _flushBuffer.
+   *
+   * @function StateManager#updatedTab
+   * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.updatedTab = function(evt) {
@@ -216,6 +224,9 @@
 
   /**
    * Called when a tab switch event is processed by _flushBuffer.
+   *
+   * @function StateManager#switchedTab
+   * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.switchedTab = function(evt) {
@@ -225,6 +236,9 @@
   /**
    * Called when a tab close event is processed by _flushBuffer.
    * Removes the node from the tabId->Node map
+   *
+   * @function StateManager#closedTab
+   * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.closedTab = function(evt) {
@@ -234,6 +248,10 @@
   /**
    * Binds an event to a default handler that pushes the event into a buffer,
    * then calls a de-bounced function to flush the buffer into the tree data.
+   *
+   * @function StateManager#_bindEvent
+   * @param {string} name - The name of the event to be bound to the default
+   * (buffered) handler
    * @private
    */
   context.StateManager.prototype._bindEvent = function(name) {
@@ -242,5 +260,5 @@
       this._flushBuffer();
     }.bind(this));
   };
-  
+
 }(window));

@@ -1,7 +1,8 @@
 {
   "opts": {
     "destination": "./doc/",
-    "recurse": true
+    "recurse": true,
+    "private": true
   },
   "tags": {
     "allowUnknownTags": true
@@ -9,7 +10,9 @@
   "source": {
     "exclude": [
       "lib/",
-      "doc/"
+      "doc/",
+      "package.json",
+      "node_modules/"
     ],
     "include": [
       "README.md",

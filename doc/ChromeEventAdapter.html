@@ -85,7 +85,7 @@ calling each with the translated event data.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line1">line 1</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line4">line 4</a>
     </li></ul></dd>
     
 
@@ -129,6 +129,930 @@ calling each with the translated event data.</p></div>
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="_declareEvent"><span class="type-signature">(private) </span>_declareEvent<span class="signature">(name)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Declares an event on ChromeEventAdapter that is able to have callbacks
+registered against it.</p>
+<p>Creates an object <code>name</code> on the EventAdapter, containing a function
+<code>addListener</code> which accepts a single argument <code>listener</code>. When called,
+<code>listener</code> is pushed into the array of listeners.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the event to declare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line159">line 159</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_onClosedTab"><span class="type-signature">(private) </span>_onClosedTab<span class="signature">(tabId, removeInfo)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Internal handler for <code>chrome.tabs.onRemoved</code> event.</p>
+<p>See <a href="https://developer.chrome.com/extensions/tabs#event-onRemoved">https://developer.chrome.com/extensions/tabs#event-onRemoved</a>
+for more information about the parameters</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tabId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>removeInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line259">line 259</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_onCreatedTab"><span class="type-signature">(private) </span>_onCreatedTab<span class="signature">(tab)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Internal handler for <code>chrome.tabs.onCreated</code> event</p>
+<p>See <a href="https://developer.chrome.com/extensions/tabs#event-onCreated">https://developer.chrome.com/extensions/tabs#event-onCreated</a>
+for more information about the parameters</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tab</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">chrome.tabs.Tab</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line183">line 183</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_onSwitchedTab"><span class="type-signature">(private) </span>_onSwitchedTab<span class="signature">(activeInfo)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Internal handler for <code>chrome.tabs.onActivated</code> event</p>
+<p>See <a href="https://developer.chrome.com/extensions/tabs#event-onActivated">https://developer.chrome.com/extensions/tabs#event-onActivated</a>
+for more information about the parameters</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>activeInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line236">line 236</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_onUpdatedTab"><span class="type-signature">(private) </span>_onUpdatedTab<span class="signature">(tabId, changeInfo, tab)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Internal handler for <code>chrome.tabs.onUpdated</code> event</p>
+<p>See <a href="https://developer.chrome.com/extensions/tabs#event-onUpdated">https://developer.chrome.com/extensions/tabs#event-onUpdated</a>
+for more information about the parameters</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tabId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>changeInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tab</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">chrome.tabs.Tab</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line209">line 209</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_registerHandlers"><span class="type-signature">(private) </span>_registerHandlers<span class="signature">(ctx)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Registers the internal handlers (declared above) for events emitted by the
+Chrome API</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="context.html">context</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The context to bind handler functions to (i.e. what
+<code>this</code> will be inside these functions)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line283">line 283</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="ready"><span class="type-signature"></span>ready<span class="signature">(fireCreate)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Indicates to the adapter that the application is ready to start receiving
+events. Calling this function will allow events through to their handlers
+as well as firing <code>created_tab</code> events for all existing tabs to set
+initial state if <code>true</code> is passed.</p>
+<p>Will not execute, but log a warning message if called more than once.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fireCreate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>fire <code>created_tab</code> for existing tabs</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line122">line 122</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
     
 
     
@@ -276,7 +1200,7 @@ calling each with the translated event data.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line35">line 35</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -352,7 +1276,7 @@ like:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line104">line 104</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line100">line 100</a>
     </li></ul></dd>
     
 
@@ -435,7 +1359,7 @@ like:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line42">line 42</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -515,7 +1439,7 @@ which will look something like:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line85">line 85</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -597,7 +1521,7 @@ like:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line64">line 64</a>
+        <a href="chrome_event_adapter.js.html">adapter/chrome_event_adapter.js</a>, <a href="chrome_event_adapter.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -642,7 +1566,7 @@ like:</p>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sun Aug 31 2014 23:54:56 GMT+1200 (NZST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Tue Sep 02 2014 15:56:53 GMT+1200 (NZST)
 </footer>
 
 <script> prettyPrint(); </script>
