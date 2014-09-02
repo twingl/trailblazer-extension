@@ -10,3 +10,4 @@ fi
 
 # Run JSDoc
 node node_modules/jsdoc/jsdoc.js -c ./conf.json --verbose
+cp arch.png doc/
