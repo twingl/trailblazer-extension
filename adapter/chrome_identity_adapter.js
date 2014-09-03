@@ -70,7 +70,7 @@
         resolve(token);
       }, function() {
         chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, function(redirectUrl) {
-          try {
+          if (redirectUrl) {
             // Slice up the redirect and parse the response object from url hash
             var response = redirectUrl.substring(redirectUrl.indexOf("#") + 1)
               , responseObject = {};
@@ -92,9 +92,9 @@
               // Otherwise, reject it with the details
               reject(responseObject);
             }
-
-          // Catch any exceptions and reject the promise
-          } catch (e) { reject(e) }
+          } else {
+            reject(chrome.runtime.lastError);
+          }
         }.bind(this)); //chrome.identity.launchWebAuthFlow
       }.bind(this)); //_getToken();
     }.bind(this)); //promise
