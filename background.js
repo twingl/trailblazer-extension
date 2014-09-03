@@ -39,18 +39,7 @@
     identityAdapter: ChromeIdentityAdapter
   });
 
-  stateManager.isSignedIn().then(function(isSignedIn) {
-    if (!isSignedIn) {
-      stateManager.signIn().then(
-          function(r) { console.log("resolve", r); },
-          function(r) { console.log("reject", r); });
-    }
-  });
-
-  console.log(stateManager);
-
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-    console.log(request);
     switch (request.action) {
       case 'getLog': /** @deprecated */
         sendResponse({ data: actions.getLog() });
