@@ -149,7 +149,7 @@
    * was found
    * @private
    */
-  context.ChromeIdentityAdapter.prototype._getToken = function(tokenObject) {
+  context.ChromeIdentityAdapter.prototype._getToken = function() {
     return new Promise(function(resolve, reject) {
       chrome.storage.sync.get("token", function(token) {
         if (token.token) {
