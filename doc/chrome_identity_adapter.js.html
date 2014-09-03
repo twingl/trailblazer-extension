@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: model/tree.js</title>
+    <title>JSDoc: Source: adapter/chrome_identity_adapter.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: model/tree.js</h1>
+    <h1 class="page-title">Source: adapter/chrome_identity_adapter.js</h1>
 
     
 
@@ -25,39 +25,49 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Creates a new tree
- * @name Tree
- *
- * @class
- * @classdesc
- * Model encapsulating part of the history of a browsing session.
- * Is referenced by one or more {@link Node}s
- *
- * @property {number} id
- */
-(function (context) {
+            <pre class="prettyprint source linenums"><code>(function (context) {
   'use strict';
 
   /**
-   * @lends Tree
+   * Creates a new ChromeIdentityAdapter
+   *
+   * @class ChromeIdentityAdapter
+   * @classdesc
+   * Maintains the authenticated state of the extension and provides a common
+   * interface to authenticate with the chrome.identity.* APIs
+   *
+   * @param {StateManager} stateManager - A reference to the {@link
+   * StateManager} instance that is creating and using this adapter.
    */
-  context.Tree = function(properties) {
-    properties = properties || {};
 
-    this.id = properties.id || Tree._getId();
+  context.ChromeIdentityAdapter = function(stateManager) {
+    /**
+     * @property {StateManager} _stateManager - The {@link StateManager}
+     * instance that is using this adapter
+     * @private
+     */
+    this._stateManager = stateManager;
   };
 
   /**
-   * Returns a temporary ID to identify the tree uniquely in memory
-   * @returns {string}
-   * @private
+   * @todo Launch the sign in flow
+   * @function ChromeIdentityAdapter#signIn
+   * @returns {Promise}
    */
-  context.Tree._getId = function() {
-    Tree.i = Tree.i || 0;
-    return ++Tree.i; //TODO generate actual ID.
-  };
-  
+  context.ChromeIdentityAdapter.prototype.signIn = function() {};
+
+  /**
+   * @todo Terminate the currently authenticated session
+   * @function ChromeIdentityAdapter#signOut
+   */
+  context.ChromeIdentityAdapter.prototype.signOut = function() {};
+
+  /**
+   * @function ChromeIdentityAdapter#profile
+   * @todo Get the currently authenticated person's profile information
+   */
+  context.ChromeIdentityAdapter.prototype.profile = function() {};
+
 }(window));
 </code></pre>
         </article>

@@ -46,7 +46,7 @@ restricted to concrete adapter implementations such as <a href="ChromeEventAdapt
     
         
 <dt>
-    <h4 class="name" id="StateManager"><span class="type-signature"></span>new StateManager<span class="signature">(eventAdapter)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StateManager"><span class="type-signature"></span>new StateManager<span class="signature">(configuration)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -88,13 +88,13 @@ restricted to concrete adapter implementations such as <a href="ChromeEventAdapt
 
         <tr>
             
-                <td class="name"><code>eventAdapter</code></td>
+                <td class="name"><code>configuration</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">EventAdapter</span>
+<span class="param-type"><a href="StateManager.html#Config">StateManager.Config</a></span>
 
 
             
@@ -104,8 +104,7 @@ restricted to concrete adapter implementations such as <a href="ChromeEventAdapt
 
             
 
-            <td class="description last"><p>The event adapter <strong>class</strong> to use for
-receiving events. Currently this only supports Google Chrome through <a href="ChromeEventAdapter.html">ChromeEventAdapter</a></p></td>
+            <td class="description last"><p>StateManger configuration</p></td>
         </tr>
 
     
@@ -212,7 +211,7 @@ session</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line11">line 11</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -303,7 +302,7 @@ session</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line159">line 159</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line180">line 180</a>
     </li></ul></dd>
     
 
@@ -365,7 +364,6 @@ session</p></td>
     <div class="description">
         <p>Returns a Node corresponding to the given Tab ID, creating one if it does
 not exist.</p>
-<p>TODO factor out into Node.find(OrCreate)ByTabId();</p>
     </div>
     
 
@@ -446,7 +444,7 @@ not exist.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line132">line 132</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -454,6 +452,13 @@ not exist.</p>
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>factor out into Node.find(OrCreate)ByTabId();</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -500,16 +505,6 @@ not exist.</p>
 </dt>
 <dd>
 
-    
-    <div class="description">
-        <p>Get info about the specified tab, including its recording state, which
-Node it corresponds to and which Project it belongs to (if applicable).</p>
-<pre class="prettyprint source lang-javascript"><code>{
-  recording: true,
-  projectId: 4,
-  nodeId: 82
-}</code></pre>
-    </div>
     
 
     
@@ -589,7 +584,7 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line114">line 114</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -597,6 +592,22 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Get info about the specified tab, including its recording state, which
+Node it corresponds to and which Project it belongs to (if applicable).
+
+```javascript
+{
+  recording: true,
+  projectId: 4,
+  nodeId: 82
+}
+```</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -643,10 +654,6 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
 </dt>
 <dd>
 
-    
-    <div class="description">
-        <p>Use the specified Tab to navigate to a Node within the Project's history</p>
-    </div>
     
 
     
@@ -749,7 +756,7 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line105">line 105</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -757,6 +764,13 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Use the specified Tab to navigate to a Node within the Project's history</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -785,12 +799,6 @@ Node it corresponds to and which Project it belongs to (if applicable).</p>
 </dt>
 <dd>
 
-    
-    <div class="description">
-        <p>Start recording the activity of a Tab.</p>
-<p>This method is intended to start recording on Tabs &quot;manually&quot; - that is,
-not a child of a recorded tab.</p>
-    </div>
     
 
     
@@ -893,7 +901,7 @@ not a child of a recorded tab.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line85">line 85</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line106">line 106</a>
     </li></ul></dd>
     
 
@@ -901,6 +909,16 @@ not a child of a recorded tab.</p>
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Start recording the activity of a Tab.
+
+This method is intended to start recording on Tabs "manually" - that is,
+not a child of a recorded tab.</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -929,10 +947,6 @@ not a child of a recorded tab.</p>
 </dt>
 <dd>
 
-    
-    <div class="description">
-        <p>Stop recording a Tab's activity.</p>
-    </div>
     
 
     
@@ -1012,7 +1026,7 @@ not a child of a recorded tab.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line97">line 97</a>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line118">line 118</a>
     </li></ul></dd>
     
 
@@ -1020,6 +1034,13 @@ not a child of a recorded tab.</p>
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Stop recording a Tab's activity.</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -1043,6 +1064,233 @@ not a child of a recorded tab.</p>
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        <dl>
+                
+<dt>
+    <h4 class="name" id="Config">Config</h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventAdapter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">EventAdapter</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An event adapter <strong>class</strong> to use for
+receiving events. Currently this only supports Google Chrome through
+<a href="ChromeEventAdapter.html">ChromeEventAdapter</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>identityAdapter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">IdentityAdapter</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An identity adapter <strong>class</strong>
+to use for authenticating with Trailblazer. Currently only supports Google
+Chrome through <a href="ChromeIdentityAdapter.html">ChromeIdentityAdapter</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>api</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>baseUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The API's base url</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>version</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The API version</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table></dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="state_manager.js.html">core/state_manager.js</a>, <a href="state_manager.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+            </dl>
+    
 
     
 </article>
@@ -1055,13 +1303,13 @@ not a child of a recorded tab.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ChromeEventAdapter.html">ChromeEventAdapter</a></li><li><a href="Node.html">Node</a></li><li><a href="StateManager.html">StateManager</a></li><li><a href="Tree.html">Tree</a></li></ul><h3>Events</h3><ul><li><a href="ChromeEventAdapter.html#event:onClosedTab">onClosedTab</a></li><li><a href="ChromeEventAdapter.html#event:onCreatedTab">onCreatedTab</a></li><li><a href="ChromeEventAdapter.html#event:onSwitchedTab">onSwitchedTab</a></li><li><a href="ChromeEventAdapter.html#event:onUpdatedTab">onUpdatedTab</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ChromeEventAdapter.html">ChromeEventAdapter</a></li><li><a href="ChromeIdentityAdapter.html">ChromeIdentityAdapter</a></li><li><a href="Node.html">Node</a></li><li><a href="StateManager.html">StateManager</a></li><li><a href="Tree.html">Tree</a></li></ul><h3>Events</h3><ul><li><a href="ChromeEventAdapter.html#event:onClosedTab">onClosedTab</a></li><li><a href="ChromeEventAdapter.html#event:onCreatedTab">onCreatedTab</a></li><li><a href="ChromeEventAdapter.html#event:onSwitchedTab">onSwitchedTab</a></li><li><a href="ChromeEventAdapter.html#event:onUpdatedTab">onUpdatedTab</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Wed Sep 03 2014 10:53:50 GMT+1200 (NZST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Wed Sep 03 2014 12:41:20 GMT+1200 (NZST)
 </footer>
 
 <script> prettyPrint(); </script>

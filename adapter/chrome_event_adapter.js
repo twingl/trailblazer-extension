@@ -10,8 +10,17 @@
    * into the format used by the extension. When an event is fired, an instance
    * of this class will iterate over the registered listeners for that event,
    * calling each with the translated event data.
+   *
+   * @param {StateManager} stateManager - A reference to the {@link
+   * StateManager} instance that is creating and using this adapter.
    */
-  context.ChromeEventAdapter = function() {
+  context.ChromeEventAdapter = function(stateManager) {
+    /**
+     * @property {StateManager} _stateManager - The {@link StateManager}
+     * instance that is using this adapter
+     * @private
+     */
+    this._stateManager = stateManager;
 
     /**
      * @property {boolean} _ready - The ready state of the adapter. When the

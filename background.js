@@ -16,7 +16,14 @@
     }
   };
 
-   var stateManager = new StateManager( ChromeEventAdapter );
+  var stateManager = new StateManager({
+    api: {
+      baseUrl: "app.trailblazer.io",
+      version: "v1"
+    },
+    eventAdapter:    ChromeEventAdapter,
+    identityAdapter: ChromeIdentityAdapter
+  });
 
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {

@@ -7,6 +7,22 @@
    * @private
    */
   var DEBOUNCE_MS = 700;
+  /**
+   * @typedef StateManager.Config
+   *
+   * @property {EventAdapter} eventAdapter - An event adapter **class** to use for
+   * receiving events. Currently this only supports Google Chrome through
+   * {@link ChromeEventAdapter}
+   *
+   * @property {IdentityAdapter} identityAdapter - An identity adapter **class**
+   * to use for authenticating with Trailblazer. Currently only supports Google
+   * Chrome through {@link ChromeIdentityAdapter}
+   *
+   * @property {Object} api
+   * @property {string} api.baseUrl - The API's base url
+   * @property {string} api.version - The API version
+   *
+   */
 
   /**
    * Creates a new StateManager
@@ -22,9 +38,7 @@
    * restricted to concrete adapter implementations such as {@link
    * ChromeEventAdapter}.
    *
-   * @param {EventAdapter} eventAdapter - The event adapter **class** to use for
-   * receiving events. Currently this only supports Google Chrome through {@link
-   * ChromeEventAdapter}
+   * @param {StateManager.Config} configuration - {@link StateManger} configuration
    *
    * @property {Map<number, Tree>} trees - Trees that are or have been referenced by
    * nodes in this session.
@@ -32,7 +46,7 @@
    * @property {Map<number, Node>} nodes - Nodes that have been visited during this
    * session
    */
-  context.StateManager = function(eventAdapter) {
+  context.StateManager = function(configuration) {
 
     // Initialize the tree/node maps
     // TODO factor out into Node/Tree respectively. Keep an instance of these
@@ -43,7 +57,7 @@
 
     /**
      * @property {Map<number, number>} _tabIdMap - Map of Tab IDs to Node IDs.
-     * TODO: Declare whether tab IDs need to be in existence to be included in
+     * @TODO: Declare whether tab IDs need to be in existence to be included in
      * this map
      * @private
      */
@@ -61,7 +75,14 @@
      * EventAdapter being used to receive events
      * @private
      */
-    this._eventAdapter = new eventAdapter();
+    this._eventAdapter = new configuration.eventAdapter(this);
+
+    /**
+     * @property {IdentityAdapter} _identityAdapter - The instance of the
+     * IdentityAdapter being used for authentication
+     * @private
+     */
+    this._identityAdapter = new configuration.identityAdapter(this);
 
     /**
      * @property {Array} _eventBuffer - Buffer into which events are pushed
@@ -83,7 +104,7 @@
   };
 
   /**
-   * Start recording the activity of a Tab.
+   * @TODO Start recording the activity of a Tab.
    *
    * This method is intended to start recording on Tabs "manually" - that is,
    * not a child of a recorded tab.
@@ -95,7 +116,7 @@
   context.StateManager.prototype.startRecording = function(tabId, projectId) {};
 
   /**
-   * Stop recording a Tab's activity.
+   * @TODO Stop recording a Tab's activity.
    *
    * @function StateManager#stopRecording
    * @param {number} tabId - the ID of the Tab to stop monitoring
@@ -103,7 +124,7 @@
   context.StateManager.prototype.stopRecording = function(tabId) {};
 
   /**
-   * Use the specified Tab to navigate to a Node within the Project's history
+   * @TODO Use the specified Tab to navigate to a Node within the Project's history
    *
    * @function StateManager#navigateTo
    * @param {number} tabId - The ID of the Tab to use
@@ -112,7 +133,7 @@
   context.StateManager.prototype.navigateTo = function(tabId, nodeId) {};
 
   /**
-   * Get info about the specified tab, including its recording state, which
+   * @TODO Get info about the specified tab, including its recording state, which
    * Node it corresponds to and which Project it belongs to (if applicable).
    *
    * ```javascript
@@ -133,7 +154,7 @@
    * Returns a Node corresponding to the given Tab ID, creating one if it does
    * not exist.
    *
-   * TODO factor out into Node.find(OrCreate)ByTabId();
+   * @TODO factor out into Node.find(OrCreate)ByTabId();
    *
    * @function StateManager#getNode
    * @param {number} tabId - The tabId whose Node should be retrieved
@@ -170,7 +191,7 @@
    * Flushes the StateManager's event buffer and processes it, inserting items
    * into the tree data where appropriate.
    * De-bounced.
-   * TODO Re-evaluate whether buffering these events is necessary
+   * @TODO Re-evaluate whether buffering these events is necessary
    *
    * @function StateManager#_flushBuffer
    * @private
