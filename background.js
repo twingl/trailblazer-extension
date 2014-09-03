@@ -57,22 +57,42 @@
         break;
 
       /**
-       * Sign in to Trailblazer. See {@link ChromeIdentityAdapter#signIn} for
-       * details)
+       * Sign in to Trailblazer. If successful, the response will be a single
+       * boolean `true`, otherwise `false`
        * @function BackgroundJS.signIn
        */
       case 'signIn':
-        sendResponse(stateManager.signIn());
+        stateManager.signIn().then(function(token) {
+          sendResponse(true);
+        }, function() {
+          sendResponse(false);
+        });
         break;
 
       /**
-       * Sign out. See {@link ChromeIdentityAdapter#signOut} for details)
+       * Retrieve the state of authentication. Responds with a single boolean
+       * `true` if authenticated, otherwise `false`
+       * @function BackgroundJS.signedIn?
+       */
+      case 'signedIn?':
+        stateManager.isSignedIn().then(sendResponse);
+        break;
+
+      /**
+       * Sign out. If successful, the response will be a single boolean `true`,
+       * otherwise `false`
        * @function BackgroundJS.signOut
        */
       case 'signOut':
-        sendResponse(stateManager.signOut());
+        stateManager.signOut().then(function() {
+          sendResponse(true);
+        }, function() {
+          sendResponse(false);
+        });
         break;
     }
+
+    return true;
   });
 
 })();
