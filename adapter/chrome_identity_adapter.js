@@ -137,6 +137,21 @@
   };
 
   /**
+   * Check whether there is a valid token available. Promise will always
+   * resolve, passing a single boolean parameter indicating whether there is a
+   * token available or not.
+   * @function ChromeIdentityAdapter#isSignedIn
+   * @returns {Promise}
+   */
+  context.ChromeIdentityAdapter.prototype.isSignedIn = function() {
+    return new Promise(function(resolve, reject) {
+      this._getToken().then(
+          function() { resolve(true); },
+          function() { resolve(false); })
+    }.bind(this));
+  };
+
+  /**
    * @function ChromeIdentityAdapter#profile
    * @TODO Get the currently authenticated person's profile information
    */

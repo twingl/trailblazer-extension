@@ -127,6 +127,14 @@
   };
 
   /**
+   * Proxy function to the IdentityAdapter's isSignedIn
+   * @function StateManager#isSignedIn
+   */
+  context.StateManager.prototype.isSignedIn = function() {
+    return this._identityAdapter.isSignedIn();
+  };
+
+  /**
    * @TODO Start recording the activity of a Tab.
    *
    * This method is intended to start recording on Tabs "manually" - that is,
