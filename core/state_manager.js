@@ -19,9 +19,11 @@
    * Chrome through {@link ChromeIdentityAdapter}
    *
    * @property {Object} api
-   * @property {string} api.baseUrl - The API's base url
+   * @property {string} api.host - The API host
+   * @property {string} api.namespace - URL fragment under which the API is
+   * namespaced (if any, often "api")
    * @property {string} api.version - The API version
-   *
+   * @property {string} api.clientId - Client ID used to identify with the API
    */
 
   /**
@@ -38,7 +40,7 @@
    * restricted to concrete adapter implementations such as {@link
    * ChromeEventAdapter}.
    *
-   * @param {StateManager.Config} configuration - {@link StateManger} configuration
+   * @param {StateManager.Config} config - {@link StateManger} configuration
    *
    * @property {Map<number, Tree>} trees - Trees that are or have been referenced by
    * nodes in this session.
@@ -46,7 +48,7 @@
    * @property {Map<number, Node>} nodes - Nodes that have been visited during this
    * session
    */
-  context.StateManager = function(configuration) {
+  context.StateManager = function(config) {
 
     // Initialize the tree/node maps
     // TODO factor out into Node/Tree respectively. Keep an instance of these
@@ -54,6 +56,11 @@
     // directly.
     this.trees = {};
     this.nodes = {};
+
+    /**
+     * @property {StateManager.Config} _config
+     */
+    this._config = config;
 
     /**
      * @property {Map<number, number>} _tabIdMap - Map of Tab IDs to Node IDs.
@@ -75,14 +82,14 @@
      * EventAdapter being used to receive events
      * @private
      */
-    this._eventAdapter = new configuration.eventAdapter(this);
+    this._eventAdapter = new this._config.eventAdapter(this);
 
     /**
      * @property {IdentityAdapter} _identityAdapter - The instance of the
      * IdentityAdapter being used for authentication
      * @private
      */
-    this._identityAdapter = new configuration.identityAdapter(this);
+    this._identityAdapter = new this._config.identityAdapter(this);
 
     /**
      * @property {Array} _eventBuffer - Buffer into which events are pushed
@@ -101,6 +108,22 @@
     // Indicate to the EventAdapter that we're ready to start listening for
     // events. Pass in `true` so that we get the initial browser state.
     this._eventAdapter.ready(true);
+  };
+
+  /**
+   * Proxy function to the IdentityAdapter's signIn
+   * @function StateManager#signIn
+   */
+  context.StateManager.prototype.signIn = function() {
+    return this._identityAdapter.signIn();
+  };
+
+  /**
+   * Proxy function to the IdentityAdapter's signOut
+   * @function StateManager#signOut
+   */
+  context.StateManager.prototype.signOut = function() {
+    return this._identityAdapter.signOut();
   };
 
   /**

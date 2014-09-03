@@ -7,6 +7,7 @@
   "permissions": [
     "http://*/*",
     "https://*/*",
+    "identity",
     "storage",
     "tabs",
     "windows"
@@ -19,6 +20,8 @@
   "background": {
     "scripts": [
       "lib/underscore.js",
+      "lib/superagent.js",
+      "lib/promise-5.0.0.js",
       "model/node.js",
       "model/tree.js",
       "adapter/chrome_storage_adapter.js",

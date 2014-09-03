@@ -18,12 +18,20 @@
 
   var stateManager = new StateManager({
     api: {
-      baseUrl: "app.trailblazer.io",
-      version: "v1"
+      host: "https://app.trailblazer.io",
+      nameSpace: "api",
+      version: "v1",
+      clientId: "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061"
     },
     eventAdapter:    ChromeEventAdapter,
     identityAdapter: ChromeIdentityAdapter
   });
+
+  stateManager.signIn().then(
+      function(r) { console.log("resolve", r); },
+      function(r) { console.log("reject", r); });
+
+  console.log(stateManager);
 
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
