@@ -24,7 +24,6 @@
       "lib/promise-5.0.0.js",
       "model/node.js",
       "model/tree.js",
-      "adapter/chrome_storage_adapter.js",
       "adapter/chrome_event_adapter.js",
       "adapter/chrome_identity_adapter.js",
       "core/state_manager.js",
