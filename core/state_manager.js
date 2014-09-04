@@ -111,6 +111,14 @@
   };
 
   /**
+   * Accessor function to get a reference to the config object
+   * @function StateManager#getConfig
+   */
+  context.StateManager.prototype.getConfig = function() {
+    return this._config;
+  };
+
+  /**
    * Proxy function to the IdentityAdapter's signIn
    * @function StateManager#signIn
    */

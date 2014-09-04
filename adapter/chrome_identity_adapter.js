@@ -53,9 +53,9 @@
    */
   context.ChromeIdentityAdapter.prototype.signIn = function() {
     var redirect = encodeURIComponent("https://" + chrome.runtime.id + ".chromiumapp.org/")
-      , host     = this._stateManager._config.api.host
-      , version  = this._stateManager._config.api.version
-      , clientId = this._stateManager._config.api.clientId;
+      , host     = this._stateManager.getConfig().api.host
+      , version  = this._stateManager.getConfig().api.version
+      , clientId = this._stateManager.getConfig().api.clientId;
 
     var params = "?" + [
       "client_id="+clientId,
@@ -116,7 +116,7 @@
         if (token.token) {
           var token = JSON.parse(token.token);
 
-          superagent.post(this._stateManager._config.api.host + "/oauth/revoke")
+          superagent.post(this._stateManager.getConfig().api.host + "/oauth/revoke")
             .send({ token: token.access_token })
             .set("Content-Type", "application/x-www-form-urlencoded")
             .end(function(response) {
