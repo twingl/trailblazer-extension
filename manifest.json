@@ -5,8 +5,8 @@
   "version": "0.0.1",
 
   "permissions": [
-    "http://*/*",
-    "https://*/*",
+    "https://app.trailblazer.io/",
+    "http://localhost:3000/",
     "identity",
     "storage",
     "tabs",
@@ -19,6 +19,7 @@
   },
   "background": {
     "scripts": [
+      "lib/jquery-2.1.1.js",
       "lib/underscore.js",
       "lib/superagent.js",
       "lib/promise-5.0.0.js",
@@ -26,6 +27,7 @@
       "model/tree.js",
       "adapter/chrome_event_adapter.js",
       "adapter/chrome_identity_adapter.js",
+      "adapter/trailblazer_http_storage_adapter.js",
       "core/state_manager.js",
       "background.js"
     ]

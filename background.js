@@ -31,18 +31,44 @@
   var stateManager = new StateManager({
     api: {
       host: "https://app.trailblazer.io",
+      clientId: "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061",
       nameSpace: "api",
-      version: "v1",
-      clientId: "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061"
+      version: "v1"
     },
     eventAdapter:    ChromeEventAdapter,
-    identityAdapter: ChromeIdentityAdapter
+    identityAdapter: ChromeIdentityAdapter,
+    storageAdapter: TrailblazerHTTPStorageAdapter
   });
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
       case 'getLog': /** @deprecated */
         sendResponse({ data: actions.getLog() });
+        break;
+
+      /**
+       * Retrieve a list of assignments from the state manager and send a
+       * message with these to any listeners.
+       *
+       * This will cause two messages: one containing the cached copy of
+       * assignments (before the request is made to the server to retrieve an
+       * up to date list), and one after the request has been made. Will
+       * contain an empty array if the cache has not yet been filled.
+       *
+       * The message sent is:
+       * ```javascript
+       * {
+       *   updatedAssignments: Array<Assignment>
+       * }
+       * ```
+       *
+       * @function BackgroundJS.getAssignments
+       */
+      case 'getAssignments':
+        var assignments = stateManager.assignments(function(assignments) {
+          chrome.runtime.sendMessage({ updatedAssignments: assignments });
+        });
+        chrome.runtime.sendMessage({ updatedAssignments: assignments });
         break;
 
       /**

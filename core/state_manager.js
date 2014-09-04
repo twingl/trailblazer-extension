@@ -92,6 +92,12 @@
     this._identityAdapter = new this._config.identityAdapter(this);
 
     /**
+     * @property {StorageAdapter} _storageAdapter - The instance of the
+     * StorageAdapter being used for communicating with resource stores
+     */
+    this._storageAdapter = new this._config.storageAdapter(this);
+
+    /**
      * @property {Array} _eventBuffer - Buffer into which events are pushed
      * from the event adapter. Periodically cleared and processed into the tree
      * data.
@@ -116,6 +122,23 @@
    */
   context.StateManager.prototype.getConfig = function() {
     return this._config;
+  };
+
+  /**
+   * Accessor function to get a cached copy of the assignments (if any), and
+   * pass an updated copy of the list to an optional callback function
+   * @function StateManager#assignments
+   * @param {function} callback - Will be called with an updated list of
+   * assignments from the server
+   */
+  context.StateManager.prototype.assignments = function(cb) {
+    this._assignments = this._assignments || [];
+    this._storageAdapter.list("assignments").then(function(response) {
+      this._assignments = response.assignments;
+      console.log(response.assignments);
+      cb(this._assignments);
+    }.bind(this));
+    return this._assignments;
   };
 
   /**
