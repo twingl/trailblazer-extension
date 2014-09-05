@@ -372,8 +372,9 @@
         var newNode = new Node({
           parentId: node.id,
           treeId:   node.treeId,
-          url:      evt.url,
-          title:    evt.title
+          url:      evt.data.url,
+          title:    evt.data.title,
+          recording: node.recording
         });
 
         this._tabIdMap[evt.data.tabId] = newNode.id;
