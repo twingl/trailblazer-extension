@@ -27,7 +27,12 @@
     this.treeId   = properties.treeId;
     this.url      = properties.url;
     this.title    = properties.title;
+
+    context.Node._instances[this.id] = this;
   };
+
+  // store the instances in memory
+  context.Node._instances = {};
 
   /**
    * Returns a temporary ID to identify the node uniquely in memory
@@ -38,5 +43,5 @@
     Node.i = Node.i || 0;
     return ++Node.i; //TODO generate actual ID.
   };
-  
+
 }(window));

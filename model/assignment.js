@@ -16,7 +16,12 @@
     properties = properties || {};
 
     this.id = properties.id || Assignment._getId();
+
+    context.Assignment._instances[this.id] = this;
   };
+
+  // store the instances in memory
+  context.Assignment._instances = {};
 
   /**
    * Returns a temporary ID to identify the Assignment uniquely in memory

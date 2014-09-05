@@ -21,7 +21,12 @@
 
     this.id           = properties.id || Tree._getId();
     this.assignmentId = properties.assignmentId || new Assignment().id;
+
+    context.Tree._instances[this.id] = this;
   };
+
+  // store the instances in memory
+  context.Tree._instances = {};
 
   /**
    * Returns a temporary ID to identify the tree uniquely in memory
@@ -32,5 +37,5 @@
     Tree.i = Tree.i || 0;
     return ++Tree.i; //TODO generate actual ID.
   };
-  
+
 }(window));
