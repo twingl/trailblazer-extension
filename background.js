@@ -13,6 +13,15 @@
    * @classname BackgroundJS
    */
 
+  /**
+   * @property {Object} BackgroundJS.popupStates
+   */
+  var popupStates = {
+    recording: "/ui/popup/recording.html",
+    idle: "/ui/popup/idle.html",
+    notAuthenticated: "/ui/popup/not_authenticated.html"
+  };
+
   /** @deprecated */
   var activityLog = [];
 
@@ -28,6 +37,30 @@
       return { nodes: stateManager.nodes };
     }
   };
+
+  chrome.tabs.onActivated.addListener(function(tab) {
+    if (stateManager.isRecording(tab.id)) {
+      chrome.browserAction.setPopup({
+        tabId: tab.id,
+        popup: popupStates.recording
+      });
+    } else {
+      stateManager.isSignedIn().then(function(signedIn) {
+        if (signedIn) {
+          chrome.browserAction.setPopup({
+            tabId: tab.id,
+            popup: popupStates.idle
+          });
+        } else {
+          chrome.browserAction.setPopup({
+            tabId: tab.id,
+            popup: popupStates.notAuthenticated
+          });
+        }
+      });
+    }
+  });
+
   var stateManager = new StateManager({
     api: {
       host: "https://app.trailblazer.io",
@@ -98,6 +131,7 @@
        */
       case 'signIn':
         stateManager.signIn().then(function(token) {
+          chrome.browserAction.setPopup({ popup: popupStates.idle });
           sendResponse(true);
         }, function() {
           sendResponse(false);

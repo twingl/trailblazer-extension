@@ -1,0 +1,47 @@
+
+*:focus {outline: none;}
+
+body {
+	width: 224px;
+	padding: 52px 10px 10px 10px;
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+.button {
+	width: 130px;
+	height: 51px;
+	margin: 0 auto;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+}
+
+.button img {
+	margin-top: 20px;
+}
+
+.button-record {
+	background-color: #616161;
+	border-radius: 3px;
+	margin-bottom: 40px;
+
+}
+
+.folder {
+	display: block;
+	width: 78px;
+	margin: 0 auto 62px auto;
+	text-decoration: none;
+	text-align: center;
+	color: #7B7B7B;
+
+}
+
+.folder img {margin-bottom: 8px}
+
+.logout {
+	float: right;
+}
+
+
