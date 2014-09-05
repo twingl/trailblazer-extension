@@ -8,7 +8,7 @@
       // Prevent the default action
       evt.preventDefault();
 
-      // Request that we be signed out
+      // Request that we start recording this tab
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         var tab = tabs[0];
 

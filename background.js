@@ -148,6 +148,29 @@
         break;
 
       /**
+       * Stop recording a given tab/node. This will prevent any potential
+       * children from being included in the tree.
+       *
+       * Message should be in the format:
+       * ```javascript
+       * {
+       *   action: 'stopRecording',
+       *   tabId: number
+       * }
+       * ```
+       *
+       * @function BackgroundJS.stopRecording
+       */
+      case 'stopRecording':
+        chrome.browserAction.setPopup({
+          tabId: request.tabId,
+          popup: popupStates.idle
+        });
+        stateManager.stopRecording(request.tabId);
+        sendResponse();
+        break;
+
+      /**
        * Sign in to Trailblazer. If successful, the response will be a single
        * boolean `true`, otherwise `false`
        * @function BackgroundJS.signIn
