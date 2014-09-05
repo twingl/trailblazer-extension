@@ -301,21 +301,19 @@
     // Iterate over the sorted buffer, finding and updating (or creating) the
     // node for each event
     _.each(buffer, function(evt) {
-      if (this.isRecording(evt.data.tabId)) {
-        switch (evt.type) {
-          case "created_tab":
-            this.createdTab(evt);
-            break;
-          case "updated_tab":
-            this.updatedTab(evt);
-            break;
-          case "switched_tab":
-            this.switchedTab(evt);
-            break;
-          case "closed_tab":
-            this.closedTab(evt);
-            break;
-        }
+      switch (evt.type) {
+        case "created_tab":
+          this.createdTab(evt);
+          break;
+        case "updated_tab":
+          this.updatedTab(evt);
+          break;
+        case "switched_tab":
+          this.switchedTab(evt);
+          break;
+        case "closed_tab":
+          this.closedTab(evt);
+          break;
       }
     }.bind(this));
 
