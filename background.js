@@ -118,10 +118,11 @@
        * }
        * ```
        *
-       * @function BackgroundJS.recordTab
+       * @function BackgroundJS.startRecording
        */
       case 'startRecording':
         stateManager.startRecording(request.tabId, request.assignmentId);
+        sendResponse();
         break;
 
       /**
