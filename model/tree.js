@@ -8,6 +8,7 @@
  * Is referenced by one or more {@link Node}s
  *
  * @property {number} id
+ * @property {number} assignmentId
  */
 (function (context) {
   'use strict';
@@ -18,7 +19,8 @@
   context.Tree = function(properties) {
     properties = properties || {};
 
-    this.id = properties.id || Tree._getId();
+    this.id           = properties.id || Tree._getId();
+    this.assignmentId = properties.assignmentId || new Assignment().id;
   };
 
   /**

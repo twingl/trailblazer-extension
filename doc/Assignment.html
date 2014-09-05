@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Node</title>
+    <title>JSDoc: Class: Assignment</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Node</h1>
+    <h1 class="page-title">Class: Assignment</h1>
 
     
 
@@ -27,10 +27,11 @@
 
 <header>
     <h2>
-    Node
+    Assignment
     </h2>
     
-        <div class="class-description"><p>Model encapsulating a node in a history tree. Must belong to a <a href="Tree.html">Tree</a></p></div>
+        <div class="class-description"><p>Model encapsulating the entire history (multiple Trees) of an Assignment's
+browsing history. Is referenced by one or more <a href="Tree.html">Tree</a>s</p></div>
     
 </header>
 
@@ -41,7 +42,7 @@
     
         
 <dt>
-    <h4 class="name" id="Node"><span class="type-signature"></span>new Node<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Assignment"><span class="type-signature"></span>new Assignment<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -49,7 +50,7 @@
 
     
     <div class="description">
-        <p>Creates a new node</p>
+        <p>Creates a new assignment</p>
     </div>
     
 
@@ -95,30 +96,6 @@
             <td class="type">
             
                 
-<span class="param-type">number/string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Unique identifier of the Node.
-Temporary IDs are strings of the form TB._<random identifier></p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>parentId</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">number</span>
 
 
@@ -136,59 +113,13 @@ Temporary IDs are strings of the form TB._<random identifier></p></td>
 
         <tr>
             
-                <td class="name"><code>treeId</code></td>
+                <td class="name"><code>assignmentId</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>title</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
 
 
             
@@ -226,7 +157,7 @@ Temporary IDs are strings of the form TB._<random identifier></p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node.js.html">model/node.js</a>, <a href="node.js.html#line1">line 1</a>
+        <a href="assignment.js.html">model/assignment.js</a>, <a href="assignment.js.html#line1">line 1</a>
     </li></ul></dd>
     
 

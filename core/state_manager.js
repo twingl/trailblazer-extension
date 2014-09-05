@@ -7,6 +7,7 @@
    * @private
    */
   var DEBOUNCE_MS = 700;
+
   /**
    * @typedef StateManager.Config
    *
@@ -69,6 +70,14 @@
      * @private
      */
     this._tabIdMap = {};
+
+    /**
+     * @property {Map<number, Object>} _tabRecordingState - Map of Tab IDs to
+     * an object containing details about the recording state of the tab, such
+     * as its assignmentId and recording start time.
+     * @private
+     */
+    this._tabRecordingState = {};
 
     /**
      * @property {number} _currentTabId - Tab ID of the tab that is currently
@@ -166,24 +175,36 @@
   };
 
   /**
-   * @TODO Start recording the activity of a Tab.
+   * Start recording the activity of a Tab.
    *
    * This method is intended to start recording on Tabs "manually" - that is,
    * not a child of a recorded tab.
    *
+   * Not specifying an assignmentId will create a new assignment automatically.
+   *
    * @function StateManager#startRecording
-   * @param {number} tabId - the ID of the Tab to stop monitoring
-   * @param {number} projectId - the ID of the Project to record to
+   * @param {number} tabId - the ID of the Tab to start recording
+   * @param {number} assignmentId - the ID of the Assignment to record to
    */
-  context.StateManager.prototype.startRecording = function(tabId, projectId) {};
+  context.StateManager.prototype.startRecording = function(tabId, assignmentId) {
+    if (!this._tabRecordingState[tabId] || !this._tabRecordingState[tabId].recording) {
+      this._tabRecordingState[tabId] = this._tabRecordingState[tabId] || {};
+
+      this._tabRecordingState[tabId].recording    = true;
+      this._tabRecordingState[tabId].started      = Date.now();
+      this._tabRecordingState[tabId].assignmentId = assignmentId || new Assignment().id;
+    }
+  };
 
   /**
-   * @TODO Stop recording a Tab's activity.
+   * Stop recording a Tab's activity.
    *
    * @function StateManager#stopRecording
    * @param {number} tabId - the ID of the Tab to stop monitoring
    */
-  context.StateManager.prototype.stopRecording = function(tabId) {};
+  context.StateManager.prototype.stopRecording = function(tabId) {
+    delete this._tabRecordingState[tabId];
+  };
 
   /**
    * @TODO Use the specified Tab to navigate to a Node within the Project's history
@@ -201,7 +222,7 @@
    * ```javascript
    * {
    *   recording: true,
-   *   projectId: 4,
+   *   assignmentId: 4,
    *   nodeId: 82
    * }
    * ```

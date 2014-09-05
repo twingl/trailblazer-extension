@@ -72,6 +72,26 @@
         break;
 
       /**
+       * Start recording a tab and its children's activity.
+       * An optional assignmentId can be supplied if an assignment exists,
+       * otherwise one will be created.
+       *
+       * Message should be in the format:
+       * ```javascript
+       * {
+       *   action: 'startRecording',
+       *   tabId: number,
+       *   assignmentId: number
+       * }
+       * ```
+       *
+       * @function BackgroundJS.recordTab
+       */
+      case 'startRecording':
+        stateManager.startRecording(request.tabId, request.assignmentId);
+        break;
+
+      /**
        * Sign in to Trailblazer. If successful, the response will be a single
        * boolean `true`, otherwise `false`
        * @function BackgroundJS.signIn

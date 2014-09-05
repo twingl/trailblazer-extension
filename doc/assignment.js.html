@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: model/node.js</title>
+    <title>JSDoc: Source: model/assignment.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: model/node.js</h1>
+    <h1 class="page-title">Source: model/assignment.js</h1>
 
     
 
@@ -26,46 +26,35 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Creates a new node
- * @name Node
+ * Creates a new assignment
  *
- * @class
+ * @class Assignment
  * @classdesc
- * Model encapsulating a node in a history tree. Must belong to a {@link Tree}
+ * Model encapsulating the entire history (multiple Trees) of an Assignment's
+ * browsing history. Is referenced by one or more {@link Tree}s
  *
- * @property {number/string} id - Unique identifier of the Node.
- * Temporary IDs are strings of the form TB._&lt;random identifier>
- * @property {number} parentId
- * @property {number} treeId
- * @property {string} url
- * @property {string} title
+ * @property {number} id
+ * @property {number} assignmentId
  */
 (function (context) {
   'use strict';
 
-  /**
-   * @lends Node
-   */
-  context.Node = function(properties) {
+  context.Assignment = function(properties) {
     properties = properties || {};
 
-    this.id       = properties.id || Node._getId();
-    this.parentId = properties.parentId;
-    this.treeId   = properties.treeId;
-    this.url      = properties.url;
-    this.title    = properties.title;
+    this.id = properties.id || Assignment._getId();
   };
 
   /**
-   * Returns a temporary ID to identify the node uniquely in memory
+   * Returns a temporary ID to identify the Assignment uniquely in memory
    * @returns {string}
    * @private
    */
-  context.Node._getId = function() {
-    Node.i = Node.i || 0;
-    return ++Node.i; //TODO generate actual ID.
+  context.Assignment._getId = function() {
+    Assignment.i = Assignment.i || 0;
+    return ++Assignment.i; //TODO generate actual ID.
   };
-  
+
 }(window));
 </code></pre>
         </article>
