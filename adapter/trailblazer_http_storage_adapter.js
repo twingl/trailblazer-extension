@@ -1,6 +1,6 @@
 (function (context) {
   'use strict';
-  
+
   /**
    * Creates a new TrailblazerHTTPStorageAdapter
    *
@@ -9,7 +9,7 @@
    * Provides an abstracted interface to the REST-like API Trailblazer
    * implements. Access is, by default, through CRUD methods (create, read,
    * update, destroy, and list).
-   * 
+   *
    * @param {StateManager} stateManager - A reference to the {@link
    * StateManager} instance that is creating and using this adapter.
    */
@@ -36,7 +36,7 @@
    * body)
    * @private
    */
-  context.TrailblazerHTTPStorageAdapter.prototype._request = function(url, httpMethod, opts) { 
+  context.TrailblazerHTTPStorageAdapter.prototype._request = function(url, httpMethod, opts) {
     var httpMethod = httpMethod || "GET"
       , opts   = opts   || {};
 
@@ -72,7 +72,7 @@
    * @param {string} id - (Optional) id of the resource
    * @param {Object} params - URL params to append to the request
    */
-  context.TrailblazerHTTPStorageAdapter.prototype.read = function(resourceName, id, params) { 
+  context.TrailblazerHTTPStorageAdapter.prototype.read = function(resourceName, id, params) {
     if (!resourceName) throw "You need to specify a resource";
     if (!id) throw "You need to specify an ID - maybe you want list instead";
 
@@ -92,7 +92,7 @@
    * @param {string} resourceName - Name of the resource to fetch
    * @param {Object} params - URL params to append to the request
    */
-  context.TrailblazerHTTPStorageAdapter.prototype.list = function(resourceName, params) { 
+  context.TrailblazerHTTPStorageAdapter.prototype.list = function(resourceName, params) {
     if (!resourceName) throw "You need to specify a resource";
 
     var url = this._stateManager.getConfig().api.host + "/"

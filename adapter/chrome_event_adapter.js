@@ -247,7 +247,7 @@
    *
    * See {@link https://developer.chrome.com/extensions/tabs#event-onActivated}
    * for more information about the parameters
-   * 
+   *
    * @function ChromeEventAdapter#_onSwitchedTab
    * @param {Object} activeInfo
    * @private
