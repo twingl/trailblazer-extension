@@ -38,22 +38,24 @@
     }
   };
 
-  chrome.tabs.onActivated.addListener(function(tab) {
-    if (stateManager.isRecording(tab.id)) {
+
+  chrome.tabs.onActivated.addListener(function(details) {
+    var node = stateManager.getNode(details.tabId);
+    if (node && node.recording) {
       chrome.browserAction.setPopup({
-        tabId: tab.id,
+        tabId: details.tabId,
         popup: popupStates.recording
       });
     } else {
       stateManager.isSignedIn().then(function(signedIn) {
         if (signedIn) {
           chrome.browserAction.setPopup({
-            tabId: tab.id,
+            tabId: details.tabId,
             popup: popupStates.idle
           });
         } else {
           chrome.browserAction.setPopup({
-            tabId: tab.id,
+            tabId: details.tabId,
             popup: popupStates.notAuthenticated
           });
         }
@@ -105,6 +107,22 @@
         break;
 
       /**
+       * Retrieve the current assignment and send a response with either the
+       * assignment or false.
+       *
+       * @function BackgroundJS.getCurrentAssignment
+       * @TODO Accessing temporary Assignment implementation
+       */
+      case 'getCurrentAssignment':
+        var id = stateManager.getCurrentNode().assignmentId;
+        if (id) {
+          sendResponse(Assignment._instances[id] || false);
+        } else {
+          sendResponse(false);
+        }
+        break;
+
+      /**
        * Start recording a tab and its children's activity.
        * An optional assignmentId can be supplied if an assignment exists,
        * otherwise one will be created.
@@ -121,6 +139,10 @@
        * @function BackgroundJS.startRecording
        */
       case 'startRecording':
+        chrome.browserAction.setPopup({
+          tabId: request.tabId,
+          popup: popupStates.recording
+        });
         stateManager.startRecording(request.tabId, request.assignmentId);
         sendResponse();
         break;

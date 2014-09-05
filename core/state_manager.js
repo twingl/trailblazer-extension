@@ -72,14 +72,6 @@
     this._tabIdMap = {};
 
     /**
-     * @property {Map<number, Object>} _tabRecordingState - Map of Tab IDs to
-     * an object containing details about the recording state of the tab, such
-     * as its assignmentId and recording start time.
-     * @private
-     */
-    this._tabRecordingState = {};
-
-    /**
      * @property {number} _currentTabId - Tab ID of the tab that is currently
      * focused
      * @private
@@ -144,7 +136,6 @@
     this._assignments = this._assignments || [];
     this._storageAdapter.list("assignments").then(function(response) {
       this._assignments = response.assignments;
-      console.log(response.assignments);
       cb(this._assignments);
     }.bind(this));
     return this._assignments;
@@ -187,24 +178,12 @@
    * @param {number} assignmentId - the ID of the Assignment to record to
    */
   context.StateManager.prototype.startRecording = function(tabId, assignmentId) {
-    if (!this._tabRecordingState[tabId] || !this._tabRecordingState[tabId].recording) {
-      this._tabRecordingState[tabId] = this._tabRecordingState[tabId] || {};
+    if (!this.getNode(tabId).recording) {
+      assignmentId = assignmentId || new Assignment().id;
 
-      this._tabRecordingState[tabId].recording    = true;
-      this._tabRecordingState[tabId].started      = Date.now();
-      this._tabRecordingState[tabId].assignmentId = assignmentId || new Assignment().id;
+      this.getNode(tabId).assignmentId = assignmentId;
+      this.getNode(tabId).recording = true;
     }
-  };
-
-  /**
-   * Check if a tabId is being recorded
-   * @function StateManager#isRecording
-   * @param {number} tabId - The ID of the Tab to check
-   * @returns {boolean} - Whether the specified Tab is being recorded
-   */
-  context.StateManager.prototype.isRecording = function(tabId) {
-    var state = this._tabRecordingState[tabId];
-    return (state) ? state.recording : false;
   };
 
   /**
@@ -214,7 +193,7 @@
    * @param {number} tabId - the ID of the Tab to stop monitoring
    */
   context.StateManager.prototype.stopRecording = function(tabId) {
-    delete this._tabRecordingState[tabId];
+    this.getNode(tabId).recording = false;
   };
 
   /**
@@ -260,7 +239,7 @@
 
     if (nodeId) {
       // Return the existing Node
-      node = this.nodes[nodeId];
+      node = Node._instances[nodeId];
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
@@ -331,7 +310,7 @@
     var node = new Node({
       url: evt.data.url,
       title: evt.data.title,
-      tabId: evt.data.tabId
+      tabId: evt.data.tabId,
     });
 
     if (currentNode && evt.data.url !== "chrome://newtab/") {
@@ -339,6 +318,8 @@
       var tree = this.trees[currentNode.treeId] || new Tree();
       this.trees[currentNode.treeId] = tree;
       node.treeId = tree.id;
+      node.recording = currentNode.recording;
+      node.assignmentId = currentNode.assignmentId;
     } else {
       var tree = new Tree();
       this.trees[tree.id] = tree;

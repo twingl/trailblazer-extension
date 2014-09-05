@@ -21,8 +21,6 @@
      * @private
      */
     this._stateManager = stateManager;
-
-    console.log(this);
   };
 
   /**
