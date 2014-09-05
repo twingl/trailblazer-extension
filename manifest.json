@@ -19,7 +19,6 @@
   },
   "background": {
     "scripts": [
-      "lib/jquery-2.1.1.js",
       "lib/underscore.js",
       "lib/superagent.js",
       "lib/promise-5.0.0.js",
