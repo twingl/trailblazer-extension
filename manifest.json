@@ -22,6 +22,7 @@
       "lib/underscore.js",
       "lib/superagent.js",
       "lib/promise-5.0.0.js",
+      "model/assignment.js",
       "model/node.js",
       "model/tree.js",
       "adapter/chrome_event_adapter.js",

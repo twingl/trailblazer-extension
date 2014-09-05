@@ -183,7 +183,7 @@
    * Not specifying an assignmentId will create a new assignment automatically.
    *
    * @function StateManager#startRecording
-   * @param {number} tabId - the ID of the Tab to start recording
+   * @param {number} tabId - The ID of the Tab to start recording
    * @param {number} assignmentId - the ID of the Assignment to record to
    */
   context.StateManager.prototype.startRecording = function(tabId, assignmentId) {
@@ -194,6 +194,17 @@
       this._tabRecordingState[tabId].started      = Date.now();
       this._tabRecordingState[tabId].assignmentId = assignmentId || new Assignment().id;
     }
+  };
+
+  /**
+   * Check if a tabId is being recorded
+   * @function StateManager#isRecording
+   * @param {number} tabId - The ID of the Tab to check
+   * @returns {boolean} - Whether the specified Tab is being recorded
+   */
+  context.StateManager.prototype.isRecording = function(tabId) {
+    var state = this._tabRecordingState[tabId];
+    return (state) ? state.recording : false;
   };
 
   /**
@@ -290,19 +301,21 @@
     // Iterate over the sorted buffer, finding and updating (or creating) the
     // node for each event
     _.each(buffer, function(evt) {
-      switch (evt.type) {
-        case "created_tab":
-          this.createdTab(evt);
-          break;
-        case "updated_tab":
-          this.updatedTab(evt);
-          break;
-        case "switched_tab":
-          this.switchedTab(evt);
-          break;
-        case "closed_tab":
-          this.closedTab(evt);
-          break;
+      if (this.isRecording(evt.data.tabId)) {
+        switch (evt.type) {
+          case "created_tab":
+            this.createdTab(evt);
+            break;
+          case "updated_tab":
+            this.updatedTab(evt);
+            break;
+          case "switched_tab":
+            this.switchedTab(evt);
+            break;
+          case "closed_tab":
+            this.closedTab(evt);
+            break;
+        }
       }
     }.bind(this));
 
@@ -349,7 +362,7 @@
     var node = this.getNode(evt.data.tabId);
     var parentNode = (node.parentId) ? this.nodes[node.parentId] : undefined;
 
-    if (evt.data.url !== node.url) {
+    if (evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
         node.url = evt.data.url;
         node.title = evt.data.title;
