@@ -126,6 +126,31 @@
   };
 
   /**
+   * Return the collection of nodes associated with an assignment, or all nodes
+   * if no ID is supplied.
+   *
+   * Object returned contains a key 'nodes' which references a Map<id, Node>
+   *
+   * @param {number} assignmentId - The Assignment ID to scope the nodes to
+   * @returns {Object}
+   */
+  context.StateManager.prototype.getMap = function(assignmentId) {
+    var data = {
+      nodes: {}
+    };
+
+    if (assignmentId) {
+      var _data = _.compact(_.map(Node._instances, function (node,id) {
+        return (node.assignmentId === assignmentId) ? node : null;
+      }));
+      _.each(_data, function(node) { data.nodes[node.id] = node; });
+    } else {
+      data.nodes = Node._instances;
+    }
+    return data;
+  };
+
+  /**
    * Accessor function to get a cached copy of the assignments (if any), and
    * pass an updated copy of the list to an optional callback function
    * @function StateManager#assignments

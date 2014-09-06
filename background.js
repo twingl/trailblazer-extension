@@ -22,23 +22,6 @@
     notAuthenticated: "/ui/popup/not_authenticated.html"
   };
 
-  /** @deprecated */
-  var activityLog = [];
-
-  /** @deprecated */
-  var previousTabId = undefined;
-
-  /** @deprecated */
-  var currentTabId = undefined;
-
-  /** @deprecated */
-  var actions = {
-    getLog: function() {
-      return { nodes: stateManager.nodes };
-    }
-  };
-
-
   chrome.tabs.onActivated.addListener(function(details) {
     var node = stateManager.getNode(details.tabId);
     if (node && node.recording) {
@@ -78,7 +61,7 @@
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
       case 'getLog': /** @deprecated */
-        sendResponse({ data: actions.getLog() });
+        sendResponse({ data: stateManager.getMap(request.assignmentId) });
         break;
 
       /**

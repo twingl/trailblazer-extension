@@ -129,14 +129,6 @@
   }
 
   chrome.runtime.sendMessage({ action: "getLog", assignmentId: assignmentId }, function(response) {
-    var data;
-    if (assignmentId) {
-      var _data = _.compact(_.map(response.data.nodes, function(i,k) { return (i.assignmentId === assignmentId) ? i : null; }));
-      data = { nodes: {} };
-      _.each(_data, function(i) { data.nodes[i.id] = i; });
-    } else {
-      data = response.data;
-    }
-    render("#map", d3ify( data ));
+    render("#map", d3ify( response.data ));
   });
 }());
