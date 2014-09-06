@@ -2,29 +2,22 @@
 *:focus {outline: none;}
 
 body {
-	width: 224px;
-	padding: 52px 10px 10px 10px;
+	width: 160px;
+	padding: 40px 10px 26px 10px;
 	font-family: sans-serif;
 	font-size: 14px;
 }
 
 .button {
 	width: 130px;
-	height: 51px;
-	margin: 0 auto;
+	padding: 20px 0;
+	margin: 0 auto 20px auto;
+	border-radius: 3px;
 	display: block;
 	text-align: center;
 	text-decoration: none;
-}
-
-.button img {
-	margin-top: 20px;
-}
-
-.button-record {
 	background-color: #616161;
-	border-radius: 3px;
-	margin-bottom: 40px;
+	color: #fff;
 
 }
 
@@ -32,20 +25,37 @@ body {
 	background-color: #B56666;
 }
 
+.button-view-trail {
+	margin-bottom: 40px;
+}
+
 .folder {
 	display: block;
 	width: 78px;
-	margin: 0 auto 62px auto;
+	margin: 40px auto 40px auto;
 	text-decoration: none;
 	text-align: center;
 	color: #7B7B7B;
-
 }
 
 .folder img {margin-bottom: 8px}
 
 .logout {
 	float: right;
+	text-decoration: none;
+	color: #8f8f8f;
+}
+
+.logout img {
+	position: relative;
+	top: 1px;
+}
+
+.sign-in {
+	width: 150px;
+	padding: 12px 0;
+	background-color: #76A9F9;
+
 }
 
 
