@@ -48,7 +48,8 @@ body {
 
 .logout img {
 	position: relative;
-	top: 1px;
+	top: 2px;
+	right: 5px;
 }
 
 .sign-in {
