@@ -42,14 +42,6 @@ body {
 
 .logout {
 	float: right;
-	text-decoration: none;
-	color: #8f8f8f;
-}
-
-.logout img {
-	position: relative;
-	top: 2px;
-	right: 5px;
 }
 
 .sign-in {
