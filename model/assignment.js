@@ -4,7 +4,7 @@
  * @class Assignment
  * @classdesc
  * Model encapsulating the entire history (multiple Trees) of an Assignment's
- * browsing history. Is referenced by one or more {@link Tree}s
+ * browsing history.
  *
  * @property {number} id
  * @property {number} assignmentId

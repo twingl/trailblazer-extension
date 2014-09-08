@@ -4,12 +4,11 @@
  *
  * @class
  * @classdesc
- * Model encapsulating a node in a history tree. Must belong to a {@link Tree}
+ * Model encapsulating a node in an assignment's history.
  *
  * @property {number/string} id - Unique identifier of the Node.
  * Temporary IDs are strings of the form TB._<random identifier>
  * @property {number} parentId
- * @property {number} treeId
  * @property {string} url
  * @property {string} title
  */
@@ -26,7 +25,6 @@
     this.parentId     = properties.parentId;
     this.assignmentId = properties.assignmentId;
     this.recording    = properties.recording;
-    this.treeId       = properties.treeId;
     this.url          = properties.url;
     this.title        = properties.title;
 

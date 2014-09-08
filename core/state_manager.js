@@ -43,19 +43,15 @@
    *
    * @param {StateManager.Config} config - {@link StateManger} configuration
    *
-   * @property {Map<number, Tree>} trees - Trees that are or have been referenced by
-   * nodes in this session.
-   *
    * @property {Map<number, Node>} nodes - Nodes that have been visited during this
    * session
    */
   context.StateManager = function(config) {
 
-    // Initialize the tree/node maps
-    // TODO factor out into Node/Tree respectively. Keep an instance of these
+    // Initialize the node map
+    // TODO factor out into Node. Keep an instance of these
     // storage adapters on the StateManager, rather than managing the model
     // directly.
-    this.trees = {};
     this.nodes = {};
 
     /**
@@ -100,8 +96,7 @@
 
     /**
      * @property {Array} _eventBuffer - Buffer into which events are pushed
-     * from the event adapter. Periodically cleared and processed into the tree
-     * data.
+     * from the event adapter. Periodically cleared and processed into nodes.
      * @private
      */
     this._eventBuffer = [];
@@ -295,8 +290,8 @@
   };
 
   /**
-   * Flushes the StateManager's event buffer and processes it, inserting items
-   * into the tree data where appropriate.
+   * Flushes the StateManager's event buffer and processes it, inserting new
+   * nodes and updating as necessary.
    * De-bounced.
    * @TODO Re-evaluate whether buffering these events is necessary
    *
@@ -349,15 +344,8 @@
 
     if (currentNode && evt.data.url !== "chrome://newtab/") {
       node.parentId = currentNode.id;
-      var tree = this.trees[currentNode.treeId] || new Tree();
-      this.trees[currentNode.treeId] = tree;
-      node.treeId = tree.id;
       node.recording = currentNode.recording;
       node.assignmentId = currentNode.assignmentId;
-    } else {
-      var tree = new Tree();
-      this.trees[tree.id] = tree;
-      node.treeId = tree.id;
     }
 
     this._tabIdMap[evt.data.tabId] = node.id;
@@ -386,7 +374,6 @@
       } else {
         var newNode = new Node({
           parentId: node.id,
-          treeId:   node.treeId,
           url:      evt.data.url,
           title:    evt.data.title,
           recording: node.recording
@@ -425,7 +412,7 @@
 
   /**
    * Binds an event to a default handler that pushes the event into a buffer,
-   * then calls a de-bounced function to flush the buffer into the tree data.
+   * then calls a de-bounced function to flush the buffer.
    *
    * @function StateManager#_bindEvent
    * @param {string} name - The name of the event to be bound to the default
