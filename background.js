@@ -16,34 +16,46 @@
   /**
    * @property {Object} BackgroundJS.popupStates
    */
-  var popupStates = {
-    recording: "/ui/popup/recording.html",
-    idle: "/ui/popup/idle.html",
-    notAuthenticated: "/ui/popup/not_authenticated.html"
+  var extensionStates = {
+    recording: {
+      popup: "/ui/popup/recording.html",
+      browserAction: ""
+    },
+    idle: {
+      popup: "/ui/popup/idle.html",
+      browserAction: ""
+    },
+    notAuthenticated: {
+      popup: "/ui/popup/not_authenticated.html",
+      browserAction: ""
+    }
   };
 
+  // Set the state of the popup when we change tabs
   chrome.tabs.onActivated.addListener(function(details) {
-    var node = stateManager.getNode(details.tabId);
-    if (node && node.recording) {
-      chrome.browserAction.setPopup({
-        tabId: details.tabId,
-        popup: popupStates.recording
-      });
-    } else {
-      stateManager.isSignedIn().then(function(signedIn) {
-        if (signedIn) {
-          chrome.browserAction.setPopup({
-            tabId: details.tabId,
-            popup: popupStates.idle
-          });
-        } else {
-          chrome.browserAction.setPopup({
-            tabId: details.tabId,
-            popup: popupStates.notAuthenticated
-          });
-        }
-      });
-    }
+    stateManager.isSignedIn().then(function (signedIn) {
+      var node = stateManager.getNode(details.tabId);
+
+      if (signedIn && node && node.recording) {
+        // The extension is signed in and is recording the current page
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.recording.popup
+        });
+      } else if (signedIn) {
+        // The extension is signed in and idle
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.idle.popup
+        });
+      } else {
+        // The extension is not signed in
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.notAuthenticated.popup
+        });
+      }
+    });
   });
 
   var stateManager = new StateManager({
@@ -56,6 +68,17 @@
     eventAdapter:    ChromeEventAdapter,
     identityAdapter: ChromeIdentityAdapter,
     storageAdapter: TrailblazerHTTPStorageAdapter
+  });
+
+  // Set initial popup state
+  stateManager.isSignedIn().then(function (signedIn) {
+    if (signedIn) {
+      // Set the extension to Idle
+      chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
+
+      //TODO fetch existing assignments and query which tabs are currently
+      //recording, restoring their recording state where needed
+    }
   });
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
@@ -124,7 +147,7 @@
       case 'startRecording':
         chrome.browserAction.setPopup({
           tabId: request.tabId,
-          popup: popupStates.recording
+          popup: extensionStates.recording.popup
         });
         stateManager.startRecording(request.tabId, request.assignmentId);
         sendResponse();
@@ -147,7 +170,7 @@
       case 'stopRecording':
         chrome.browserAction.setPopup({
           tabId: request.tabId,
-          popup: popupStates.idle
+          popup: extensionStates.idle.popup
         });
         stateManager.stopRecording(request.tabId);
         sendResponse();
@@ -160,7 +183,7 @@
        */
       case 'signIn':
         stateManager.signIn().then(function(token) {
-          chrome.browserAction.setPopup({ popup: popupStates.idle });
+          chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
           sendResponse(true);
         }, function() {
           sendResponse(false);
