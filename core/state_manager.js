@@ -153,7 +153,9 @@
     }
 
     _.each(this._tabIdMap, function(map, key) {
-      data.nodes[map].openTab = key;
+      if (data.nodes[map]) {
+        data.nodes[map].openTab = key;
+      }
     });
 
     return data;
