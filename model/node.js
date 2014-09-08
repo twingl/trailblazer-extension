@@ -44,4 +44,23 @@
     return ++Node.i; //TODO generate actual ID.
   };
 
+  /**
+   * Return a Node, if it exists, corresponding to the given ID.
+   * @param {number} id - The ID of the {@link Node}
+   * @returns {Node}
+   */
+  context.Node.read = function(id) {
+    return context.Node._instances[id];
+  };
+
+  /**
+   * Find a Node that matches the supplied properties
+   * Delegates match to Underscore's findWhere function
+   * @param {Object} props - The properties to match
+   * @returns {Node}
+   */
+  context.Node.findWhere = function(props) {
+    return _.findWhere(context.Node._instances, props);
+  };
+
 }(window));

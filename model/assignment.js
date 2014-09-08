@@ -33,4 +33,23 @@
     return ++Assignment.i; //TODO generate actual ID.
   };
 
+  /**
+   * Return a Assignment, if it exists, corresponding to the given ID.
+   * @param {number} id - The ID of the {@link Assignment}
+   * @returns {Assignment}
+   */
+  context.Assignment.read = function(id) {
+    return context.Assignment._instances[id];
+  };
+
+  /**
+   * Find a Assignment that matches the supplied properties
+   * Delegates match to Underscore's findWhere function
+   * @param {Object} props - The properties to match
+   * @returns {Assignment}
+   */
+  context.Assignment.findWhere = function(props) {
+    return _.findWhere(context.Assignment._instances, props);
+  };
+
 }(window));

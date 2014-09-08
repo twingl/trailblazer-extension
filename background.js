@@ -34,7 +34,7 @@
   // Set the state of the popup when we change tabs
   chrome.tabs.onActivated.addListener(function(details) {
     stateManager.isSignedIn().then(function (signedIn) {
-      var node = stateManager.getNode(details.tabId);
+      var node = Node.read(stateManager._tabIdMap[details.tabId]);
 
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
@@ -122,7 +122,7 @@
       case 'getCurrentAssignment':
         var id = stateManager.getCurrentNode().assignmentId;
         if (id) {
-          sendResponse(Assignment._instances[id] || false);
+          sendResponse(Assignment.read(id) || false);
         } else {
           sendResponse(false);
         }

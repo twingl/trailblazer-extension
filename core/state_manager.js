@@ -48,12 +48,6 @@
    */
   context.StateManager = function(config) {
 
-    // Initialize the node map
-    // TODO factor out into Node. Keep an instance of these
-    // storage adapters on the StateManager, rather than managing the model
-    // directly.
-    this.nodes = {};
-
     /**
      * @property {StateManager.Config} _config
      */
@@ -268,11 +262,10 @@
 
     if (nodeId) {
       // Return the existing Node
-      node = Node._instances[nodeId];
+      node = Node.read(nodeId);
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
-      this.nodes[node.id] = node;
       this._tabIdMap[tabId] = { nodeId: node.id }
     }
 
@@ -349,7 +342,6 @@
     }
 
     this._tabIdMap[evt.data.tabId] = node.id;
-    this.nodes[node.id] = node;
   };
 
   /**
@@ -360,8 +352,8 @@
    * @private
    */
   context.StateManager.prototype.updatedTab = function(evt) {
-    var node = this.getNode(evt.data.tabId);
-    var parentNode = (node.parentId) ? this.nodes[node.parentId] : undefined;
+    var node = Node.read(this._tabIdMap[evt.data.tabId]);
+    var parentNode = (node && node.parentId) ? Node.read(node.parentId) : undefined;
 
     if (evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
@@ -369,8 +361,8 @@
         node.title = evt.data.title;
       } else if (parentNode && evt.data.url && evt.data.url === parentNode.url) {
         this._tabIdMap[evt.data.tabId] = parentNode.id;
-      } else if (_.findWhere(this.nodes, { parentId: node.id, url: evt.data.url })) {
-        this._tabIdMap[evt.data.tabId] = _.findWhere(this.nodes, { parentId: node.id, url: evt.data.url }).id;
+      } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
+        this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
         var newNode = new Node({
           parentId: node.id,
@@ -380,7 +372,6 @@
         });
 
         this._tabIdMap[evt.data.tabId] = newNode.id;
-        this.nodes[newNode.id] = newNode;
       }
     } else {
       node.title = evt.data.title;
