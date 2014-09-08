@@ -22,11 +22,13 @@
   context.Node = function(properties) {
     properties = properties || {};
 
-    this.id       = properties.id || Node._getId();
-    this.parentId = properties.parentId;
-    this.treeId   = properties.treeId;
-    this.url      = properties.url;
-    this.title    = properties.title;
+    this.id           = properties.id || Node._getId();
+    this.parentId     = properties.parentId;
+    this.assignmentId = properties.assignmentId;
+    this.recording    = properties.recording;
+    this.treeId       = properties.treeId;
+    this.url          = properties.url;
+    this.title        = properties.title;
 
     context.Node._instances[this.id] = this;
   };

@@ -16,49 +16,46 @@
   /**
    * @property {Object} BackgroundJS.popupStates
    */
-  var popupStates = {
-    recording: "/ui/popup/recording.html",
-    idle: "/ui/popup/idle.html",
-    notAuthenticated: "/ui/popup/not_authenticated.html"
-  };
-
-  /** @deprecated */
-  var activityLog = [];
-
-  /** @deprecated */
-  var previousTabId = undefined;
-
-  /** @deprecated */
-  var currentTabId = undefined;
-
-  /** @deprecated */
-  var actions = {
-    getLog: function() {
-      return { nodes: stateManager.nodes };
+  var extensionStates = {
+    recording: {
+      popup: "/ui/popup/recording.html",
+      browserAction: ""
+    },
+    idle: {
+      popup: "/ui/popup/idle.html",
+      browserAction: ""
+    },
+    notAuthenticated: {
+      popup: "/ui/popup/not_authenticated.html",
+      browserAction: ""
     }
   };
 
-  chrome.tabs.onActivated.addListener(function(tab) {
-    if (stateManager.isRecording(tab.id)) {
-      chrome.browserAction.setPopup({
-        tabId: tab.id,
-        popup: popupStates.recording
-      });
-    } else {
-      stateManager.isSignedIn().then(function(signedIn) {
-        if (signedIn) {
-          chrome.browserAction.setPopup({
-            tabId: tab.id,
-            popup: popupStates.idle
-          });
-        } else {
-          chrome.browserAction.setPopup({
-            tabId: tab.id,
-            popup: popupStates.notAuthenticated
-          });
-        }
-      });
-    }
+  // Set the state of the popup when we change tabs
+  chrome.tabs.onActivated.addListener(function(details) {
+    stateManager.isSignedIn().then(function (signedIn) {
+      var node = stateManager.getNode(details.tabId);
+
+      if (signedIn && node && node.recording) {
+        // The extension is signed in and is recording the current page
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.recording.popup
+        });
+      } else if (signedIn) {
+        // The extension is signed in and idle
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.idle.popup
+        });
+      } else {
+        // The extension is not signed in
+        chrome.browserAction.setPopup({
+          tabId: details.tabId,
+          popup: extensionStates.notAuthenticated.popup
+        });
+      }
+    });
   });
 
   var stateManager = new StateManager({
@@ -73,10 +70,21 @@
     storageAdapter: TrailblazerHTTPStorageAdapter
   });
 
+  // Set initial popup state
+  stateManager.isSignedIn().then(function (signedIn) {
+    if (signedIn) {
+      // Set the extension to Idle
+      chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
+
+      //TODO fetch existing assignments and query which tabs are currently
+      //recording, restoring their recording state where needed
+    }
+  });
+
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
       case 'getLog': /** @deprecated */
-        sendResponse({ data: actions.getLog() });
+        sendResponse({ data: stateManager.getMap(request.assignmentId) });
         break;
 
       /**
@@ -105,6 +113,22 @@
         break;
 
       /**
+       * Retrieve the current assignment and send a response with either the
+       * assignment or false.
+       *
+       * @function BackgroundJS.getCurrentAssignment
+       * @TODO Accessing temporary Assignment implementation
+       */
+      case 'getCurrentAssignment':
+        var id = stateManager.getCurrentNode().assignmentId;
+        if (id) {
+          sendResponse(Assignment._instances[id] || false);
+        } else {
+          sendResponse(false);
+        }
+        break;
+
+      /**
        * Start recording a tab and its children's activity.
        * An optional assignmentId can be supplied if an assignment exists,
        * otherwise one will be created.
@@ -121,7 +145,34 @@
        * @function BackgroundJS.startRecording
        */
       case 'startRecording':
+        chrome.browserAction.setPopup({
+          tabId: request.tabId,
+          popup: extensionStates.recording.popup
+        });
         stateManager.startRecording(request.tabId, request.assignmentId);
+        sendResponse();
+        break;
+
+      /**
+       * Stop recording a given tab/node. This will prevent any potential
+       * children from being included in the tree.
+       *
+       * Message should be in the format:
+       * ```javascript
+       * {
+       *   action: 'stopRecording',
+       *   tabId: number
+       * }
+       * ```
+       *
+       * @function BackgroundJS.stopRecording
+       */
+      case 'stopRecording':
+        chrome.browserAction.setPopup({
+          tabId: request.tabId,
+          popup: extensionStates.idle.popup
+        });
+        stateManager.stopRecording(request.tabId);
         sendResponse();
         break;
 
@@ -132,7 +183,7 @@
        */
       case 'signIn':
         stateManager.signIn().then(function(token) {
-          chrome.browserAction.setPopup({ popup: popupStates.idle });
+          chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
           sendResponse(true);
         }, function() {
           sendResponse(false);
