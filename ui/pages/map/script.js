@@ -98,6 +98,10 @@
               .style("fill", function(d) {
                 return ( d.parentId ? "rgba(255,0,0" : "rgba(0,0,255" )
                   + ( d.recording ? ",1)" : ",0.1)" );
+              })
+              .style("stroke", "rgba(0,100,100,1)")
+              .style("stroke-width", function(d) {
+                return (d.openTab) ? "2" : "0";
               });
 
     force.on("tick", function() {

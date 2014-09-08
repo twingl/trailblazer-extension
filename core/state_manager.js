@@ -139,14 +139,23 @@
       nodes: {}
     };
 
+    // Make a copy of the node store
+    var tmp = {};
+    _.extend(tmp, Node._instances);
+
     if (assignmentId) {
-      var _data = _.compact(_.map(Node._instances, function (node,id) {
+      var _data = _.compact(_.map(tmp, function (node,id) {
         return (node.assignmentId === assignmentId) ? node : null;
       }));
       _.each(_data, function(node) { data.nodes[node.id] = node; });
     } else {
-      data.nodes = Node._instances;
+      data.nodes = tmp;
     }
+
+    _.each(this._tabIdMap, function(map, key) {
+      data.nodes[map].openTab = key;
+    });
+
     return data;
   };
 
