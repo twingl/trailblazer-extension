@@ -15,7 +15,7 @@
     var index = 0;
     var idMap = {};
 
-    // Iterate over each tree and each tree's nodes
+    // Iterate over nodes to insert them into an array with known indices
     _.each(data.nodes, function(node, nodeId) {
       // Record the relationship between index and location in the original
       // object
@@ -27,7 +27,10 @@
 
       // Add the node to the rendering list of nodes
       nodes.push(node);
+    });
 
+    // Iterate over the nodes a second time to create links
+    _.each(data.nodes, function(node, nodeId) {
       // Add a link to the rendering list if there's a relationship present.
       // Note the directionality: parentNode -> node
       if (node.parentId) {
