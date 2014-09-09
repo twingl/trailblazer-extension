@@ -17,3 +17,14 @@ html {
 .boolean { color: #ce93d8; }
 .null { color: #f69988; }
 .key { color: #ff8a65; }
+
+.node {
+	fill: #fff;
+	stroke: #000;
+	stroke-width: 2px;
+}
+
+.link {
+	stroke: #333;
+	stroke-width: 2px;
+}

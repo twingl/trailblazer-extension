@@ -73,11 +73,18 @@
       .html(function(d) {
         return "<pre>" + syntaxHighlight(JSON.stringify(d, null, 3)) + "</pre>";
       });
-    var force = d3.layout.force().size([400,300]);
+
+    var width = 960,
+        height = 500;
+
+    var force = d3.layout.force()
+      .linkDistance(120)
+      .charge(-400)
+      .size([width, height]);
 
     var svg = d3.select(selector).append("svg")
-          .attr("width", 400)
-          .attr("height", 300);
+          .attr("width", width)
+          .attr("height", height);
 
     force.nodes(data.nodes).links(data.links).start();
 
@@ -85,24 +92,26 @@
           .data(data.links)
           .enter()
             .append("line")
-              .attr("class", "link")
-              .style("stroke", "#555")
+              .attr("class", "link");
+/**           .style("stroke", "#555")
               .style("stroke-width", 2);
-
+*/
     var node = svg.selectAll(".node")
           .data(data.nodes)
           .enter()
             .append("circle")
               .attr("class", "node")
-              .attr("r", 5)
+              .attr("r", 20);
+/** Kept as reference, Moving styling to style.css
               .style("fill", function(d) {
-                return ( d.parentId ? "rgba(255,0,0" : "rgba(0,0,255" )
+                return ( d.parentId ? "rgba(0,225,0" : "rgba(0,0,255" )
                   + ( d.recording ? ",1)" : ",0.1)" );
               })
               .style("stroke", "rgba(0,100,100,1)")
               .style("stroke-width", function(d) {
                 return (d.openTab) ? "2" : "0";
               });
+*/
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
