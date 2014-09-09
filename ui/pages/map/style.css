@@ -21,10 +21,17 @@ html {
 .node {
 	fill: #fff;
 	stroke: #000;
-	stroke-width: 2px;
+	stroke-width: 1px;
+	vector-effect: non-scaling-stroke;
 }
 
 .link {
 	stroke: #333;
 	stroke-width: 2px;
+	vector-effect: non-scaling-stroke;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
 }

@@ -74,17 +74,29 @@
         return "<pre>" + syntaxHighlight(JSON.stringify(d, null, 3)) + "</pre>";
       });
 
-    var width = 960,
+    var width = "960",
         height = 500;
 
     var force = d3.layout.force()
-      .linkDistance(120)
-      .charge(-400)
+      .linkDistance(80)
+      .charge(-300)
       .size([width, height]);
 
     var svg = d3.select(selector).append("svg")
           .attr("width", width)
-          .attr("height", height);
+          .attr("height", height)
+        .append("g")
+          .call(d3.behavior.zoom().scaleExtent([.5, 4]).on("zoom", zoom))
+        .append("g");
+
+    svg.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height);
+
+    function zoom() {
+      svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
 
     force.nodes(data.nodes).links(data.links).start();
 
@@ -111,7 +123,7 @@
               .style("stroke-width", function(d) {
                 return (d.openTab) ? "2" : "0";
               });
-*/
+*/  
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
