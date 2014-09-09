@@ -21,6 +21,19 @@
   };
   context.Assignment.cache = {};
 
+  /**
+   * Return the properties that can be persisted on the server
+   * @returns {Object}
+   */
+  context.Assignment.prototype.toProps = function() {
+    var props = {};
+
+    props.name = "Untitled";
+    props.description = "Recording from " + new Date().toLocaleString()
+
+    return props;
+  };
+
   // store the instances in memory
   context.Assignment._instances = {};
 
@@ -31,7 +44,7 @@
    */
   context.Assignment._getId = function() {
     Assignment.i = Assignment.i || 0;
-    return ++Assignment.i; //TODO generate actual ID.
+    return "TB_." + ++Assignment.i;
   };
 
   /**
@@ -88,6 +101,33 @@
         // Reject the Promise with the adapter error
         reject);
     }.bind(this));
+  };
+
+  context.Assignment.prototype.save = function(adapter) {
+    if (!this._saving) {
+      this._saving = true;
+      return new Promise(function(resolve, reject) {
+        if (typeof this.id === "number") {
+          // It's been saved before
+          adapter.update("assignments", this.id, { assignment: this.toProps() }, {})
+            .then(function(response) {
+              this.id = response.id;
+              context.Assignment._instances[this.id] = this;
+              resolve(this);
+            }.bind(this), function(response) { reject(response); });
+
+        } else if (this.id.indexOf("TB_.") >= 0) {
+          // It's a temporary ID
+          adapter.create("assignments", { assignment: this.toProps() }, {})
+            .then(function(response) {
+              this.id = response.id;
+              context.Assignment._instances[this.id] = this;
+              resolve(this);
+            }.bind(this), function(response) { reject(response); });
+        }
+        delete this._saving;
+      }.bind(this));
+    }
   };
 
   /**

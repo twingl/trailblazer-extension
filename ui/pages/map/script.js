@@ -19,10 +19,10 @@
     _.each(data.nodes, function(node, nodeId) {
       // Record the relationship between index and location in the original
       // object
-      idMap[nodeId] = {
+      idMap[node.id] = {
         index: index++,
         treeId: node.treeId,
-        nodeId: nodeId
+        nodeId: node.id
       };
 
       // Add the node to the rendering list of nodes

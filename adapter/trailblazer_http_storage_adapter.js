@@ -106,13 +106,44 @@
    * @todo Create a new resource
    * @function TrailblazerHTTPStorageAdapter#create
    */
-  context.TrailblazerHTTPStorageAdapter.prototype.create = function() {};
+  context.TrailblazerHTTPStorageAdapter.prototype.create = function(resourceName, props, options) {
+    if (!resourceName) throw "You need to specify a resource";
+
+    var url = this._stateManager.getConfig().api.host + "/"
+            + this._stateManager.getConfig().api.nameSpace + "/"
+            + this._stateManager.getConfig().api.version + "/"
+
+    if (options.parentResource) {
+      url += options.parentResource.name + "/"
+          +  options.parentResource.id + "/"
+    };
+
+    url += resourceName;
+
+    return this._request(url, "POST", { data: props });
+  };
 
   /**
    * @todo Update a resource
    * @function TrailblazerHTTPStorageAdapter#update
    */
-  context.TrailblazerHTTPStorageAdapter.prototype.update = function() {};
+  context.TrailblazerHTTPStorageAdapter.prototype.update = function(resourceName, id, props, options) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!id) throw "You need to specify an ID";
+
+    var url = this._stateManager.getConfig().api.host + "/"
+            + this._stateManager.getConfig().api.nameSpace + "/"
+            + this._stateManager.getConfig().api.version + "/"
+
+    if (options.parentResource) {
+      url += options.parentResource.name + "/"
+          +  options.parentResource.id + "/"
+    };
+
+    url += resourceName + "/" + id;
+
+    return this._request(url, "PUT", { data: props });
+  };
 
   /**
    * @todo Destroy a resource

@@ -7,7 +7,7 @@
  * Model encapsulating a node in an assignment's history.
  *
  * @property {number/string} id - Unique identifier of the Node.
- * Temporary IDs are strings of the form TB._<random identifier>
+ * Temporary IDs are strings of the form TB._<identifier>
  * @property {number} parentId
  * @property {string} url
  * @property {string} title
@@ -32,6 +32,20 @@
   };
   context.Node.cache = {};
 
+  /**
+   * Return the properties that can be persisted on the server
+   * @returns {Object}
+   */
+  context.Node.prototype.toProps = function() {
+    var props = {};
+
+    if (this.parentId) props.parent_id = this.parentId;
+    if (this.url)      props.url = this.url;
+    if (this.title)    props.title = this.title;
+
+    return props;
+  };
+
   // store the instances in memory
   context.Node._instances = {};
 
@@ -42,7 +56,7 @@
    */
   context.Node._getId = function() {
     Node.i = Node.i || 0;
-    return ++Node.i; //TODO generate actual ID.
+    return "TB_." + ++Node.i;
   };
 
   /**
@@ -62,7 +76,9 @@
    * @returns {Array<Node>}
    */
   context.Node.cache.list = function(adapter, assignmentId) {
-    return _.where(context.Node._instances, { assignmentId: assignmentId });
+    var conditions = {};
+    if (assignmentId) conditions.assignmentId = assignmentId;
+    return _.where(context.Node._instances, conditions);
   };
 
   /**
@@ -98,6 +114,41 @@
         // Reject the Promise with the adapter error
         reject);
     }.bind(this));
+  };
+
+  context.Node.prototype.save = function(adapter) {
+    if (!this._saving) {
+      this._saving = true;
+      return new Promise(function(resolve, reject) {
+        if (typeof this.id === "number") {
+          // It's been saved before
+          adapter.update("nodes", this.id, { node: this.toProps() }, {
+            parentResource: {
+              name: "assignments",
+              id: this.assignmentId
+            }
+          }).then(function(response) {
+            this.id = response.id;
+            context.Node._instances[this.id] = this;
+            resolve(this);
+          }.bind(this), function(response) { reject(response); });
+
+        } else if (this.id.indexOf("TB_.") >= 0) {
+          // It's a temporary ID
+          adapter.create("nodes", { node: this.toProps() }, {
+            parentResource: {
+              name: "assignments",
+              id: this.assignmentId
+            }
+          }).then(function(response) {
+            this.id = response.id;
+            context.Node._instances[this.id] = this;
+            resolve(this);
+          }.bind(this), function(response) { reject(response); });
+        }
+        delete this._saving;
+      }.bind(this));
+    }
   };
 
   /**

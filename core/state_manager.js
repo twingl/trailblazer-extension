@@ -130,22 +130,14 @@
 
     // Make a copy of the node store
     var tmp = {};
-    _.extend(tmp, Node.cache.list(this._storageAdapter));
+    _.extend(tmp, Node.cache.list(this._storageAdapter, assignmentId));
 
-    if (assignmentId) {
-      // Scope the Map down to a particular assignment if specified
-      var _data = _.compact(_.map(tmp, function (node, id) {
-        return (node.assignmentId === assignmentId) ? node : null;
-      }));
-      _.each(_data, function(node) { data.nodes[node.id] = node; });
-    } else {
-      // No assignment specified -> whole map of in-memory nodes
-      data.nodes = tmp;
-    }
+    // Form a Map<Node.id, Node>
+    _.each(tmp, function(node, key) { data.nodes[node.id] = node; });
 
     // If any tabs are open, set them as properties on the nodes
     _.each(this._tabIdMap, function(map, key) {
-      data.nodes[map].openTab = key;
+      if (data.nodes[map]) data.nodes[map].openTab = key;
     });
 
     return data;
@@ -203,10 +195,25 @@
    */
   context.StateManager.prototype.startRecording = function(tabId, assignmentId) {
     if (!this.getNode(tabId).recording) {
-      assignmentId = assignmentId || new Assignment().id;
+      var assignment;
+      if (assignmentId) {
+        // It's an existing assignment
+        assignment = Assignment.cache.read(this._storageAdapter, assignmentId);
+      } else {
+        // We need to create a new assignment
+        assignment = new Assignment();
+      }
 
-      this.getNode(tabId).assignmentId = assignmentId;
-      this.getNode(tabId).recording = true;
+      // Ensure we have a valid ID for the assignment so we can start saving
+      // the trail
+      assignment.save(this._storageAdapter).then(function(assignment) {
+        this.getNode(tabId).assignmentId = assignment.id;
+        this.getNode(tabId).recording = true;
+        this.getNode(tabId).save(this._storageAdapter);
+        // TODO Feature? Iterate over the existing, in-memory tree and save the
+        // connected graph - this will save the entire tree, if desirable.
+        // Pending team discussion
+      }.bind(this));
     }
   };
 
@@ -280,7 +287,13 @@
    * @returns {Node} Returns the node if found, otherwise `null`
    */
   context.StateManager.prototype.getCurrentNode = function() {
-    return (this._tabIdMap[this._currentTabId]) ? this.getNode(this._currentTabId) : null;
+    var nodeId = this._tabIdMap[this._currentTabId];
+
+    if (nodeId) {
+      return context.Node.cache.read(this._storageAdapter, nodeId);
+    } else {
+      return null;
+    }
   };
 
   /**
@@ -340,6 +353,10 @@
       node.parentId = currentNode.id;
       node.recording = currentNode.recording;
       node.assignmentId = currentNode.assignmentId;
+
+      if (node.recording && node.assignmentId) {
+        node.save(this._storageAdapter);
+      }
     }
 
     this._tabIdMap[evt.data.tabId] = node.id;
@@ -366,11 +383,16 @@
         this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
         var newNode = new Node({
-          parentId: node.id,
-          url:      evt.data.url,
-          title:    evt.data.title,
-          recording: node.recording
+          assignmentId: node.assignmentId,
+          parentId:     node.id,
+          recording:    node.recording,
+          url:          evt.data.url,
+          title:        evt.data.title
         });
+
+        if (typeof node.id === "number" && newNode.recording && newNode.assignmentId) {
+          newNode.save(this._storageAdapter);
+        }
 
         this._tabIdMap[evt.data.tabId] = newNode.id;
       }
