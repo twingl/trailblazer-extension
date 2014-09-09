@@ -70,20 +70,10 @@
    *
    * @param {StateManager.Config} config - {@link StateManger} configuration
    *
-   * @property {Map&lt;number, Tree>} trees - Trees that are or have been referenced by
-   * nodes in this session.
-   *
    * @property {Map&lt;number, Node>} nodes - Nodes that have been visited during this
    * session
    */
   context.StateManager = function(config) {
-
-    // Initialize the tree/node maps
-    // TODO factor out into Node/Tree respectively. Keep an instance of these
-    // storage adapters on the StateManager, rather than managing the model
-    // directly.
-    this.trees = {};
-    this.nodes = {};
 
     /**
      * @property {StateManager.Config} _config
@@ -127,8 +117,7 @@
 
     /**
      * @property {Array} _eventBuffer - Buffer into which events are pushed
-     * from the event adapter. Periodically cleared and processed into the tree
-     * data.
+     * from the event adapter. Periodically cleared and processed into nodes.
      * @private
      */
     this._eventBuffer = [];
@@ -166,14 +155,18 @@
       nodes: {}
     };
 
-    if (assignmentId) {
-      var _data = _.compact(_.map(Node._instances, function (node,id) {
-        return (node.assignmentId === assignmentId) ? node : null;
-      }));
-      _.each(_data, function(node) { data.nodes[node.id] = node; });
-    } else {
-      data.nodes = Node._instances;
-    }
+    // Make a copy of the node store
+    var tmp = {};
+    _.extend(tmp, Node.cache.list(this._storageAdapter, assignmentId));
+
+    // Form a Map&lt;Node.id, Node>
+    _.each(tmp, function(node, key) { data.nodes[node.id] = node; });
+
+    // If any tabs are open, set them as properties on the nodes
+    _.each(this._tabIdMap, function(map, key) {
+      if (data.nodes[map]) data.nodes[map].openTab = key;
+    });
+
     return data;
   };
 
@@ -185,12 +178,10 @@
    * assignments from the server
    */
   context.StateManager.prototype.assignments = function(cb) {
-    this._assignments = this._assignments || [];
-    this._storageAdapter.list("assignments").then(function(response) {
-      this._assignments = response.assignments;
-      cb(this._assignments);
-    }.bind(this));
-    return this._assignments;
+    Assignment.list(this._storageAdapter).then(function(assignments) {
+      cb(assignments);
+    });
+    return Assignment.cache.list(this._storageAdapter);
   };
 
   /**
@@ -231,10 +222,25 @@
    */
   context.StateManager.prototype.startRecording = function(tabId, assignmentId) {
     if (!this.getNode(tabId).recording) {
-      assignmentId = assignmentId || new Assignment().id;
+      var assignment;
+      if (assignmentId) {
+        // It's an existing assignment
+        assignment = Assignment.cache.read(this._storageAdapter, assignmentId);
+      } else {
+        // We need to create a new assignment
+        assignment = new Assignment();
+      }
 
-      this.getNode(tabId).assignmentId = assignmentId;
-      this.getNode(tabId).recording = true;
+      // Ensure we have a valid ID for the assignment so we can start saving
+      // the trail
+      assignment.save(this._storageAdapter).then(function(assignment) {
+        this.getNode(tabId).assignmentId = assignment.id;
+        this.getNode(tabId).recording = true;
+        this.getNode(tabId).save(this._storageAdapter);
+        // TODO Feature? Iterate over the existing, in-memory tree and save the
+        // connected graph - this will save the entire tree, if desirable.
+        // Pending team discussion
+      }.bind(this));
     }
   };
 
@@ -291,11 +297,10 @@
 
     if (nodeId) {
       // Return the existing Node
-      node = Node._instances[nodeId];
+      node = Node.cache.read(this._storageAdapter, nodeId);
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
-      this.nodes[node.id] = node;
       this._tabIdMap[tabId] = { nodeId: node.id }
     }
 
@@ -309,12 +314,18 @@
    * @returns {Node} Returns the node if found, otherwise `null`
    */
   context.StateManager.prototype.getCurrentNode = function() {
-    return (this._tabIdMap[this._currentTabId]) ? this.getNode(this._currentTabId) : null;
+    var nodeId = this._tabIdMap[this._currentTabId];
+
+    if (nodeId) {
+      return context.Node.cache.read(this._storageAdapter, nodeId);
+    } else {
+      return null;
+    }
   };
 
   /**
-   * Flushes the StateManager's event buffer and processes it, inserting items
-   * into the tree data where appropriate.
+   * Flushes the StateManager's event buffer and processes it, inserting new
+   * nodes and updating as necessary.
    * De-bounced.
    * @TODO Re-evaluate whether buffering these events is necessary
    *
@@ -367,19 +378,15 @@
 
     if (currentNode &amp;&amp; evt.data.url !== "chrome://newtab/") {
       node.parentId = currentNode.id;
-      var tree = this.trees[currentNode.treeId] || new Tree();
-      this.trees[currentNode.treeId] = tree;
-      node.treeId = tree.id;
       node.recording = currentNode.recording;
       node.assignmentId = currentNode.assignmentId;
-    } else {
-      var tree = new Tree();
-      this.trees[tree.id] = tree;
-      node.treeId = tree.id;
+
+      if (node.recording &amp;&amp; node.assignmentId) {
+        node.save(this._storageAdapter);
+      }
     }
 
     this._tabIdMap[evt.data.tabId] = node.id;
-    this.nodes[node.id] = node;
   };
 
   /**
@@ -390,8 +397,8 @@
    * @private
    */
   context.StateManager.prototype.updatedTab = function(evt) {
-    var node = this.getNode(evt.data.tabId);
-    var parentNode = (node.parentId) ? this.nodes[node.parentId] : undefined;
+    var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    var parentNode = (node &amp;&amp; node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
 
     if (evt.data.url &amp;&amp; evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
@@ -399,19 +406,22 @@
         node.title = evt.data.title;
       } else if (parentNode &amp;&amp; evt.data.url &amp;&amp; evt.data.url === parentNode.url) {
         this._tabIdMap[evt.data.tabId] = parentNode.id;
-      } else if (_.findWhere(this.nodes, { parentId: node.id, url: evt.data.url })) {
-        this._tabIdMap[evt.data.tabId] = _.findWhere(this.nodes, { parentId: node.id, url: evt.data.url }).id;
+      } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
+        this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
         var newNode = new Node({
-          parentId: node.id,
-          treeId:   node.treeId,
-          url:      evt.data.url,
-          title:    evt.data.title,
-          recording: node.recording
+          assignmentId: node.assignmentId,
+          parentId:     node.id,
+          recording:    node.recording,
+          url:          evt.data.url,
+          title:        evt.data.title
         });
 
+        if (typeof node.id === "number" &amp;&amp; newNode.recording &amp;&amp; newNode.assignmentId) {
+          newNode.save(this._storageAdapter);
+        }
+
         this._tabIdMap[evt.data.tabId] = newNode.id;
-        this.nodes[newNode.id] = newNode;
       }
     } else {
       node.title = evt.data.title;
@@ -443,7 +453,7 @@
 
   /**
    * Binds an event to a default handler that pushes the event into a buffer,
-   * then calls a de-bounced function to flush the buffer into the tree data.
+   * then calls a de-bounced function to flush the buffer.
    *
    * @function StateManager#_bindEvent
    * @param {string} name - The name of the event to be bound to the default
@@ -468,13 +478,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Assignment.html">Assignment</a></li><li><a href="BackgroundJS.html">BackgroundJS</a></li><li><a href="ChromeEventAdapter.html">ChromeEventAdapter</a></li><li><a href="ChromeIdentityAdapter.html">ChromeIdentityAdapter</a></li><li><a href="Node.html">Node</a></li><li><a href="StateManager.html">StateManager</a></li><li><a href="TrailblazerHTTPStorageAdapter.html">TrailblazerHTTPStorageAdapter</a></li><li><a href="Tree.html">Tree</a></li></ul><h3>Events</h3><ul><li><a href="ChromeEventAdapter.html#event:onClosedTab">onClosedTab</a></li><li><a href="ChromeEventAdapter.html#event:onCreatedTab">onCreatedTab</a></li><li><a href="ChromeEventAdapter.html#event:onSwitchedTab">onSwitchedTab</a></li><li><a href="ChromeEventAdapter.html#event:onUpdatedTab">onUpdatedTab</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Assignment.html">Assignment</a></li><li><a href="BackgroundJS.html">BackgroundJS</a></li><li><a href="ChromeEventAdapter.html">ChromeEventAdapter</a></li><li><a href="ChromeIdentityAdapter.html">ChromeIdentityAdapter</a></li><li><a href="Node.html">Node</a></li><li><a href="StateManager.html">StateManager</a></li><li><a href="TrailblazerHTTPStorageAdapter.html">TrailblazerHTTPStorageAdapter</a></li></ul><h3>Events</h3><ul><li><a href="ChromeEventAdapter.html#event:onClosedTab">onClosedTab</a></li><li><a href="ChromeEventAdapter.html#event:onCreatedTab">onCreatedTab</a></li><li><a href="ChromeEventAdapter.html#event:onSwitchedTab">onSwitchedTab</a></li><li><a href="ChromeEventAdapter.html#event:onUpdatedTab">onUpdatedTab</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sat Sep 06 2014 14:32:51 GMT+1200 (NZST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Tue Sep 09 2014 21:24:41 GMT+1200 (NZST)
 </footer>
 
 <script> prettyPrint(); </script>
