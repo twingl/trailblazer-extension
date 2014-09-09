@@ -373,7 +373,7 @@
     var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
     var parentNode = (node && node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
 
-    if (evt.data.url && evt.data.url !== node.url) {
+    if (node && evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
         node.url = evt.data.url;
         node.title = evt.data.title;
@@ -396,7 +396,7 @@
 
         this._tabIdMap[evt.data.tabId] = newNode.id;
       }
-    } else {
+    } else if (node && evt.data.title) {
       node.title = evt.data.title;
     }
   };

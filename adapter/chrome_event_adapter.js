@@ -200,19 +200,24 @@
    * @private
    */
   context.ChromeEventAdapter.prototype._onCreatedTab = function(tab) {
-    var evt = {
-      type: "created_tab",
-      occurred: Date.now(),
-      data: {
-        tabId: tab.id,
-        url: tab.url,
-        title: tab.title,
-        parentTabId: tab.openerTabId
+    chrome.tabs.query({ windowType: "normal" }, function(tabs) {
+      tab = _.findWhere(tabs, { id: tab.id });
+      if (tab) {
+        var evt = {
+          type: "created_tab",
+          occurred: Date.now(),
+          data: {
+            tabId: tab.id,
+            url: tab.url,
+            title: tab.title,
+            parentTabId: tab.openerTabId
+          }
+        };
+        if (this._ready) {
+          _.each(this._listeners.onCreatedTab, function(l) { l(evt); });
+        }
       }
-    };
-    if (this._ready) {
-      _.each(this._listeners.onCreatedTab, function(l) { l(evt); });
-    }
+    }.bind(this));
   };
 
   /**
@@ -228,18 +233,23 @@
    * @private
    */
   context.ChromeEventAdapter.prototype._onUpdatedTab = function(tabId, changeInfo, tab) {
-    var evt = {
-      type: "updated_tab",
-      occurred: Date.now(),
-      data: {
-        tabId: tab.id,
-        url: tab.url,
-        title: tab.title
-      }
-    };
-    if (this._ready) {
-      _.each(this._listeners.onUpdatedTab, function(l) { l(evt); });
-    }
+    chrome.tabs.query({ windowType: "normal" }, function(tabs) {
+      tab = _.findWhere(tabs, { id: tab.id });
+      if (tab) {
+        var evt = {
+          type: "updated_tab",
+          occurred: Date.now(),
+          data: {
+            tabId: tab.id,
+            url: tab.url,
+            title: tab.title
+          }
+        };
+        if (this._ready) {
+          _.each(this._listeners.onUpdatedTab, function(l) { l(evt); });
+        }
+      };
+    }.bind(this));
   };
 
   /**
@@ -253,16 +263,21 @@
    * @private
    */
   context.ChromeEventAdapter.prototype._onSwitchedTab = function(activeInfo) {
-    var evt = {
-      type: "switched_tab",
-      occurred: Date.now(),
-      data: {
-        tabId: activeInfo.tabId
+    chrome.tabs.query({ windowType: "normal" }, function(tabs) {
+      var tab = _.findWhere(tabs, { id: activeInfo.tabId });
+      if (tab) {
+        var evt = {
+          type: "switched_tab",
+          occurred: Date.now(),
+          data: {
+            tabId: tab.id
+          }
+        };
+        if (this._ready) {
+          _.each(this._listeners.onSwitchedTab, function(l) { l(evt); });
+        }
       }
-    };
-    if (this._ready) {
-      _.each(this._listeners.onSwitchedTab, function(l) { l(evt); });
-    }
+    }.bind(this));
   };
 
   /**
