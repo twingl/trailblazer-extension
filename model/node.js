@@ -22,14 +22,15 @@
     properties = properties || {};
 
     this.id           = properties.id || Node._getId();
-    this.parentId     = properties.parentId;
-    this.assignmentId = properties.assignmentId;
+    this.parentId     = properties.parent_id || properties.parentId;
+    this.assignmentId = properties.assignment_id || properties.assignmentId;
     this.recording    = properties.recording;
     this.url          = properties.url;
     this.title        = properties.title;
 
     context.Node._instances[this.id] = this;
   };
+  context.Node.cache = {};
 
   // store the instances in memory
   context.Node._instances = {};
@@ -46,11 +47,57 @@
 
   /**
    * Return a Node, if it exists, corresponding to the given ID.
+   * @param {StorageAdapter} adapter - The storage adapter to query
    * @param {number} id - The ID of the {@link Node}
    * @returns {Node}
    */
-  context.Node.read = function(id) {
+  context.Node.cache.read = function(adapter, id) {
     return context.Node._instances[id];
+  };
+
+  /**
+   * Return all Nodes in the cache
+   * @param {StorageAdapter} adapter - The storage adapter to query
+   * @param {number} id - The ID of the {@link Node}
+   * @returns {Array<Node>}
+   */
+  context.Node.cache.list = function(adapter, assignmentId) {
+    return _.where(context.Node._instances, { assignmentId: assignmentId });
+  };
+
+  /**
+   * Request a Node from the storage adapter, corresponding to the provided ID
+   * @param {StorageAdapter} adapter - The storage adapter to query
+   * @param {number} id - The ID of the {@link Node}
+   * @returns {Node}
+   */
+  context.Node.read = function(adapter, id) {
+    return adapter.read("nodes", id);
+  };
+
+  /**
+   * Request all Nodes from the storage adapter.
+   * @param {StorageAdapter} adapter - The storage adapter to query
+   * @returns {Promise} - Resolves with Array<Node> or an error object
+   */
+  context.Node.list = function(adapter, assignmentId) {
+    return new Promise(function(resolve, reject) {
+      // Request assignments from the storage adapter
+      adapter.list(["assignments", assignmentId, "nodes"].join("/")).then(
+        function(response) {
+          // Update our cache with the response (only for keys in the response -
+          // we may have unsaved models)
+          _.each(response.nodes, function(r) {
+            context.Node._instances[r.id] = new context.Node(r);
+          }.bind(this));
+
+          // Resolve the promise with the assignments
+          resolve(context.Node.cache.list(adapter));
+        }.bind(this),
+
+        // Reject the Promise with the adapter error
+        reject);
+    }.bind(this));
   };
 
   /**

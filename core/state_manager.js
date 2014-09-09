@@ -130,17 +130,20 @@
 
     // Make a copy of the node store
     var tmp = {};
-    _.extend(tmp, Node._instances);
+    _.extend(tmp, Node.cache.list(this._storageAdapter));
 
     if (assignmentId) {
-      var _data = _.compact(_.map(tmp, function (node,id) {
+      // Scope the Map down to a particular assignment if specified
+      var _data = _.compact(_.map(tmp, function (node, id) {
         return (node.assignmentId === assignmentId) ? node : null;
       }));
       _.each(_data, function(node) { data.nodes[node.id] = node; });
     } else {
+      // No assignment specified -> whole map of in-memory nodes
       data.nodes = tmp;
     }
 
+    // If any tabs are open, set them as properties on the nodes
     _.each(this._tabIdMap, function(map, key) {
       data.nodes[map].openTab = key;
     });
@@ -156,12 +159,10 @@
    * assignments from the server
    */
   context.StateManager.prototype.assignments = function(cb) {
-    this._assignments = this._assignments || [];
-    this._storageAdapter.list("assignments").then(function(response) {
-      this._assignments = response.assignments;
-      cb(this._assignments);
-    }.bind(this));
-    return this._assignments;
+    Assignment.list(this._storageAdapter).then(function(assignments) {
+      cb(assignments);
+    });
+    return Assignment.cache.list(this._storageAdapter);
   };
 
   /**
@@ -262,7 +263,7 @@
 
     if (nodeId) {
       // Return the existing Node
-      node = Node.read(nodeId);
+      node = Node.cache.read(this._storageAdapter, nodeId);
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
@@ -352,8 +353,8 @@
    * @private
    */
   context.StateManager.prototype.updatedTab = function(evt) {
-    var node = Node.read(this._tabIdMap[evt.data.tabId]);
-    var parentNode = (node && node.parentId) ? Node.read(node.parentId) : undefined;
+    var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    var parentNode = (node && node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
 
     if (evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {

@@ -69,6 +69,7 @@
    * @param {string} resourceName - Name of the resource to fetch
    * @param {string} id - (Optional) id of the resource
    * @param {Object} params - URL params to append to the request
+   * @returns {Promise}
    */
   context.TrailblazerHTTPStorageAdapter.prototype.read = function(resourceName, id, params) {
     if (!resourceName) throw "You need to specify a resource";
