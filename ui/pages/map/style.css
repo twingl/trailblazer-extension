@@ -91,6 +91,12 @@ html {
 	background: #444;
 	color:#FFF;
 }
+
+.click-nav ul .clicker img {
+	float: right;
+	padding: 6px 6px 6px 6px;
+}
+
 .click-nav ul .clicker:hover,
 .click-nav ul .active {
 	background:#333;
