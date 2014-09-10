@@ -1,6 +1,24 @@
+
+*,
+*:after,
+*:before {
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	font-smoothing:antialiased;
+	text-rendering:optimizeLegibility;
+}
+
+body {
+	font:400 13px/1.4 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	background:#fff;
+}
+
 html {
-  width: 400px;
-  height: 300px;
+  width: 100%;
 }
 
 .d3-tip {
@@ -18,15 +36,20 @@ html {
 .null { color: #f69988; }
 .key { color: #ff8a65; }
 
+#map {
+	width: 960px;
+	margin: 0 auto;
+}
+
 .node {
 	fill: #fff;
-	stroke: #000;
-	stroke-width: 1px;
+	stroke: #555;
+	stroke-width: 2px;
 	vector-effect: non-scaling-stroke;
 }
 
 .link {
-	stroke: #333;
+	stroke: #444;
 	stroke-width: 2px;
 	vector-effect: non-scaling-stroke;
 }
@@ -35,3 +58,65 @@ html {
   fill: none;
   pointer-events: all;
 }
+
+
+
+
+
+
+
+
+
+.click-nav {
+	margin:30px auto;
+	width:200px;
+	position: fixed;
+	left: 0;
+	right: 0;
+}
+.click-nav ul {
+	font-weight:900;
+}
+.click-nav ul li {
+	position:relative;
+	list-style:none;
+	cursor:pointer;
+}
+.click-nav ul li ul {
+	position:absolute;
+	left:0;
+	right:0;
+}
+.click-nav ul .clicker {
+	background: #444;
+	color:#FFF;
+}
+.click-nav ul .clicker:hover,
+.click-nav ul .active {
+	background:#333;
+}
+
+.click-nav ul li a {
+	transition:background-color 0.2s ease-in-out;
+	-webkit-transition:background-color 0.2s ease-in-out;
+	-moz-transition:background-color 0.2s ease-in-out;
+	display:block;
+	padding:12px 12px 12px 16px;
+	background:#FFF;
+	color:#333;
+	text-decoration:none;
+}
+.click-nav ul li a:hover {
+	background:#ddd;
+}
+/* Fallbacks */
+.click-nav .no-js ul {
+	display:none;
+}
+.click-nav .no-js:hover ul {
+	display:block;
+}
+
+
+
+

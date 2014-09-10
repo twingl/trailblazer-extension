@@ -74,7 +74,7 @@
         return "<pre>" + syntaxHighlight(JSON.stringify(d, null, 3)) + "</pre>";
       });
 
-    var width = "960",
+    var width = 960,
         height = 500;
 
     var force = d3.layout.force()
@@ -105,15 +105,17 @@
           .enter()
             .append("line")
               .attr("class", "link");
-/**           .style("stroke", "#555")
-              .style("stroke-width", 2);
-*/
-    var node = svg.selectAll(".node")
+    
+    var gnodes = svg.selectAll(".node")
           .data(data.nodes)
           .enter()
-            .append("circle")
+          .append('g');
+
+    var node = gnodes.append("circle")
               .attr("class", "node")
               .attr("r", 20);
+
+
 /** Kept as reference, Moving styling to style.css
               .style("fill", function(d) {
                 return ( d.parentId ? "rgba(0,225,0" : "rgba(0,0,255" )
@@ -123,7 +125,8 @@
               .style("stroke-width", function(d) {
                 return (d.openTab) ? "2" : "0";
               });
-*/  
+*/ 
+  
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
