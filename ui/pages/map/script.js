@@ -95,6 +95,8 @@
     var node = svg.selectAll(".node")
           .data(data.nodes)
           .enter()
+            .append("svg:a")
+            .attr('xlink:href', function(d) { return d.url })
             .append("circle")
               .attr("class", "node")
               .attr("r", 5)
@@ -133,7 +135,7 @@
       o[kv[0]] = kv[1];
     });
     assignmentId = parseInt(o.assignment);
-  }
+  };
 
   chrome.runtime.sendMessage({ action: "getLog", assignmentId: assignmentId }, function(response) {
     render("#map", d3ify( response.data ));
