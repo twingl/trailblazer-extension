@@ -129,9 +129,10 @@
        * @TODO Accessing temporary Assignment implementation
        */
       case 'getCurrentAssignment':
-        var id = stateManager.getCurrentNode().assignmentId;
-        if (id) {
-          sendResponse(Assignment.cache.read(stateManager._storageAdapter, id) || false);
+        var node = stateManager.getCurrentNode();
+        if (node.assignmentId && node.recording) {
+          var assignment = Assignment.cache.read(stateManager._storageAdapter, node.assignmentId);
+          sendResponse(assignment || false);
         } else {
           sendResponse(false);
         }
