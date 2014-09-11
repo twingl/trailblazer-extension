@@ -31,31 +31,40 @@
     }
   };
 
-  // Set the state of the popup when we change tabs
-  chrome.tabs.onActivated.addListener(function(details) {
+  var updateUIState = function (tabId) {
     stateManager.isSignedIn().then(function (signedIn) {
-      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[details.tabId]);
+      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
 
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
         chrome.browserAction.setPopup({
-          tabId: details.tabId,
+          tabId: tabId,
           popup: extensionStates.recording.popup
         });
       } else if (signedIn) {
         // The extension is signed in and idle
         chrome.browserAction.setPopup({
-          tabId: details.tabId,
+          tabId: tabId,
           popup: extensionStates.idle.popup
         });
       } else {
         // The extension is not signed in
         chrome.browserAction.setPopup({
-          tabId: details.tabId,
+          tabId: tabId,
           popup: extensionStates.notAuthenticated.popup
         });
       }
     });
+  }
+
+  // Set the state of the popup when we change tabs
+  chrome.tabs.onActivated.addListener(function(activeInfo) {
+    updateUIState(activeInfo.tabId);
+  });
+
+  // Set the state of the popup a tab is updated
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    updateUIState(tabId);
   });
 
   var stateManager = new StateManager({
