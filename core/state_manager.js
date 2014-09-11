@@ -351,10 +351,10 @@
 
     if (currentNode && evt.data.url !== "chrome://newtab/") {
       node.parentId = currentNode.id;
-      node.recording = currentNode.recording;
-      node.assignmentId = currentNode.assignmentId;
 
-      if (node.recording && node.assignmentId) {
+      if (currentNode.recording && currentNode.assignmentId) {
+        node.recording    = currentNode.recording;
+        node.assignmentId = currentNode.assignmentId;
         node.save(this._storageAdapter);
       }
     }
@@ -383,12 +383,15 @@
         this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
         var newNode = new Node({
-          assignmentId: node.assignmentId,
           parentId:     node.id,
-          recording:    node.recording,
           url:          evt.data.url,
           title:        evt.data.title
         });
+
+        if (node.recording) {
+          newNode.recording    = node.recording;
+          newNode.assignmentId = node.assignmentId;
+        }
 
         if (typeof node.id === "number" && newNode.recording && newNode.assignmentId) {
           newNode.save(this._storageAdapter);
