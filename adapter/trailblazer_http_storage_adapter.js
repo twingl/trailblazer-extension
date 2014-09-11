@@ -149,5 +149,15 @@
    * @todo Destroy a resource
    * @function TrailblazerHTTPStorageAdapter#destroy
    */
-  context.TrailblazerHTTPStorageAdapter.prototype.destroy = function() {};
+  context.TrailblazerHTTPStorageAdapter.prototype.destroy = function(resourceName, id) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!id) throw "You need to specify an ID";
+
+    var url = this._stateManager.getConfig().api.host + "/"
+            + this._stateManager.getConfig().api.nameSpace + "/"
+            + this._stateManager.getConfig().api.version + "/"
+            + resourceName + "/" + id;
+
+    return this._request(url, "DELETE");
+  };
 }(window));

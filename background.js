@@ -97,9 +97,9 @@
         break;
 
       /**
-       * Resume the specified assignment by adding a new node to the tree based
-       * on the specified Tab ID, or by opening a new Tab based on the Node
-       * referred to by the specified Node ID
+       * Resume an assignment (implied from the Node) by adding a new node to
+       * the tree based on the specified Tab ID, or by opening a new Tab in the
+       * current window based on the Node referred to by the specified Node ID
        *
        * If a Node ID is specified, a new Tab will be opened on that Node's URL
        * and be set to a recording state.
@@ -113,7 +113,6 @@
        * ```javascript
        * {
        *   action: 'resumeAssignment',
-       *   assignmentId: number,
        *   tabId: number, (not requred if nodeId specified)
        *   nodeId: number (not requred if tabId specified, takes preference)
        * }
@@ -122,6 +121,14 @@
        * @function BackgroundJS.resumeAssignment
        */
       case 'resumeAssignment':
+        if (request.nodeId) {
+          var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+          chrome.windows.create({ url: node.url }, function(tab) {
+            stateManager.resumeRecording(tab.id, request.nodeId);
+          });
+        } else if (request.tabId) {
+          stateManager.startRecording(request.tabId, requst.assignmentId);
+        }
         break;
 
       /**

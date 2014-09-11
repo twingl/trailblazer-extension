@@ -228,13 +228,25 @@
   };
 
   /**
-   * @TODO Use the specified Tab to navigate to a Node within the Project's history
+   * Resume recording a trail on a given node and tab.
    *
-   * @function StateManager#navigateTo
+   * Delegates the setting of recording state to {@link
+   * StateManager#startRecording}
+   *
+   * @function StateManager#resumeRecording
+   * @param {number} assignmentId - The ID of the Assignment to record to
    * @param {number} tabId - The ID of the Tab to use
    * @param {number} nodeId - The ID of the Node to navigate to
    */
-  context.StateManager.prototype.navigateTo = function(tabId, nodeId) {};
+  context.StateManager.prototype.resumeRecording = function(tabId, nodeId) {
+    var node = Node.cache.read(this._storageAdapter, nodeId);
+    var tmpNodeId = this._tabIdMap[tabId];
+    this._tabIdMap[tabId] = nodeId;
+    if (tmpNodeId && Node.cache.read(this._storageAdapter, tmpNodeId)) {
+      Node.cache.read(this._storageAdapter, tmpNodeId).destroy();
+    }
+    this.startRecording(tabId, node.assignmentId);
+  };
 
   /**
    * @TODO Get info about the specified tab, including its recording state, which
