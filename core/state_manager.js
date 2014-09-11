@@ -274,7 +274,7 @@
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
-      this._tabIdMap[tabId] = { nodeId: node.id }
+      this._tabIdMap[tabId] = node.id;
     }
 
     return node;
@@ -375,15 +375,24 @@
 
     if (node && evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
+        // Opened a new tab
         node.url = evt.data.url;
         node.title = evt.data.title;
       } else if (parentNode && evt.data.url && evt.data.url === parentNode.url) {
+        // Navigating back
+        var node = Node.cache.read(this._storageAdapter, node.id);
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = parentNode.id;
       } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
+        // Navigating to an existing child
+        var node = Node.cache.read(this._storageAdapter, node.id);
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
+        // Navigating to a new child
         var newNode = new Node({
           parentId:     node.id,
+          openTab:      node.openTab,
           url:          evt.data.url,
           title:        evt.data.title
         });
@@ -397,6 +406,7 @@
           newNode.save(this._storageAdapter);
         }
 
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = newNode.id;
       }
     } else if (node && evt.data.title) {
@@ -417,13 +427,17 @@
 
   /**
    * Called when a tab close event is processed by _flushBuffer.
-   * Removes the node from the tabId->Node map
+   * Removes the node from the tabId->Node map, unsets its tab ID reference,
+   * unsets its recording state
    *
    * @function StateManager#closedTab
    * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.closedTab = function(evt) {
+    var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    delete node.recording;
+    delete node.openTab;
     delete this._tabIdMap[evt.data.tabId];
   };
 
