@@ -165,7 +165,7 @@
        */
       case 'getCurrentAssignment':
         var node = stateManager.getCurrentNode();
-        if (node.assignmentId && node.recording) {
+        if (node && node.assignmentId && node.recording) {
           var assignment = Assignment.cache.read(stateManager._storageAdapter, node.assignmentId);
           sendResponse(assignment || false);
         } else {
