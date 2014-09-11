@@ -119,7 +119,7 @@
        * }
        * ```
        *
-       * @function BackgroundJS.getAssignments
+       * @function BackgroundJS.resumeAssignment
        */
       case 'resumeAssignment':
         break;
