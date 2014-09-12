@@ -19,39 +19,67 @@
   var extensionStates = {
     recording: {
       popup: "/ui/popup/recording.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19-recording.png",
+        38: "/ui/icons/38-recording.png"
+      }
     },
     idle: {
       popup: "/ui/popup/idle.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19.png",
+        38: "/ui/icons/38.png"
+      }
     },
     notAuthenticated: {
       popup: "/ui/popup/not_authenticated.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19.png",
+        38: "/ui/icons/38.png"
+      }
     }
   };
 
   var updateUIState = function (tabId) {
     stateManager.isSignedIn().then(function (signedIn) {
       var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
+      console.log(node);
 
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
+        // Set Popup
         chrome.browserAction.setPopup({
           tabId: tabId,
           popup: extensionStates.recording.popup
         });
+        // Set Icon
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.recording.browserAction
+        });
       } else if (signedIn) {
         // The extension is signed in and idle
+        // Set Popup
         chrome.browserAction.setPopup({
           tabId: tabId,
           popup: extensionStates.idle.popup
         });
+        // Set Icon
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.idle.browserAction
+        });
       } else {
         // The extension is not signed in
+        // Set Popup
         chrome.browserAction.setPopup({
           tabId: tabId,
           popup: extensionStates.notAuthenticated.popup
+        });
+        // Set Icon
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.notAuthenticated.browserAction
         });
       }
     });
@@ -160,6 +188,12 @@
           popup: extensionStates.recording.popup
         });
         stateManager.startRecording(request.tabId, request.assignmentId);
+        // Set Icon
+        // FIXME directly setting browser action in multiple places
+        chrome.browserAction.setIcon({
+          tabId: request.tabId,
+          path: extensionStates.recording.browserAction
+        });
         sendResponse();
         break;
 
@@ -183,6 +217,12 @@
           popup: extensionStates.idle.popup
         });
         stateManager.stopRecording(request.tabId);
+        // Set Icon
+        // FIXME directly setting browser action in multiple places
+        chrome.browserAction.setIcon({
+          tabId: request.tabId,
+          path: extensionStates.idle.browserAction
+        });
         sendResponse();
         break;
 
