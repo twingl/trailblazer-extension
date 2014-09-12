@@ -19,52 +19,99 @@
   var extensionStates = {
     recording: {
       popup: "/ui/popup/recording.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19-recording.png",
+        38: "/ui/icons/38-recording.png"
+      }
     },
     idle: {
       popup: "/ui/popup/idle.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19.png",
+        38: "/ui/icons/38.png"
+      }
     },
     notAuthenticated: {
       popup: "/ui/popup/not_authenticated.html",
-      browserAction: ""
+      browserAction: {
+        19: "/ui/icons/19.png",
+        38: "/ui/icons/38.png"
+      }
     }
   };
 
-  var updateUIState = function (tabId) {
+  var updateUIState = function (tabId, state) {
+    switch (state) {
+      case "recording":
+        chrome.browserAction.setPopup({
+          tabId: tabId,
+          popup: extensionStates.recording.popup
+        });
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.recording.browserAction
+        });
+        break;
+
+      case "notAuthenticated":
+        chrome.browserAction.setPopup({
+          tabId: tabId,
+          popup: extensionStates.notAuthenticated.popup
+        });
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.notAuthenticated.browserAction
+        });
+        break;
+
+      case "idle":
+        chrome.browserAction.setPopup({
+          tabId: tabId,
+          popup: extensionStates.idle.popup
+        });
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.idle.browserAction
+        });
+        break;
+
+    }
+  }
+
+  // Set the state of the popup when we change tabs
+  chrome.tabs.onActivated.addListener(function(activeInfo) {
+    stateManager.isSignedIn().then(function (signedIn) {
+      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[activeInfo.tabId]);
+
+      if (signedIn && node && node.recording) {
+        // The extension is signed in and is recording the current page
+        updateUIState(activeInfo.tabId, "recording");
+      } else if (signedIn) {
+        // The extension is signed in and idle
+        updateUIState(activeInfo.tabId, "idle");
+      } else {
+        // The extension is not signed in
+        updateUIState(activeInfo.tabId, "notAuthenticated");
+      }
+    });
+  });
+
+  // Set the state of the popup a tab is updated
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     stateManager.isSignedIn().then(function (signedIn) {
       var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
 
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates.recording.popup
-        });
+        updateUIState(tabId, "recording");
       } else if (signedIn) {
         // The extension is signed in and idle
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates.idle.popup
-        });
+        updateUIState(tabId, "idle");
       } else {
         // The extension is not signed in
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates.notAuthenticated.popup
-        });
+        updateUIState(tabId, "notAuthenticated");
       }
     });
-  }
-
-  // Set the state of the popup when we change tabs
-  chrome.tabs.onActivated.addListener(function(activeInfo) {
-    updateUIState(activeInfo.tabId);
-  });
-
-  // Set the state of the popup a tab is updated
-  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    updateUIState(tabId);
   });
 
   var stateManager = new StateManager({
@@ -180,10 +227,7 @@
        * @function BackgroundJS.startRecording
        */
       case 'startRecording':
-        chrome.browserAction.setPopup({
-          tabId: request.tabId,
-          popup: extensionStates.recording.popup
-        });
+        updateUIState(request.tabId, "recording");
         stateManager.startRecording(request.tabId, request.assignmentId);
         sendResponse();
         break;
@@ -203,10 +247,7 @@
        * @function BackgroundJS.stopRecording
        */
       case 'stopRecording':
-        chrome.browserAction.setPopup({
-          tabId: request.tabId,
-          popup: extensionStates.idle.popup
-        });
+        updateUIState(request.tabId, "idle");
         stateManager.stopRecording(request.tabId);
         sendResponse();
         break;
