@@ -40,59 +40,78 @@
     }
   };
 
-  var updateUIState = function (tabId) {
-    stateManager.isSignedIn().then(function (signedIn) {
-      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
-      console.log(node);
-
-      if (signedIn && node && node.recording) {
-        // The extension is signed in and is recording the current page
-        // Set Popup
+  var updateUIState = function (tabId, state) {
+    switch (state) {
+      case "recording":
         chrome.browserAction.setPopup({
           tabId: tabId,
           popup: extensionStates.recording.popup
         });
-        // Set Icon
         chrome.browserAction.setIcon({
           tabId: tabId,
           path: extensionStates.recording.browserAction
         });
-      } else if (signedIn) {
-        // The extension is signed in and idle
-        // Set Popup
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates.idle.popup
-        });
-        // Set Icon
-        chrome.browserAction.setIcon({
-          tabId: tabId,
-          path: extensionStates.idle.browserAction
-        });
-      } else {
-        // The extension is not signed in
-        // Set Popup
+        break;
+
+      case "notAuthenticated":
         chrome.browserAction.setPopup({
           tabId: tabId,
           popup: extensionStates.notAuthenticated.popup
         });
-        // Set Icon
         chrome.browserAction.setIcon({
           tabId: tabId,
           path: extensionStates.notAuthenticated.browserAction
         });
-      }
-    });
+        break;
+
+      case "idle":
+        chrome.browserAction.setPopup({
+          tabId: tabId,
+          popup: extensionStates.idle.popup
+        });
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.idle.browserAction
+        });
+        break;
+
+    }
   }
 
   // Set the state of the popup when we change tabs
   chrome.tabs.onActivated.addListener(function(activeInfo) {
-    updateUIState(activeInfo.tabId);
+    stateManager.isSignedIn().then(function (signedIn) {
+      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[activeInfo.tabId]);
+
+      if (signedIn && node && node.recording) {
+        // The extension is signed in and is recording the current page
+        updateUIState(activeInfo.tabId, "recording");
+      } else if (signedIn) {
+        // The extension is signed in and idle
+        updateUIState(activeInfo.tabId, "idle");
+      } else {
+        // The extension is not signed in
+        updateUIState(activeInfo.tabId, "notAuthenticated");
+      }
+    });
   });
 
   // Set the state of the popup a tab is updated
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    updateUIState(tabId);
+    stateManager.isSignedIn().then(function (signedIn) {
+      var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
+
+      if (signedIn && node && node.recording) {
+        // The extension is signed in and is recording the current page
+        updateUIState(tabId, "recording");
+      } else if (signedIn) {
+        // The extension is signed in and idle
+        updateUIState(tabId, "idle");
+      } else {
+        // The extension is not signed in
+        updateUIState(tabId, "notAuthenticated");
+      }
+    });
   });
 
   var stateManager = new StateManager({
@@ -183,17 +202,8 @@
        * @function BackgroundJS.startRecording
        */
       case 'startRecording':
-        chrome.browserAction.setPopup({
-          tabId: request.tabId,
-          popup: extensionStates.recording.popup
-        });
+        updateUIState(request.tabId, "recording");
         stateManager.startRecording(request.tabId, request.assignmentId);
-        // Set Icon
-        // FIXME directly setting browser action in multiple places
-        chrome.browserAction.setIcon({
-          tabId: request.tabId,
-          path: extensionStates.recording.browserAction
-        });
         sendResponse();
         break;
 
@@ -212,17 +222,8 @@
        * @function BackgroundJS.stopRecording
        */
       case 'stopRecording':
-        chrome.browserAction.setPopup({
-          tabId: request.tabId,
-          popup: extensionStates.idle.popup
-        });
+        updateUIState(request.tabId, "idle");
         stateManager.stopRecording(request.tabId);
-        // Set Icon
-        // FIXME directly setting browser action in multiple places
-        chrome.browserAction.setIcon({
-          tabId: request.tabId,
-          path: extensionStates.idle.browserAction
-        });
         sendResponse();
         break;
 
