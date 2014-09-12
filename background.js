@@ -97,6 +97,31 @@
         break;
 
       /**
+       * Resume an assignment (implied from the Node) by opening a new Tab in
+       * the current window based on the Node referred to by the specified Node
+       * ID
+       *
+       * With the Node ID specified, a new Tab will be opened on that Node's URL
+       * and be set to a recording state.
+       *
+       * The message should be of the form:
+       * ```javascript
+       * {
+       *   action: 'resumeAssignment',
+       *   nodeId: number
+       * }
+       * ```
+       *
+       * @function BackgroundJS.resumeAssignment
+       */
+      case 'resumeAssignment':
+        var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+        chrome.tabs.create({ url: node.url }, function(tab) {
+          stateManager.resumeRecording(tab.id, request.nodeId);
+        });
+        break;
+
+      /**
        * Retrieve a list of assignments from the state manager and send a
        * message with these to any listeners.
        *
@@ -130,7 +155,7 @@
        */
       case 'getCurrentAssignment':
         var node = stateManager.getCurrentNode();
-        if (node.assignmentId && node.recording) {
+        if (node && node.assignmentId && node.recording) {
           var assignment = Assignment.cache.read(stateManager._storageAdapter, node.assignmentId);
           sendResponse(assignment || false);
         } else {

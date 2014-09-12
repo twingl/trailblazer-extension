@@ -27,6 +27,7 @@
     this.recording    = properties.recording;
     this.url          = properties.url;
     this.title        = properties.title;
+    this.openTab      = properties.openTab;
 
     context.Node._instances[this.id] = this;
   };
@@ -122,12 +123,7 @@
       return new Promise(function(resolve, reject) {
         if (typeof this.id === "number") {
           // It's been saved before
-          adapter.update("nodes", this.id, { node: this.toProps() }, {
-            parentResource: {
-              name: "assignments",
-              id: this.assignmentId
-            }
-          }).then(function(response) {
+          adapter.update("nodes", this.id, { node: this.toProps() }, {}).then(function(response) {
             this.id = response.id;
             context.Node._instances[this.id] = this;
             resolve(this);
@@ -149,6 +145,15 @@
         delete this._saving;
       }.bind(this));
     }
+  };
+
+  context.Node.prototype.destroy = function(adapter) {
+    if (typeof this.id === "number") {
+      // It's not a temp ID, so it should be persisted on the server
+      adapter.destroy("nodes", this.id);
+    }
+    // Purge from the cache
+    delete context.Node._instances[this.id];
   };
 
   /**

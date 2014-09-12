@@ -210,7 +210,7 @@
         this.getNode(tabId).assignmentId = assignment.id;
         this.getNode(tabId).recording = true;
         this.getNode(tabId).save(this._storageAdapter);
-        // TODO Feature? Iterate over the existing, in-memory tree and save the
+        // TODO Feature? Iterate over the existing, in-memory nodes and save the
         // connected graph - this will save the entire tree, if desirable.
         // Pending team discussion
       }.bind(this));
@@ -228,13 +228,27 @@
   };
 
   /**
-   * @TODO Use the specified Tab to navigate to a Node within the Project's history
+   * Resume recording a trail on a given node and tab.
    *
-   * @function StateManager#navigateTo
+   * Inserts an event in the buffer to be handled by {@link
+   * StateManager#resumedNode()}
+   *
+   * @function StateManager#resumeRecording
    * @param {number} tabId - The ID of the Tab to use
    * @param {number} nodeId - The ID of the Node to navigate to
    */
-  context.StateManager.prototype.navigateTo = function(tabId, nodeId) {};
+  context.StateManager.prototype.resumeRecording = function(tabId, nodeId) {
+    var tabEvent = {
+      type: "resumed_node",
+      occurred: Date.now(),
+      data: {
+        tabId: tabId,
+        nodeId: nodeId
+      }
+    };
+    this._eventBuffer.push(tabEvent);
+    this._flushBuffer();
+  };
 
   /**
    * @TODO Get info about the specified tab, including its recording state, which
@@ -274,7 +288,7 @@
     } else {
       // Create and map the Tab ID to a new Node
       node = new Node();
-      this._tabIdMap[tabId] = { nodeId: node.id }
+      this._tabIdMap[tabId] = node.id;
     }
 
     return node;
@@ -329,6 +343,9 @@
         case "closed_tab":
           this.closedTab(evt);
           break;
+        case "resumed_node":
+          this.resumedNode(evt);
+          break;
       }
     }.bind(this));
 
@@ -337,29 +354,54 @@
   /**
    * Called when a tab creation event is processed by _flushBuffer.
    *
+   * Inserts a new Node into the graph, connected to the currentNode under the
+   * right conditions.
+   *
+   * If a node is being resumed, it will ensure the node is mapped to the tab
+   *
    * @function StateManager#createdTab
    * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.createdTab = function(evt) {
     var currentNode = this.getCurrentNode();
-    var node = new Node({
-      url: evt.data.url,
-      title: evt.data.title,
-      tabId: evt.data.tabId,
-    });
+    var node;
 
-    if (currentNode && evt.data.url !== "chrome://newtab/") {
-      node.parentId = currentNode.id;
+    if (this._tabIdMap[evt.data.tabId]) {
+      // This is a resumed node
+      node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+      node.openTab = evt.data.tabId;
+      this._tabIdMap[evt.data.tabId] = node.id;
+    } else {
+      // This is a new node
+      node = new Node({
+        url: evt.data.url,
+        title: evt.data.title,
+        openTab: evt.data.tabId
+      });
 
-      if (currentNode.recording && currentNode.assignmentId) {
-        node.recording    = currentNode.recording;
-        node.assignmentId = currentNode.assignmentId;
-        node.save(this._storageAdapter);
+      if (currentNode && evt.data.url !== "chrome://newtab/") {
+        node.parentId = currentNode.id;
+
+        if (currentNode.recording && currentNode.assignmentId) {
+          node.recording    = currentNode.recording;
+          node.assignmentId = currentNode.assignmentId;
+          node.save(this._storageAdapter);
+        }
       }
+
+      if (currentNode && evt.data.url !== "chrome://newtab/" && !node.parentId) {
+        node.parentId = currentNode.id;
+
+        if (currentNode.recording && currentNode.assignmentId) {
+          node.recording    = currentNode.recording;
+          node.assignmentId = currentNode.assignmentId;
+          node.save(this._storageAdapter);
+        }
+      }
+      this._tabIdMap[evt.data.tabId] = node.id;
     }
 
-    this._tabIdMap[evt.data.tabId] = node.id;
   };
 
   /**
@@ -375,15 +417,24 @@
 
     if (node && evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
+        // Opened a new tab
         node.url = evt.data.url;
         node.title = evt.data.title;
       } else if (parentNode && evt.data.url && evt.data.url === parentNode.url) {
+        // Navigating back
+        var node = Node.cache.read(this._storageAdapter, node.id);
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = parentNode.id;
       } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
+        // Navigating to an existing child
+        var node = Node.cache.read(this._storageAdapter, node.id);
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
+        // Navigating to a new child
         var newNode = new Node({
           parentId:     node.id,
+          openTab:      node.openTab,
           url:          evt.data.url,
           title:        evt.data.title
         });
@@ -397,6 +448,7 @@
           newNode.save(this._storageAdapter);
         }
 
+        delete node.openTab;
         this._tabIdMap[evt.data.tabId] = newNode.id;
       }
     } else if (node && evt.data.title) {
@@ -417,14 +469,43 @@
 
   /**
    * Called when a tab close event is processed by _flushBuffer.
-   * Removes the node from the tabId->Node map
+   * Removes the node from the tabId->Node map, unsets its tab ID reference,
+   * unsets its recording state
    *
    * @function StateManager#closedTab
    * @param {Object} evt - The event object emitted by `eventAdapter`
    * @private
    */
   context.StateManager.prototype.closedTab = function(evt) {
+    var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    delete node.recording;
+    delete node.openTab;
     delete this._tabIdMap[evt.data.tabId];
+  };
+
+  /**
+   * Called when a Node is resumed, opening a new tab.
+   * This event converges the old Node, and the Node created as a result of the
+   * re-opening tab being handled by createdTab.
+   *
+   * @function StateManager#resumedNode
+   * @param {Object} evt - The event object created in {@link
+   * Statemanager#resumeRecording}
+   * @private
+   */
+  context.StateManager.prototype.resumedNode = function(evt) {
+    // Get the node to be resumed
+    var node = Node.cache.read(this._storageAdapter, evt.data.nodeId);
+
+    // If a node was created by the createdTab event, remove it
+    if (this._tabIdMap[evt.data.tabId]) {
+      var tmpNode = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+      tmpNode.destroy();
+    }
+
+    // Map the tab ID to the resumed node and set it to be recording
+    this._tabIdMap[evt.data.tabId] = node.id;
+    this.startRecording(evt.data.tabId, node.assignmentId);
   };
 
   /**
