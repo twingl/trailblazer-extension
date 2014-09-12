@@ -33,7 +33,7 @@
     _.each(data.nodes, function(node, nodeId) {
       // Add a link to the rendering list if there's a relationship present.
       // Note the directionality: parentNode -> node
-      if (node.parentId) {
+      if (node.parentId && idMap[node.parentId]) {
         links.push({
           source: idMap[node.parentId].index,
           target: idMap[node.id].index
