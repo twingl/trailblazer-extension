@@ -170,7 +170,7 @@
        */
       case 'resumeAssignment':
         var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
-        chrome.tabs.create({ url: node.url }, function(tab) {
+        chrome.tabs.create({ url: node.url, active: false }, function(tab) {
           stateManager.resumeRecording(tab.id, request.nodeId);
         });
         break;
