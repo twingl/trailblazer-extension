@@ -210,7 +210,7 @@
         this.getNode(tabId).assignmentId = assignment.id;
         this.getNode(tabId).recording = true;
         this.getNode(tabId).save(this._storageAdapter);
-        // TODO Feature? Iterate over the existing, in-memory tree and save the
+        // TODO Feature? Iterate over the existing, in-memory nodes and save the
         // connected graph - this will save the entire tree, if desirable.
         // Pending team discussion
       }.bind(this));
@@ -230,11 +230,10 @@
   /**
    * Resume recording a trail on a given node and tab.
    *
-   * Delegates the setting of recording state to {@link
-   * StateManager#startRecording}
+   * Inserts an event in the buffer to be handled by {@link
+   * StateManager#resumedNode()}
    *
    * @function StateManager#resumeRecording
-   * @param {number} assignmentId - The ID of the Assignment to record to
    * @param {number} tabId - The ID of the Tab to use
    * @param {number} nodeId - The ID of the Node to navigate to
    */
@@ -354,6 +353,11 @@
 
   /**
    * Called when a tab creation event is processed by _flushBuffer.
+   *
+   * Inserts a new Node into the graph, connected to the currentNode under the
+   * right conditions.
+   *
+   * If a node is being resumed, it will ensure the node is mapped to the tab
    *
    * @function StateManager#createdTab
    * @param {Object} evt - The event object emitted by `eventAdapter`
@@ -490,14 +494,17 @@
    * @private
    */
   context.StateManager.prototype.resumedNode = function(evt) {
+    // Get the node to be resumed
     var node = Node.cache.read(this._storageAdapter, evt.data.nodeId);
+
+    // If a node was created by the createdTab event, remove it
     if (this._tabIdMap[evt.data.tabId]) {
       var tmpNode = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
       tmpNode.destroy();
     }
+
+    // Map the tab ID to the resumed node and set it to be recording
     this._tabIdMap[evt.data.tabId] = node.id;
-    node.recording = true;
-    node.save();
     this.startRecording(evt.data.tabId, node.assignmentId);
   };
 

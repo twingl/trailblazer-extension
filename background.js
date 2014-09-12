@@ -97,38 +97,28 @@
         break;
 
       /**
-       * Resume an assignment (implied from the Node) by adding a new node to
-       * the tree based on the specified Tab ID, or by opening a new Tab in the
-       * current window based on the Node referred to by the specified Node ID
+       * Resume an assignment (implied from the Node) by opening a new Tab in
+       * the current window based on the Node referred to by the specified Node
+       * ID
        *
-       * If a Node ID is specified, a new Tab will be opened on that Node's URL
+       * With the Node ID specified, a new Tab will be opened on that Node's URL
        * and be set to a recording state.
-       *
-       * If a Tab ID is specified, the Tab will be added to the map on its own
-       * with its current details.
-       *
-       * If both are specified, the Tab ID will be ignored.
        *
        * The message should be of the form:
        * ```javascript
        * {
        *   action: 'resumeAssignment',
-       *   tabId: number, (not requred if nodeId specified)
-       *   nodeId: number (not requred if tabId specified, takes preference)
+       *   nodeId: number
        * }
        * ```
        *
        * @function BackgroundJS.resumeAssignment
        */
       case 'resumeAssignment':
-        if (request.nodeId) {
-          var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
-          chrome.tabs.create({ url: node.url }, function(tab) {
-            stateManager.resumeRecording(tab.id, request.nodeId);
-          });
-        } else if (request.tabId) {
-          stateManager.startRecording(request.tabId, requst.assignmentId);
-        }
+        var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+        chrome.tabs.create({ url: node.url }, function(tab) {
+          stateManager.resumeRecording(tab.id, request.nodeId);
+        });
         break;
 
       /**
