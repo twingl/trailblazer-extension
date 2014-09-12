@@ -75,11 +75,13 @@
     if (!resourceName) throw "You need to specify a resource";
     if (!id) throw "You need to specify an ID - maybe you want list instead";
 
-    var url = this._stateManager.getConfig().api.host + "/"
-            + this._stateManager.getConfig().api.nameSpace + "/"
-            + this._stateManager.getConfig().api.version + "/"
-            + resourceName + "/"
-            + id;
+    var url = [
+      this._stateManager.getConfig().api.host,
+      this._stateManager.getConfig().api.nameSpace,
+      this._stateManager.getConfig().api.version,
+      resourceName,
+      id
+    ].join("/");
 
     return this._request(url, "GET", { params: params });
   };
@@ -94,10 +96,12 @@
   context.TrailblazerHTTPStorageAdapter.prototype.list = function(resourceName, params) {
     if (!resourceName) throw "You need to specify a resource";
 
-    var url = this._stateManager.getConfig().api.host + "/"
-            + this._stateManager.getConfig().api.nameSpace + "/"
-            + this._stateManager.getConfig().api.version + "/"
-            + resourceName;
+    var url = [
+      this._stateManager.getConfig().api.host,
+      this._stateManager.getConfig().api.nameSpace,
+      this._stateManager.getConfig().api.version,
+      resourceName
+    ].join("/");
 
     return this._request(url, "GET", { params: params });
   };
@@ -109,16 +113,19 @@
   context.TrailblazerHTTPStorageAdapter.prototype.create = function(resourceName, props, options) {
     if (!resourceName) throw "You need to specify a resource";
 
-    var url = this._stateManager.getConfig().api.host + "/"
-            + this._stateManager.getConfig().api.nameSpace + "/"
-            + this._stateManager.getConfig().api.version + "/"
+    var url = [
+      this._stateManager.getConfig().api.host,
+      this._stateManager.getConfig().api.nameSpace,
+      this._stateManager.getConfig().api.version
+    ];
 
     if (options.parentResource) {
-      url += options.parentResource.name + "/"
-          +  options.parentResource.id + "/"
+      url.push(options.parentResource.name, options.parentResource.id);
     };
 
-    url += resourceName;
+    url.push(resourceName);
+
+    url = url.join("/");
 
     return this._request(url, "POST", { data: props });
   };
@@ -131,16 +138,18 @@
     if (!resourceName) throw "You need to specify a resource";
     if (!id) throw "You need to specify an ID";
 
-    var url = this._stateManager.getConfig().api.host + "/"
-            + this._stateManager.getConfig().api.nameSpace + "/"
-            + this._stateManager.getConfig().api.version + "/"
+    var url = [
+      this._stateManager.getConfig().api.host,
+      this._stateManager.getConfig().api.nameSpace,
+      this._stateManager.getConfig().api.version
+    ];
 
     if (options.parentResource) {
-      url += options.parentResource.name + "/"
-          +  options.parentResource.id + "/"
+      url.push(options.parentResource.name, options.parentResource.id);
     };
 
-    url += resourceName + "/" + id;
+    url.push(resourceName, id);
+    url = url.join("/");
 
     return this._request(url, "PUT", { data: props });
   };
@@ -153,10 +162,13 @@
     if (!resourceName) throw "You need to specify a resource";
     if (!id) throw "You need to specify an ID";
 
-    var url = this._stateManager.getConfig().api.host + "/"
-            + this._stateManager.getConfig().api.nameSpace + "/"
-            + this._stateManager.getConfig().api.version + "/"
-            + resourceName + "/" + id;
+    var url = [
+      this._stateManager.getConfig().api.host,
+      this._stateManager.getConfig().api.nameSpace,
+      this._stateManager.getConfig().api.version,
+      resourceName,
+      id
+    ].join("/");
 
     return this._request(url, "DELETE");
   };
