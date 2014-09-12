@@ -123,7 +123,7 @@
       case 'resumeAssignment':
         if (request.nodeId) {
           var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
-          chrome.windows.create({ url: node.url }, function(tab) {
+          chrome.tabs.create({ url: node.url }, function(tab) {
             stateManager.resumeRecording(tab.id, request.nodeId);
           });
         } else if (request.tabId) {
