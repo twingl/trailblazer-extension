@@ -13,11 +13,18 @@
   'use strict';
 
   context.Assignment = function(properties) {
-    properties = properties || {};
+    var properties = properties || {};
 
-    this.id = properties.id || Assignment._getId();
+    this.id               = properties.id || Assignment._getId();
+    this.completedAt     = properties.completed_at;
+    this.currentNodeId  = properties.current_node_id;
+    this.description      = properties.description;
+    this.projectId       = properties.project_id;
+    this.startedAt       = properties.started_at;
+    this.title            = properties.title;
+    this.userId          = properties.user_id;
 
-    context.Assignment._instances[this.id] = this;
+    context.Assignment._instances[this.id] = _.clone(this);
   };
   context.Assignment.cache = {};
 

@@ -18,5 +18,16 @@
       });
     });
 
+    /**
+     * Click handler for creating a new tab to display trails
+     */
+    $('.folder-view-trails').click(function(evt) {
+      // Prevent the default action
+      evt.preventDefault();
+
+      // Open new tab showing list of assignments
+      chrome.tabs.create({ url: "/ui/pages/trails.html" });
+    });
+
   });
 }(window.jQuery));
