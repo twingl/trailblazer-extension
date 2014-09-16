@@ -15,14 +15,14 @@
   context.Assignment = function(properties) {
     var properties = properties || {};
 
-    this.id               = properties.id || Assignment._getId();
-    this.completedAt     = properties.completed_at;
-    this.currentNodeId  = properties.current_node_id;
-    this.description      = properties.description;
-    this.projectId       = properties.project_id;
-    this.startedAt       = properties.started_at;
-    this.title            = properties.title;
-    this.userId          = properties.user_id;
+    this.id             = properties.id || Assignment._getId();
+    this.completedAt    = properties.completed_at || properties.completedAt;
+    this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
+    this.description    = properties.description;
+    this.projectId      = properties.project_id || properties.projectId;
+    this.startedAt      = properties.started_at || properties.startedAt;
+    this.title          = properties.title;
+    this.userId         = properties.user_id || properties.userId;
 
     context.Assignment._instances[this.id] = _.clone(this);
   };
