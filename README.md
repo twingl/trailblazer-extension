@@ -3,6 +3,20 @@
 Trailblazer is a Chrome extension built to track a user's browsing activity and
 build up a map, helping them make sense of the places they visit.
 
+## Install
+
+
+    $ git clone git://github.com/twingl/trailblazer-wash.git
+    
+    $ cd trailblazer-wash
+    
+    $ npm install
+
+
+## Develop
+
+From the root directory `$ npm run develop` will watch for changes to the jsx files in `/ui/pages/js/src` and compile them to js in `ui/pages/js/build`
+
 ## Structure
 
 The extension is structured in the following way:
