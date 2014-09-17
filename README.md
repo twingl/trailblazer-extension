@@ -5,15 +5,17 @@ build up a map, helping them make sense of the places they visit.
 
 ## Install
 
-```git clone git://github.com/twingl/trailblazer-wash.git
 
-cd trailblazer-wash
+    $ git clone git://github.com/twingl/trailblazer-wash.git
+    
+    $ cd trailblazer-wash
+    
+    $ npm install
 
-npm install```
 
-##Develop
+## Develop
 
-From the root directory ```npm run develop``` will watch for changes to the jsx files in ```/ui/pages/js/src``` and compile them to js in ```ui/pages/js/build```
+From the root directory `$ npm run develop` will watch for changes to the jsx files in `/ui/pages/js/src` and compile them to js in `ui/pages/js/build`
 
 ## Structure
 
