@@ -161,7 +161,20 @@
     assignmentId = parseInt(o.assignment);
   };
 
-  chrome.runtime.sendMessage({ action: "getLog", assignmentId: assignmentId }, function(response) {
-    render("#map", d3ify( response.data ));
+  var getMap =  function(assignmentId) {
+    chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
+        if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
+          render("#map", d3ify( response.data ));
+        };
+      });
+  };
+
+  //listen for updates to an assignment's nodes and render map
+  chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+    if (request.assignmentId === assignmentId) {
+      getMap(assignmentId);
+    };  
   });
+
+  getMap(assignmentId);
 }());
