@@ -149,7 +149,6 @@
 
     // Register the click handler for the nodes
     svg.selectAll(".node")
-      .data(data.nodes)
       .on('click', function(node) {
         // If a link is middle clicked or ctrl/cmd+clicked
         if (d3.event.which === 2 || (d3.event.which === 1 && (d3.event.metaKey || d3.event.ctrlKey))) {
