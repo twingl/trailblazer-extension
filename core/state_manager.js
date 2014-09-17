@@ -137,7 +137,9 @@
 
     // If any tabs are open, set them as properties on the nodes
     _.each(this._tabIdMap, function(map, key) {
-      if (data.nodes[map]) data.nodes[map].openTab = key;
+      if (data.nodes[map]) {
+        data.nodes[map].openTab = key;
+      }
     });
 
     return data;
