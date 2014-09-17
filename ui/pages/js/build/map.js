@@ -112,8 +112,6 @@
     var gnodes = svg.selectAll(".node")
           .data(data.nodes)
           .enter()
-            .append("svg:a")
-            .attr('xlink:href', function(d) { return d.url })
           .append('g');
 
     var nodes = gnodes.append("circle")
@@ -148,6 +146,23 @@
       .data(data.nodes)
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide);
+
+    // Register the click handler for the nodes
+    svg.selectAll(".node")
+      .data(data.nodes)
+      .on('click', function(node) {
+        // If a link is middle clicked or ctrl/cmd+clicked
+        if (d3.event.which === 2 || (d3.event.which === 1 && (d3.event.metaKey || d3.event.ctrlKey))) {
+          d3.event.preventDefault();
+          d3.event.stopPropagation();
+ 
+          // Tell the runtime to open a new tab
+          chrome.runtime.sendMessage({
+            action: 'resumeAssignment',
+            nodeId: node.id
+          });
+        }
+      });
   };
 
   var assignmentId;
