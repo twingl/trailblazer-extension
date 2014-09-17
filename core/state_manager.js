@@ -157,6 +157,21 @@
     return Assignment.cache.list(this._storageAdapter);
   };
 
+
+  /**
+   * Accessor function to get a cached copy of the nodes (if any), and
+   * pass an updated copy of the list to an optional callback function
+   * @function StateManager#nodes
+   * @param {function} callback - Will be called with an updated list of
+   * nodes from the server
+   */
+  context.StateManager.prototype.nodes = function(assignmentId, cb) {
+    Node.list(this._storageAdapter, assignmentId).then(function(nodes) {
+      cb(nodes);
+    });
+    return Node.cache.list(this._storageAdapter, assignmentId);
+  };
+
   /**
    * Proxy function to the IdentityAdapter's signIn
    * @function StateManager#signIn

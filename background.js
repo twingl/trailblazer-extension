@@ -139,8 +139,15 @@
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
-      case 'getLog': /** @deprecated */
+      case 'getMap': 
         sendResponse({ data: stateManager.getMap(request.assignmentId) });
+        break;
+
+      case 'getNodes':
+        var nodes = stateManager.nodes(request.assignmentId, function(nodes) {
+          chrome.runtime.sendMessage({ assignmentId: request.assignmentId, updatedNodes: nodes });
+        });
+        chrome.runtime.sendMessage({ assignmentId: request.assignmentId, updatedNodes: nodes });
         break;
 
       /**

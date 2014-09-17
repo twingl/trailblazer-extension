@@ -115,7 +115,9 @@
       .on('mouseout', tip.hide);
   };
 
-  chrome.runtime.sendMessage({ action: "getLog" }, function(response) {
-    render("#map", d3ify( response.data ));
-  });
+  chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
+      if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
+        render("#map", d3ify( response.data ));
+      };
+    });
 }());
