@@ -8,7 +8,7 @@ body {
 	font-size: 14px;
 }
 
-
+/* Recording Title */
 
 .recording-title {
 	position: relative;
@@ -29,35 +29,12 @@ body {
 }
 
 .recording-title.state {
-	color: grey;
+	color: #ccc;
 	font-size: 10px;
 	margin-bottom: 26px; 
 }
 
-
-
-
-/*
-.recording-title {
-	display:inline-block;
-	position: relative;
-	font-size: 20px;
-    align-items: center;
-}
-
-.recording-title img {
-	position: absolute;
-		right: -12px;
-}
-
-.recording-title.state {
-	font-size: 10px;
-	padding-bottom: 20px;
-	margin: 0;
-	color: #ccc;
-}
-
-*/
+/* Buttons */
 
 .button {
 	width: 130px;
