@@ -140,7 +140,11 @@
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
       case 'getMap': 
-        sendResponse({ data: stateManager.getMap(request.assignmentId) });
+        stateManager.getMap(request.assignmentId, function(data) {
+          sendResponse({data: data})
+
+        })
+        // sendResponse({ data: stateManager.getMap(request.assignmentId) });
         break;
 
       case 'getNodes':
