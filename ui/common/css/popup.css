@@ -3,10 +3,61 @@
 
 body {
 	width: 160px;
-	padding: 40px 10px 26px 10px;
+	padding: 26px 10px 26px 10px;
 	font-family: sans-serif;
 	font-size: 14px;
 }
+
+
+
+.recording-title {
+	position: relative;
+	font-size: 20px;
+	text-align: center;
+	margin: 0;
+}
+
+.recording-title a {
+	position: relative;
+	text-decoration: none;
+	color: #222;
+}
+
+.recording-title a img {
+	position: absolute;
+		right: -12px;
+}
+
+.recording-title.state {
+	color: grey;
+	font-size: 10px;
+	margin-bottom: 26px; 
+}
+
+
+
+
+/*
+.recording-title {
+	display:inline-block;
+	position: relative;
+	font-size: 20px;
+    align-items: center;
+}
+
+.recording-title img {
+	position: absolute;
+		right: -12px;
+}
+
+.recording-title.state {
+	font-size: 10px;
+	padding-bottom: 20px;
+	margin: 0;
+	color: #ccc;
+}
+
+*/
 
 .button {
 	width: 130px;
