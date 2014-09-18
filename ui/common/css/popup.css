@@ -3,10 +3,38 @@
 
 body {
 	width: 160px;
-	padding: 40px 10px 26px 10px;
+	padding: 26px 10px 26px 10px;
 	font-family: sans-serif;
 	font-size: 14px;
 }
+
+/* Recording Title */
+
+.recording-title {
+	position: relative;
+	font-size: 20px;
+	text-align: center;
+	margin: 0;
+}
+
+.recording-title a {
+	position: relative;
+	text-decoration: none;
+	color: #222;
+}
+
+.recording-title a img {
+	position: absolute;
+		right: -12px;
+}
+
+.recording-title.state {
+	color: #ccc;
+	font-size: 10px;
+	margin-bottom: 26px; 
+}
+
+/* Buttons */
 
 .button {
 	width: 130px;
