@@ -434,6 +434,9 @@
           }.bind(this));
         }
       }
+
+      // Map to the temporary ID, this will be overwritten if the node is saved
+      this._tabIdMap[evt.data.tabId] = node.id;
     }
 
   };
@@ -484,6 +487,8 @@
           }.bind(this));
         };
 
+        // Map to the temporary ID, this will be overwritten if the node is saved
+        this._tabIdMap[evt.data.tabId] = newNode.id;
         delete node.tabId;
       }
     } else if (node && evt.data.title) {
