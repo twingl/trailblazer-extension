@@ -72,6 +72,7 @@ html {
 }
 
 /* dropdown */
+/* temp made invisable untill in working order */
 
 .click-nav {
 	margin:30px auto;
@@ -79,6 +80,7 @@ html {
 	position: fixed;
 	left: 0;
 	right: 0;
+	display: none;
 }
 .click-nav ul {
 	font-weight:900;
