@@ -31,14 +31,16 @@
 
   // listen for updates to assignments and render in a list 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-    var assignments = request.updatedAssignments;
+    if (request.action === "updatedAssignments") {
+      var assignments = request.updatedAssignments;
 
-    if (assignments.length > 0) {
-      React.renderComponent(
-        <AsssignmentList items={assignments} />, 
-        document.getElementById('assignment-list')
-      );
-    };
+      if (assignments.length > 0) {
+        React.renderComponent(
+          <AsssignmentList items={assignments} />, 
+          document.getElementById('assignment-list')
+        );
+      };
+    }
   });
 
   // send message to chrome to trigger assignment update

@@ -199,9 +199,15 @@
        */
       case 'getAssignments':
         var assignments = stateManager.assignments(function(assignments) {
-          chrome.runtime.sendMessage({ updatedAssignments: assignments });
+          chrome.runtime.sendMessage({
+            action: "updatedAssignments",
+            updatedAssignments: assignments
+          });
         });
-        chrome.runtime.sendMessage({ updatedAssignments: assignments });
+        chrome.runtime.sendMessage({
+          action: "updatedAssignments",
+          updatedAssignments: assignments
+        });
         break;
 
       /**
