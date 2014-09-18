@@ -123,7 +123,7 @@
    * @param {number} assignmentId - The Assignment ID to scope the nodes to
    * @returns {Object}
    */
-  context.StateManager.prototype.getMap = function(assignmentId) {
+  context.StateManager.prototype.getMap = function(assignmentId, callback) {
     var data = {
       nodes: {}
     };
@@ -135,14 +135,27 @@
     // Form a Map<Node.id, Node>
     _.each(tmp, function(node, key) { data.nodes[node.id] = node; });
 
-    // If any tabs are open, set them as properties on the nodes
-    _.each(this._tabIdMap, function(map, key) {
-      if (data.nodes[map]) {
-        data.nodes[map].openTab = key;
-      }
-    });
+    chrome.tabs.query({currentWindow: true}, function(tabs) {
+      // two(!) methods to ensure opentabs are emphasised in UI 
+      //get currently open tab urls
+      var tabUrls = _.pluck(tabs, 'url');
+      _.each(data.nodes, function(node, id) {
+        var index = tabUrls.indexOf(node.url);
+        if (index > -1) {
+        //if node url matches open tab url set the node.tabId property
+          data.nodes[id].tabId = tabs[index].id;
+        };
+      });
 
-    return data;
+      // If any tabs are open as shown in tabIdMap, set them as properties on the nodes
+      _.each(this._tabIdMap, function(map, key) {
+        if (data.nodes[map]) {
+          data.nodes[map].tabId = key;
+        }
+      });
+
+      return callback(data);
+    });
   };
 
   /**
@@ -387,14 +400,14 @@
     if (this._tabIdMap[evt.data.tabId]) {
       // This is a resumed node
       node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
-      node.openTab = evt.data.tabId;
+      node.tabId = evt.data.tabId;
       this._tabIdMap[evt.data.tabId] = node.id;
     } else {
       // This is a new node
       node = new Node({
         url: evt.data.url,
         title: evt.data.title,
-        openTab: evt.data.tabId
+        tabId: evt.data.tabId
       });
 
       if (currentNode && evt.data.url !== "chrome://newtab/") {
@@ -403,7 +416,9 @@
         if (currentNode.recording && currentNode.assignmentId) {
           node.recording    = currentNode.recording;
           node.assignmentId = currentNode.assignmentId;
-          node.save(this._storageAdapter);
+          node.save(this._storageAdapter).then(function(savedNode) {
+            this._tabIdMap[evt.data.tabId] = savedNode.id;
+          }.bind(this));
         }
       }
 
@@ -413,10 +428,12 @@
         if (currentNode.recording && currentNode.assignmentId) {
           node.recording    = currentNode.recording;
           node.assignmentId = currentNode.assignmentId;
-          node.save(this._storageAdapter);
+
+          node.save(this._storageAdapter).then(function(savedNode) {
+            this._tabIdMap[evt.data.tabId] = savedNode.id;
+          }.bind(this));
         }
       }
-      this._tabIdMap[evt.data.tabId] = node.id;
     }
 
   };
@@ -440,18 +457,18 @@
       } else if (parentNode && evt.data.url && evt.data.url === parentNode.url) {
         // Navigating back
         var node = Node.cache.read(this._storageAdapter, node.id);
-        delete node.openTab;
+        delete node.tabId;
         this._tabIdMap[evt.data.tabId] = parentNode.id;
       } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
         // Navigating to an existing child
         var node = Node.cache.read(this._storageAdapter, node.id);
-        delete node.openTab;
+        delete node.tabId;
         this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
       } else {
         // Navigating to a new child
         var newNode = new Node({
           parentId:     node.id,
-          openTab:      node.openTab,
+          tabId:      node.tabId,
           url:          evt.data.url,
           title:        evt.data.title
         });
@@ -459,14 +476,15 @@
         if (node.recording) {
           newNode.recording    = node.recording;
           newNode.assignmentId = node.assignmentId;
-        }
+        };
 
         if (typeof node.id === "number" && newNode.recording && newNode.assignmentId) {
-          newNode.save(this._storageAdapter);
-        }
+          newNode.save(this._storageAdapter).then(function(savedNode) {
+            this._tabIdMap[evt.data.tabId] = savedNode.id;
+          }.bind(this));
+        };
 
-        delete node.openTab;
-        this._tabIdMap[evt.data.tabId] = newNode.id;
+        delete node.tabId;
       }
     } else if (node && evt.data.title) {
       node.title = evt.data.title;
@@ -496,7 +514,7 @@
   context.StateManager.prototype.closedTab = function(evt) {
     var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
     delete node.recording;
-    delete node.openTab;
+    delete node.tabId;
     delete this._tabIdMap[evt.data.tabId];
   };
 

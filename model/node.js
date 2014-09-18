@@ -27,7 +27,7 @@
     this.recording    = properties.recording;
     this.url          = properties.url;
     this.title        = properties.title;
-    this.openTab      = properties.openTab;
+    this.tabId        = properties.tabId;
 
     context.Node._instances[this.id] = this;
   };

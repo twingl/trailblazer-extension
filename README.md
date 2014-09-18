@@ -5,7 +5,6 @@ build up a map, helping them make sense of the places they visit.
 
 ## Install
 
-
     $ git clone git://github.com/twingl/trailblazer-wash.git
     
     $ cd trailblazer-wash
@@ -16,6 +15,33 @@ build up a map, helping them make sense of the places they visit.
 ## Develop
 
 From the root directory `$ npm run develop` will watch for changes to the jsx files in `/ui/pages/js/src` and compile them to js in `ui/pages/js/build`
+
+## Domain Concepts
+
+### Map / Assignment
+
+This is the container in which browsing activity is stored.
+
+As far as vernacular is concerned, it should be noted here that Assignment and
+Map essentially refer to the same construct, but from different contexts (and
+subsequently different boundaries regarding what they encompass).
+
+When referring to it as an Assignment, this is usually from a context where the
+data model is being considered in some detail (e.g. interacting with the API).
+In these kinds of contexts it is often important to make the distinction
+between the Map as a whole (which encompasses the Assignment, its Nodes and
+often the User), and the Assignment component which acts as a container object
+for Nodes and a join model between a Project and a User. In the case where it
+is being referred to as a Map, it's less important to consider the intricacies
+of the data model, considering it as a 'sum of its parts' - often in the
+context of design and UI/UX.
+
+### Node
+
+This is the 'smallest' item in the data model, encompassing a visit to some web
+address in the context of an Assignment. It houses information about the site,
+as well as meta-data such as when the address was first visited. In future it
+may also house information such as return visits and time spent viewing/idle.
 
 ## Structure
 
@@ -63,17 +89,17 @@ point value.
 3. Start a feature branch, named appropriate to the story (e.g. the story may
    be called "Assignment list", so the branch is named `assignment-list`).
 4. \[Do work things\].
-5. When the feature is finished and is ready to go for code review, *prefix the
+5. When the feature is finished and is ready to go for code review, **prefix the
    branch with "[needs review]", open a new Pull Request and tap `Finish` in
-   Pivotal*.
-6. Someone else reviews the changes and either *closes the PR, merges the
-   branch and taps `Deliver`*, or gives *feedback to action before it can be
-   closed/merged/delivered*.
+   Pivotal**.
+6. Someone else reviews the changes and either **closes the PR, merges the
+   branch and taps `Deliver`**, or gives **feedback to action before it can be
+   closed/merged/delivered**.
 7. The product owner then steps in at some point in the future and checks if
-   the story in `master` fits the product goals, *tapping `Accept` if so or
-   tapping `Reject` if not*.
-8. If rejected, the product owner *includes a description of what needs to be
-   done* in order to accept the story and the process starts again from *1.*
+   the story in `master` fits the product goals, **tapping `Accept` if so or
+   tapping `Reject` if not**.
+8. If rejected, the product owner **includes a description of what needs to be
+   done** in order to accept the story and the process starts again from **1.**
 
 ## Documentation
 

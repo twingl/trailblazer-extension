@@ -14,7 +14,7 @@
 
 body {
 	font:400 13px/1.4 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	background:#fff;
+	background:#5CC8CB;
 }
 
 html {
@@ -41,16 +41,28 @@ html {
 	margin: 0 auto;
 }
 
+/* nodes */
 .node {
 	fill: #fff;
-	stroke: #555;
-	stroke-width: 2px;
-	vector-effect: non-scaling-stroke;
+	fill-rule: evenodd;
+}
+.node-halo {
+	opacity: 0.1;
+}
+.node-core {
+	opacity: 0.9;
 }
 
+.open .node-halo{
+	opacity: 0.8;
+
+}
+
+/* links */
 .link {
-	stroke: #444;
-	stroke-width: 2px;
+	stroke: #fff;
+	stroke-width: 1px;
+	opacity: .2;
 	vector-effect: non-scaling-stroke;
 }
 
@@ -59,13 +71,7 @@ html {
   pointer-events: all;
 }
 
-
-
-
-
-
-
-
+/* dropdown */
 
 .click-nav {
 	margin:30px auto;
