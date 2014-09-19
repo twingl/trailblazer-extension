@@ -139,7 +139,7 @@
 
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     switch (request.action) {
-      case 'getMap': 
+      case 'getMap':
         stateManager.getMap(request.assignmentId, function(data) {
           sendResponse({data: data})
 
