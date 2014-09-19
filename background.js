@@ -227,6 +227,16 @@
         }
         break;
 
+      case 'destroyAssignment':
+        var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
+
+        if (assignment) {
+          assignment.destroy(stateManager._storageAdapter).then(function() {
+            chrome.runtime.sendMessage({ action: "getAssignments" });
+          });
+        }
+        break;
+
       /**
        * Start recording a tab and its children's activity.
        * An optional assignmentId can be supplied if an assignment exists,

@@ -137,6 +137,17 @@
     }
   };
 
+  context.Assignment.prototype.destroy = function(adapter) {
+    // Purge from the cache
+    delete context.Assignment._instances[this.id];
+    if (typeof this.id === "number") {
+      // It's not a temp ID, so it should be persisted on the server
+      return adapter.destroy("assignments", this.id);
+    } else {
+      return new Promise(function(resolve, reject) { resolve(); });
+    }
+  };
+
   /**
    * Find a cached Assignment that matches the supplied properties
    * Delegates match to Underscore's findWhere function
