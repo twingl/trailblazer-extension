@@ -518,8 +518,10 @@
    */
   context.StateManager.prototype.closedTab = function(evt) {
     var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
-    delete node.recording;
-    delete node.tabId;
+    if (node) {
+      delete node.recording;
+      delete node.tabId;
+    }
     delete this._tabIdMap[evt.data.tabId];
   };
 
