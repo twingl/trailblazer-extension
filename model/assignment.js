@@ -21,10 +21,10 @@
     this.description    = properties.description;
     this.projectId      = properties.project_id || properties.projectId;
     this.startedAt      = properties.started_at || properties.startedAt;
-    this.title          = properties.title;
+    this.title          = properties.title || "Untitled " + this.id;
     this.userId         = properties.user_id || properties.userId;
 
-    context.Assignment._instances[this.id] = _.clone(this);
+    context.Assignment._instances[this.id] = this;
   };
   context.Assignment.cache = {};
 
@@ -127,6 +127,7 @@
           // It's a temporary ID
           adapter.create("assignments", { assignment: this.toProps() }, {})
             .then(function(response) {
+              delete context.Assignment._instances[this.id];
               this.id = response.id;
               context.Assignment._instances[this.id] = this;
               resolve(this);
