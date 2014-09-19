@@ -77,7 +77,7 @@
   var render = function(selector, data) {
     var tip = d3.tip()
       .direction("s")
-      .offset([0, 10])
+      .offset([0, 0])
       .attr("class", "tooltip")
       .html(function(d) {
         return "<p>" + d.title + "</p>";
