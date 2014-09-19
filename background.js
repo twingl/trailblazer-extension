@@ -149,9 +149,9 @@
 
       case 'getNodes':
         var nodes = stateManager.nodes(request.assignmentId, function(nodes) {
-          chrome.runtime.sendMessage({ assignmentId: request.assignmentId, updatedNodes: nodes });
+          chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
         });
-        chrome.runtime.sendMessage({ assignmentId: request.assignmentId, updatedNodes: nodes });
+        chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
         break;
 
       /**

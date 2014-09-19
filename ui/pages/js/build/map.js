@@ -185,9 +185,9 @@
 
   //listen for updates to an assignment's nodes and render map
   chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-    if (request.assignmentId === assignmentId) {
+    if (request.action === "updatedNodes" && request.assignmentId === assignmentId) {
       getMap(assignmentId);
-    };  
+    };
   });
 
   getMap(assignmentId);
