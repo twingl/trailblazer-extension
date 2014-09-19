@@ -36,6 +36,13 @@ is being referred to as a Map, it's less important to consider the intricacies
 of the data model, considering it as a 'sum of its parts' - often in the
 context of design and UI/UX.
 
+## API
+
+Documentation for the API that backs the extension can be found here:
+
+- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
+- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
+
 ### Node
 
 This is the 'smallest' item in the data model, encompassing a visit to some web
