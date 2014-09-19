@@ -410,19 +410,8 @@
         tabId: evt.data.tabId
       });
 
-      if (currentNode && evt.data.url !== "chrome://newtab/") {
-        node.parentId = currentNode.id;
-
-        if (currentNode.recording && currentNode.assignmentId) {
-          node.recording    = currentNode.recording;
-          node.assignmentId = currentNode.assignmentId;
-          node.save(this._storageAdapter).then(function(savedNode) {
-            this._tabIdMap[evt.data.tabId] = savedNode.id;
-          }.bind(this));
-        }
-      }
-
-      if (currentNode && evt.data.url !== "chrome://newtab/" && !node.parentId) {
+      if (currentNode && evt.data.url !== "chrome://newtab/" && !node.parentId
+          && evt.data.url.indexOf(chrome.runtime.getURL("/")) < 0) {
         node.parentId = currentNode.id;
 
         if (currentNode.recording && currentNode.assignmentId) {
