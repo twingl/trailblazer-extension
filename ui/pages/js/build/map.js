@@ -76,11 +76,11 @@
   // render("selector", {nodes: nodes[], links: links[] })
   var render = function(selector, data) {
     var tip = d3.tip()
-      .direction("e")
+      .direction("s")
       .offset([0, 10])
-      .attr("class", "d3-tip")
+      .attr("class", "tooltip")
       .html(function(d) {
-        return "<pre>" + syntaxHighlight(JSON.stringify({title: d.title, url: d.url}, null, 3)) + "</pre>";
+        return "<p>" + d.title + "</p>";
       });
 
     var width = 960,

@@ -21,20 +21,18 @@ html {
   width: 100%;
 }
 
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-}
+/* tooltip */
 
-.string { color: #aed581; }
-.number { color: #81d4fa; }
-.boolean { color: #ce93d8; }
-.null { color: #f69988; }
-.key { color: #ff8a65; }
+.tooltip {
+  padding: 12px;
+  background: #fff;
+  color: #333;
+  border-radius: 2px;
+  font-family: 'Open Sans', sans-serif;
+  max-width: 320px;
+  text-align: center;
+  overflow: hidden;
+}
 
 #map {
 	width: 100%;
