@@ -355,7 +355,7 @@
     //FIXME Making the assumption that parentTabId will reference an ID less
     //than its own tabId
     var buffer = _.sortBy(this._eventBuffer, function(d) { return d.data.tabId });
-    this._eventBuffer = [];
+    this._eventBuffer.length = 0;
 
     // Iterate over the sorted buffer, finding and updating (or creating) the
     // node for each event
@@ -451,7 +451,7 @@
   context.StateManager.prototype.updatedTab = function(evt) {
     var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
     var parentNode = (node && node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
-
+    
     if (node && evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
         // Opened a new tab
@@ -470,10 +470,10 @@
       } else {
         // Navigating to a new child
         var newNode = new Node({
-          parentId:     node.id,
+          parentId:   node.id,
           tabId:      node.tabId,
-          url:          evt.data.url,
-          title:        evt.data.title
+          url:        evt.data.url,
+          title:      evt.data.title
         });
 
         if (node.recording) {
