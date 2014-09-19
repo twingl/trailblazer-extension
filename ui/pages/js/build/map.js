@@ -92,8 +92,10 @@
       .size([width, height]);
 
     var svg = d3.select(selector).append("svg")
-          .attr("width", width)
-          .attr("height", height)
+          .attr("width", "100%")
+          .attr("height", "100%")
+          .attr("viewBox", "0 0 " + width + " " + height )
+          .attr("preserveAspectRatio", "xMidYMid meet")
         .append("g")
           .call(d3.behavior.zoom().scaleExtent([.5, 4]).on("zoom", zoom))
         .append("g");
