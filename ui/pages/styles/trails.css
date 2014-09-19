@@ -21,7 +21,31 @@
 	margin-left: auto;
 }
 
+.assignment-menu li:after {
+  content:"";
+  display:table;
+  clear:both;
+}
+
+.assignment-menu li a{
+	float: right;
+}
+
+.assignment-menu li a:hover{
+	fill: red;
+}
+
 .assignment-menu li:hover {
 	background-color: #ddd;
 
+}
+
+.show {
+	opacity: 1;
+  -webkit-transition: opacity 0.4s ease-in;
+}
+
+.destroy {
+	opacity: 0;
+  -webkit-transition: opacity 0.4s ease-in;
 }
