@@ -80,7 +80,7 @@
       .offset([0, 10])
       .attr("class", "d3-tip")
       .html(function(d) {
-        return "<pre>" + syntaxHighlight(JSON.stringify(d, null, 3)) + "</pre>";
+        return "<pre>" + syntaxHighlight(JSON.stringify({title: d.title, url: d.url}, null, 3)) + "</pre>";
       });
 
     var width = 960,
