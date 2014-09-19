@@ -16,6 +16,13 @@ build up a map, helping them make sense of the places they visit.
 
 From the root directory `$ npm run develop` will watch for changes to the jsx files in `/ui/pages/js/src` and compile them to js in `ui/pages/js/build`
 
+## API
+
+Documentation for the API that backs the extension can be found here:
+
+- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
+- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
+
 ## Domain Concepts
 
 ### Map / Assignment
@@ -35,13 +42,6 @@ for Nodes and a join model between a Project and a User. In the case where it
 is being referred to as a Map, it's less important to consider the intricacies
 of the data model, considering it as a 'sum of its parts' - often in the
 context of design and UI/UX.
-
-## API
-
-Documentation for the API that backs the extension can be found here:
-
-- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
-- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
 
 ### Node
 
