@@ -18,7 +18,7 @@ body {
 }
 
 html {
-  width: 100%;
+  	width: 100%;
 }
 
 /* tooltip */
@@ -32,6 +32,13 @@ html {
   max-width: 320px;
   text-align: center;
   overflow: hidden;
+}
+
+.tooltip-url {
+	colour:	#666;
+	font-size: 8px;
+	padding-top: 2px;
+
 }
 
 #map {

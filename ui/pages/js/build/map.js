@@ -80,7 +80,7 @@
       .offset([0, 0])
       .attr("class", "tooltip")
       .html(function(d) {
-        return "<p>" + d.title + "</p>";
+        return "<p>" + d.title + "</p><p class='tooltip-url'>" + d.url + "</p>";
       });
 
     var width = 960,
