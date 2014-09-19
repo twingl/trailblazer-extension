@@ -199,9 +199,9 @@
    * @param {chrome.tabs.Tab} tab
    * @private
    */
-  context.ChromeEventAdapter.prototype._onCreatedTab = function(tab) {
+  context.ChromeEventAdapter.prototype._onCreatedTab = function(createdTab) {
     chrome.tabs.query({ windowType: "normal" }, function(tabs) {
-      tab = _.findWhere(tabs, { id: tab.id });
+      var tab = _.findWhere(tabs, { id: createdTab.id });
       if (tab) {
         var evt = {
           type: "created_tab",
@@ -232,9 +232,9 @@
    * @param {chrome.tabs.Tab} tab
    * @private
    */
-  context.ChromeEventAdapter.prototype._onUpdatedTab = function(tabId, changeInfo, tab) {
+  context.ChromeEventAdapter.prototype._onUpdatedTab = function(tabId, changeInfo, updatedTab) {
     chrome.tabs.query({ windowType: "normal" }, function(tabs) {
-      tab = _.findWhere(tabs, { id: tab.id });
+      var tab = _.findWhere(tabs, { id: updatedTab.id });
       if (tab) {
         var evt = {
           type: "updated_tab",

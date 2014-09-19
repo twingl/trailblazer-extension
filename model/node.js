@@ -19,7 +19,7 @@
    * @lends Node
    */
   context.Node = function(properties) {
-    properties = properties || {};
+    var properties = properties || {};
 
     this.id           = properties.id || Node._getId();
     this.parentId     = properties.parent_id || properties.parentId;
@@ -28,9 +28,11 @@
     this.url          = properties.url;
     this.title        = properties.title;
     this.tabId        = properties.tabId;
+    this.favIconUrl   = properties.favIconUrl;
 
     context.Node._instances[this.id] = this;
   };
+  
   context.Node.cache = {};
 
   /**

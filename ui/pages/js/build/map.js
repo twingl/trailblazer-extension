@@ -4,8 +4,11 @@
   var nodeCoreD = "M18.9063355 0.1 L33.942812 9 C34.6940305 9.5 35.3 10.5 35.3 11.4 L35.3030134 29.2 C35.3030134 30.1 34.7 31.2 33.9 31.6 L18.9063355 40.5 C18.1551171 40.9 16.9 40.9 16.2 40.5 L1.14945629 31.6 C0.39823781 31.2 -0.2 30.1 -0.2 29.2 L-0.21074509 11.4 C-0.21074509 10.5 0.4 9.5 1.1 9 L16.1859328 0.1 C16.9371513 -0.3 18.2 -0.3 18.9 0.1 Z",
       nodeHaloD = "M18.2007195 11.2 L24.9141649 15.1 C25.2495669 15.3 25.5 15.8 25.5 16.2 L25.5214639 24.2 C25.5214639 24.5 25.2 25 24.9 25.2 L18.2007195 29.2 C17.8653175 29.4 17.3 29.4 17 29.2 L10.272676 25.2 C9.93727401 25 9.7 24.5 9.7 24.2 L9.66537697 16.2 C9.66537697 15.8 9.9 15.3 10.3 15.1 L16.9861214 11.2 C17.3215234 11 17.9 11 18.2 11.2 Z",
       //hack to account for offset [0,0] coordinates of generated inline svg
-      offsetX = -18,
-      offsetY = -21;
+      offsetX = 18,
+      offsetY = 21,
+      favIconSize = 10,
+      favIconOffsetX = offsetX - (favIconSize/2)-0.5,
+      favIconOffsetY = offsetY - (favIconSize/2)-0.5;
   /**
    *  Render cleaned data
    */
@@ -126,12 +129,19 @@
           .attr('class', function(d) { return d.tabId ? 'open node' : 'closed node' });
 
     var nodeHalos = gnodes.append('path')
-                    .attr('d', nodeHaloD)
-                    .attr("class", "node-core");
+                      .attr('d', nodeHaloD)
+                      .attr("class", "node-core");
 
     var nodes = gnodes.append('path')
-                  .attr('d', nodeCoreD)
-                  .attr("class", "node-halo");
+                      .attr('d', nodeCoreD)
+                      .attr("class", "node-halo");
+
+    var favicons = gnodes.append('image')
+                      .attr('xlink:href', function(d) { return "chrome://favicon/" + d.url })
+                      .attr('x', favIconOffsetX)
+                      .attr('y', favIconOffsetY)
+                      .attr('height', favIconSize)
+                      .attr('width', favIconSize)
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
@@ -139,7 +149,7 @@
           .attr("x2", function(d) { return d.target.x; })
           .attr("y2", function(d) { return d.target.y; });
 
-      gnodes.attr("transform", function(d) { return "translate(" +(d.x+offsetX)+ "," +(d.y+offsetY)+ ")"; })
+      gnodes.attr("transform", function(d) { return "translate(" +(d.x-offsetX)+ "," +(d.y-offsetY)+ ")"; })
 
     });
 
