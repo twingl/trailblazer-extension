@@ -90,8 +90,10 @@
         height = 500;
 
     var force = d3.layout.force()
-      .linkDistance(80)
-      .charge(-300)
+      .linkDistance(40)
+      .linkStrength(1)
+      .charge(-700)
+      .gravity(0.22)
       .size([width, height]);
 
     var svg = d3.select(selector).append("svg")
