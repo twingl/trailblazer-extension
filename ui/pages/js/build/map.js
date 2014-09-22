@@ -172,6 +172,12 @@
             action: 'resumeAssignment',
             nodeId: node.id
           });
+        } else if (d3.event.which === 1) {
+          if (node.tabId) {
+            chrome.tabs.update(node.tabId, { active: true }, function(tab) {
+              chrome.windows.update(tab.windowId, {focused: true});
+            });
+          }
         }
       });
   };
