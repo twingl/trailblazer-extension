@@ -90,7 +90,7 @@
         height = 500;
 
     var force = d3.layout.force()
-      .linkDistance(80)
+      .linkDistance(100)
       .charge(-300)
       .size([width, height]);
 
