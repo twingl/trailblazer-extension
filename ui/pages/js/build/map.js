@@ -126,7 +126,9 @@
           .data(data.nodes)
           .enter()
           .append('g')
-          .attr('class', function(d) { return d.tabId ? 'open node' : 'closed node' });
+          .classed('node', true)
+          .classed('open', function(d) { return d.tabId })
+          .classed('root', function(d) { return d.parentId ? false : true });
 
     var nodeHalos = gnodes.append('path')
                       .attr('d', nodeHaloD)
