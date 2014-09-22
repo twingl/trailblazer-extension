@@ -66,9 +66,9 @@ html {
 /* links */
 .link {
 	stroke: #fff;
-	stroke-width: 4px;
+	stroke-width: .5px;
 	stroke-linecap: round;
-	opacity: .2;
+	opacity: .8;
 	vector-effect: non-scaling-stroke;
 }
 
