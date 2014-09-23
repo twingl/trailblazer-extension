@@ -2,11 +2,30 @@
   "name": "trailblazer-wash",
   "version": "0.0.0",
   "description": "Trailblazer \"Wash\" Chrome extension",
+  "watch": {
+    "watching": "/ui/pages/js/src/*"
+  },
   "scripts": {
-    "develop": "jsx --watch ui/pages/js/src/ ui/pages/js/build/" 
+    "watch-map": "browserify ui/pages/js/src/map.js -o ui/pages/js/build/map.js --debug --verbose",
+    "watch-trails": "browserify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js --debug --verbose",
+    "build-map": "browserify -g uglifyify ui/pages/js/src/map.js -o ui/pages/js/build/map.js",
+    "build-trails": "browserify -g uglifyify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js",
+    "watching": "npm run watch-map & npm run watch-trails",
+    "watch": "npm run watch-map & npm run watch-trails && npm-watch",
+    "build": "npm run build-map & npm run build-trails"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
   },
   "dependencies": {
-    "jsdoc": "~3.3.0-alpha9"
+    "d3": "^3.4.11",
+    "d3-tip": "git://github.com/jansegre/d3-tip",
+    "jquery": "^2.1.1",
+    "jsdoc": "~3.3.0-alpha9",
+    "lodash": "^2.4.1",
+    "react": "^0.11.2"
   },
   "repository": {
     "type": "git",
@@ -17,6 +36,8 @@
   },
   "homepage": "http://twin.gl",
   "devDependencies": {
-    "react-tools": "^0.11.1"
+    "browserify": "^5.11.2",
+    "npm-watch": "0.0.0",
+    "reactify": "^0.14.0"
   }
 }

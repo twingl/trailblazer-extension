@@ -1,4 +1,6 @@
-node_modules/
+node_modules/*
+!node_modules/app
+ui/pages/js/build/*
 doc/
 .DS_Store
 .module-cache

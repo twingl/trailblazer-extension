@@ -14,7 +14,22 @@ build up a map, helping them make sense of the places they visit.
 
 ## Develop
 
-From the root directory `$ npm run develop` will watch for changes to the jsx files in `/ui/pages/js/src` and compile them to js in `ui/pages/js/build`
+From the root directory 
+
+    $ npm run watch
+
+  will watch for changes to the /src files and bundle them to /build
+
+    $ npm run build
+
+  when building for production
+
+## API
+
+Documentation for the API that backs the extension can be found here:
+
+- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
+- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
 
 ## API
 

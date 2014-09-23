@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
-(function($) {
+var $ = require('jquery');
+var React = require('react');
+var chrome = window.chrome;
 
   //assignment list component with embedded list items
   var AsssignmentList = React.createClass({
@@ -11,7 +13,6 @@
       return <ul>{assignments}</ul>;
     }
   });
-
 
   var AsssignmentItem = React.createClass({
     getInitialState: function () {
@@ -74,4 +75,6 @@
   $(document).ready(function () {
     chrome.runtime.sendMessage({ action: 'getAssignments' });
   });
-}(window.jQuery));
+
+
+

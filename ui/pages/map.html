@@ -3,53 +3,11 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-    <script src="/lib/d3.v3.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/underscore.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/d3.tip.v0.6.3.js" type="text/javascript" charset="utf-8"></script>
-
     <link rel="stylesheet" href="/ui/pages/styles/map.css" type="text/css" media="all" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
   </head>
   <body>
-  
-    <!-- Clickable Nav -->
-    <div class="click-nav">
-      <ul class="no-js">
-        <li>
-          <a class="clicker">Current Trail<img src="/ui/icons/dropdown-icon.svg"></a>
-          <ul>
-            <li><a href="#">Trail 1</a></li>
-            <li><a href="#">Trail 2</a></li>
-            <li><a href="#">Trail 3</a></li>
-            <li><a href="#">Trail 4</a></li>
-            <li><a href="#">Trail 5</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <!-- /Clickable Nav -->
-    
-    <!-- jQuery -->
-    <script type="text/javascript" src="/lib/jquery-2.1.1.js"></script>
-    <script>
-    $(function() {
-      // Clickable Dropdown
-      $('.click-nav > ul').toggleClass('no-js js');
-      $('.click-nav .js ul').hide();
-      $('.click-nav .js').click(function(e) {
-        $('.click-nav .js ul').slideToggle(200);
-        $('.clicker').toggleClass('active');
-        e.stopPropagation();
-      });
-      $(document).click(function() {
-        if ($('.click-nav .js ul').is(':visible')) {
-          $('.click-nav .js ul', this).slideUp();
-          $('.clicker').removeClass('active');
-        }
-      });
-    });
-    </script>
-    <!-- /jQuery -->
+
   
     <div id="map"></div>
     <script src="/ui/pages/js/build/map.js" type="text/javascript" charset="utf-8"></script>
