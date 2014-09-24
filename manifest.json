@@ -6,6 +6,7 @@
 
   "permissions": [
     "https://app.trailblazer.io/",
+    "http://staging.trailblazer.io/",
     "http://localhost:3000/",
     "chrome://favicon/",
     "identity",
