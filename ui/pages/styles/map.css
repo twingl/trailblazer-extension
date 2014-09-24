@@ -75,25 +75,27 @@ html {
 	fill-rule: evenodd;
 }
 .node-halo {
-	opacity: 0.1;
+	fill-opacity: 0.1;
 }
 .node-core {
-	opacity: 0.9;
+	opacity: 1;
 }
 
-/* Temporarily disabled while testing hubs
+
 .open .node-halo{
-	opacity: 0.6;
+	stroke: #44C0FF;
+	stroke-width: 1px;
+	stroke-opacity: .9;
 }
-*/
+
 
 .root .node-halo{
-	opacity: 0.6;
+	fill-opacity: 0.6;
 	fill: #FF9D99;
 }
 
 .hub .node-halo{
-	opacity: 0.6;
+	fill-opacity: 0.6;
 }
 
 /* links */
