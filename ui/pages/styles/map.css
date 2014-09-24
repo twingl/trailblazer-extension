@@ -14,7 +14,7 @@
 
 body {
 	font:400 13px/1.4 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	background-image: linear-gradient(#5CC8CB, #80E0D5);
+	background-image: linear-gradient(#757E9B, #D4DAE5);
 }
 
 html {
@@ -63,7 +63,8 @@ html {
 }
 
 .root .node-halo{
-	opacity: 1;
+	opacity: 0.9;
+	fill: #FF9D99;
 }
 
 /* links */
