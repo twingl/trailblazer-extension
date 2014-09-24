@@ -287,6 +287,11 @@
       case 'signIn':
         stateManager.signIn().then(function(token) {
           chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
+          chrome.browserAction.setIcon({ path: extensionStates.idle.browserAction });
+          chrome.windows.getCurrent({ populate: true }, function(win) {
+            var tab = _.findWhere(win.tabs, { active: true });
+            if (tab) updateUIState(tab.id, "idle");
+          });
           sendResponse(true);
         }, function() {
           sendResponse(false);
@@ -309,6 +314,12 @@
        */
       case 'signOut':
         stateManager.signOut().then(function() {
+          chrome.browserAction.setPopup({ popup: extensionStates.notAuthenticated.popup });
+          chrome.browserAction.setIcon({ path: extensionStates.notAuthenticated.browserAction });
+          chrome.windows.getCurrent({ populate: true }, function(win) {
+            var tab = _.findWhere(win.tabs, { active: true });
+            if (tab) updateUIState(tab.id, "notAuthenticated");
+          });
           sendResponse(true);
         }, function() {
           sendResponse(false);
