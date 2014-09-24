@@ -69,6 +69,17 @@ html {
 	left: 74px;
 }
 
+.map-title h1:after {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  top:11px; /* controls vertical position */
+  left:-6px; /* value = - border-left-width - border-right-width */
+  bottom:auto;
+  border-width:6px 6px 6px 0;
+  border-color:transparent #fff;
+}
+
 /* nodes */
 .node {
 	fill: #fff;
