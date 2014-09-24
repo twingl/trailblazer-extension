@@ -38,6 +38,7 @@
   "devDependencies": {
     "browserify": "^5.11.2",
     "npm-watch": "0.0.0",
-    "reactify": "^0.14.0"
+    "reactify": "^0.14.0",
+    "uglifyify": "^2.5.0"
   }
 }
