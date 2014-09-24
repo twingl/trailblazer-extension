@@ -125,7 +125,8 @@
    */
   context.StateManager.prototype.getMap = function(assignmentId, callback) {
     var data = {
-      nodes: {}
+      nodes: {},
+      assignment: Assignment.cache.read(this._storageAdapter, assignmentId),
     };
 
     // Make a copy of the node store
