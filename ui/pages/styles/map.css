@@ -72,7 +72,11 @@ html {
 
 .open .node-halo{
 	opacity: 0.6;
+}
 
+.root .node-halo{
+	opacity: 0.9;
+	fill: #FF9D99;
 }
 
 /* links */
