@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Trailblazer \"Wash\" Chrome extension",
   "watch": {
-    "watching": "/ui/pages/js/src/*"
+    "watching": "/{node_modules/app/**/,ui/pages/js/src}/*"
   },
   "scripts": {
     "watch-map": "browserify ui/pages/js/src/map.js -o ui/pages/js/build/map.js --debug --verbose",

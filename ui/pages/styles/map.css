@@ -70,13 +70,19 @@ html {
 	opacity: 0.9;
 }
 
+/* Temporarily disabled while testing hubs
 .open .node-halo{
 	opacity: 0.6;
 }
+*/
 
 .root .node-halo{
-	opacity: 0.9;
+	opacity: 0.6;
 	fill: #FF9D99;
+}
+
+.hub .node-halo{
+	opacity: 0.6;
 }
 
 /* links */
