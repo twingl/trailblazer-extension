@@ -60,7 +60,10 @@ html {
 
 .open .node-halo{
 	opacity: 0.8;
+}
 
+.root .node-halo{
+	opacity: 1;
 }
 
 /* links */
