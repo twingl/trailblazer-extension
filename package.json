@@ -22,7 +22,7 @@
   "dependencies": {
     "d3": "^3.4.11",
     "d3-tip": "git://github.com/jansegre/d3-tip",
-    "jquery": "^2.1.1",
+    "domready": "^1.0.7",
     "jsdoc": "~3.3.0-alpha9",
     "lodash": "^2.4.1",
     "react": "^0.11.2"
