@@ -31,7 +31,7 @@ body {
 }
 
 .recording-title.state {
-	color: #ccc;
+	color: #aaa;
 	font-size: 10px;
 	font-weight: 400;
 	margin-bottom: 30px; 
@@ -68,7 +68,7 @@ body {
 .folder {
 	display: block;
 	width: 78px;
-	margin: 40px auto 40px auto;
+	margin: 40px auto 20px auto;
 	text-decoration: none;
 	text-align: center;
 	color: #7B7B7B;
