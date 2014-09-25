@@ -74,6 +74,12 @@ body {
 	color: #7B7B7B;
 }
 
+.start-recording{
+	background-image:url(/ui/icons/new-icon.svg);
+	background-repeat: no-repeat;
+	background-position:92px 16px;
+}
+
 .folder img {margin-bottom: 8px}
 
 .logout {
