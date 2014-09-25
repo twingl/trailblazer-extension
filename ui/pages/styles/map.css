@@ -86,6 +86,7 @@ html {
 .node {
 	fill: #fff;
 	fill-rule: evenodd;
+	cursor: pointer;
 }
 .node-halo {
 	fill-opacity: 0.1;
