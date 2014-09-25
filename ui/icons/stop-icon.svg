@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="54px" height="11px" viewBox="0 0 54 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+<svg width="10px" height="10px" viewBox="0 0 10 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
     <!-- Generator: Sketch 3.0.4 (8054) - http://www.bohemiancoding.com/sketch -->
-    <title>Trail</title>
+    <title>Rectangle 122</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Dropdown-Concept" sketch:type="MSLayerGroup" transform="translate(-85.000000, -95.000000)" fill="#FFFFFF">
-            <g id="Button" transform="translate(47.000000, 42.000000)" sketch:type="MSShapeGroup">
-                <g id="Colour-+-Trail" transform="translate(0.000000, 17.000000)">
-                    <path d="M70,44 L52,44 L52,39 L70,39 L70,36 L73,36 L73,47 L70,47 L70,44 Z M60,39 L60,44 L65,44 L65,39 L60,39 Z M42.5,36 L46.9655762,38.75 L46.9655762,44.25 L42.5,47 L38.0339356,44.25 L38.0339356,38.75 L42.5,36 Z M87.5004883,36 L91.9660644,38.75 L91.9660644,44.25 L87.5004883,47 L83.0344238,44.25 L83.0344238,38.75 L87.5004883,36 Z" id="Trail"></path>
-                </g>
-            </g>
-        </g>
+        <rect id="Rectangle-122" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0" width="10" height="10"></rect>
     </g>
 </svg>

@@ -34,7 +34,7 @@ body {
 	color: #ccc;
 	font-size: 10px;
 	font-weight: 400;
-	margin-bottom: 26px; 
+	margin-bottom: 30px; 
 }
 
 /* Buttons */
@@ -49,15 +49,20 @@ body {
 	text-decoration: none;
 	background-color: #616161;
 	color: #fff;
+}
 
+.button:hover {
+	background-color: #5B5B5B;
 }
 
 .button-stop {
 	background-color: #F97E76;
+	padding: 10px 0;
+	width: 100px;
 }
 
-.button-view-trail {
-	margin-bottom: 40px;
+.button-stop:hover {
+	background-color: #F7766C;
 }
 
 .folder {
