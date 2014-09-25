@@ -13,7 +13,7 @@
 }
 
 body {
-	background-image: linear-gradient(#757F9A, #D7DDE8);
+	background-image: linear-gradient(#757F9A, #A5ADC1);
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
 }
@@ -41,6 +41,7 @@ html {
   max-width: 320px;
   text-align: center;
   overflow: hidden;
+  font-size: 14px;
 }
 
 .tooltip-url {
@@ -64,36 +65,51 @@ html {
 	border-radius: 2px;
 	position: absolute;
 	font-size: 12px;
+	font-weight: 400;
 	padding: 8px 12px;
 	top: 32px;
 	left: 74px;
+}
+
+.map-title h1:after {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  top:11px; /* controls vertical position */
+  left:-6px; /* value = - border-left-width - border-right-width */
+  bottom:auto;
+  border-width:6px 6px 6px 0;
+  border-color:transparent #fff;
 }
 
 /* nodes */
 .node {
 	fill: #fff;
 	fill-rule: evenodd;
+	cursor: pointer;
 }
 .node-halo {
-	opacity: 0.1;
+	fill-opacity: 0.1;
 }
 .node-core {
-	opacity: 0.9;
+	opacity: 1;
 }
 
-/* Temporarily disabled while testing hubs
+
 .open .node-halo{
-	opacity: 0.6;
+	stroke: #44C0FF;
+	stroke-width: 1px;
+	stroke-opacity: .9;
 }
-*/
+
 
 .root .node-halo{
-	opacity: 0.6;
+	fill-opacity: 0.6;
 	fill: #FF9D99;
 }
 
 .hub .node-halo{
-	opacity: 0.6;
+	fill-opacity: 0.6;
 }
 
 /* links */
