@@ -78,7 +78,7 @@ html {
 	opacity: 0.1;
 }
 .node-core {
-	opacity: 0.9;
+	opacity: 1;
 }
 
 /* Temporarily disabled while testing hubs
