@@ -22,6 +22,7 @@
     this.startedAt      = properties.started_at || properties.startedAt;
     this.title          = properties.title || "Untitled " + this.id;
     this.userId         = properties.user_id || properties.userId;
+    this.tempId         = properties.temp_id || properties.tempId || this.id;
 
     /** DEPRECATED - included only for compatibility with Browser */
     this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
@@ -44,6 +45,8 @@
 
     /** DEPRECATED - included only for compatibility with Browser */
     props.current_node_id = this.currentNodeId;
+
+    if (this.tempId) props.temp_id = this.tempId;
 
     return props;
   };
