@@ -95,7 +95,6 @@ html {
 	opacity: 1;
 }
 
-
 .open .node-halo{
 	stroke: #44C0FF;
 	stroke-width: 1px;
@@ -184,6 +183,17 @@ html {
 }
 .click-nav .no-js:hover ul {
 	display:block;
+}
+
+.help {
+	position: fixed;
+	right: 30px;
+	bottom: 30px;
+	opacity: 0.1;
+}
+
+.tutorial:hover {
+	fill: #fff;
 }
 
 
