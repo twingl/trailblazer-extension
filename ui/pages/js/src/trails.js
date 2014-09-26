@@ -52,8 +52,10 @@ var AsssignmentItem = React.createClass({
   },
 
   destroyAnimation: function (evt) {
-    this.setState({show: false});
-    evt.stopPropagation();
+    if (window.confirm("Are you sure you want to delete " + this.props.item.title + "?")) {
+      this.setState({show: false});
+      evt.stopPropagation();
+    }
   }
 });
 
