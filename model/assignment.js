@@ -35,8 +35,11 @@
   context.Assignment.prototype.toProps = function() {
     var props = {};
 
-    props.name = "Untitled";
-    props.description = "Recording from " + new Date().toLocaleString()
+    props.title           = this.title || "New Trail";
+    props.description     = this.description || "Recording from " + new Date().toLocaleString();
+    props.started_at      = this.startedAt;
+    props.completed_at    = this.completedAt;
+    props.current_node_id = this.currentNodeId;
 
     return props;
   };

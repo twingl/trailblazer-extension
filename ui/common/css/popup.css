@@ -9,6 +9,12 @@ body {
 	font-size: 14px;
 }
 
+h1 {
+	font-size: inherit;
+	font-weight: inherit;
+	margin: 0;
+}
+
 /* Recording Title */
 
 .recording-title {
@@ -28,6 +34,11 @@ body {
 .recording-title a img {
 	position: absolute;
 		right: -12px;
+}
+
+.recording-title input {
+  text-align: center;
+  font-size: 12px;
 }
 
 .recording-title.state {
