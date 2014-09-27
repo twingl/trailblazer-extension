@@ -5,19 +5,11 @@ var domready = require('domready');
 
 domready(function() {
   chrome.runtime.sendMessage({action: 'getCurrentAssignment'}, function (response) {
-    console.log('response', response)
     var title = response.title || 'New Trail';
     var id = response.id || null;
     React.renderComponent(
       <TrailTitle title={title} id={id} />,
-      document.getElementById('recording-title')
+      document.getElementById('assignment-title')
     );
   });
 });
-
-
-
-
-
-
-

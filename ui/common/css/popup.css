@@ -9,6 +9,22 @@ body {
 	font-size: 14px;
 }
 
+/* Assignment Title */
+#assignment-title {
+  text-align: center;
+}
+
+#assignment-title a {
+  text-decoration: none;
+  color: inherit;
+}
+#assignment-title a>span {
+  margin-right: 6px;
+}
+#assignment-title input {
+  text-align: center;
+}
+
 /* Recording Title */
 
 .recording-title {
