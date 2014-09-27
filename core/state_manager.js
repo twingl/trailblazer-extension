@@ -235,6 +235,8 @@
         assignment = new Assignment();
       }
 
+      assignment.currentNodeId = this.getNode(tabId).id;
+
       // Ensure we have a valid ID for the assignment so we can start saving
       // the trail
       assignment.save(this._storageAdapter).then(function(assignment) {
