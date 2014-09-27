@@ -14,7 +14,7 @@
    */
 
   // Disable reporting in development
-  REPORTING_ENABLED = false;
+  var REPORTING_ENABLED = false;
 
   var keenClient = new Keen({
     requestType: "xhr",
