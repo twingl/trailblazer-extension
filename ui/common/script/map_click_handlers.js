@@ -9,6 +9,14 @@
       evt.preventDefault();
 
       chrome.runtime.sendMessage({ action: "getCurrentAssignment" }, function(response) {
+        chrome.runtime.sendMessage({
+          action: "trackUIEvent",
+          eventName: "ui.popup.map.click",
+          eventData: {
+            assignmentId: response.id || false
+          }
+        });
+
         // Open the map in a new tab
         chrome.tabs.create({ url: chrome.extension.getURL("/ui/pages/map.html#assignment=" + (response.id || false) ) });
       });

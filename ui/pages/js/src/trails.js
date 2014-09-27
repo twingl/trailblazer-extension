@@ -42,7 +42,15 @@ var AsssignmentItem = React.createClass({
 
   handleClick: function () {
     var id = this.props.item.id;
-    chrome.runtime.sendMessage({action: 'getNodes', assignmentId: id})
+    chrome.runtime.sendMessage({action: 'getNodes', assignmentId: id});
+    chrome.runtime.sendMessage({
+      action: "trackUIEvent",
+      eventName: "ui.trails.assignment.click",
+      eventData: {
+        assignmentId: this.props.item.id,
+        userId:       this.props.item.user_id
+      }
+    });
     window.location.href  = "/ui/pages/map.html#assignment=" + id;
   },
 
@@ -55,6 +63,15 @@ var AsssignmentItem = React.createClass({
     if (window.confirm("Are you sure you want to delete " + this.props.item.title + "?")) {
       this.setState({show: false});
       evt.stopPropagation();
+
+      chrome.runtime.sendMessage({
+        action: "trackUIEvent",
+        eventName: "ui.trails.assignment.delete.confirm",
+        eventData: {
+          assignmentId: this.props.item.id,
+          userId:       this.props.item.user_id
+        }
+      });
     }
   }
 });
