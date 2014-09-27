@@ -9,6 +9,12 @@ body {
 	font-size: 14px;
 }
 
+h1 {
+	font-size: inherit;
+	font-weight: inherit;
+	margin: 0;
+}
+
 /* Assignment Title */
 #assignment-title {
   text-align: center;
@@ -18,11 +24,10 @@ body {
   text-decoration: none;
   color: inherit;
 }
-#assignment-title a>span {
-  margin-right: 6px;
-}
+
 #assignment-title input {
   text-align: center;
+  font-size: 12px;
 }
 
 /* Recording Title */
