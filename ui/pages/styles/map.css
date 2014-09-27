@@ -188,12 +188,27 @@ html {
 .help {
 	position: fixed;
 	right: 30px;
-	bottom: 30px;
+	bottom: 24px;
+	font-size: 12px;
+}
+
+.help a {
 	opacity: 0.1;
 }
 
-.tutorial:hover {
-	fill: #fff;
+.help a:hover {
+	opacity: 0.2;
+}
+
+.tutorial {
+	padding-left: 1px;
+}
+
+.feedback {
+	position: relative;
+	bottom: 4px;
+	text-decoration: none;
+	color: inherit;
 }
 
 
