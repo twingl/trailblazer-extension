@@ -15,6 +15,12 @@ h1 {
 	margin: 0;
 }
 
+.idle {
+	background-image: url(/ui/icons/idle-background.png);
+	background-repeat: none;
+	background-size: 100%
+}
+
 /* Recording Title */
 
 .recording-title {
@@ -79,10 +85,7 @@ h1 {
 .folder {
 	display: block;
 	width: 78px;
-	margin: 40px auto 20px auto;
-	text-decoration: none;
-	text-align: center;
-	color: #7B7B7B;
+	margin: 80px auto 60px auto;
 }
 
 .start-recording{
