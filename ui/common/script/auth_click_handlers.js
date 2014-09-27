@@ -47,5 +47,17 @@
       });
     });
 
+    /**
+     * Click handler for the extension how-to
+     */
+    $('.tutorial').click(function(evt) {
+      // Prevent the default action
+      evt.preventDefault();
+
+      // Open the map in a new tab
+      chrome.tabs.create({ url: evt.target.href });
+    });
+
+
   });
 }(window.jQuery));
