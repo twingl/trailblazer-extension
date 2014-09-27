@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Trailblazer \"Wash\"",
-  "version": "0.0.4",
+  "name": "Trailblazer",
+  "version": "0.0.5",
 
   "permissions": [
     "*://api.keen.io/",
