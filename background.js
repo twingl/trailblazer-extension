@@ -236,6 +236,22 @@
         }
         break;
 
+
+      case 'updateAssignment': 
+        var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
+
+        //only handles updating title
+        if (assignment) {
+          console.log('assignment', assignment,request)
+          assignment.title = request.newTitle
+          assignment.save(stateManager._storageAdapter).then(function(savedAssignment) {
+            console.log('savedAssignment', savedAssignment)
+            chrome.runtime.sendMessage({action: 'updatedAssignment', assignment: savedAssignment})
+          })
+
+        }
+        break;
+
       /**
        * Start recording a tab and its children's activity.
        * An optional assignmentId can be supplied if an assignment exists,
