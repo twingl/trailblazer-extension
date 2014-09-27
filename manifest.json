@@ -5,6 +5,7 @@
   "version": "0.0.4",
 
   "permissions": [
+    "*://api.keen.io/",
     "https://app.trailblazer.io/",
     "http://staging.trailblazer.io/",
     "http://localhost:3000/",
@@ -21,6 +22,7 @@
   },
   "background": {
     "scripts": [
+      "lib/keen-tracker-3.0.8.min.js",
       "lib/underscore.js",
       "lib/superagent.js",
       "lib/promise-5.0.0.js",
