@@ -189,15 +189,15 @@ html {
 	position: fixed;
 	right: 30px;
 	bottom: 24px;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .help a {
-	opacity: 0.2;
+	opacity: 0.3;
 }
 
 .help a:hover {
-	opacity: 0.3;
+	opacity: 0.4;
 }
 
 .tutorial {
@@ -206,7 +206,7 @@ html {
 
 .feedback {
 	position: relative;
-	bottom: 4px;
+	bottom: 3px;
 	text-decoration: none;
 	color: inherit;
 }
