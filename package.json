@@ -15,7 +15,7 @@
     "build-popup": "browserify -g uglifyify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js",
     "watching": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup",
     "watch": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup && npm-watch",
-    "build": "npm run components && run build-map & npm run build-trails & npm run build-popup"
+    "build": "npm run components && npm run build-map & npm run build-trails & npm run build-popup"
   },
   "browserify": {
     "transform": [
