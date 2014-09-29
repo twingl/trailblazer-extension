@@ -249,14 +249,14 @@
       case 'updateAssignment':
         var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
 
-        //only handles updating title
-        if (assignment) {
-          assignment.title = request.newTitle
+        if (assignment && request.props) {
+          assignment = _.extend(assignment, request.props);
+    
           assignment.save(stateManager._storageAdapter).then(function(savedAssignment) {
+            //unused
             chrome.runtime.sendMessage({action: 'updatedAssignment', assignment: savedAssignment})
-          })
-
-        }
+          });
+        };
         break;
 
       /**
