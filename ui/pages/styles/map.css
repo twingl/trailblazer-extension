@@ -51,6 +51,12 @@ html {
 
 }
 
+/* Temp !!! */
+.temp-help {
+	padding-top: 8px;
+	color: #F57584;
+}
+
 #map {
 	width: 100%;
 	height: 100%;
