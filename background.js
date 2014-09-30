@@ -325,9 +325,14 @@
        * @function BackgroundJS.startRecording
        */
       case 'startRecording':
-        updateUIState(request.tabId, "recording");
-        stateManager.startRecording(request.tabId, request.assignmentId);
-        sendResponse();
+        stateManager.startRecording(request.tabId, request.assignmentId).then(
+            function() {
+              updateUIState(request.tabId, "recording");
+              sendResponse({ success: true });
+            },
+            function() {
+              sendResponse({ success: false });
+            });
         break;
 
       /**

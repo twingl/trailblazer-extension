@@ -239,13 +239,19 @@
 
       // Ensure we have a valid ID for the assignment so we can start saving
       // the trail
-      assignment.save(this._storageAdapter).then(function(assignment) {
-        this.getNode(tabId).assignmentId = assignment.id;
-        this.getNode(tabId).recording = true;
-        this.getNode(tabId).save(this._storageAdapter);
-        // TODO Feature? Iterate over the existing, in-memory nodes and save the
-        // connected graph - this will save the entire tree, if desirable.
-        // Pending team discussion
+      return new Promise(function(resolve, reject) {
+        assignment.save(this._storageAdapter).then(function(assignment) {
+          this.getNode(tabId).assignmentId = assignment.id;
+          this.getNode(tabId).recording = true;
+          this.getNode(tabId).save(this._storageAdapter);
+          // TODO Feature? Iterate over the existing, in-memory nodes and save the
+          // connected graph - this will save the entire tree, if desirable.
+          // Pending team discussion
+          resolve();
+        }.bind(this),
+        function() {
+          reject();
+        });
       }.bind(this));
     }
   };
