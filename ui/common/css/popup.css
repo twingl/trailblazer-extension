@@ -107,4 +107,11 @@ h1 {
 
 }
 
+.tutorial path{
+	fill: #444;
+}
+
+.tutorial:hover path{
+	fill: #777;
+}
 
