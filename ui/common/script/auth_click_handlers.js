@@ -55,7 +55,7 @@
       evt.preventDefault();
 
       // Open the map in a new tab
-      chrome.tabs.create({ url: evt.target.href });
+      chrome.tabs.create({ url: evt.currentTarget.href });
     });
 
 
