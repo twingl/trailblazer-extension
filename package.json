@@ -40,6 +40,11 @@
   "homepage": "http://twin.gl",
   "devDependencies": {
     "browserify": "^5.11.2",
+    "gulp": "^3.8.8",
+    "gulp-bump": "^0.1.11",
+    "gulp-run": "^1.6.4",
+    "gulp-util": "^3.0.1",
+    "gulp-zip": "^2.0.2",
     "npm-watch": "0.0.0",
     "reactify": "^0.14.0",
     "uglifyify": "^2.5.0"
