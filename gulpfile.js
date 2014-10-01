@@ -1,6 +1,7 @@
 var gulp    = require('gulp')
   , fs      = require('fs')
   , bump    = require('gulp-bump')
+  , pre     = require('gulp-preprocess')
   , run     = require('gulp-run')
   , util    = require('gulp-util')
   , zip     = require('gulp-zip');
@@ -37,15 +38,20 @@ gulp.task('release', ['build', 'version-bump'], function () {
     , versionMessage = "Release: " + versionTag
     , pkgName        = manifest.name.toLowerCase().replace(' ', '-') + "-" + versionTag + ".zip";
 
-  util.log("Tagging", versionTag);
-  run("git tag " + versionTag).exec(function(err) { if (err) throw err; });
-
   util.log("Committing", versionMessage);
-  run("git commit -am \"" + versionMessage + "\"").exec(function(err) { if (err) throw err; });
+  run("git commit -am \"" + versionMessage + "\"").exec(function(err) {
+    if (err) throw err;
 
-  util.log("Packaging", "'" + util.colors.yellow(locations.releaseDir + "/" + pkgName) + "'");
+    util.log("Tagging", versionTag);
+    run("git tag " + versionTag).exec(function(err) {
+      if (err) throw err;
 
-  return gulp.src(locations.src)
-      .pipe(zip(pkgName))
-      .pipe(gulp.dest(locations.releaseDir));
+      util.log("Packaging", "'" + util.colors.yellow(locations.releaseDir + "/" + pkgName) + "'");
+      return gulp.src(locations.src)
+          .pipe(pre({ context: { PRODUCTION: true } }))
+          .pipe(zip(pkgName))
+          .pipe(gulp.dest(locations.releaseDir));
+    });
+  });
+
 });
