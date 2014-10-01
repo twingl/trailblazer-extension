@@ -1,6 +1,7 @@
 var gulp    = require('gulp')
   , fs      = require('fs')
   , bump    = require('gulp-bump')
+  , filter  = require('gulp-filter')
   , pre     = require('gulp-preprocess')
   , run     = require('gulp-run')
   , util    = require('gulp-util')
@@ -47,8 +48,12 @@ gulp.task('release', ['build', 'version-bump'], function () {
       if (err) throw err;
 
       util.log("Packaging", "'" + util.colors.yellow(locations.releaseDir + "/" + pkgName) + "'");
+
+      var backgroundFilter = filter("background.js"); // only pre-process background.js
       return gulp.src(locations.src)
+          .pipe(backgroundFilter)
           .pipe(pre({ context: { PRODUCTION: true } }))
+          .pipe(backgroundFilter.restore())
           .pipe(zip(pkgName))
           .pipe(gulp.dest(locations.releaseDir));
     });
