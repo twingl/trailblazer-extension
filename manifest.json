@@ -1,9 +1,7 @@
 {
   "manifest_version": 2,
-
   "name": "Trailblazer",
-  "version": "0.0.6",
-
+  "version": "0.0.7",
   "permissions": [
     "*://api.keen.io/",
     "https://app.trailblazer.io/",
