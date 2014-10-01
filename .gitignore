@@ -7,4 +7,4 @@ doc/
 .DS_Store
 .module-cache
 npm-debug.log
-
+release/

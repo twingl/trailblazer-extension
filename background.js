@@ -1,6 +1,25 @@
 (function () {
   'use strict';
 
+  // @ifdef PRODUCTION
+  var REPORTING_ENABLED = true;
+  // @endif
+
+  // @ifndef PRODUCTION
+  var REPORTING_ENABLED = false;
+  // @endif
+
+  // @ifdef PRODUCTION
+  var CLIENT_ID = "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061";
+  var API_HOST  = "https://app.trailblazer.io";
+  // @endif
+
+  // @ifndef PRODUCTION
+  var CLIENT_ID = "d3e24c417ab322f8189d47177748462d620781c24166419bb34ee04e35ffc785";
+  var API_HOST  = "http://staging.trailblazer.io";
+  // @endif
+
+
   /**
    * **This is not an actual class, and functions documented here are actually
    * chrome.runtime messages**
@@ -12,9 +31,6 @@
    * @class BackgroundJS
    * @classname BackgroundJS
    */
-
-  // Disable reporting in development
-  var REPORTING_ENABLED = false;
 
   var keenClient = new Keen({
     requestType: "xhr",
@@ -125,8 +141,8 @@
 
   var stateManager = new StateManager({
     api: {
-      host: "https://app.trailblazer.io",
-      clientId: "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061",
+      host: API_HOST,
+      clientId: CLIENT_ID,
       nameSpace: "api",
       version: "v1"
     },
@@ -251,7 +267,7 @@
 
         if (assignment && request.props) {
           assignment = _.extend(assignment, request.props);
-    
+
           assignment.save(stateManager._storageAdapter).then(function(savedAssignment) {
             //unused
             chrome.runtime.sendMessage({action: 'updatedAssignment', assignment: savedAssignment})
