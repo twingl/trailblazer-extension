@@ -38,6 +38,14 @@
         eventData: { }
       });
 
+      var btnText = $(evt.currentTarget).text();
+      $(evt.currentTarget).addClass('throbber');
+      $(evt.currentTarget).text('');
+      window.setTimeout(function() {
+        $(evt.currentTarget).removeClass('throbber');
+        $(evt.currentTarget).text(btnText);
+      }, 10000);
+
       // Request that we be signed in
       chrome.runtime.sendMessage({ action: "signIn" }, function(success) {
         // When we hear that it was successful, navigate to the idle view
