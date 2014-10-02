@@ -3,7 +3,7 @@
 
 body {
 	width: 160px;
-	padding: 26px 10px 26px 10px;
+	padding: 26px 10px 6px 10px;
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
 	font-size: 14px;
@@ -15,10 +15,21 @@ h1 {
 	margin: 0;
 }
 
+
 .idle {
-	background-image: url(/ui/icons/idle-background.png);
-	background-repeat: none;
-	background-size: 100%
+  background-image: url(/ui/icons/idle-background.png);
+  background-repeat: none;
+  background-size: 100%
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
 }
 
 /* Recording Title */
@@ -75,6 +86,7 @@ h1 {
 .button-stop {
 	background-color: #F97E76;
 	padding: 10px 0;
+	margin-bottom: 40px;
 	width: 100px;
 }
 
@@ -96,8 +108,50 @@ h1 {
 
 .folder img {margin-bottom: 8px}
 
+.waypoint {
+	fill: #C5C5C5;
+	text-decoration: none;
+	float: left;
+}
+
+.waypoint:hover {
+	fill: #989898;
+}
+
+/* Retain? - Consider after removing tutorial element 
+
+.waypoint:hover:after {
+	content: "Waypoint";
+	font-size: 10px;
+	color: #989898;
+	position: relative;
+	top: -3px;
+}
+
+ /Retain? */
+
+.waypoint-active {
+	fill: #FFC62F;
+	float: left;
+}
+
+.waypoint-active {
+	fill: #FFD463;
+}
+
 .logout {
 	float: right;
+	fill: #C5C5C5;
+}
+
+.logout:hover {
+	fill: #989898;
+}
+
+.sign-in {
+	width: 150px;
+	padding: 12px 0;
+	background-color: #76A9F9;
 }
 
 .tutorial path{
@@ -107,7 +161,6 @@ h1 {
 .tutorial:hover path{
 	fill: #777;
 }
-
 
 .sign-in {
 	width: 150px;
@@ -170,3 +223,15 @@ h1 {
     -webkit-transform: rotateZ(0deg);
   }
 }
+
+/* Stop Gap - First to go when we remove tutorial element from dropdown! */
+
+.tutorial-recording {
+	padding-left: 8px;
+}
+
+.tutorial-recording path {
+	fill: #C5C5C5;
+}
+
+/* /Stop Gap - First to go! */

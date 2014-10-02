@@ -182,11 +182,33 @@
         })
         break;
 
+      case 'getNode':
+        if (request.nodeId) {
+          var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+          sendResponse({node: node});
+        } else if (request.tabId) {
+          var node = stateManager.getNode(request.tabId);
+          sendResponse({node: node});
+        }
+        break;
+
       case 'getNodes':
         var nodes = stateManager.nodes(request.assignmentId, function(nodes) {
           chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
         });
         chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
+        break;
+
+      case 'updateNode':
+        var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+
+        if (node && request.props) {
+          node = _.extend(node, request.props);
+          node.save(stateManager._storageAdapter).then(function(updatedNode) {
+            //unused
+            chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
+          })
+        };
         break;
 
       /**
@@ -286,7 +308,6 @@
           });
         };
         break;
-
       /**
        * Start recording a tab and its children's activity.
        * An optional assignmentId can be supplied if an assignment exists,
