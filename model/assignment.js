@@ -22,6 +22,7 @@
     this.startedAt      = properties.started_at || properties.startedAt;
     this.title          = properties.title || "Untitled " + this.id;
     this.userId         = properties.user_id || properties.userId;
+    this.tempId         = properties.temp_id || properties.tempId || this.id;
 
     /** DEPRECATED - included only for compatibility with Browser */
     this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
@@ -45,6 +46,8 @@
     /** DEPRECATED - included only for compatibility with Browser */
     props.current_node_id = this.currentNodeId;
 
+    if (this.tempId) props.temp_id = this.tempId;
+
     return props;
   };
 
@@ -56,9 +59,14 @@
    * @returns {string}
    * @private
    */
+  var S4 = function() {
+    return (((1+Math.random())*0x10000)|0).toString(16).substring(1); };
+
+  var uuid = function() {
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()); };
+
   context.Assignment._getId = function() {
-    Assignment.i = Assignment.i || 0;
-    return "TB_." + ++Assignment.i;
+    return "TB_." + uuid();
   };
 
   /**
