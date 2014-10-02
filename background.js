@@ -159,18 +159,6 @@
 
       //TODO fetch existing assignments and query which tabs are currently
       //recording, restoring their recording state where needed
-
-      // Send backed-up trail data to API
-      chrome.storage.local.get(function(localStore) {
-        stateManager._storageAdapter._request([
-          API_HOST,
-          "api",
-          "v1",
-          "backup"
-        ].join("/"), "POST", { data: { backup: JSON.stringify(localStore) } }).then(
-          function() { console.log("SUCCESSFULLY SENT BACKUP"); },
-          function() { console.log("FAILED TO SEND BACKUP"); });
-      });
     }
   });
 
