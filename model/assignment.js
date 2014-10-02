@@ -17,12 +17,14 @@
 
     this.id             = properties.id || Assignment._getId();
     this.completedAt    = properties.completed_at || properties.completedAt;
-    this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
     this.description    = properties.description;
     this.projectId      = properties.project_id || properties.projectId;
     this.startedAt      = properties.started_at || properties.startedAt;
     this.title          = properties.title || "Untitled " + this.id;
     this.userId         = properties.user_id || properties.userId;
+
+    /** DEPRECATED - included only for compatibility with Browser */
+    this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
 
     context.Assignment._instances[this.id] = this;
   };
@@ -39,6 +41,8 @@
     props.description     = this.description || "Recording from " + new Date().toLocaleString();
     props.started_at      = this.startedAt;
     props.completed_at    = this.completedAt;
+
+    /** DEPRECATED - included only for compatibility with Browser */
     props.current_node_id = this.currentNodeId;
 
     return props;
