@@ -16,6 +16,12 @@ h1 {
 }
 
 
+.idle {
+  background-image: url(/ui/icons/idle-background.png);
+  background-repeat: none;
+  background-size: 100%
+}
+
 .cf:before,
 .cf:after {
     content: " "; /* 1 */
