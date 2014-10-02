@@ -63,9 +63,14 @@
    * @returns {string}
    * @private
    */
+  var S4 = function() {
+    return (((1+Math.random())*0x10000)|0).toString(16).substring(1); };
+
+  var uuid = function() {
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()); };
+
   context.Node._getId = function() {
-    Node.i = Node.i || 0;
-    return "TB_." + ++Node.i;
+    return "TB_." + uuid();
   };
 
   /**
