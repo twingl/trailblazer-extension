@@ -29,6 +29,7 @@
     this.title        = properties.title;
     this.tabId        = properties.tabId;
     this.favIconUrl   = properties.favIconUrl;
+    this.rank         = properties.rank || 0;
 
     context.Node._instances[this.id] = this;
   };
@@ -45,6 +46,7 @@
     if (this.parentId) props.parent_id = this.parentId;
     if (this.url)      props.url = this.url;
     if (this.title)    props.title = this.title;
+    if (this.rank)     props.rank = this.rank;
 
     return props;
   };
