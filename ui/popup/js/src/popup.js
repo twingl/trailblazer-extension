@@ -9,7 +9,6 @@ domready(function() {
     console.log('assignment', response);
     var title = response.title || 'New Trail';
     var assignmentId = response.id || null;
-    var currentNodeId = response.currentNodeId;
 
     React.renderComponent(
       <TrailTitle id={assignmentId} title={title} />,
@@ -17,13 +16,16 @@ domready(function() {
     );
 
     //probably a better pattern than nested messaging
-    chrome.runtime.sendMessage({action: 'getNode', nodeId: currentNodeId}, function (response) {
-      console.log('node response', response)
-      var rank = (response && response.node) ? response.node.rank : 0;
-      React.renderComponent(
-        <Star id={currentNodeId} width={16} height={15} rank={rank}/>,
-        document.getElementById('waypoint-div')
-      );
+    chrome.tabs.query({ currentWindow: true, active: true }, function(tabs) {
+      if (tabs.length > 0) {
+        chrome.runtime.sendMessage({action: 'getNode', tabId: tabs[0].id}, function (response) {
+          var rank = (response && response.node) ? response.node.rank : 0;
+          React.renderComponent(
+            <Star id={response.node.id} width={16} height={15} rank={rank}/>,
+            document.getElementById('waypoint-div')
+          );
+        });
+      }
     });
   });
 

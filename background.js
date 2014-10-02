@@ -182,9 +182,14 @@
         })
         break;
 
-      case 'getNode': 
-        var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
-        sendResponse({node: node});
+      case 'getNode':
+        if (request.nodeId) {
+          var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+          sendResponse({node: node});
+        } else if (request.tabId) {
+          var node = stateManager.getNode(request.tabId);
+          sendResponse({node: node});
+        }
         break;
 
       case 'getNodes':
