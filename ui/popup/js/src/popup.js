@@ -6,7 +6,6 @@ var domready = require('domready');
 
 domready(function() {
   chrome.runtime.sendMessage({action: 'getCurrentAssignment'}, function (response) {
-    console.log('assignment', response);
     var title = response.title || 'New Trail';
     var assignmentId = response.id || null;
 

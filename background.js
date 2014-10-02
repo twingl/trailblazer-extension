@@ -205,7 +205,6 @@
         if (node && request.props) {
           node = _.extend(node, request.props);
           node.save(stateManager._storageAdapter).then(function(updatedNode) {
-            console.log('updatedNode', updatedNode)
             //unused
             chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
           })
