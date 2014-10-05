@@ -213,6 +213,10 @@ html {
 
 .tutorial {
 	padding-left: 1px;
+	float: right;
+	position: fixed;
+	bottom: 30px;
+	right: 126px;
 }
 
 .feedback {
@@ -220,8 +224,82 @@ html {
 	bottom: 3px;
 	text-decoration: none;
 	color: inherit;
+	float: right;
+	position: fixed;
+	bottom: 33px;
+	right: 146px;
 }
 
+.popover {
+	padding: 18px;
+	border-radius: 2px;
+	background-color: #fff;
+	position: fixed;
+	bottom: 80px;
+	right:	30px;
+}
+
+.popover:after {
+  	content:"";
+  	position:absolute;
+  	border-style:solid;
+  	top:11px; /* controls vertical position */
+ 	 left: 110px; /* value = - border-left-width - border-right-width */
+  	bottom:auto;
+  	border-width: 15px 15px 0;
+  	border-color: #fff transparent;
+	display: block;
+	width: 0;
+    z-index: 1;
+}
+
+
+.btn {
+	border: none;
+	border-radius: 2px;
+	font-size: 14px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	padding: 6px;
+}
+
+.btn-share {
+	background-color: #99A0B5;	
+	width: 76px;
+	position: fixed;
+	bottom: 25px;
+	right: 30px;
+}
+
+.btn-share:hover{
+	background-color: #8991A8;
+
+}
+
+.btn-share:focus {
+	outline: none;
+
+}
+
+.share-message {
+	font-size: 12px;
+	color: #777777;
+	padding-bottom: 6px;
+
+}
+
+.share-url {
+	text-align: center;
+	padding-bottom: 12px;
+}
+
+.btn-make-private {
+	float: right;
+	color: #fff;
+	background-color: #FFAAAA;
+
+}
 
 
 
