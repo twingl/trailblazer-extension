@@ -77,16 +77,20 @@ html {
 	left: 74px;
 }
 
+/* Does the title need an arrow?
+
 .map-title h1:after {
   content:"";
   position:absolute;
   border-style:solid;
-  top:11px; /* controls vertical position */
-  left:-6px; /* value = - border-left-width - border-right-width */
+  top:11px;
+  left:-6px;
   bottom:auto;
   border-width:6px 6px 6px 0;
   border-color:transparent #fff;
 }
+
+*/
 
 /* nodes */
 .node {
@@ -235,22 +239,20 @@ html {
 	border-radius: 2px;
 	background-color: #fff;
 	position: fixed;
-	bottom: 80px;
+	bottom: 70px;
 	right:	30px;
 }
 
 .popover:after {
-  	content:"";
-  	position:absolute;
-  	border-style:solid;
-  	top:11px; /* controls vertical position */
- 	 left: 110px; /* value = - border-left-width - border-right-width */
-  	bottom:auto;
-  	border-width: 15px 15px 0;
-  	border-color: #fff transparent;
-	display: block;
-	width: 0;
-    z-index: 1;
+  content:"";
+  position:absolute;
+  border-style:solid;
+  bottom:-8px; /* controls vertical position */
+  right:30px; /* value = - border-left-width - border-right-width */
+  border-width:8px 8px 0px 8px;
+  border-color:#fff transparent;
+
+
 }
 
 
@@ -268,7 +270,7 @@ html {
 	background-color: #99A0B5;	
 	width: 76px;
 	position: fixed;
-	bottom: 25px;
+	bottom: 26px;
 	right: 30px;
 }
 
