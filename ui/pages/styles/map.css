@@ -223,6 +223,15 @@ html {
 	right: 126px;
 }
 
+.tutorial path{
+	fill-rule: evenodd;
+
+}
+
+.tutorial path{
+	fill: #000;
+}
+
 .feedback {
 	position: relative;
 	bottom: 3px;
@@ -267,6 +276,7 @@ html {
 }
 
 .btn-share {
+	color: #4D4D4D; 
 	background-color: #99A0B5;	
 	width: 76px;
 	position: fixed;
