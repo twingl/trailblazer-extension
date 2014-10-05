@@ -11,6 +11,7 @@
     "watch-trails": "browserify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js --debug --verbose",
     "watch-popup": "browserify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js --debug --verbose",
     "build-map": "browserify -g uglifyify ui/pages/js/src/map.js -o ui/pages/js/build/map.js",
+    "build-public-map": "npm run components && browserify -g uglifyify ui/pages/js/src/public_map.js -o ui/pages/js/build/public_map.js",
     "build-trails": "browserify -g uglifyify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js",
     "build-popup": "browserify -g uglifyify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js",
     "watching": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup",
@@ -19,7 +20,8 @@
   },
   "browserify": {
     "transform": [
-      "reactify"
+      "reactify",
+      "cssify"
     ]
   },
   "dependencies": {
@@ -40,6 +42,7 @@
   "homepage": "http://twin.gl",
   "devDependencies": {
     "browserify": "^5.11.2",
+    "cssify": "^0.6.0",
     "gulp": "^3.8.8",
     "gulp-bump": "^0.1.11",
     "gulp-filter": "^1.0.2",
