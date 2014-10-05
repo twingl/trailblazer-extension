@@ -277,10 +277,10 @@ html {
 
 .btn-share {
 	color: #4D4D4D; 
-	background-color: #99A0B5;	
+	background-color: rgba(0,0,0,0.06);	
 	width: 76px;
 	position: fixed;
-	bottom: 26px;
+	bottom: 27px;
 	right: 30px;
 }
 
@@ -310,6 +310,8 @@ html {
 	float: right;
 	color: #fff;
 	background-color: #FFAAAA;
+	padding: 6px 8px;
+	font-size: 12px;
 
 }
 
