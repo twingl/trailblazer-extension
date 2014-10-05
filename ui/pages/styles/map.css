@@ -57,7 +57,7 @@ html {
 	color: #F57584;
 }
 
-#map {
+#map-container {
 	width: 100%;
 	height: 100%;
 	background-image:url(/ui/icons/logo-watermark.svg);
@@ -77,16 +77,20 @@ html {
 	left: 74px;
 }
 
+/* Does the title need an arrow?
+
 .map-title h1:after {
   content:"";
   position:absolute;
   border-style:solid;
-  top:11px; /* controls vertical position */
-  left:-6px; /* value = - border-left-width - border-right-width */
+  top:11px;
+  left:-6px;
   bottom:auto;
   border-width:6px 6px 6px 0;
   border-color:transparent #fff;
 }
+
+*/
 
 /* nodes */
 .node {
@@ -213,6 +217,19 @@ html {
 
 .tutorial {
 	padding-left: 1px;
+	float: right;
+	position: fixed;
+	bottom: 30px;
+	right: 126px;
+}
+
+.tutorial path{
+	fill-rule: evenodd;
+
+}
+
+.tutorial path{
+	fill: #000;
 }
 
 .feedback {
@@ -220,8 +237,89 @@ html {
 	bottom: 3px;
 	text-decoration: none;
 	color: inherit;
+	float: right;
+	position: fixed;
+	bottom: 33px;
+	right: 146px;
 }
 
+.popover {
+	padding: 18px;
+	border-radius: 2px;
+	background-color: #fff;
+	position: fixed;
+	bottom: 70px;
+	right:	30px;
+}
+
+.popover:after {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  bottom:-8px; /* controls vertical position */
+  right:30px; /* value = - border-left-width - border-right-width */
+  border-width:8px 8px 0px 8px;
+  border-color:#fff transparent;
+
+
+}
+
+
+.btn {
+	border: none;
+	border-radius: 2px;
+	font-size: 14px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	padding: 6px;
+}
+
+.btn-share {
+	color: #4D4D4D; 
+	background-color: rgba(0,0,0,0.06);	
+	width: 76px;
+	position: fixed;
+	bottom: 27px;
+	right: 30px;
+}
+
+.btn-share:hover{
+	background-color: #8991A8;
+
+}
+
+.btn-share:focus {
+	outline: none;
+
+}
+
+.share-message {
+	font-size: 12px;
+	color: #777777;
+	padding-bottom: 6px;
+
+}
+
+.share-url {
+	text-align: center;
+	padding-bottom: 12px;
+}
+
+.share-url a {
+  color: inherit;
+  text-decoration: inherit;
+  opacity: 1;
+}
+
+.btn-make-private {
+	float: right;
+	color: #fff;
+	background-color: #FFAAAA;
+	padding: 6px 8px;
+	font-size: 12px;
+
+}
 
 
 

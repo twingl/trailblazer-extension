@@ -1,17 +1,45 @@
 /** @jsx React.DOM */
-var render = require('app/render');
+//helpers
 var d3ify = require('app/d3ify');
 var React = require('react');
 var _ = require('lodash');
+var domready = require('domready');
+
+//components
+var MapView = require('app/components/map-view');
+
+//variables
 var assignmentId;
 var chrome = window.chrome;
 
-//React component. TODO pare these off into their own directory.
-var MapName = React.createClass({
-  render: function () {
-    return <h1>{this.props.name}</h1>
-  }
-});
+var shareAction = function(assignmentId, bool) {
+  console.log('shareAction fired', assignmentId)
+  chrome.runtime.sendMessage({ 
+    action: 'updateAssignment', 
+    assignmentId: assignmentId, 
+    props: {
+      visible: bool
+    }
+  })
+}
+
+var getMap =  function(assignmentId) {
+  chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
+      console.log('getmap fired')
+      if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
+        React.renderComponent(
+          <MapView 
+            mapURL={response.data.assignment.url}
+            shareAction={shareAction}
+            assignmentId={assignmentId}
+            visible={response.data.assignment.visible}
+            title={response.data.assignment.title} 
+            data={response.data} />,
+          document.getElementsByTagName('body')[0]
+        );
+      };
+    });
+};
 
 if (window.location.hash) {
   var o = {};
@@ -22,26 +50,23 @@ if (window.location.hash) {
   assignmentId = parseInt(o.assignment);
 };
 
-var getMap =  function(assignmentId) {
-  chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
-      if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
-        render("#map", d3ify( response.data ));
-
-        React.renderComponent(
-          <MapName name={response.data.assignment.title} />,
-          document.getElementById('title')
-        );
-      };
-    });
-};
-
-//listen for updates to an assignment's nodes and render map
+//listen for updates to an assignment's nodes and render map (unused)
 chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   if (request.action === "updatedNodes" && request.assignmentId === assignmentId) {
     getMap(assignmentId);
   };
 });
 
-getMap(assignmentId);
+chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+  if (request.action === "updatedAssignment" && request.assignment.id === assignmentId) {
+    getMap(assignmentId);
+  };
+});
+
+
+domready(function() {
+  getMap(assignmentId);
+});
+
 
 

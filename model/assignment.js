@@ -23,6 +23,8 @@
     this.title          = properties.title || "Untitled " + this.id;
     this.userId         = properties.user_id || properties.userId;
     this.tempId         = properties.temp_id || properties.tempId || this.id;
+    this.visible        = properties.visible || false;
+    this.url            = properties.url;
 
     /** DEPRECATED - included only for compatibility with Browser */
     this.currentNodeId  = properties.current_node_id || properties.currentNodeId;
@@ -42,6 +44,7 @@
     props.description     = this.description || "Recording from " + new Date().toLocaleString();
     props.started_at      = this.startedAt;
     props.completed_at    = this.completedAt;
+    props.visible         = this.visible;
 
     /** DEPRECATED - included only for compatibility with Browser */
     props.current_node_id = this.currentNodeId;
