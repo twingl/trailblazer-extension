@@ -306,6 +306,12 @@ html {
 	padding-bottom: 12px;
 }
 
+.share-url a {
+  color: inherit;
+  text-decoration: inherit;
+  opacity: 1;
+}
+
 .btn-make-private {
 	float: right;
 	color: #fff;
