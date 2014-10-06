@@ -460,11 +460,14 @@
         var node = Node.cache.read(this._storageAdapter, node.id);
         delete node.tabId;
         this._tabIdMap[evt.data.tabId] = parentNode.id;
+        parentNode.recording = node.recording;
       } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
         // Navigating to an existing child
         var node = Node.cache.read(this._storageAdapter, node.id);
         delete node.tabId;
-        this._tabIdMap[evt.data.tabId] = Node.findWhere({ parentId: node.id, url: evt.data.url }).id;
+        var childNode = Node.findWhere({ parentId: node.id, url: evt.data.url });
+        childNode.recording = node.recording;
+        this._tabIdMap[evt.data.tabId] = childNode.id;
       } else {
         // Navigating to a new child
         var newNode = new Node({
