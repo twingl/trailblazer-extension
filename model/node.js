@@ -150,7 +150,9 @@
               id: this.assignmentId
             }
           }).then(function(response) {
+            delete context.Node._instances[this.id];
             this.id = response.id;
+            context.Node._instances[this.tempId] = this;
             context.Node._instances[this.id] = this;
             resolve(this);
           }.bind(this), function(response) { reject(response); });
