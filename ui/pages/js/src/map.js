@@ -13,7 +13,6 @@ var assignmentId;
 var chrome = window.chrome;
 
 var shareAction = function(assignmentId, bool) {
-  console.log('shareAction fired', assignmentId)
   chrome.runtime.sendMessage({ 
     action: 'updateAssignment', 
     assignmentId: assignmentId, 
@@ -21,11 +20,10 @@ var shareAction = function(assignmentId, bool) {
       visible: bool
     }
   })
-}
+};
 
 var getMap =  function(assignmentId) {
   chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
-      console.log('getmap fired')
       if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
         React.renderComponent(
           <MapView 
@@ -62,7 +60,6 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     getMap(assignmentId);
   };
 });
-
 
 domready(function() {
   getMap(assignmentId);

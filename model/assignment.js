@@ -45,6 +45,7 @@
     props.started_at      = this.startedAt;
     props.completed_at    = this.completedAt;
     props.visible         = this.visible;
+    props.url             = this.url || null;
 
     /** DEPRECATED - included only for compatibility with Browser */
     props.current_node_id = this.currentNodeId;
@@ -137,6 +138,7 @@
           adapter.update("assignments", this.id, { assignment: this.toProps() }, {})
             .then(function(response) {
               this.id = response.id;
+              this.url = response.url;
               context.Assignment._instances[this.id] = this;
               resolve(this);
             }.bind(this), function(response) { reject(response); });

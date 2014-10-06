@@ -10,9 +10,9 @@
     "watch-map": "browserify ui/pages/js/src/map.js -o ui/pages/js/build/map.js --debug --verbose",
     "watch-trails": "browserify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js --debug --verbose",
     "watch-popup": "browserify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js --debug --verbose",
-    "build-map": "browserify -g uglifyify ui/pages/js/src/map.js -o ui/pages/js/build/map.js",
-    "build-trails": "browserify -g uglifyify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js",
-    "build-popup": "browserify -g uglifyify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js",
+    "build-map": "browserify -g uglifyify ui/pages/js/src/map.js -o ui/pages/js/build/map.js --verbose",
+    "build-trails": "browserify -g uglifyify ui/pages/js/src/trails.js -o ui/pages/js/build/trails.js --verbose",
+    "build-popup": "browserify -g uglifyify ui/popup/js/src/popup.js -o ui/popup/js/build/popup.js --verbose",
     "watching": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup",
     "watch": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup && npm-watch",
     "build": "npm run components && npm run build-map & npm run build-trails & npm run build-popup"
