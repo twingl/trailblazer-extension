@@ -222,6 +222,7 @@
         var focus = request.focus || false;
         chrome.tabs.create({ url: node.url, active: focus }, function(tab) {
           stateManager.resumeRecording(tab.id, request.nodeId);
+          chrome.runtime.sendMessage({action: 'updatedNodes', assignmentId: node.assignmentId});
         });
         break;
 

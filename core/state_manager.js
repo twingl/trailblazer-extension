@@ -522,6 +522,7 @@
     if (node) {
       delete node.recording;
       delete node.tabId;
+      chrome.runtime.sendMessage({action: "updatedNodes", assignmentId: node.assignmentId})
     }
     delete this._tabIdMap[evt.data.tabId];
   };
