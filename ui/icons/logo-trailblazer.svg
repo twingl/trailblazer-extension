@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="43px" height="49px" viewBox="0 0 43 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.1 (8751) - http://www.bohemiancoding.com/sketch -->
+    <title>Trailblazer Logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Empty-State" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Wireframe-1" sketch:type="MSLayerGroup" transform="translate(-569.000000, -217.000000)" fill="#3B3B3B">
+            <g id="Trailblazer-Logo" transform="translate(569.000000, 217.000000)" sketch:type="MSShapeGroup">
+                <path d="M19.8530704,0.397688743 C20.7626445,-0.132449348 22.2369658,-0.132676469 23.1469296,0.397688743 L41.3530704,11.0089945 C42.2626445,11.5391326 43,12.8279638 43,13.8886943 L43,35.1113057 C43,36.1715819 42.2630342,37.4606403 41.3530704,37.9910055 L23.1469296,48.6023113 C22.2373555,49.1324493 20.7630342,49.1326765 19.8530704,48.6023113 L1.64692958,37.9910055 C0.737355487,37.4608674 1.35042892e-14,36.1720362 1.35042892e-14,35.1113057 L0,13.8886943 C0,12.8284181 0.736965808,11.5393597 1.64692958,11.0089945 L19.8530704,0.397688743 L19.8530704,0.397688743 Z M19.9922386,22.4116554 C19.7783215,22.5660899 19.4824536,22.8663054 19.3310088,23.0827636 L10.4529965,35.7719993 L22.916336,26.709531 C23.1296908,26.5543942 23.4263397,26.2536095 23.5780589,26.0389276 L32.5470035,13.3479156 L19.9922386,22.4116554 L19.9922386,22.4116554 Z"></path>
+            </g>
+        </g>
+    </g>
+</svg>
