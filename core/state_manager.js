@@ -100,6 +100,7 @@
     this._bindEvent("onUpdatedTab");
     this._bindEvent("onSwitchedTab");
     this._bindEvent("onClosedTab");
+    this._bindEvent("onBeforeRedirect");
 
     // Indicate to the EventAdapter that we're ready to start listening for
     // events. Pass in `true` so that we get the initial browser state.
@@ -385,6 +386,9 @@
         case "resumed_node":
           this.resumedNode(evt);
           break;
+        case "redirect_pending":
+          this.redirectPending(evt);
+          break;
       }
     }.bind(this));
 
@@ -449,7 +453,7 @@
   context.StateManager.prototype.updatedTab = function(evt) {
     var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
     var parentNode = (node && node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
-    
+
     if (node && evt.data.url && evt.data.url !== node.url) {
       if (node.url === "chrome://newtab/" || node.url === "") {
         // Opened a new tab
@@ -551,6 +555,18 @@
     this._tabIdMap[evt.data.tabId] = node.id;
     this.startRecording(evt.data.tabId, node.assignmentId);
   };
+
+  context.StateManager.prototype.redirectPending = function(evt) {
+    var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId])
+    //switch url with redirect url
+    //TODO make sure title is correct
+    node.url = evt.data.redirectUrl
+    node.save(this._storageAdapter).then(function(updatedNode) {
+      //unused
+      chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
+    });
+  };
+
 
   /**
    * Binds an event to a default handler that pushes the event into a buffer,

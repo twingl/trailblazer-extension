@@ -125,6 +125,27 @@
      */
     this._declareEvent("onClosedTab");
 
+    /**
+     * Fired when a tab  is about to redirect. Handlers receive a single
+     * argument {@link ChromeEventAdapter.TabEvent} which will look something
+     * like:
+     *
+     * ```javascript
+     * {
+     *   type: "redirect_pending",
+     *   occurred: Date.now(),
+     *   data: {
+     *     tabId: tab.id,
+           url: details.url,
+           redirectUrl: details.redirectUrl
+     *   }
+     * }
+     * ```
+     *
+     * @event ChromeEventAdapter#onBeforeRedirect
+     */
+    this._declareEvent("onBeforeRedirect");
+
     this._registerHandlers(this);
   };
 
@@ -304,6 +325,21 @@
     }
   };
 
+  context.ChromeEventAdapter.prototype._onBeforeRedirect = function(details) {
+    var evt = {
+      type: "redirect_pending",
+      occurred: Date.now(),
+      data: {
+        tabId: details.tabId,
+        url: details.url,
+        redirectUrl: details.redirectUrl
+      }
+    };
+    if (this._ready) {
+      _.each(this._listeners.onBeforeRedirect, function(l) { l(evt); });
+    }
+  };
+
   /**
    * Registers the internal handlers (declared above) for events emitted by the
    * Chrome API
@@ -314,10 +350,14 @@
    * @private
    */
   context.ChromeEventAdapter.prototype._registerHandlers = function(ctx) {
-    chrome.tabs.onCreated  .addListener( ctx._onCreatedTab .bind(this) );
-    chrome.tabs.onUpdated  .addListener( ctx._onUpdatedTab .bind(this) );
-    chrome.tabs.onActivated.addListener( ctx._onSwitchedTab.bind(this) );
-    chrome.tabs.onRemoved  .addListener( ctx._onClosedTab  .bind(this) );
+    chrome.tabs.onCreated             .addListener( ctx._onCreatedTab     .bind(this) );
+    chrome.tabs.onUpdated             .addListener( ctx._onUpdatedTab     .bind(this) );
+    chrome.tabs.onActivated           .addListener( ctx._onSwitchedTab    .bind(this) );
+    chrome.tabs.onRemoved             .addListener( ctx._onClosedTab      .bind(this) );
+    chrome.webRequest.onBeforeRedirect.addListener( 
+        ctx._onBeforeRedirect.bind(this), 
+        {urls: ["<all_urls>"], types:["main_frame"]} 
+    );
   };
 
 }(window));
