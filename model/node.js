@@ -35,7 +35,7 @@
 
     context.Node._instances[this.id] = this;
   };
-  
+
   context.Node.cache = {};
 
   /**
@@ -131,6 +131,18 @@
   };
 
   context.Node.prototype.save = function(adapter) {
+    var updateChildren = function(parentNode) {
+      var children = Node.where({
+        parentId: parentNode.tempId,
+        assignmentId: parentNode.assignmentId
+      });
+
+      _.each(children, function(node) {
+        node.parentId = parentNode.id;
+        node.save();
+      });
+    };
+
     if (!this._saving) {
       this._saving = true;
       return new Promise(function(resolve, reject) {
@@ -139,6 +151,7 @@
           adapter.update("nodes", this.id, { node: this.toProps() }, {}).then(function(response) {
             this.id = response.id;
             context.Node._instances[this.id] = this;
+            updateChildren(this);
             resolve(this);
           }.bind(this), function(response) { reject(response); });
 
@@ -154,6 +167,7 @@
             this.id = response.id;
             context.Node._instances[this.tempId] = this;
             context.Node._instances[this.id] = this;
+            updateChildren(this);
             resolve(this);
           }.bind(this), function(response) { reject(response); });
         }
@@ -179,6 +193,16 @@
    */
   context.Node.findWhere = function(props) {
     return _.findWhere(context.Node._instances, props);
+  };
+
+  /**
+   * Return nodes that match the supplied properties
+   * Delegates match to Underscore's where function
+   * @param {Object} props - The properties to match
+   * @returns {Node}
+   */
+  context.Node.where = function(props) {
+    return _.where(context.Node._instances, props);
   };
 
 }(window));
