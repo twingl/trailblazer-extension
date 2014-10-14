@@ -86,7 +86,7 @@
               responseObject.expires_in = parseInt(responseObject.expires_in);
               responseObject.expires_at = Date.now() + responseObject.expires_in;
 
-              this._storeToken(responseObject);
+              this.storeToken(responseObject);
               resolve(responseObject);
             } else {
               // Otherwise, reject it with the details
@@ -179,14 +179,13 @@
 
   /**
    * Stores the provided token in chrome.storage.sync
-   * @function ChromeIdentityAdapter#_storeToken
+   * @function ChromeIdentityAdapter#storeToken
    * @param {Object} tokenObject - the token passed to {@link
    * ChromeIdentityAdapter#signIn}'s `resolve`
    * @returns {Promise} A promise which resolves if chrome.runtime.lastError is
    * not set
-   * @private
    */
-  context.ChromeIdentityAdapter.prototype._storeToken = function(tokenObject) {
+  context.ChromeIdentityAdapter.prototype.storeToken = function(tokenObject) {
     return new Promise(function(resolve, reject) {
       var userUrl = [
         this._stateManager.getConfig().api.host,
@@ -194,7 +193,6 @@
         this._stateManager.getConfig().api.version,
         "me"
       ].join("/");
-      console.log(userUrl);
 
       superagent("GET", userUrl)
         .set("Authorization", "Bearer " + tokenObject.access_token)

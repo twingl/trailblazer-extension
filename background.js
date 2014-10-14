@@ -153,6 +153,23 @@
     storageAdapter: TrailblazerHTTPStorageAdapter
   });
 
+  chrome.runtime.onInstalled.addListener(function(details) {
+    switch(details.reason) {
+      case "update":
+        // Do stuff
+        stateManager._identityAdapter.getToken().then(function(token) {
+          stateManager._identityAdapter.storeToken(token);
+        });
+        break;
+      case "install":
+        // Show onboarding
+        break;
+      case "chrome_update":
+        //
+        break;
+    }
+  });
+
   // Set initial popup state
   stateManager.isSignedIn().then(function (signedIn) {
     if (signedIn) {
