@@ -66,7 +66,7 @@
     var authUrl = [host, "oauth/authorize"].join("/") + params;
 
     var promise = new Promise(function(resolve, reject) {
-      this._getToken().then(function(token) {
+      this.getToken().then(function(token) {
         resolve(token);
       }, function() {
         chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, function(redirectUrl) {
@@ -86,7 +86,7 @@
               responseObject.expires_in = parseInt(responseObject.expires_in);
               responseObject.expires_at = Date.now() + responseObject.expires_in;
 
-              this._storeToken(responseObject);
+              this.storeToken(responseObject);
               resolve(responseObject);
             } else {
               // Otherwise, reject it with the details
@@ -96,7 +96,7 @@
             reject(chrome.runtime.lastError);
           }
         }.bind(this)); //chrome.identity.launchWebAuthFlow
-      }.bind(this)); //_getToken();
+      }.bind(this)); //getToken();
     }.bind(this)); //promise
 
     return promise;
@@ -145,7 +145,7 @@
    */
   context.ChromeIdentityAdapter.prototype.isSignedIn = function() {
     return new Promise(function(resolve, reject) {
-      this._getToken().then(
+      this.getToken().then(
           function() { resolve(true); },
           function() { resolve(false); })
     }.bind(this));
@@ -159,12 +159,11 @@
 
   /**
    * Retrieves the token stored in chrome.storage.sync
-   * @function ChromeIdentityAdapter#_getToken
+   * @function ChromeIdentityAdapter#getToken
    * @returns {Promise} A promise which resolves with the token object if it
    * was found
-   * @private
    */
-  context.ChromeIdentityAdapter.prototype._getToken = function() {
+  context.ChromeIdentityAdapter.prototype.getToken = function() {
     return new Promise(function(resolve, reject) {
       chrome.storage.sync.get("token", function(token) {
         if (token.token) {
@@ -180,23 +179,35 @@
 
   /**
    * Stores the provided token in chrome.storage.sync
-   * @function ChromeIdentityAdapter#_storeToken
+   * @function ChromeIdentityAdapter#storeToken
    * @param {Object} tokenObject - the token passed to {@link
    * ChromeIdentityAdapter#signIn}'s `resolve`
    * @returns {Promise} A promise which resolves if chrome.runtime.lastError is
    * not set
-   * @private
    */
-  context.ChromeIdentityAdapter.prototype._storeToken = function(tokenObject) {
+  context.ChromeIdentityAdapter.prototype.storeToken = function(tokenObject) {
     return new Promise(function(resolve, reject) {
-      chrome.storage.sync.set({ token: JSON.stringify(tokenObject) }, function() {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          resolve();
-        }
-      }); //chrome.storage.sync.set
-    }); //promise
+      var userUrl = [
+        this._stateManager.getConfig().api.host,
+        this._stateManager.getConfig().api.nameSpace,
+        this._stateManager.getConfig().api.version,
+        "me"
+      ].join("/");
+
+      superagent("GET", userUrl)
+        .set("Authorization", "Bearer " + tokenObject.access_token)
+        .set("Accept", "application/json")
+        .end(function(response) {
+          tokenObject.user_id = response.body.id;
+          chrome.storage.sync.set({ token: JSON.stringify(tokenObject) }, function() {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+            } else {
+              resolve();
+            }
+          }); //chrome.storage.sync.set
+        });
+    }.bind(this)); //promise
   };
 
   /**
