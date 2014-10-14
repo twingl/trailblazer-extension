@@ -8,9 +8,11 @@
     "http://staging.trailblazer.io/",
     "http://localhost:3000/",
     "chrome://favicon/",
+    "*://*/",
     "identity",
     "storage",
     "tabs",
+    "webRequest",
     "windows"
   ],
   "icons": {
