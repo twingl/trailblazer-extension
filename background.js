@@ -415,19 +415,27 @@
        */
       case 'trackUIEvent':
         stateManager._identityAdapter.getToken().then(function(token) {
-          var keenEvent = request.eventData;
+          chrome.runtime.getPlatformInfo(function(platformInfo) {
 
-          keenEvent.token = token.access_token;
-          keenEvent.userId = token.user_id;
+            var keenEvent = request.eventData;
 
-          keenEvent.keen = { timestamp: new Date().toISOString() };
+            keenEvent.token = token.access_token;
+            keenEvent.userId = token.user_id;
 
-          if (REPORTING_ENABLED) {
-            console.log("reporting event: " + request.eventName, keenEvent);
-            keenClient.addEvent(request.eventName, keenEvent);
-          } else {
-            console.log("not reporting event: " + request.eventName, keenEvent);
-          }
+            keenEvent.extensionVersion = chrome.runtime.getManifest().version;
+
+            keenEvent.platformInfo = platformInfo;
+            keenEvent.userAgent = navigator.userAgent;
+
+            keenEvent.keen = { timestamp: new Date().toISOString() };
+
+            if (REPORTING_ENABLED) {
+              console.log("reporting event: " + request.eventName, keenEvent);
+              keenClient.addEvent(request.eventName, keenEvent);
+            } else {
+              console.log("not reporting event: " + request.eventName, keenEvent);
+            }
+          });
         });
         break;
     }
