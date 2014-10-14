@@ -60,10 +60,9 @@ var AsssignmentItem = React.createClass({
   },
 
   destroyAnimation: function (evt) {
+    evt.stopPropagation();
     if (window.confirm("Are you sure you want to delete " + this.props.item.title + "?")) {
       this.setState({show: false});
-      evt.stopPropagation();
-
       chrome.runtime.sendMessage({
         action: "trackUIEvent",
         eventName: "ui.trails.assignment.delete.confirm",
