@@ -38,6 +38,8 @@
     writeKey: "efe90ef21a97678868e8fb2aa5f1bc3da9f5311f417c915058c9bdf1e24a2d75c65e39b2ab4290d406969087657880bc513d65625cec3f73e6ff232cb190113f9d163fbc16f001b8cea75ae15e4bbe255d9b16caf8e4376c405f40440147cda09fd7e3af3798491c2a318072e4a761f4"
   });
 
+  var keenUserData = {};
+
   /**
    * @property {Object} BackgroundJS.popupStates
    */
@@ -350,6 +352,8 @@
         stateManager.signIn().then(function(token) {
           chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
           chrome.browserAction.setIcon({ path: extensionStates.idle.browserAction });
+
+          keenUserData.token = token.token;
           chrome.windows.getCurrent({ populate: true }, function(win) {
             var tab = _.findWhere(win.tabs, { active: true });
             if (tab) updateUIState(tab.id, "idle");
@@ -393,14 +397,11 @@
        * @function BackgroundJS.trackUIEvent
        */
       case 'trackUIEvent':
-        chrome.storage.sync.get("token", function(token) {
+        stateManager._identityAdapter.getToken().then(function(token) {
           var keenEvent = request.eventData;
 
-          try {
-            keenEvent.token = JSON.parse(token.token).access_token;
-          } catch (e) {
-            keenEvent.token = "invalid_or_error";
-          }
+          keenEvent.token = token.access_token;
+          keenEvent.userId = token.user_id;
 
           keenEvent.keen = { timestamp: new Date().toISOString() };
 
