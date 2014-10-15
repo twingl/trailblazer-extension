@@ -80,8 +80,15 @@ html {
 
 .map-title img {
 	position: relative;
-	top: -9px;
-	right: -13px;
+	top: 1px;
+	right: -6px;
+	padding-right: 4px;
+}
+
+.map-title:focus {
+	border-style: none;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
 }
 
 /* Does the title need an arrow?
