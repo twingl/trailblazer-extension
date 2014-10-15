@@ -185,6 +185,7 @@
         break;
       case "install":
         // Show onboarding
+        chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/ui/pages/welcome.html") });
         break;
       case "chrome_update":
         //
