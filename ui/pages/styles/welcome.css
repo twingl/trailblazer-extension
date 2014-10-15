@@ -1,0 +1,108 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.cf:after {
+   content: "."; 
+   visibility: hidden; 
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	text-align: center;
+	color: #5B5B5B;
+	background-color: #FAFAFA;
+
+}
+
+.logo {
+	margin: 86px 0 40px 0;
+}
+
+h1{
+	font-size: 24px;
+	font-weight: 400;
+	margin-bottom: 20px;
+}
+
+h2 {
+	font-size: 18px;
+	font-weight: 400;
+	margin-bottom: 30px;
+}
+
+h3 {
+	font-size: 20px;
+	font-weight: 400;
+	margin-bottom: 20px;
+}
+
+.how-to {
+	width: 552px;
+	margin: 0 auto;
+	padding: 20px 60px 20px 60px;
+	border-radius: 4px;
+	background-color: #fff;
+/*	border-color: #5B5B5B;
+	border-width: 1px;
+	border-style: solid; */
+}
+
+.how-to div{
+	width: 164px;
+	float: left;
+	padding: 0 30px 20px 0 ;
+	font-size: 14px;
+}
+
+.how-to div:last-child{
+	padding-right: 0;
+}
+
+
+.how-to img{
+	width: 164px;
+	padding-bottom: 20px;
+}
+
+.flag {
+	position: fixed;
+	top: 20px;
+	right: 50px;
+	width: 160px;
+	text-align: right;
+	font-size: 12px;
+}
+
+@-webkit-keyframes dropin {
+  0% {
+    top: -30px;
+    right: -15px;
+    opacity: 0;
+  }
+
+  100% {
+    top: 0;
+    right: 0;
+    opacity: 1;
+  }
+}
+
+.flag img {
+	position: relative;
+	width: 84px;
+	float: right;
+	-webkit-animation-name: dropin;
+  	-webkit-animation-duration: .5s;
+  	-webkit-animation-iteration-count: 1;
+  	-webkit-animation-timing-function: ease-out;
+}
+
+.flag p {
+	clear: both;
+}
