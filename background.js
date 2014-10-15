@@ -66,7 +66,7 @@
       }
     },
     default: {
-      popup: "/ui/popup/not_authenticated.html",
+      popup: "/ui/popup/unknown.html",
       browserAction: {
         19: "/ui/icons/19-unknown.png",
         38: "/ui/icons/38-unknown.png"
@@ -109,7 +109,12 @@
         });
         break;
 
+      case "unknown":
       default:
+        chrome.browserAction.setPopup({
+          tabId: tabId,
+          popup: extensionStates.default.popup
+        });
         chrome.browserAction.setIcon({
           tabId: tabId,
           path: extensionStates.default.browserAction
@@ -191,10 +196,23 @@
   stateManager.isSignedIn().then(function (signedIn) {
     if (signedIn) {
       // Set the extension to Idle
-      chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
+      chrome.browserAction.setPopup({
+        popup: extensionStates.idle.popup
+      });
+      chrome.browserAction.setIcon({
+        path: extensionStates.idle.browserAction
+      });
 
       //TODO fetch existing assignments and query which tabs are currently
       //recording, restoring their recording state where needed
+    } else {
+      // Set the extension to Idle
+      chrome.browserAction.setPopup({
+        popup: extensionStates.notAuthenticated.popup
+      });
+      chrome.browserAction.setIcon({
+        path: extensionStates.notAuthenticated.browserAction
+      });
     }
   });
 

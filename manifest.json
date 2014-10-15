@@ -40,6 +40,6 @@
       "19": "ui/icons/19-unknown.png",
       "38": "ui/icons/38-unknown.png"
     },
-    "default_popup": "ui/popup/not_authenticated.html"
+    "default_popup": "ui/popup/unknown.html"
   }
 }
