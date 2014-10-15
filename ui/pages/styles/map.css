@@ -65,7 +65,8 @@ html {
 	background-position:30px 30px;
 }
 
-.map-title h1 {
+.map-title {
+	text-decoration: none;
 	color: #4D4D4D;
 	background-color: #fff;
 	border-radius: 2px;
@@ -75,6 +76,19 @@ html {
 	padding: 8px 12px;
 	top: 32px;
 	left: 74px;
+}
+
+.map-title img {
+	position: relative;
+	top: 1px;
+	right: -6px;
+	padding-right: 4px;
+}
+
+.map-title:focus {
+	border-style: none;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
 }
 
 /* Does the title need an arrow?

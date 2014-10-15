@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 var React = require('react');
-var TrailTitle = require('app/components/trail-title');
+var MapTitle = require('app/components/map-title');
 var Star = require('app/components/star');
 var domready = require('domready');
 
@@ -10,8 +10,8 @@ domready(function() {
     var assignmentId = response.id || null;
 
     React.renderComponent(
-      <TrailTitle id={assignmentId} title={title} />,
-      document.getElementById('assignment-title')
+      <MapTitle id={assignmentId} title={title} />,
+      document.getElementById('map-title')
     );
 
     //probably a better pattern than nested messaging
