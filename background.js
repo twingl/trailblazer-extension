@@ -61,8 +61,15 @@
     notAuthenticated: {
       popup: "/ui/popup/not_authenticated.html",
       browserAction: {
-        19: "/ui/icons/19.png",
-        38: "/ui/icons/38.png"
+        19: "/ui/icons/19-unknown.png",
+        38: "/ui/icons/38-unknown.png"
+      }
+    },
+    default: {
+      popup: "/ui/popup/not_authenticated.html",
+      browserAction: {
+        19: "/ui/icons/19-unknown.png",
+        38: "/ui/icons/38-unknown.png"
       }
     }
   };
@@ -102,6 +109,12 @@
         });
         break;
 
+      default:
+        chrome.browserAction.setIcon({
+          tabId: tabId,
+          path: extensionStates.default.browserAction
+        });
+
     }
   }
 
@@ -113,9 +126,11 @@
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
         updateUIState(activeInfo.tabId, "recording");
-      } else if (signedIn) {
+      } else if (signedIn && node) {
         // The extension is signed in and idle
         updateUIState(activeInfo.tabId, "idle");
+      } else if (signedIn) {
+        updateUIState(activeInfo.tabId, "unknown");
       } else {
         // The extension is not signed in
         updateUIState(activeInfo.tabId, "notAuthenticated");
@@ -131,9 +146,11 @@
       if (signedIn && node && node.recording) {
         // The extension is signed in and is recording the current page
         updateUIState(tabId, "recording");
-      } else if (signedIn) {
+      } else if (signedIn && node) {
         // The extension is signed in and idle
-        updateUIState(tabId, "idle");
+        updateUIState(activeInfo.tabId, "idle");
+      } else if (signedIn) {
+        updateUIState(tabId, "unknown");
       } else {
         // The extension is not signed in
         updateUIState(tabId, "notAuthenticated");
