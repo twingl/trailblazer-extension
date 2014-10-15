@@ -332,6 +332,19 @@
       case 'destroyAssignment':
         var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
 
+        
+        chrome.windows.getCurrent(function(window) {
+          chrome.tabs.getAllInWindow(window.id, function(tabs) {
+            _.each(tabs, function(tab) {
+
+
+            })
+          })
+
+        })
+
+
+
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
             chrome.runtime.sendMessage({ action: "getAssignments" });
