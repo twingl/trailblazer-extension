@@ -332,11 +332,20 @@
       case 'destroyAssignment':
         var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
 
-        
+        var nodes = stateManager.nodes(request.assignmentId);
+        var nodeTabIds = _.pluck(nodes, 'tabId');
+
+        console.log('nodeTabIds', nodeTabIds);
+
         chrome.windows.getCurrent(function(window) {
           chrome.tabs.getAllInWindow(window.id, function(tabs) {
+            console.log('tabs', tabs)
             _.each(tabs, function(tab) {
-
+              console.log('tab', tab)
+              if (_.contains(nodeTabIds, tab.id)) {
+                console.log('does contain', tab)
+                chrome.runtime.sendMessage({action: 'stopRecording', tabId: tab.id})
+              }
 
             })
           })
@@ -404,6 +413,7 @@
        * @function BackgroundJS.stopRecording
        */
       case 'stopRecording':
+        console.log('stopping recording', request)
         updateUIState(request.tabId, "idle");
         stateManager.stopRecording(request.tabId);
         sendResponse();
