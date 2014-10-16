@@ -61,8 +61,8 @@
     notAuthenticated: {
       popup: "/ui/popup/not_authenticated.html",
       browserAction: {
-        19: "/ui/icons/19-unknown.png",
-        38: "/ui/icons/38-unknown.png"
+        19: "/ui/icons/19.png",
+        38: "/ui/icons/38.png"
       }
     },
     default: {
