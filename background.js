@@ -342,7 +342,7 @@
             _.each(tabs, function(tab) {
               console.log('tab', tab)
               if (_.contains(nodeTabIds, tab.id)) {
-                var node stateManager.getNode(tab.id)
+                var node = stateManager.getNode(tab.id)
 
                 // node.assignmentId = null;
                 // node.id = Node._getId();;
