@@ -331,34 +331,40 @@
 
       case 'destroyAssignment':
         var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
-
+        var mapUrlSubstring = "map.html#assignment=" + assignment.id;
         var nodes = stateManager.nodes(request.assignmentId);
         var nodeTabIds = _.pluck(nodes, 'tabId');
 
-        console.log('nodeTabIds', nodeTabIds);
+        console.log('destroyAssignment', assignment);
 
         chrome.windows.getCurrent(function(window) {
           chrome.tabs.getAllInWindow(window.id, function(tabs) {
             _.each(tabs, function(tab) {
               console.log('tab', tab)
               if (_.contains(nodeTabIds, tab.id)) {
-                var node = stateManager.getNode(tab.id)
+                var node = stateManager.getNode(tab.id).destroy(stateManager._storageAdapter);
 
                 // node.assignmentId = null;
-                // node.id = Node._getId();;
+                // node.tempId = Node._getId();
+                // node.id = node.tempId;
                 // node.recording = false;
                 // console.log('does contain', node)
-                // chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: node})
+                // node.save(stateManager._storageAdapter).then(function(updatedNode) {
+                //   //unused
+                //   chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
+                // });
+              }
+              if (tab.url.indexOf(mapUrlSubstring) !== -1) {
+                //assignment's map is an open tab
+                chrome.tabs.remove(tab.id);
               }
             })
           })
-        })
+        });
 
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
             chrome.runtime.sendMessage({ action: "getAssignments" });
-            var assignment.title = "DELETED";
-            chrome.runtime.sendMessage({action: "updatedAssignment", assignment: assignment})
           });
         }
         break;
