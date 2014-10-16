@@ -339,24 +339,26 @@
 
         chrome.windows.getCurrent(function(window) {
           chrome.tabs.getAllInWindow(window.id, function(tabs) {
-            console.log('tabs', tabs)
             _.each(tabs, function(tab) {
               console.log('tab', tab)
               if (_.contains(nodeTabIds, tab.id)) {
-                console.log('does contain', tab)
-                chrome.runtime.sendMessage({action: 'stopRecording', tabId: tab.id})
-              }
+                var node stateManager.getNode(tab.id)
 
+                // node.assignmentId = null;
+                // node.id = Node._getId();;
+                // node.recording = false;
+                // console.log('does contain', node)
+                // chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: node})
+              }
             })
           })
-
         })
-
-
 
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
             chrome.runtime.sendMessage({ action: "getAssignments" });
+            var assignment.title = "DELETED";
+            chrome.runtime.sendMessage({action: "updatedAssignment", assignment: assignment})
           });
         }
         break;
