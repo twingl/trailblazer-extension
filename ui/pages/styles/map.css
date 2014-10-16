@@ -158,9 +158,9 @@ html {
 }
 
 .waypoint .node-halo{
-	stroke: gold;
-	stroke-opacity: 0.8;
-	stroke-width: 1.2px;
+	fill: gold;
+	fill-opacity: 0.8;
+
 }
 
 /* links */
