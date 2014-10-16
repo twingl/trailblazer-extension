@@ -337,34 +337,35 @@
 
         console.log('destroyAssignment', assignment);
 
-        chrome.windows.getCurrent(function(window) {
-          chrome.tabs.getAllInWindow(window.id, function(tabs) {
-            _.each(tabs, function(tab) {
-              console.log('tab', tab)
-              if (_.contains(nodeTabIds, tab.id)) {
-                var node = stateManager.getNode(tab.id).destroy(stateManager._storageAdapter);
-
-                // node.assignmentId = null;
-                // node.tempId = Node._getId();
-                // node.id = node.tempId;
-                // node.recording = false;
-                // console.log('does contain', node)
-                // node.save(stateManager._storageAdapter).then(function(updatedNode) {
-                //   //unused
-                //   chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
-                // });
-              }
-              if (tab.url.indexOf(mapUrlSubstring) !== -1) {
-                //assignment's map is an open tab
-                chrome.tabs.remove(tab.id);
-              }
-            })
-          })
-        });
-
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
-            chrome.runtime.sendMessage({ action: "getAssignments" });
+            chrome.windows.getCurrent(function(window) {
+              chrome.tabs.getAllInWindow(window.id, function(tabs) {
+                _.each(tabs, function(tab, index) {
+                  console.log('tab', tab)
+                  if (_.contains(nodeTabIds, tab.id)) {
+                    var node = stateManager.getNode(tab.id);
+
+                    node.assignmentId = Assignment._getId();
+                    node.tempId = Node._getId();
+                    node.id = node.tempId;
+                    node.recording = false;
+                    console.log('does contain', node)
+                    node.save(stateManager._storageAdapter).then(function(updatedNode) {
+                      //unused
+                      chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
+                    });
+                  }
+                  if (tab.url.indexOf(mapUrlSubstring) !== -1) {
+                    //assignment's map is an open tab
+                    chrome.tabs.remove(tab.id);
+                  }
+                  if (index === tabs.length-1) {
+                    chrome.runtime.sendMessage({ action: "getAssignments" });
+                  }
+                })
+              })
+            });
           });
         }
         break;
