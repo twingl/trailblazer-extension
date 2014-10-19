@@ -339,32 +339,37 @@
 
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
-            chrome.windows.getCurrent(function(window) {
-              chrome.tabs.getAllInWindow(window.id, function(tabs) {
-                _.each(tabs, function(tab, index) {
-                  console.log('tab', tab)
-                  if (_.contains(nodeTabIds, tab.id)) {
-                    var node = stateManager.getNode(tab.id);
 
-                    node.assignmentId = Assignment._getId();
-                    node.tempId = Node._getId();
-                    node.id = node.tempId;
-                    node.recording = false;
-                    console.log('does contain', node)
-                    node.save(stateManager._storageAdapter).then(function(updatedNode) {
-                      //unused
-                      chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
-                    });
-                  }
-                  if (tab.url.indexOf(mapUrlSubstring) !== -1) {
-                    //assignment's map is an open tab
-                    chrome.tabs.remove(tab.id);
-                  }
-                  if (index === tabs.length-1) {
-                    chrome.runtime.sendMessage({ action: "getAssignments" });
-                  }
-                })
-              })
+            chrome.tabs.query({ windowType: "normal" }, function(tabs) {
+
+              _.each(tabs, function(tab, index) {
+                if (_.contains(nodeTabIds, tab.id)) {
+                  var node = stateManager.getNode(tab.id);
+
+                  // Nodes don't have an assignment ID by default
+                  delete node.assignmentId;
+                  delete node.tabId;
+
+                  // Set up a new ID for the node (this will orhpan child nodes)
+                  node.id = node.tempId = Node._getId();
+
+                  // Reset the recording state of the node
+                  node.recording = false;
+
+                  console.log('does contain', node);
+
+                  // Broadcast an updated
+                  chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: node})
+                }
+
+                if (tab.url.indexOf(mapUrlSubstring) !== -1) {
+                  chrome.tabs.remove(tab.id);
+                }
+              });
+
+              //_.each is synchronous
+              chrome.runtime.sendMessage({ action: "getAssignments" });
+
             });
           });
         }
