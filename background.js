@@ -331,10 +331,38 @@
 
       case 'destroyAssignment':
         var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
+        var mapUrlSubstring = "map.html#assignment=" + assignment.id;
+        var nodes = stateManager.nodes(request.assignmentId);
+        var nodeTabIds = _.pluck(nodes, 'tabId');
 
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
-            chrome.runtime.sendMessage({ action: "getAssignments" });
+            chrome.tabs.query({ windowType: "normal" }, function(tabs) {
+              _.each(tabs, function(tab, index) {
+                if (_.contains(nodeTabIds, tab.id)) {
+                  var node = stateManager.getNode(tab.id);
+                  delete node.assignmentId;
+                  delete node.tabId;
+
+                  // Set up a new ID for the node (this will orhpan child nodes)
+                  node.id = node.tempId = Node._getId();
+
+                  // Reset the recording state of the node
+                  node.recording = false;
+
+                  // Broadcast an updated
+                  chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: node})
+                }
+
+                // close tab if it is a map of the deleted assignment
+                if (tab.url.indexOf(mapUrlSubstring) !== -1) {
+                  chrome.tabs.remove(tab.id);
+                }
+              });
+
+              //broadcast updated assignments list
+              chrome.runtime.sendMessage({ action: "getAssignments" });
+            });
           });
         }
         break;
