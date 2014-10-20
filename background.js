@@ -335,18 +335,12 @@
         var nodes = stateManager.nodes(request.assignmentId);
         var nodeTabIds = _.pluck(nodes, 'tabId');
 
-        console.log('destroyAssignment', assignment);
-
         if (assignment) {
           assignment.destroy(stateManager._storageAdapter).then(function() {
-
             chrome.tabs.query({ windowType: "normal" }, function(tabs) {
-
               _.each(tabs, function(tab, index) {
                 if (_.contains(nodeTabIds, tab.id)) {
                   var node = stateManager.getNode(tab.id);
-
-                  // Nodes don't have an assignment ID by default
                   delete node.assignmentId;
                   delete node.tabId;
 
@@ -356,20 +350,18 @@
                   // Reset the recording state of the node
                   node.recording = false;
 
-                  console.log('does contain', node);
-
                   // Broadcast an updated
                   chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: node})
                 }
 
+                // close tab if it is a map of the deleted assignment
                 if (tab.url.indexOf(mapUrlSubstring) !== -1) {
                   chrome.tabs.remove(tab.id);
                 }
               });
 
-              //_.each is synchronous
+              //broadcast updated assignments list
               chrome.runtime.sendMessage({ action: "getAssignments" });
-
             });
           });
         }
@@ -427,7 +419,6 @@
        * @function BackgroundJS.stopRecording
        */
       case 'stopRecording':
-        console.log('stopping recording', request)
         updateUIState(request.tabId, "idle");
         stateManager.stopRecording(request.tabId);
         sendResponse();
