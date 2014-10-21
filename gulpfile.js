@@ -1,30 +1,47 @@
-var gulp    = require('gulp')
-  , fs      = require('fs')
-  , bump    = require('gulp-bump')
-  , filter  = require('gulp-filter')
-  , pre     = require('gulp-preprocess')
-  , run     = require('gulp-run')
-  , util    = require('gulp-util')
-  , zip     = require('gulp-zip');
+var gulp        = require('gulp')
+  , fs          = require('fs')
+  , bump        = require('gulp-bump')
+  , filter      = require('gulp-filter')
+  , pre         = require('gulp-preprocess')
+  , run         = require('gulp-run')
+  , util        = require('gulp-util')
+  , zip         = require('gulp-zip')
+  , dotenv      = require('dotenv')
+  , browserify  = require('browserify');
+
+dotenv.load();
 
 
 var locations = {
   src: [
-    "./{adapter,model,core,lib,ui}/**/*",
-    "./background.js",
-    "./manifest.json",
-    "./delete-icon.svg"
+    "./src/{adapter,model,core,lib,ui}/**/*",
+    "./src/background.js",
+    "./src/manifest.json",
+    "./src/delete-icon.svg"
 
   ],
-  releaseDir: "./release"
+  releaseDir: "./release",
+  build: "./build",
 };
 
 gulp.task('build', function (cb) {
+
+  var bundler = browserify({
+    debug: true,
+  });
+
+  var bundle = function () {
+    return bundler()
+      .bundle()
+
+  }
+
+
   run('npm run build').exec(cb);
 });
 
 gulp.task('version-bump', function() {
-  return gulp.src("./manifest.json")
+  return gulp.src("./src/manifest.json")
       .pipe(bump({ type: "patch" }))
       .pipe(gulp.dest("./"));
 });
@@ -34,7 +51,7 @@ gulp.task('version-bump', function() {
  * Store and tags a release in the git repo.
  */
 gulp.task('release', ['build', 'version-bump'], function () {
-  var manifest = require("./manifest.json")
+  var manifest = require("./src/manifest.json")
     , versionTag     = "v" + manifest.version
     , versionMessage = "Release: " + versionTag
     , pkgName        = manifest.name.toLowerCase().replace(' ', '-') + "-" + versionTag + ".zip";
