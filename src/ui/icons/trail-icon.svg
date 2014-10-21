@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="54px" height="11px" viewBox="0 0 54 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8054) - http://www.bohemiancoding.com/sketch -->
+    <title>Trail</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Dropdown-Concept" sketch:type="MSLayerGroup" transform="translate(-85.000000, -79.000000)" fill="#FFFFFF">
+            <g id="Button" transform="translate(47.000000, 42.000000)" sketch:type="MSShapeGroup">
+                <g id="Colour-+-Trail" transform="translate(0.000000, 17.000000)">
+                    <path d="M52,23 L52,28 L86,28 L86,23 L52,23 Z M60,23 L60,28 L65,28 L65,23 L60,23 Z M73,23 L73,28 L78,28 L78,23 L73,23 Z M86,31 L86,20 L92,25.5 L86,31 Z M42.5,20 L46.9655762,22.75 L46.9655762,28.25 L42.5,31 L38.0339356,28.25 L38.0339356,22.75 L42.5,20 Z" id="Trail"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -7,10 +7,13 @@ var gulp        = require('gulp')
   , util        = require('gulp-util')
   , zip         = require('gulp-zip')
   , dotenv      = require('dotenv')
-  , browserify  = require('browserify');
+  , browserify  = require('browserify')
+  , source      = require('vinyl-source-stream')
+  , buffer      = require('vinyl-buffer')
+  , size        = require('gulp-size')
+  , uglify      = require('gulp-uglify');
 
 dotenv.load();
-
 
 var locations = {
   src: [
@@ -18,25 +21,26 @@ var locations = {
     "./src/background.js",
     "./src/manifest.json",
     "./src/delete-icon.svg"
-
   ],
   releaseDir: "./release",
   build: "./build",
 };
 
-gulp.task('build', function (cb) {
 
+gulp.task('build-map', function() {
   var bundler = browserify({
-    debug: true,
-  });
+    entries: ['./src/ui/pages/js/src/map.js']
+  })
 
-  var bundle = function () {
-    return bundler()
-      .bundle()
+  return bundler.bundle()
+    .pipe(source('map.js'))
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(size())
+    .pipe(gulp.dest('build/'))
+});
 
-  }
-
-
+gulp.task('build', function (cb) {
   run('npm run build').exec(cb);
 });
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="12px" height="14px" viewBox="0 0 12 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8054) - http://www.bohemiancoding.com/sketch -->
+    <title>Logout Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Logout-Icon" sketch:type="MSLayerGroup" fill="#222222">
+            <path d="M2,2.71428571 L2,0 L12,0 L12,14 L2,14 L2,11.2857143 L3.5,10.2142857 L3.5,12.5 L10.5,12.5 L10.5,1.5 L3.5,1.5 L3.5,3.78571429 L2,2.71428571 Z" id="Rectangle-92" sketch:type="MSShapeGroup"></path>
+            <path d="M0,11 L0,3 L5,7 L0,11 Z" id="Triangle-2" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

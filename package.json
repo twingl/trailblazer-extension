@@ -49,11 +49,15 @@
     "gulp-filter": "^1.0.2",
     "gulp-preprocess": "^1.1.1",
     "gulp-run": "^1.6.4",
+    "gulp-size": "^1.1.0",
     "gulp-sourcemaps": "^1.2.4",
+    "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.1",
     "gulp-zip": "^2.0.2",
     "npm-watch": "0.0.0",
     "reactify": "^0.14.0",
-    "uglifyify": "^2.5.0"
+    "uglifyify": "^2.5.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
   }
 }
