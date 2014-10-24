@@ -38,6 +38,16 @@ module.exports = {
         entries: './src/ui/pages/js/map.js',
         dest: dest,
         outputName: 'map.js'
+      },
+      {
+        entries: './src/ui/pages/js/trails.js',
+        dest: dest,
+        outputName: 'trails.js'
+      },
+      {
+        entries: './src/core/state_manager.js',
+        dest: dest,
+        outputName: 'state-manager.js'
       }
     ]
   }
