@@ -7,16 +7,20 @@
 
    See browserify.bundleConfigs in gulp/config.js
 */
-
+var argv         = require('yargs').argv;
 var browserify   = require('browserify');
-var watchify     = require('watchify');
-var bundleLogger = require('../util/bundleLogger');
-var gulp         = require('gulp');
-var handleErrors = require('../util/handleErrors');
-var source       = require('vinyl-source-stream');
-var config       = require('../config').browserify;
-var size         = require('gulp-size');
 var buffer       = require('vinyl-buffer');
+var bundleLogger = require('../util/bundleLogger');
+var config       = require('../config').browserify;
+var gulp         = require('gulp');
+var gulpif       = require('gulp-if');
+var handleErrors = require('../util/handleErrors');
+var size         = require('gulp-size');
+var source       = require('vinyl-source-stream');
+var uglify       = require('gulp-uglify');
+var watchify     = require('watchify');
+
+var ENV = process.env.NODE;
 
 gulp.task('browserify', function(callback) {
   var bundleQueue = config.bundleConfigs.length;
@@ -49,6 +53,8 @@ gulp.task('browserify', function(callback) {
         // desired output filename here.
         .pipe(source(bundleConfig.outputName))
         .pipe(buffer())
+        // accepts two ways of flagging for production
+        .pipe(gulpif((argv.production || ENV === 'production'), uglify()))
         .pipe(size())
         // Specify the output destination
         .pipe(gulp.dest(bundleConfig.dest))

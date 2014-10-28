@@ -28,21 +28,6 @@ var locations = {
   build: "./build",
 };
 
-
-
-// gulp.task('build-map', function() {
-//   var bundler = browserify({
-//     entries: ['./src/ui/pages/js/src/map.js']
-//   })
-
-//   return bundler.bundle()
-//     .pipe(source('map.js'))
-//     .pipe(buffer())
-//     .pipe(uglify())
-//     .pipe(size())
-//     .pipe(gulp.dest('build/'))
-// });
-
 gulp.task('build', function (cb) {
   run('npm run build').exec(cb);
 });
