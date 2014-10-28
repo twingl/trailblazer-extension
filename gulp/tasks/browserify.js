@@ -80,7 +80,6 @@ gulp.task('browserify', function(callback) {
         // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
         callback();
       }
-
     };
 
     return bundle();
