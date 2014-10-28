@@ -19,10 +19,11 @@ var size         = require('gulp-size');
 var buffer       = require('vinyl-buffer');
 
 gulp.task('browserify', function(callback) {
-
   var bundleQueue = config.bundleConfigs.length;
+  var index = 0;
 
-  var browserifyThis = function(bundleConfig) {
+  var browserifyThis = function(index) {
+    var bundleConfig = config.bundleConfigs[index];
 
     var bundler = browserify({
       // Required watchify args
@@ -51,7 +52,7 @@ gulp.task('browserify', function(callback) {
         .pipe(size())
         // Specify the output destination
         .pipe(gulp.dest(bundleConfig.dest))
-        .on('end', reportFinished);
+        .on('end', finished);
     };
 
     if(global.isWatching) {
@@ -61,23 +62,24 @@ gulp.task('browserify', function(callback) {
       bundler.on('update', bundle);
     }
 
-    var reportFinished = function() {
+    var finished = function() {
       // Log when bundling completes
       bundleLogger.end(bundleConfig.outputName)
 
-      if(bundleQueue) {
-        bundleQueue--;
-        if(bundleQueue === 0) {
-          // If queue is empty, tell gulp the task is complete.
-          // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
-          callback();
-        }
+      index++;
+      if(index < bundleQueue) {
+        browserifyThis(index)
+      } else {
+        // If queue is empty, tell gulp the task is complete.
+        // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
+        callback();
       }
+
     };
 
     return bundle();
   };
 
   // Start bundling with Browserify for each bundleConfig specified
-  config.bundleConfigs.forEach(browserifyThis);
+  browserifyThis(index)
 });
