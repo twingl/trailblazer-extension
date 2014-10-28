@@ -1,25 +1,10 @@
 var StateManager = require('./core/state-manager');
 var Keen = require('keen.io');
 
-
-// @ifdef PRODUCTION
-var REPORTING_ENABLED = true;
-// @endif
-
-// @ifndef PRODUCTION
-var REPORTING_ENABLED = false;
-// @endif
-
-// @ifdef PRODUCTION
-var CLIENT_ID = "a2042d508750087699fc5651f442dc6534fb8222125c29aba91b2c71d49e7061";
-var API_HOST  = "https://app.trailblazer.io";
-// @endif
-
-// @ifndef PRODUCTION
-var CLIENT_ID = "d3e24c417ab322f8189d47177748462d620781c24166419bb34ee04e35ffc785";
-var API_HOST  = "http://staging.trailblazer.io";
-// @endif
-
+// Environment Variables
+var REPORTING_ENABLED = process.env.REPORTING_ENABLED;
+var CLIENT_ID = process.env.CLIENT_ID;
+var API_HOST  = process.env.API_HOST;
 
 /**
  * **This is not an actual class, and functions documented here are actually
