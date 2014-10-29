@@ -35,11 +35,6 @@ module.exports = {
     // bundle config in the list below
     bundleConfigs: [
       {
-        entries: './src/config.js',
-        dest: dest,
-        outputName: 'config.js'
-      },
-      {
         entries: './src/ui/pages/js/map.js',
         dest: dest,
         outputName: 'map.js'
