@@ -54,7 +54,7 @@ TrailblazerHTTPStorageAdapter.prototype._request = function(url, httpMethod, opt
           }
         }); //superagent
     }.bind(this), function() {
-      throw "Tried to make authenticated request without token!
+      throw "Tried to make authenticated request without token!";
     }); //_stateManager.signIn()
   }.bind(this)); //promise
 
