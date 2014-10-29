@@ -22,7 +22,6 @@
   },
   "background": {
     "scripts": [
-      "build/state-manager.js",
       "build/background.js"
     ]
   },
