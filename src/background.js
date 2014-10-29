@@ -9,6 +9,7 @@ var StateManager = require('./core/state-manager');
 
 // helpers
 var Keen = require('../vendor/keen');
+var _    = require('lodash');
 
 /**
  * **This is not an actual class, and functions documented here are actually
