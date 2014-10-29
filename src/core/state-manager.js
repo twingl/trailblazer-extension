@@ -137,30 +137,6 @@ StateManager.prototype.nodes = function(assignmentId, cb) {
 };
 
 /**
- * Proxy function to the IdentityAdapter's signIn
- * @function StateManager#signIn
- */
-StateManager.prototype.signIn = function() {
-  return this._identityAdapter.signIn();
-};
-
-/**
- * Proxy function to the IdentityAdapter's signOut
- * @function StateManager#signOut
- */
-StateManager.prototype.signOut = function() {
-  return this._identityAdapter.signOut();
-};
-
-/**
- * Proxy function to the IdentityAdapter's isSignedIn
- * @function StateManager#isSignedIn
- */
-StateManager.prototype.isSignedIn = function() {
-  return this._identityAdapter.isSignedIn();
-};
-
-/**
  * Start recording the activity of a Tab.
  *
  * This method is intended to start recording on Tabs "manually" - that is,
