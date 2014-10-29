@@ -114,6 +114,10 @@ Node.list = function(assignmentId) {
   }.bind(this));
 };
 
+// TODO break out into create() and update() - simplifies the models greatly
+// and will avoid potentially overwriting fields when calling save in quick
+// succession (dirty attributes aren't tracked, so the whole model is sent in
+// the request)
 Node.prototype.save = function() {
   var updateChildren = function(parentNode) {
     var children = Node.where({
