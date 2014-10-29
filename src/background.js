@@ -475,7 +475,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
           keenEvent.keen = { timestamp: new Date().toISOString() };
 
-          if (config.keen.enabled) {
+          if (config.keen.enabled === "true") {
             console.log("reporting event: " + request.eventName, keenEvent);
             keenClient.addEvent(request.eventName, keenEvent);
           } else {
