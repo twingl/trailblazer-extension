@@ -1,11 +1,14 @@
-var StateManager = require('./core/state-manager');
-//Keen not working yet.
-// var Keen = require('keen.io');
+// config
+var config = require('./config');
 
-// Environment Variables
-var REPORTING_ENABLED = process.env.REPORTING_ENABLED;
-var CLIENT_ID = process.env.CLIENT_ID;
-var API_HOST  = process.env.API_HOST;
+// adapters
+var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
+
+// core
+var StateManager = require('./core/state-manager');
+
+// helpers
+// var Keen = require('keen.io');
 
 /**
  * **This is not an actual class, and functions documented here are actually
@@ -21,11 +24,11 @@ var API_HOST  = process.env.API_HOST;
 
 // var keenClient = Keen.configure({
 //   requestType: "xhr",
-//   projectId: "54264ce280a7bd5b525ad712",
-//   writeKey: "efe90ef21a97678868e8fb2aa5f1bc3da9f5311f417c915058c9bdf1e24a2d75c65e39b2ab4290d406969087657880bc513d65625cec3f73e6ff232cb190113f9d163fbc16f001b8cea75ae15e4bbe255d9b16caf8e4376c405f40440147cda09fd7e3af3798491c2a318072e4a761f4"
+//   projectId: config.keen.projectId,
+//   writeKey: config.keen.writeKey
 // });
 
-var keenUserData = {};
+ var keenUserData = {};
 
 /**
  * @property {Object} BackgroundJS.popupStates
@@ -113,7 +116,7 @@ var updateUIState = function (tabId, state) {
 // Set the state of the popup when we change tabs
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   stateManager.isSignedIn().then(function (signedIn) {
-    var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[activeInfo.tabId]);
+    var node = Node.cache.read(stateManager._tabIdMap[activeInfo.tabId]);
 
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page
@@ -133,7 +136,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 // Set the state of the popup a tab is updated
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   stateManager.isSignedIn().then(function (signedIn) {
-    var node = Node.cache.read(stateManager._storageAdapter, stateManager._tabIdMap[tabId]);
+    var node = Node.cache.read(stateManager._tabIdMap[tabId]);
 
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page
@@ -150,24 +153,15 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   });
 });
 
-var stateManager = new StateManager({
-  api: {
-    host: API_HOST,
-    clientId: CLIENT_ID,
-    nameSpace: "api",
-    version: "v1"
-  },
-  eventAdapter:    ChromeEventAdapter,
-  identityAdapter: ChromeIdentityAdapter,
-  storageAdapter: TrailblazerHTTPStorageAdapter
-});
+var stateManager = new StateManager();
 
 chrome.runtime.onInstalled.addListener(function(details) {
   switch(details.reason) {
     case "update":
       // Do stuff
-      stateManager._identityAdapter.getToken().then(function(token) {
-        stateManager._identityAdapter.storeToken(token);
+      var identity = new ChromeIdentityAdapter();
+      identity.getToken().then(function(token) {
+        identity.storeToken(token);
       });
       break;
     case "install":
@@ -214,7 +208,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
     case 'getNode':
       if (request.nodeId) {
-        var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+        var node = Node.cache.read(request.nodeId);
         sendResponse({node: node});
       } else if (request.tabId) {
         var node = stateManager.getNode(request.tabId);
@@ -230,11 +224,11 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       break;
 
     case 'updateNode':
-      var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+      var node = Node.cache.read(request.nodeId);
 
       if (node && request.props) {
         node = _.extend(node, request.props);
-        node.save(stateManager._storageAdapter).then(function(updatedNode) {
+        node.save().then(function(updatedNode) {
           //unused
           chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
         })
@@ -260,7 +254,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.resumeAssignment
      */
     case 'resumeAssignment':
-      var node = Node.cache.read(stateManager._storageAdapter, request.nodeId);
+      var node = Node.cache.read(request.nodeId);
       var focus = request.focus || false;
       chrome.tabs.create({ url: node.url, active: focus }, function(tab) {
         stateManager.resumeRecording(tab.id, request.nodeId);
@@ -309,7 +303,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     case 'getCurrentAssignment':
       var node = stateManager.getCurrentNode();
       if (node && node.assignmentId && node.recording) {
-        var assignment = Assignment.cache.read(stateManager._storageAdapter, node.assignmentId);
+        var assignment = Assignment.cache.read(node.assignmentId);
         sendResponse(assignment || false);
       } else {
         sendResponse(false);
@@ -317,13 +311,13 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       break;
 
     case 'destroyAssignment':
-      var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
+      var assignment = Assignment.cache.read(request.assignmentId);
       var mapUrlSubstring = "map.html#assignment=" + assignment.id;
       var nodes = stateManager.nodes(request.assignmentId);
       var nodeTabIds = _.pluck(nodes, 'tabId');
 
       if (assignment) {
-        assignment.destroy(stateManager._storageAdapter).then(function() {
+        assignment.destroy().then(function() {
           chrome.tabs.query({ windowType: "normal" }, function(tabs) {
             _.each(tabs, function(tab, index) {
               if (_.contains(nodeTabIds, tab.id)) {
@@ -355,11 +349,11 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       break;
 
     case 'updateAssignment':
-      var assignment = Assignment.cache.read(stateManager._storageAdapter, request.assignmentId);
+      var assignment = Assignment.cache.read(request.assignmentId);
       if (assignment && request.props) {
         assignment = _.extend(assignment, request.props);
 
-        assignment.save(stateManager._storageAdapter).then(function(savedAssignment) {
+        assignment.save().then(function(savedAssignment) {
           chrome.runtime.sendMessage({action: 'updatedAssignment', assignment: savedAssignment})
         });
       };
@@ -465,7 +459,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.trackUIEvent
      */
     case 'trackUIEvent':
-      // stateManager._identityAdapter.getToken().then(function(token) {
+      // new ChromeIdentityAdapter().getToken().then(function(token) {
       //   chrome.runtime.getPlatformInfo(function(platformInfo) {
 
       //     var keenEvent = request.eventData;
@@ -480,7 +474,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
       //     keenEvent.keen = { timestamp: new Date().toISOString() };
 
-      //     if (REPORTING_ENABLED) {
+      //     if (config.keen.enabled) {
       //       console.log("reporting event: " + request.eventName, keenEvent);
       //       keenClient.addEvent(request.eventName, keenEvent);
       //     } else {

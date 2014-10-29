@@ -1,6 +1,8 @@
 var _           = require('lodash');
 var Promise     = require('promise');
 
+var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
+
 Assignment = function(properties) {
   var properties = properties || {};
 
@@ -64,44 +66,40 @@ Assignment._getId = function() {
 
 /**
  * Return an Assignment, if it exists, corresponding to the given ID.
- * @param {StorageAdapter} adapter - The storage adapter to query
  * @param {number} id - The ID of the {@link Assignment}
  * @returns {Assignment}
  */
-Assignment.cache.read = function(adapter, id) {
+Assignment.cache.read = function(id) {
   return Assignment._instances[id];
 };
 
 /**
  * Return all Assignments in the cache
- * @param {StorageAdapter} adapter - The storage adapter to query
  * @param {number} id - The ID of the {@link Assignment}
  * @returns {Array<Assignment>}
  */
-Assignment.cache.list = function(adapter) {
+Assignment.cache.list = function() {
   return _.values(Assignment._instances);
 };
 
 /**
  * Request an Assignment from the storage adapter corresponding to the
  * provided ID
- * @param {StorageAdapter} adapter - The storage adapter to query
  * @param {number} id - The ID of the {@link Assignment}
  * @returns {Assignment}
  */
-Assignment.read = function(adapter, id) {
-  return adapter.read("assignments", id);
+Assignment.read = function(id) {
+  return new TrailblazerHTTPStorageAdapter().read("assignments", id);
 };
 
 /**
  * Request all Assignments from the storage adapter.
- * @param {StorageAdapter} adapter - The storage adapter to query
  * @returns {Promise} - Resolves with Array<Assignment> or an error object
  */
-Assignment.list = function(adapter) {
+Assignment.list = function() {
   return new Promise(function(resolve, reject) {
     // Request assignments from the storage adapter
-    adapter.list("assignments").then(
+    new TrailblazerHTTPStorageAdapter().list("assignments").then(
       function(response) {
         // Update our cache with the response (only for keys in the response -
         // we may have unsaved models)
@@ -110,7 +108,7 @@ Assignment.list = function(adapter) {
         }.bind(this));
 
         // Resolve the promise with the assignments
-        resolve(Assignment.cache.list(adapter));
+        resolve(Assignment.cache.list());
       }.bind(this),
 
       // Reject the Promise with the adapter error
@@ -118,13 +116,13 @@ Assignment.list = function(adapter) {
   }.bind(this));
 };
 
-Assignment.prototype.save = function(adapter) {
+Assignment.prototype.save = function() {
   if (!this._saving) {
     this._saving = true;
     return new Promise(function(resolve, reject) {
       if (typeof this.id === "number") {
         // It's been saved before
-        adapter.update("assignments", this.id, { assignment: this.toProps() }, {})
+        new TrailblazerHTTPStorageAdapter().update("assignments", this.id, { assignment: this.toProps() }, {})
           .then(function(response) {
             this.id = response.id;
             this.url = response.url;
@@ -134,7 +132,7 @@ Assignment.prototype.save = function(adapter) {
 
       } else if (this.id.indexOf("TB_.") >= 0) {
         // It's a temporary ID
-        adapter.create("assignments", { assignment: this.toProps() }, {})
+        new TrailblazerHTTPStorageAdapter().create("assignments", { assignment: this.toProps() }, {})
           .then(function(response) {
             delete Assignment._instances[this.id];
             this.id = response.id;
@@ -147,12 +145,12 @@ Assignment.prototype.save = function(adapter) {
   }
 };
 
-Assignment.prototype.destroy = function(adapter) {
+Assignment.prototype.destroy = function() {
   // Purge from the cache
   delete Assignment._instances[this.id];
   if (typeof this.id === "number") {
     // It's not a temp ID, so it should be persisted on the server
-    return adapter.destroy("assignments", this.id);
+    return new TrailblazerHTTPStorageAdapter().destroy("assignments", this.id);
   } else {
     return new Promise(function(resolve, reject) { resolve(); });
   }
@@ -170,5 +168,3 @@ Assignment.cache.findWhere = function(props) {
 
 
 module.exports = Assignment;
-
-

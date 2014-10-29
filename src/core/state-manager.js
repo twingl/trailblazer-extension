@@ -2,6 +2,10 @@
 var Node        = require('../model/node')
   , Assignment  = require('../model/assignment');
 
+// adapters
+var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
+  , ChromeEventAdapter    = require('../adapter/chrome_event_adapter');
+
 //helpers
 var _           = require('lodash')
   , Promise     = require('promise')
@@ -9,12 +13,7 @@ var _           = require('lodash')
 //constants
 var DEBOUNCE_MS = 700;
 
-var StateManager = function(config) {
-  /**
-   * @property {StateManager.Config} _config
-   */
-  this._config = config;
-
+var StateManager = function() {
   /**
    * @property {Map<number, number>} _tabIdMap - Map of Tab IDs to Node IDs.
    * @TODO: Declare whether tab IDs need to be in existence to be included in
@@ -35,20 +34,14 @@ var StateManager = function(config) {
    * EventAdapter being used to receive events
    * @private
    */
-  this._eventAdapter = new this._config.eventAdapter(this);
+  this._eventAdapter = new ChromeEventAdapter();
 
   /**
    * @property {IdentityAdapter} _identityAdapter - The instance of the
    * IdentityAdapter being used for authentication
    * @private
    */
-  this._identityAdapter = new this._config.identityAdapter(this);
-
-  /**
-   * @property {StorageAdapter} _storageAdapter - The instance of the
-   * StorageAdapter being used for communicating with resource stores
-   */
-  this._storageAdapter = new this._config.storageAdapter(this);
+  this._identityAdapter = new ChromeIdentityAdapter();
 
   /**
    * @property {Array} _eventBuffer - Buffer into which events are pushed
@@ -70,14 +63,6 @@ var StateManager = function(config) {
 };
 
 /**
- * Accessor function to get a reference to the config object
- * @function StateManager#getConfig
- */
-StateManager.prototype.getConfig = function() {
-  return this._config;
-};
-
-/**
  * Return the collection of nodes associated with an assignment, or all nodes
  * if no ID is supplied.
  *
@@ -89,12 +74,12 @@ StateManager.prototype.getConfig = function() {
 StateManager.prototype.getMap = function(assignmentId, callback) {
   var data = {
     nodes: {},
-    assignment: Assignment.cache.read(this._storageAdapter, assignmentId),
+    assignment: Assignment.cache.read(assignmentId),
   };
 
   // Make a copy of the node store
   var tmp = {};
-  _.extend(tmp, Node.cache.list(this._storageAdapter, assignmentId));
+  _.extend(tmp, Node.cache.list(assignmentId));
 
   // Form a Map<Node.id, Node>
   _.each(tmp, function(node, key) { data.nodes[node.id] = node; });
@@ -130,10 +115,10 @@ StateManager.prototype.getMap = function(assignmentId, callback) {
  * assignments from the server
  */
 StateManager.prototype.assignments = function(cb) {
-  Assignment.list(this._storageAdapter).then(function(assignments) {
+  Assignment.list().then(function(assignments) {
     cb(assignments);
   });
-  return Assignment.cache.list(this._storageAdapter);
+  return Assignment.cache.list();
 };
 
 
@@ -145,10 +130,10 @@ StateManager.prototype.assignments = function(cb) {
  * nodes from the server
  */
 StateManager.prototype.nodes = function(assignmentId, cb) {
-  Node.list(this._storageAdapter, assignmentId).then(function(nodes) {
+  Node.list(assignmentId).then(function(nodes) {
     cb(nodes);
   });
-  return Node.cache.list(this._storageAdapter, assignmentId);
+  return Node.cache.list(assignmentId);
 };
 
 /**
@@ -192,7 +177,7 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
     var assignment;
     if (assignmentId) {
       // It's an existing assignment
-      assignment = Assignment.cache.read(this._storageAdapter, assignmentId);
+      assignment = Assignment.cache.read(assignmentId);
     } else {
       // We need to create a new assignment
       assignment = new Assignment();
@@ -203,10 +188,10 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
     // Ensure we have a valid ID for the assignment so we can start saving
     // the trail
     return new Promise(function(resolve, reject) {
-      assignment.save(this._storageAdapter).then(function(assignment) {
+      assignment.save().then(function(assignment) {
         this.getNode(tabId).assignmentId = assignment.id;
         this.getNode(tabId).recording = true;
-        this.getNode(tabId).save(this._storageAdapter);
+        this.getNode(tabId).save();
         // TODO Feature? Iterate over the existing, in-memory nodes and save the
         // connected graph - this will save the entire tree, if desirable.
         // Pending team discussion
@@ -286,7 +271,7 @@ StateManager.prototype.getNode = function(tabId) {
 
   if (nodeId) {
     // Return the existing Node
-    node = Node.cache.read(this._storageAdapter, nodeId);
+    node = Node.cache.read(nodeId);
   } else {
     // Create and map the Tab ID to a new Node
     node = new Node();
@@ -306,7 +291,7 @@ StateManager.prototype.getCurrentNode = function() {
   var nodeId = this._tabIdMap[this._currentTabId];
 
   if (nodeId) {
-    return Node.cache.read(this._storageAdapter, nodeId);
+    return Node.cache.read(nodeId);
   } else {
     return null;
   }
@@ -374,7 +359,7 @@ StateManager.prototype.createdTab = function(evt) {
 
   if (this._tabIdMap[evt.data.tabId]) {
     // This is a resumed node
-    node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
     node.tabId = evt.data.tabId;
     this._tabIdMap[evt.data.tabId] = node.id;
   } else {
@@ -393,7 +378,7 @@ StateManager.prototype.createdTab = function(evt) {
         node.recording    = currentNode.recording;
         node.assignmentId = currentNode.assignmentId;
 
-        node.save(this._storageAdapter).then(function(savedNode) {
+        node.save().then(function(savedNode) {
           this._tabIdMap[evt.data.tabId] = savedNode.id;
         }.bind(this));
       }
@@ -413,8 +398,8 @@ StateManager.prototype.createdTab = function(evt) {
  * @private
  */
 StateManager.prototype.updatedTab = function(evt) {
-  var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
-  var parentNode = (node && node.parentId) ? Node.cache.read(this._storageAdapter, node.parentId) : undefined;
+  var node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
+  var parentNode = (node && node.parentId) ? Node.cache.read(node.parentId) : undefined;
 
   if (node && evt.data.url && evt.data.url !== node.url) {
     if (node.url === "chrome://newtab/" || node.url === "") {
@@ -423,13 +408,13 @@ StateManager.prototype.updatedTab = function(evt) {
       node.title = evt.data.title;
     } else if (parentNode && evt.data.url && evt.data.url === parentNode.url) {
       // Navigating back
-      var node = Node.cache.read(this._storageAdapter, node.id);
+      var node = Node.cache.read(node.id);
       delete node.tabId;
       parentNode.recording = node.recording;
       this._tabIdMap[evt.data.tabId] = parentNode.id;
     } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
       // Navigating to an existing child
-      var node = Node.cache.read(this._storageAdapter, node.id);
+      var node = Node.cache.read(node.id);
       delete node.tabId;
       var childNode = Node.findWhere({ parentId: node.id, url: evt.data.url });
       childNode.recording = node.recording;
@@ -449,7 +434,7 @@ StateManager.prototype.updatedTab = function(evt) {
       };
 
       if (typeof node.id === "number" && newNode.recording && newNode.assignmentId) {
-        newNode.save(this._storageAdapter).then(function(savedNode) {
+        newNode.save().then(function(savedNode) {
           this._tabIdMap[evt.data.tabId] = savedNode.id;
         }.bind(this));
       };
@@ -484,7 +469,7 @@ StateManager.prototype.switchedTab = function(evt) {
  * @private
  */
 StateManager.prototype.closedTab = function(evt) {
-  var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+  var node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
   if (node) {
     delete node.recording;
     delete node.tabId;
@@ -505,11 +490,11 @@ StateManager.prototype.closedTab = function(evt) {
  */
 StateManager.prototype.resumedNode = function(evt) {
   // Get the node to be resumed
-  var node = Node.cache.read(this._storageAdapter, evt.data.nodeId);
+  var node = Node.cache.read(evt.data.nodeId);
 
   // If a node was created by the createdTab event, remove it
   if (this._tabIdMap[evt.data.tabId]) {
-    var tmpNode = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId]);
+    var tmpNode = Node.cache.read(this._tabIdMap[evt.data.tabId]);
     tmpNode.destroy();
   }
 
@@ -519,11 +504,11 @@ StateManager.prototype.resumedNode = function(evt) {
 };
 
 StateManager.prototype.redirectPending = function(evt) {
-  var node = Node.cache.read(this._storageAdapter, this._tabIdMap[evt.data.tabId])
+  var node = Node.cache.read(this._tabIdMap[evt.data.tabId])
   //switch url with redirect url
   //TODO make sure title is correct
   node.url = evt.data.redirectUrl
-  node.save(this._storageAdapter).then(function(updatedNode) {
+  node.save().then(function(updatedNode) {
     //unused
     chrome.runtime.sendMessage({action: 'updatedNode', updatedNode: updatedNode})
   });

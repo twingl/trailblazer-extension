@@ -67,6 +67,7 @@
     "pretty-hrtime": "^0.2.2",
     "reactify": "^0.14.0",
     "require-dir": "^0.1.0",
+    "superagent": "^0.20.0",
     "uglifyify": "^2.5.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
