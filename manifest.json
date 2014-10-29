@@ -22,12 +22,6 @@
   },
   "background": {
     "scripts": [
-      "src/lib/underscore.js",
-      "src/lib/superagent.js",
-      "src/lib/promise-5.0.0.js",
-      "src/adapter/chrome_event_adapter.js",
-      "src/adapter/chrome_identity_adapter.js",
-      "src/adapter/trailblazer_http_storage_adapter.js",
       "build/state-manager.js",
       "build/background.js"
     ]

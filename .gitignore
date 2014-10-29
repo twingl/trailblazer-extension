@@ -5,6 +5,7 @@ ui/pages/js/build/*
 ui/popup/js/build/*
 build/*
 .env*
+!.env-example
 doc/
 .DS_Store
 .module-cache
