@@ -8,7 +8,7 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 var StateManager = require('./core/state-manager');
 
 // helpers
-// var Keen = require('keen.io');
+var Keen = require('../vendor/keen');
 
 /**
  * **This is not an actual class, and functions documented here are actually
@@ -22,11 +22,11 @@ var StateManager = require('./core/state-manager');
  * @classname BackgroundJS
  */
 
-// var keenClient = Keen.configure({
-//   requestType: "xhr",
-//   projectId: config.keen.projectId,
-//   writeKey: config.keen.writeKey
-// });
+var keenClient = new Keen({
+  requestType: "xhr",
+  projectId: config.keen.projectId,
+  writeKey: config.keen.writeKey
+});
 
  var keenUserData = {};
 
@@ -459,29 +459,29 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.trackUIEvent
      */
     case 'trackUIEvent':
-      // new ChromeIdentityAdapter().getToken().then(function(token) {
-      //   chrome.runtime.getPlatformInfo(function(platformInfo) {
+      new ChromeIdentityAdapter().getToken().then(function(token) {
+        chrome.runtime.getPlatformInfo(function(platformInfo) {
 
-      //     var keenEvent = request.eventData;
+          var keenEvent = request.eventData;
 
-      //     keenEvent.token = token.access_token;
-      //     keenEvent.userId = token.user_id;
+          keenEvent.token = token.access_token;
+          keenEvent.userId = token.user_id;
 
-      //     keenEvent.extensionVersion = chrome.runtime.getManifest().version;
+          keenEvent.extensionVersion = chrome.runtime.getManifest().version;
 
-      //     keenEvent.platformInfo = platformInfo;
-      //     keenEvent.userAgent = navigator.userAgent;
+          keenEvent.platformInfo = platformInfo;
+          keenEvent.userAgent = navigator.userAgent;
 
-      //     keenEvent.keen = { timestamp: new Date().toISOString() };
+          keenEvent.keen = { timestamp: new Date().toISOString() };
 
-      //     if (config.keen.enabled) {
-      //       console.log("reporting event: " + request.eventName, keenEvent);
-      //       keenClient.addEvent(request.eventName, keenEvent);
-      //     } else {
-      //       console.log("not reporting event: " + request.eventName, keenEvent);
-      //     }
-      //   });
-      // });
+          if (config.keen.enabled) {
+            console.log("reporting event: " + request.eventName, keenEvent);
+            keenClient.addEvent(request.eventName, keenEvent);
+          } else {
+            console.log("not reporting event: " + request.eventName, keenEvent);
+          }
+        });
+      });
       break;
   }
 
