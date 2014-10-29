@@ -30,7 +30,7 @@ var AsssignmentItem = React.createClass({
                 onClick={this.handleClick} >
                 {this.props.item.title}
                 <a onClick={this.destroyAnimation}>
-                  <img src="/ui/icons/delete-icon.svg" />
+                  <img src="/src/ui/icons/delete-icon.svg" />
                 </a>
               </li>
             </div>
@@ -51,7 +51,7 @@ var AsssignmentItem = React.createClass({
         userId:       this.props.item.user_id
       }
     });
-    window.location.href  = "/ui/pages/map.html#assignment=" + id;
+    window.location.href  = "/src/ui/pages/map.html#assignment=" + id;
   },
 
   destroy: function () {

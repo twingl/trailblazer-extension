@@ -19,7 +19,7 @@
       chrome.runtime.sendMessage({ action: "signOut" }, function(success) {
         // When we hear that it was successful, navigate to the unauth view
         if (success) {
-          window.location.href = "/ui/popup/not_authenticated.html";
+          window.location.href = "/src/ui/popup/not_authenticated.html";
         }
       });
     });
@@ -50,7 +50,7 @@
       chrome.runtime.sendMessage({ action: "signIn" }, function(success) {
         // When we hear that it was successful, navigate to the idle view
         if (success) {
-          window.location.href = "/ui/popup/idle.html";
+          window.location.href = "/src/ui/popup/idle.html";
         }
       });
     });

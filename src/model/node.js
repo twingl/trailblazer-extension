@@ -1,8 +1,6 @@
 var _       = require('lodash');
 var Promise = require('promise');
 
-
-module.exports = Node;
 /**
  * @lends Node
  */
@@ -193,4 +191,4 @@ Node.where = function(props) {
   return _.where(Node._instances, props);
 };
 
-
+module.exports = Node;

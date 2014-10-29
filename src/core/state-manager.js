@@ -9,9 +9,6 @@ var _           = require('lodash')
 //constants
 var DEBOUNCE_MS = 700;
 
-module.exports = StateManager;
-
-
 var StateManager = function(config) {
   /**
    * @property {StateManager.Config} _config
@@ -549,4 +546,4 @@ StateManager.prototype._bindEvent = function(name) {
   }.bind(this));
 };
 
-
+module.exports = StateManager;

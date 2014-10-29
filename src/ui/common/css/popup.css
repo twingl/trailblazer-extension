@@ -17,7 +17,7 @@ h1 {
 
 
 .idle {
-  background-image: url(/ui/icons/idle-background.png);
+  background-image: url(/src/ui/icons/idle-background.png);
   background-repeat: none;
   background-size: 100%
 }
@@ -101,7 +101,7 @@ h1 {
 }
 
 .start-recording{
-	background-image:url(/ui/icons/new-icon.svg);
+	background-image:url(/src/ui/icons/new-icon.svg);
 	background-repeat: no-repeat;
 	background-position:92px 16px;
 }

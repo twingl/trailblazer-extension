@@ -18,7 +18,7 @@
         });
 
         // Open the map in a new tab
-        chrome.tabs.create({ url: chrome.extension.getURL("/ui/pages/map.html#assignment=" + (response.id || false) ) });
+        chrome.tabs.create({ url: chrome.extension.getURL("/src/ui/pages/map.html#assignment=" + (response.id || false) ) });
       });
     });
 

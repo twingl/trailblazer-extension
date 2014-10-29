@@ -1,5 +1,6 @@
 var StateManager = require('./core/state-manager');
-var Keen = require('keen.io');
+//Keen not working yet.
+// var Keen = require('keen.io');
 
 // Environment Variables
 var REPORTING_ENABLED = process.env.REPORTING_ENABLED;
@@ -18,11 +19,11 @@ var API_HOST  = process.env.API_HOST;
  * @classname BackgroundJS
  */
 
-var keenClient = Keen.configure({
-  requestType: "xhr",
-  projectId: "54264ce280a7bd5b525ad712",
-  writeKey: "efe90ef21a97678868e8fb2aa5f1bc3da9f5311f417c915058c9bdf1e24a2d75c65e39b2ab4290d406969087657880bc513d65625cec3f73e6ff232cb190113f9d163fbc16f001b8cea75ae15e4bbe255d9b16caf8e4376c405f40440147cda09fd7e3af3798491c2a318072e4a761f4"
-});
+// var keenClient = Keen.configure({
+//   requestType: "xhr",
+//   projectId: "54264ce280a7bd5b525ad712",
+//   writeKey: "efe90ef21a97678868e8fb2aa5f1bc3da9f5311f417c915058c9bdf1e24a2d75c65e39b2ab4290d406969087657880bc513d65625cec3f73e6ff232cb190113f9d163fbc16f001b8cea75ae15e4bbe255d9b16caf8e4376c405f40440147cda09fd7e3af3798491c2a318072e4a761f4"
+// });
 
 var keenUserData = {};
 
@@ -31,31 +32,31 @@ var keenUserData = {};
  */
 var extensionStates = {
   recording: {
-    popup: "/ui/popup/recording.html",
+    popup: "/src/ui/popup/recording.html",
     browserAction: {
-      19: "/ui/icons/19-recording.png",
-      38: "/ui/icons/38-recording.png"
+      19: "/src/ui/icons/19-recording.png",
+      38: "/src/ui/icons/38-recording.png"
     }
   },
   idle: {
-    popup: "/ui/popup/idle.html",
+    popup: "/src/ui/popup/idle.html",
     browserAction: {
-      19: "/ui/icons/19.png",
-      38: "/ui/icons/38.png"
+      19: "/src/ui/icons/19.png",
+      38: "/src/ui/icons/38.png"
     }
   },
   notAuthenticated: {
-    popup: "/ui/popup/not_authenticated.html",
+    popup: "/src/ui/popup/not_authenticated.html",
     browserAction: {
-      19: "/ui/icons/19.png",
-      38: "/ui/icons/38.png"
+      19: "/src/ui/icons/19.png",
+      38: "/src/ui/icons/38.png"
     }
   },
   default: {
-    popup: "/ui/popup/unknown.html",
+    popup: "/src/ui/popup/unknown.html",
     browserAction: {
-      19: "/ui/icons/19-unknown.png",
-      38: "/ui/icons/38-unknown.png"
+      19: "/src/ui/icons/19-unknown.png",
+      38: "/src/ui/icons/38-unknown.png"
     }
   }
 };
@@ -171,7 +172,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
       break;
     case "install":
       // Show onboarding
-      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/ui/pages/welcome.html") });
+      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/src/ui/pages/welcome.html") });
       break;
     case "chrome_update":
       //
@@ -464,29 +465,29 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.trackUIEvent
      */
     case 'trackUIEvent':
-      stateManager._identityAdapter.getToken().then(function(token) {
-        chrome.runtime.getPlatformInfo(function(platformInfo) {
+      // stateManager._identityAdapter.getToken().then(function(token) {
+      //   chrome.runtime.getPlatformInfo(function(platformInfo) {
 
-          var keenEvent = request.eventData;
+      //     var keenEvent = request.eventData;
 
-          keenEvent.token = token.access_token;
-          keenEvent.userId = token.user_id;
+      //     keenEvent.token = token.access_token;
+      //     keenEvent.userId = token.user_id;
 
-          keenEvent.extensionVersion = chrome.runtime.getManifest().version;
+      //     keenEvent.extensionVersion = chrome.runtime.getManifest().version;
 
-          keenEvent.platformInfo = platformInfo;
-          keenEvent.userAgent = navigator.userAgent;
+      //     keenEvent.platformInfo = platformInfo;
+      //     keenEvent.userAgent = navigator.userAgent;
 
-          keenEvent.keen = { timestamp: new Date().toISOString() };
+      //     keenEvent.keen = { timestamp: new Date().toISOString() };
 
-          if (REPORTING_ENABLED) {
-            console.log("reporting event: " + request.eventName, keenEvent);
-            keenClient.addEvent(request.eventName, keenEvent);
-          } else {
-            console.log("not reporting event: " + request.eventName, keenEvent);
-          }
-        });
-      });
+      //     if (REPORTING_ENABLED) {
+      //       console.log("reporting event: " + request.eventName, keenEvent);
+      //       keenClient.addEvent(request.eventName, keenEvent);
+      //     } else {
+      //       console.log("not reporting event: " + request.eventName, keenEvent);
+      //     }
+      //   });
+      // });
       break;
   }
 

@@ -24,7 +24,7 @@
         // We've heard back from the server
         chrome.runtime.sendMessage({ action: "startRecording", tabId: tab.id }, function(response) {
           if (response.success) {
-            window.location.href = "/ui/popup/recording.html";
+            window.location.href = "/src/ui/popup/recording.html";
           } else {
             // Remove the loading state and notify that it failed
             $('.start-recording').removeClass('loading');
@@ -52,7 +52,7 @@
       });
 
       // Open new tab showing list of assignments
-      chrome.tabs.create({ url: "/ui/pages/trails.html" });
+      chrome.tabs.create({ url: "/src/ui/pages/trails.html" });
     });
 
   });

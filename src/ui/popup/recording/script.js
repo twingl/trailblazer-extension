@@ -19,7 +19,7 @@
         var tab = tabs[0];
 
         chrome.runtime.sendMessage({ action: "stopRecording", tabId: tab.id }, function() {
-          window.location.href = "/ui/popup/idle.html";
+          window.location.href = "/src/ui/popup/idle.html";
         });
       });
     });

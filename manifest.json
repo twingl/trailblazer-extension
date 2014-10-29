@@ -16,30 +16,27 @@
     "windows"
   ],
   "icons": {
-    "16": "ui/icons/16.png",
-    "48": "ui/icons/48.png",
-    "128": "ui/icons/128.png"
+    "16": "src/ui/icons/16.png",
+    "48": "src/ui/icons/48.png",
+    "128": "src/ui/icons/128.png"
   },
   "background": {
     "scripts": [
-      "lib/keen-tracker-3.0.8.min.js",
-      "lib/underscore.js",
-      "lib/superagent.js",
-      "lib/promise-5.0.0.js",
-      "model/assignment.js",
-      "model/node.js",
-      "adapter/chrome_event_adapter.js",
-      "adapter/chrome_identity_adapter.js",
-      "adapter/trailblazer_http_storage_adapter.js",
-      "core/state_manager.js",
-      "background.js"
+      "src/lib/underscore.js",
+      "src/lib/superagent.js",
+      "src/lib/promise-5.0.0.js",
+      "src/adapter/chrome_event_adapter.js",
+      "src/adapter/chrome_identity_adapter.js",
+      "src/adapter/trailblazer_http_storage_adapter.js",
+      "build/state-manager.js",
+      "build/background.js"
     ]
   },
   "browser_action": {
     "default_icon": {
-      "19": "ui/icons/19-unknown.png",
-      "38": "ui/icons/38-unknown.png"
+      "19": "/src/ui/icons/19-unknown.png",
+      "38": "/src/ui/icons/38-unknown.png"
     },
-    "default_popup": "ui/popup/unknown.html"
+    "default_popup": "/src/ui/popup/unknown.html"
   }
 }

@@ -1,8 +1,6 @@
 var _           = require('lodash');
 var Promise     = require('promise');
 
-module.exports = Assignment;
-
 Assignment = function(properties) {
   var properties = properties || {};
 
@@ -169,5 +167,8 @@ Assignment.prototype.destroy = function(adapter) {
 Assignment.cache.findWhere = function(props) {
   return _.findWhere(Assignment._instances, props);
 };
+
+
+module.exports = Assignment;
 
 
