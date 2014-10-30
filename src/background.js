@@ -6,6 +6,7 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 
 // core
 var StateManager = require('./core/state-manager');
+var tabIdMap = require('./core/tab-id-map');
 
 // helpers
 var Keen = require('../vendor/keen');
@@ -117,7 +118,7 @@ var updateUIState = function (tabId, state) {
 // Set the state of the popup when we change tabs
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   stateManager.isSignedIn().then(function (signedIn) {
-    var node = Node.cache.read(stateManager._tabIdMap[activeInfo.tabId]);
+    var node = Node.cache.read(tabIdMap[activeInfo.tabId]);
 
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page
@@ -137,7 +138,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 // Set the state of the popup a tab is updated
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   stateManager.isSignedIn().then(function (signedIn) {
-    var node = Node.cache.read(stateManager._tabIdMap[tabId]);
+    var node = Node.cache.read(tabIdMap[tabId]);
 
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page

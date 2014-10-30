@@ -1,26 +1,20 @@
 // models
-var Node        = require('../model/node')
-  , Assignment  = require('../model/assignment');
+var Node                  = require('../model/node')
+  , Assignment            = require('../model/assignment');
 
 // adapters
 var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
-  , ChromeEventAdapter    = require('../adapter/chrome_event_adapter');
+  , ChromeEventAdapter    = require('../adapter/chrome_event_adapter')
+  , tabIdMap              = require('./tab-id-map');
 
 //helpers
-var _           = require('lodash')
-  , Promise     = require('promise')
+var _                     = require('lodash')
+  , Promise               = require('promise')
 
 //constants
 var DEBOUNCE_MS = 700;
 
 var StateManager = function() {
-  /**
-   * @property {Map<number, number>} _tabIdMap - Map of Tab IDs to Node IDs.
-   * @TODO: Declare whether tab IDs need to be in existence to be included in
-   * this map
-   * @private
-   */
-  this._tabIdMap = {};
 
   /**
    * @property {number} _currentTabId - Tab ID of the tab that is currently
@@ -97,7 +91,7 @@ StateManager.prototype.getMap = function(assignmentId, callback) {
     });
 
     // If any tabs are open as shown in tabIdMap, set them as properties on the nodes
-    _.each(this._tabIdMap, function(map, key) {
+    _.each(tabIdMap, function(map, key) {
       if (data.nodes[map]) {
         data.nodes[map].tabId = key;
       }
@@ -267,7 +261,7 @@ StateManager.prototype.getTabInfo = function(tabId) {};
  */
 StateManager.prototype.getNode = function(tabId) {
   var node = undefined,
-      nodeId = this._tabIdMap[tabId];
+      nodeId = tabIdMap[tabId];
 
   if (nodeId) {
     // Return the existing Node
@@ -275,7 +269,7 @@ StateManager.prototype.getNode = function(tabId) {
   } else {
     // Create and map the Tab ID to a new Node
     node = new Node();
-    this._tabIdMap[tabId] = node.id;
+    tabIdMap[tabId] = node.id;
   }
 
   return node;
@@ -288,7 +282,7 @@ StateManager.prototype.getNode = function(tabId) {
  * @returns {Node} Returns the node if found, otherwise `null`
  */
 StateManager.prototype.getCurrentNode = function() {
-  var nodeId = this._tabIdMap[this._currentTabId];
+  var nodeId = tabIdMap[this._currentTabId];
 
   if (nodeId) {
     return Node.cache.read(nodeId);
@@ -357,11 +351,11 @@ StateManager.prototype.createdTab = function(evt) {
   var currentNode = this.getCurrentNode();
   var node;
 
-  if (this._tabIdMap[evt.data.tabId]) {
+  if (tabIdMap[evt.data.tabId]) {
     // This is a resumed node
-    node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
+    node = Node.cache.read(tabIdMap[evt.data.tabId]);
     node.tabId = evt.data.tabId;
-    this._tabIdMap[evt.data.tabId] = node.id;
+    tabIdMap[evt.data.tabId] = node.id;
   } else {
     // This is a new node
     node = new Node({
@@ -379,13 +373,13 @@ StateManager.prototype.createdTab = function(evt) {
         node.assignmentId = currentNode.assignmentId;
 
         node.save().then(function(savedNode) {
-          this._tabIdMap[evt.data.tabId] = savedNode.id;
+          tabIdMap[evt.data.tabId] = savedNode.id;
         }.bind(this));
       }
     }
 
     // Map to the temporary ID, this will be overwritten if the node is saved
-    this._tabIdMap[evt.data.tabId] = node.id;
+    tabIdMap[evt.data.tabId] = node.id;
   }
 
 };
@@ -398,7 +392,7 @@ StateManager.prototype.createdTab = function(evt) {
  * @private
  */
 StateManager.prototype.updatedTab = function(evt) {
-  var node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
+  var node = Node.cache.read(tabIdMap[evt.data.tabId]);
   var parentNode = (node && node.parentId) ? Node.cache.read(node.parentId) : undefined;
 
   if (node && evt.data.url && evt.data.url !== node.url) {
@@ -411,14 +405,14 @@ StateManager.prototype.updatedTab = function(evt) {
       var node = Node.cache.read(node.id);
       delete node.tabId;
       parentNode.recording = node.recording;
-      this._tabIdMap[evt.data.tabId] = parentNode.id;
+      tabIdMap[evt.data.tabId] = parentNode.id;
     } else if (Node.findWhere({ parentId: node.id, url: evt.data.url })) {
       // Navigating to an existing child
       var node = Node.cache.read(node.id);
       delete node.tabId;
       var childNode = Node.findWhere({ parentId: node.id, url: evt.data.url });
       childNode.recording = node.recording;
-      this._tabIdMap[evt.data.tabId] = childNode.id;
+      tabIdMap[evt.data.tabId] = childNode.id;
     } else {
       // Navigating to a new child
       var newNode = new Node({
@@ -435,12 +429,12 @@ StateManager.prototype.updatedTab = function(evt) {
 
       if (typeof node.id === "number" && newNode.recording && newNode.assignmentId) {
         newNode.save().then(function(savedNode) {
-          this._tabIdMap[evt.data.tabId] = savedNode.id;
+          tabIdMap[evt.data.tabId] = savedNode.id;
         }.bind(this));
       };
 
       // Map to the temporary ID, this will be overwritten if the node is saved
-      this._tabIdMap[evt.data.tabId] = newNode.id;
+      tabIdMap[evt.data.tabId] = newNode.id;
       delete node.tabId;
     }
   } else if (node && evt.data.title) {
@@ -469,13 +463,13 @@ StateManager.prototype.switchedTab = function(evt) {
  * @private
  */
 StateManager.prototype.closedTab = function(evt) {
-  var node = Node.cache.read(this._tabIdMap[evt.data.tabId]);
+  var node = Node.cache.read(tabIdMap[evt.data.tabId]);
   if (node) {
     delete node.recording;
     delete node.tabId;
     chrome.runtime.sendMessage({action: "updatedNodes", assignmentId: node.assignmentId})
   }
-  delete this._tabIdMap[evt.data.tabId];
+  delete tabIdMap[evt.data.tabId];
 };
 
 /**
@@ -493,18 +487,18 @@ StateManager.prototype.resumedNode = function(evt) {
   var node = Node.cache.read(evt.data.nodeId);
 
   // If a node was created by the createdTab event, remove it
-  if (this._tabIdMap[evt.data.tabId]) {
-    var tmpNode = Node.cache.read(this._tabIdMap[evt.data.tabId]);
+  if (tabIdMap[evt.data.tabId]) {
+    var tmpNode = Node.cache.read(tabIdMap[evt.data.tabId]);
     tmpNode.destroy();
   }
 
   // Map the tab ID to the resumed node and set it to be recording
-  this._tabIdMap[evt.data.tabId] = node.id;
+  tabIdMap[evt.data.tabId] = node.id;
   this.startRecording(evt.data.tabId, node.assignmentId);
 };
 
 StateManager.prototype.redirectPending = function(evt) {
-  var node = Node.cache.read(this._tabIdMap[evt.data.tabId])
+  var node = Node.cache.read(tabIdMap[evt.data.tabId])
   //switch url with redirect url
   //TODO make sure title is correct
   node.url = evt.data.redirectUrl
