@@ -117,9 +117,9 @@ var updateUIState = function (tabId, state) {
 
 // Set the state of the popup when we change tabs
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-  stateManager.isSignedIn().then(function (signedIn) {
+  new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
     var node = Node.cache.read(tabIdMap[activeInfo.tabId]);
-
+    
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page
       updateUIState(activeInfo.tabId, "recording");
@@ -137,7 +137,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 // Set the state of the popup a tab is updated
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  stateManager.isSignedIn().then(function (signedIn) {
+  new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
     var node = Node.cache.read(tabIdMap[tabId]);
 
     if (signedIn && node && node.recording) {
@@ -177,7 +177,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 // Set initial popup state
-stateManager.isSignedIn().then(function (signedIn) {
+new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
   if (signedIn) {
     // Set the extension to Idle
     chrome.browserAction.setPopup({
@@ -413,7 +413,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.signIn
      */
     case 'signIn':
-      stateManager.signIn().then(function(token) {
+      new ChromeIdentityAdapter().signIn().then(function(token) {
         chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
         chrome.browserAction.setIcon({ path: extensionStates.idle.browserAction });
 
@@ -434,7 +434,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.signedIn?
      */
     case 'signedIn?':
-      stateManager.isSignedIn().then(sendResponse);
+      new ChromeIdentityAdapter().isSignedIn().then(sendResponse);
       break;
 
     /**
@@ -443,7 +443,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.signOut
      */
     case 'signOut':
-      stateManager.signOut().then(function() {
+      new ChromeIdentityAdapter().signOut().then(function() {
         chrome.browserAction.setPopup({ popup: extensionStates.notAuthenticated.popup });
         chrome.browserAction.setIcon({ path: extensionStates.notAuthenticated.browserAction });
         chrome.windows.getCurrent({ populate: true }, function(win) {

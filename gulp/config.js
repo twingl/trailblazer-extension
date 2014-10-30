@@ -45,11 +45,6 @@ module.exports = {
         outputName: 'trails.js'
       },
       {
-        entries: './src/core/state-manager.js',
-        dest: dest,
-        outputName: 'state-manager.js'
-      },
-      {
         entries: './src/background.js',
         dest: dest,
         outputName: 'background.js'
