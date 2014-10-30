@@ -1,16 +1,17 @@
 // config
-var config = require('./config');
+var config                = require('./config');
 
 // adapters
 var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 
 // core
-var StateManager = require('./core/state-manager');
-var tabIdMap = require('./core/tab-id-map');
+var StateManager          = require('./core/state-manager')
+  , tabIdMap              = require('./core/tab-id-map')
+  , popupStates           = require('./core/popup-states');
 
 // helpers
-var Keen = require('../vendor/keen');
-var _    = require('lodash');
+var Keen                  = require('../vendor/keen')
+  , _                     = require('lodash');
 
 /**
  * **This is not an actual class, and functions documented here are actually
@@ -35,69 +36,40 @@ var keenClient = new Keen({
 /**
  * @property {Object} BackgroundJS.popupStates
  */
-var extensionStates = {
-  recording: {
-    popup: "/src/ui/popup/recording.html",
-    browserAction: {
-      19: "/src/ui/icons/19-recording.png",
-      38: "/src/ui/icons/38-recording.png"
-    }
-  },
-  idle: {
-    popup: "/src/ui/popup/idle.html",
-    browserAction: {
-      19: "/src/ui/icons/19.png",
-      38: "/src/ui/icons/38.png"
-    }
-  },
-  notAuthenticated: {
-    popup: "/src/ui/popup/not_authenticated.html",
-    browserAction: {
-      19: "/src/ui/icons/19.png",
-      38: "/src/ui/icons/38.png"
-    }
-  },
-  default: {
-    popup: "/src/ui/popup/unknown.html",
-    browserAction: {
-      19: "/src/ui/icons/19-unknown.png",
-      38: "/src/ui/icons/38-unknown.png"
-    }
-  }
-};
+
 
 var updateUIState = function (tabId, state) {
   switch (state) {
     case "recording":
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: extensionStates.recording.popup
+        popup: popupStates.recording.popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: extensionStates.recording.browserAction
+        path: popupStates.recording.browserAction
       });
       break;
 
     case "notAuthenticated":
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: extensionStates.notAuthenticated.popup
+        popup: popupStates.notAuthenticated.popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: extensionStates.notAuthenticated.browserAction
+        path: popupStates.notAuthenticated.browserAction
       });
       break;
 
     case "idle":
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: extensionStates.idle.popup
+        popup: popupStates.idle.popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: extensionStates.idle.browserAction
+        path: popupStates.idle.browserAction
       });
       break;
 
@@ -105,11 +77,11 @@ var updateUIState = function (tabId, state) {
     default:
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: extensionStates.default.popup
+        popup: popupStates.default.popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: extensionStates.default.browserAction
+        path: popupStates.default.browserAction
       });
 
   }
@@ -119,7 +91,7 @@ var updateUIState = function (tabId, state) {
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
     var node = Node.cache.read(tabIdMap[activeInfo.tabId]);
-    
+
     if (signedIn && node && node.recording) {
       // The extension is signed in and is recording the current page
       updateUIState(activeInfo.tabId, "recording");
@@ -181,10 +153,10 @@ new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
   if (signedIn) {
     // Set the extension to Idle
     chrome.browserAction.setPopup({
-      popup: extensionStates.idle.popup
+      popup: popupStates.idle.popup
     });
     chrome.browserAction.setIcon({
-      path: extensionStates.idle.browserAction
+      path: popupStates.idle.browserAction
     });
 
     //TODO fetch existing assignments and query which tabs are currently
@@ -192,10 +164,10 @@ new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
   } else {
     // Set the extension to Idle
     chrome.browserAction.setPopup({
-      popup: extensionStates.notAuthenticated.popup
+      popup: popupStates.notAuthenticated.popup
     });
     chrome.browserAction.setIcon({
-      path: extensionStates.notAuthenticated.browserAction
+      path: popupStates.notAuthenticated.browserAction
     });
   }
 });
@@ -414,8 +386,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      */
     case 'signIn':
       new ChromeIdentityAdapter().signIn().then(function(token) {
-        chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
-        chrome.browserAction.setIcon({ path: extensionStates.idle.browserAction });
+        chrome.browserAction.setPopup({ popup: popupStates.idle.popup });
+        chrome.browserAction.setIcon({ path: popupStates.idle.browserAction });
 
         keenUserData.token = token.token;
         chrome.windows.getCurrent({ populate: true }, function(win) {
@@ -444,8 +416,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      */
     case 'signOut':
       new ChromeIdentityAdapter().signOut().then(function() {
-        chrome.browserAction.setPopup({ popup: extensionStates.notAuthenticated.popup });
-        chrome.browserAction.setIcon({ path: extensionStates.notAuthenticated.browserAction });
+        chrome.browserAction.setPopup({ popup: popupStates.notAuthenticated.popup });
+        chrome.browserAction.setIcon({ path: popupStates.notAuthenticated.browserAction });
         chrome.windows.getCurrent({ populate: true }, function(win) {
           var tab = _.findWhere(win.tabs, { active: true });
           if (tab) updateUIState(tab.id, "notAuthenticated");
