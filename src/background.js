@@ -11,7 +11,8 @@ var StateManager          = require('./core/state-manager')
   , updateUIState         = require('./core/update-ui-state');
 
 //actions
-var getMap                = require('./lib/get-map');
+var getMap                = require('./lib/get-map')
+  , getNode               = require('./lib/get-node');
 
 // helpers
 var Keen                  = require('../vendor/keen')
@@ -135,7 +136,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
         var node = Node.cache.read(request.nodeId);
         sendResponse({node: node});
       } else if (request.tabId) {
-        var node = stateManager.getNode(request.tabId);
+        var node = getNode(request.tabId);
         sendResponse({node: node});
       }
       break;
@@ -245,7 +246,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
           chrome.tabs.query({ windowType: "normal" }, function(tabs) {
             _.each(tabs, function(tab, index) {
               if (_.contains(nodeTabIds, tab.id)) {
-                var node = stateManager.getNode(tab.id);
+                var node = getNode(tab.id);
                 delete node.assignmentId;
                 delete node.tabId;
 

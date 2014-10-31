@@ -217,16 +217,7 @@ StateManager.prototype.resumeRecording = function(tabId, nodeId) {
  */
 StateManager.prototype.getTabInfo = function(tabId) {};
 
-/**
- * Returns a Node corresponding to the given Tab ID, creating one if it does
- * not exist.
- *
- * @TODO factor out into Node.find(OrCreate)ByTabId();
- *
- * @function StateManager#getNode
- * @param {number} tabId - The tabId whose Node should be retrieved
- * @returns {Node}
- */
+//DEPRECATED
 StateManager.prototype.getNode = function(tabId) {
   var node = undefined,
       nodeId = tabIdMap[tabId];
