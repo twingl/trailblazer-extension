@@ -56,15 +56,7 @@ var StateManager = function() {
   this._eventAdapter.ready(true);
 };
 
-/**
- * Return the collection of nodes associated with an assignment, or all nodes
- * if no ID is supplied.
- *
- * Object returned contains a key 'nodes' which references a Map<id, Node>
- *
- * @param {number} assignmentId - The Assignment ID to scope the nodes to
- * @returns {Object}
- */
+ //DEPRECATED
 StateManager.prototype.getMap = function(assignmentId, callback) {
   var data = {
     nodes: {},

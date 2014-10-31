@@ -10,6 +10,9 @@ var StateManager          = require('./core/state-manager')
   , popupStates           = require('./core/popup-states')
   , updateUIState         = require('./core/update-ui-state');
 
+//actions
+var getMap                = require('./lib/get-map');
+
 // helpers
 var Keen                  = require('../vendor/keen')
   , _                     = require('lodash');
@@ -122,7 +125,7 @@ new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
 chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   switch (request.action) {
     case 'getMap':
-      stateManager.getMap(request.assignmentId, function(data) {
+      getMap(request.assignmentId, function(data) {
         sendResponse({data: data})
       })
       break;
