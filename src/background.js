@@ -7,7 +7,8 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 // core
 var StateManager          = require('./core/state-manager')
   , tabIdMap              = require('./core/tab-id-map')
-  , popupStates           = require('./core/popup-states');
+  , popupStates           = require('./core/popup-states')
+  , updateUIState         = require('./core/update-ui-state');
 
 // helpers
 var Keen                  = require('../vendor/keen')
@@ -32,60 +33,6 @@ var keenClient = new Keen({
 });
 
  var keenUserData = {};
-
-/**
- * @property {Object} BackgroundJS.popupStates
- */
-
-
-var updateUIState = function (tabId, state) {
-  switch (state) {
-    case "recording":
-      chrome.browserAction.setPopup({
-        tabId: tabId,
-        popup: popupStates.recording.popup
-      });
-      chrome.browserAction.setIcon({
-        tabId: tabId,
-        path: popupStates.recording.browserAction
-      });
-      break;
-
-    case "notAuthenticated":
-      chrome.browserAction.setPopup({
-        tabId: tabId,
-        popup: popupStates.notAuthenticated.popup
-      });
-      chrome.browserAction.setIcon({
-        tabId: tabId,
-        path: popupStates.notAuthenticated.browserAction
-      });
-      break;
-
-    case "idle":
-      chrome.browserAction.setPopup({
-        tabId: tabId,
-        popup: popupStates.idle.popup
-      });
-      chrome.browserAction.setIcon({
-        tabId: tabId,
-        path: popupStates.idle.browserAction
-      });
-      break;
-
-    case "unknown":
-    default:
-      chrome.browserAction.setPopup({
-        tabId: tabId,
-        popup: popupStates.default.popup
-      });
-      chrome.browserAction.setIcon({
-        tabId: tabId,
-        path: popupStates.default.browserAction
-      });
-
-  }
-}
 
 // Set the state of the popup when we change tabs
 chrome.tabs.onActivated.addListener(function(activeInfo) {
