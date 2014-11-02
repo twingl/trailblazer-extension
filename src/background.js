@@ -142,10 +142,24 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       break;
 
     case 'getNodes':
-      var nodes = stateManager.nodes(request.assignmentId, function(nodes) {
-        chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
+      var nodes;
+      //asynchronous
+      Node.list(request.assignmentId).then(function(nodes) {
+        console.log('node listing', nodes)
+        chrome.runtime.sendMessage({ 
+          action: "updatedNodes", 
+          assignmentId: request.assignmentId, 
+          updatedNodes: nodes 
+        });
       });
-      chrome.runtime.sendMessage({ action: "updatedNodes", assignmentId: request.assignmentId, updatedNodes: nodes });
+
+      //synchronous
+      nodes = Node.cache.list(request.assignmentId);
+      chrome.runtime.sendMessage({ 
+        action: "updatedNodes", 
+        assignmentId: request.assignmentId, 
+        updatedNodes: nodes 
+      });
       break;
 
     case 'updateNode':
