@@ -11,9 +11,12 @@
  * @private
  */
 
+var getCurrentNode = require('./get-current-node')
+  , tabIdMap       = require('../core/tab-id-map')
+  , Node           = require('../model/node');  
 
 module.exports = function(evt) {
-  var currentNode = this.getCurrentNode();
+  var currentNode = getCurrentNode();
   var node;
 
   if (tabIdMap[evt.data.tabId]) {

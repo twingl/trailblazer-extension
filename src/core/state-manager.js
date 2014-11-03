@@ -11,6 +11,7 @@ var extensionStates       = require('./extension-states');
 
 var startRecording        = require('../lib/start-recording');
 var getCurrentNode        = require('../lib/get-current-node');
+var createdTab            = require('../lib/created-tab');
 
 
 //actions
@@ -290,7 +291,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
   _.each(buffer, function(evt) {
     switch (evt.type) {
       case "created_tab":
-        this.createdTab(evt);
+        createdTab(evt);
         break;
       case "updated_tab":
         this.updatedTab(evt);
@@ -324,6 +325,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
  * @param {Object} evt - The event object emitted by `eventAdapter`
  * @private
  */
+//DEPRECATED
 StateManager.prototype.createdTab = function(evt) {
   var currentNode = getCurrentNode();
   var node;
