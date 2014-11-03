@@ -7,6 +7,7 @@ var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
   , ChromeEventAdapter    = require('../adapter/chrome_event_adapter')
   , tabIdMap              = require('./tab-id-map');
 
+var extensionStates       = require('./extension-states');
 
 //actions
 var getNode               = require('../lib/get-node');
@@ -29,7 +30,8 @@ var StateManager = function() {
    * focused
    * @private
    */
-  this._currentTabId = undefined;
+  //DEPRECATED 
+  // extensionStates.currentTabId = undefined;
 
   /**
    * @property {EventAdapter} _eventAdapter - The instance of the
@@ -250,7 +252,7 @@ StateManager.prototype.getNode = function(tabId) {
  * @returns {Node} Returns the node if found, otherwise `null`
  */
 StateManager.prototype.getCurrentNode = function() {
-  var nodeId = tabIdMap[this._currentTabId];
+  var nodeId = tabIdMap[extensionStates.currentTabId];
 
   if (nodeId) {
     return Node.cache.read(nodeId);
@@ -419,7 +421,7 @@ StateManager.prototype.updatedTab = function(evt) {
  * @private
  */
 StateManager.prototype.switchedTab = function(evt) {
-  this._currentTabId = evt.data.tabId;
+  extensionStates.currentTabId = evt.data.tabId;
 };
 
 /**

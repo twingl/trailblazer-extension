@@ -26,5 +26,6 @@ module.exports = {
       19: "/src/ui/icons/19-unknown.png",
       38: "/src/ui/icons/38-unknown.png"
     }
-  }
+  },
+  currentTabId: undefined
 };

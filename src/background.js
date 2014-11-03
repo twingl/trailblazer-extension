@@ -7,7 +7,7 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 // core
 var StateManager          = require('./core/state-manager')
   , tabIdMap              = require('./core/tab-id-map')
-  , popupStates           = require('./core/popup-states')
+  , extensionStates       = require('./core/extension-states')
   , updateUIState         = require('./core/update-ui-state')
   , Fluxxor               = require('fluxxor');
 
@@ -108,10 +108,10 @@ new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
   if (signedIn) {
     // Set the extension to Idle
     chrome.browserAction.setPopup({
-      popup: popupStates.idle.popup
+      popup: extensionStates.idle.popup
     });
     chrome.browserAction.setIcon({
-      path: popupStates.idle.browserAction
+      path: extensionStates.idle.browserAction
     });
 
     //TODO fetch existing assignments and query which tabs are currently
@@ -119,10 +119,10 @@ new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
   } else {
     // Set the extension to Idle
     chrome.browserAction.setPopup({
-      popup: popupStates.notAuthenticated.popup
+      popup: extensionStates.notAuthenticated.popup
     });
     chrome.browserAction.setIcon({
-      path: popupStates.notAuthenticated.browserAction
+      path: extensionStates.notAuthenticated.browserAction
     });
   }
 });
@@ -355,8 +355,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      */
     case 'signIn':
       new ChromeIdentityAdapter().signIn().then(function(token) {
-        chrome.browserAction.setPopup({ popup: popupStates.idle.popup });
-        chrome.browserAction.setIcon({ path: popupStates.idle.browserAction });
+        chrome.browserAction.setPopup({ popup: extensionStates.idle.popup });
+        chrome.browserAction.setIcon({ path: extensionStates.idle.browserAction });
 
         keenUserData.token = token.token;
         chrome.windows.getCurrent({ populate: true }, function(win) {
@@ -385,8 +385,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      */
     case 'signOut':
       new ChromeIdentityAdapter().signOut().then(function() {
-        chrome.browserAction.setPopup({ popup: popupStates.notAuthenticated.popup });
-        chrome.browserAction.setIcon({ path: popupStates.notAuthenticated.browserAction });
+        chrome.browserAction.setPopup({ popup: extensionStates.notAuthenticated.popup });
+        chrome.browserAction.setIcon({ path: extensionStates.notAuthenticated.browserAction });
         chrome.windows.getCurrent({ populate: true }, function(win) {
           var tab = _.findWhere(win.tabs, { active: true });
           if (tab) updateUIState(tab.id, "notAuthenticated");

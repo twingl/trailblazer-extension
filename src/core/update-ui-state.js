@@ -1,4 +1,4 @@
-var popupStates = require('./popup-states');
+var extensionStates = require('./extension-states');
 
 module.exports = function (tabId, state) {
   switch (state) {
@@ -7,22 +7,22 @@ module.exports = function (tabId, state) {
     case "idle":
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: popupStates[state].popup
+        popup: extensionStates[state].popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: popupStates[state].browserAction
+        path: extensionStates[state].browserAction
       });
       break;
     case "unknown":
     default:
       chrome.browserAction.setPopup({
         tabId: tabId,
-        popup: popupStates.default.popup
+        popup: extensionStates.default.popup
       });
       chrome.browserAction.setIcon({
         tabId: tabId,
-        path: popupStates.default.browserAction
+        path: extensionStates.default.browserAction
       });
   }
 };
