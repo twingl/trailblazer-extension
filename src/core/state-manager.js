@@ -16,6 +16,7 @@ var updatedTab            = require('../lib/updated-tab');
 var switchedTab           = require('../lib/switched-tab');
 var closedTab             = require('../lib/closed-tab');
 var resumedNode           = require('../lib/resumed-node');
+var redirectPending       = require('../lib/redirect-pending');
 
 
 //actions
@@ -311,7 +312,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
         resumedNode(evt);
         break;
       case "redirect_pending":
-        this.redirectPending(evt);
+        redirectPending(evt);
         break;
     }
   }.bind(this));
@@ -485,6 +486,7 @@ StateManager.prototype.resumedNode = function(evt) {
   startRecording(evt.data.tabId, node.assignmentId);
 };
 
+//DEPRECATED
 StateManager.prototype.redirectPending = function(evt) {
   var node = Node.cache.read(tabIdMap[evt.data.tabId])
   //switch url with redirect url
