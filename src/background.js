@@ -15,7 +15,8 @@ var StateManager          = require('./core/state-manager')
 var getMap                = require('./lib/get-map')
   , getNode               = require('./lib/get-node')
   // , resumeRecording       = require('./lib/resume-recording');
-  , startRecording        = require('./lib/start-recording');
+  , startRecording        = require('./lib/start-recording')
+  , stopRecording         = require('./lib/stop-recording');
 
 
 // helpers
@@ -344,7 +345,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      */
     case 'stopRecording':
       updateUIState(request.tabId, "idle");
-      stateManager.stopRecording(request.tabId);
+      stopRecording(request.tabId);
       sendResponse();
       break;
 

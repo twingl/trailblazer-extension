@@ -183,6 +183,7 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
  * @function StateManager#stopRecording
  * @param {number} tabId - the ID of the Tab to stop monitoring
  */
+//DEPRECATED
 StateManager.prototype.stopRecording = function(tabId) {
   getNode(tabId).recording = false;
 };
