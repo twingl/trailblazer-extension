@@ -15,6 +15,7 @@ var createdTab            = require('../lib/created-tab');
 var updatedTab            = require('../lib/updated-tab');
 var switchedTab           = require('../lib/switched-tab');
 var closedTab             = require('../lib/closed-tab');
+var resumedNode           = require('../lib/resumed-node');
 
 
 //actions
@@ -307,7 +308,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
         closedTab(evt);
         break;
       case "resumed_node":
-        this.resumedNode(evt);
+        resumedNode(evt);
         break;
       case "redirect_pending":
         this.redirectPending(evt);
@@ -468,6 +469,7 @@ StateManager.prototype.closedTab = function(evt) {
  * Statemanager#resumeRecording}
  * @private
  */
+//DEPRECATED 
 StateManager.prototype.resumedNode = function(evt) {
   // Get the node to be resumed
   var node = Node.cache.read(evt.data.nodeId);
