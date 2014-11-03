@@ -9,6 +9,9 @@ var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
 
 var extensionStates       = require('./extension-states');
 
+var startRecording        = require('../lib/start-recording');
+
+
 //actions
 var getNode               = require('../lib/get-node');
 
@@ -110,6 +113,7 @@ StateManager.prototype.getMap = function(assignmentId, callback) {
  * @param {function} callback - Will be called with an updated list of
  * assignments from the server
  */
+ //DEPRECATED
 StateManager.prototype.assignments = function(cb) {
   Assignment.list().then(function(assignments) {
     cb(assignments);
@@ -183,7 +187,7 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
  * @function StateManager#stopRecording
  * @param {number} tabId - the ID of the Tab to stop monitoring
  */
-//DEPRECATED
+//DEPRECATED  
 StateManager.prototype.stopRecording = function(tabId) {
   getNode(tabId).recording = false;
 };
@@ -466,7 +470,7 @@ StateManager.prototype.resumedNode = function(evt) {
 
   // Map the tab ID to the resumed node and set it to be recording
   tabIdMap[evt.data.tabId] = node.id;
-  this.startRecording(evt.data.tabId, node.assignmentId);
+  startRecording(evt.data.tabId, node.assignmentId);
 };
 
 StateManager.prototype.redirectPending = function(evt) {

@@ -225,12 +225,17 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.getAssignments
      */
     case 'getAssignments':
-      var assignments = stateManager.assignments(function(assignments) {
+      var assignments;
+      //asynchronous
+      Assignment.list().then(function(assignments) {
         chrome.runtime.sendMessage({
           action: "updatedAssignments",
           updatedAssignments: assignments
         });
       });
+
+      //synchronous
+      assignments = Assignment.cache.list();
       chrome.runtime.sendMessage({
         action: "updatedAssignments",
         updatedAssignments: assignments
