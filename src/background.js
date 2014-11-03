@@ -263,7 +263,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     case 'destroyAssignment':
       var assignment = Assignment.cache.read(request.assignmentId);
       var mapUrlSubstring = "map.html#assignment=" + assignment.id;
-      var nodes = stateManager.nodes(request.assignmentId);
+      var nodes = Node.cache.list(request.assignmentId);
       var nodeTabIds = _.pluck(nodes, 'tabId');
 
       if (assignment) {

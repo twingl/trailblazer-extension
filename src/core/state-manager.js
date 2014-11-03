@@ -132,6 +132,7 @@ StateManager.prototype.assignments = function(cb) {
  * @param {function} callback - Will be called with an updated list of
  * nodes from the server
  */
+//DEPRECATED
 StateManager.prototype.nodes = function(assignmentId, cb) {
   Node.list(assignmentId).then(function(nodes) {
     cb(nodes);
