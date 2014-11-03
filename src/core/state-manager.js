@@ -10,6 +10,7 @@ var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
 var extensionStates       = require('./extension-states');
 
 var startRecording        = require('../lib/start-recording');
+var getCurrentNode        = require('../lib/get-current-node');
 
 
 //actions
@@ -324,7 +325,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
  * @private
  */
 StateManager.prototype.createdTab = function(evt) {
-  var currentNode = this.getCurrentNode();
+  var currentNode = getCurrentNode();
   var node;
 
   if (tabIdMap[evt.data.tabId]) {

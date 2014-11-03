@@ -16,7 +16,8 @@ var getMap                = require('./lib/get-map')
   , getNode               = require('./lib/get-node')
   // , resumeRecording       = require('./lib/resume-recording');
   , startRecording        = require('./lib/start-recording')
-  , stopRecording         = require('./lib/stop-recording');
+  , stopRecording         = require('./lib/stop-recording')
+  , getCurrentNode        = require('./lib/get-current-node');
 
 
 // helpers
@@ -250,7 +251,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @TODO Accessing temporary Assignment implementation
      */
     case 'getCurrentAssignment':
-      var node = stateManager.getCurrentNode();
+      var node = getCurrentNode();
       if (node && node.assignmentId && node.recording) {
         var assignment = Assignment.cache.read(node.assignmentId);
         sendResponse(assignment || false);
