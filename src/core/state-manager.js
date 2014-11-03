@@ -14,6 +14,7 @@ var getCurrentNode        = require('../lib/get-current-node');
 var createdTab            = require('../lib/created-tab');
 var updatedTab            = require('../lib/updated-tab');
 var switchedTab           = require('../lib/switched-tab');
+var closedTab             = require('../lib/closed-tab');
 
 
 //actions
@@ -303,7 +304,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
         switchedTab(evt);
         break;
       case "closed_tab":
-        this.closedTab(evt);
+        closedTab(evt);
         break;
       case "resumed_node":
         this.resumedNode(evt);
@@ -446,6 +447,7 @@ StateManager.prototype.switchedTab = function(evt) {
  * @param {Object} evt - The event object emitted by `eventAdapter`
  * @private
  */
+//DEPRECATED 
 StateManager.prototype.closedTab = function(evt) {
   var node = Node.cache.read(tabIdMap[evt.data.tabId]);
   if (node) {
@@ -502,7 +504,7 @@ StateManager.prototype.redirectPending = function(evt) {
  * (buffered) handler
  * @private
  */
-//DEPRECATED
+
 StateManager.prototype._bindEvent = function(name) {
   this._eventAdapter[name].addListener( function(tabEvent) {
     this._eventBuffer.push(tabEvent);
