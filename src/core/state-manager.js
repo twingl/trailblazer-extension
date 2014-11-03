@@ -7,6 +7,11 @@ var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
   , ChromeEventAdapter    = require('../adapter/chrome_event_adapter')
   , tabIdMap              = require('./tab-id-map');
 
+
+//events 
+// var Fluxxor               = require('fluxxor');
+// var eventManager          = require('./event-manager');
+
 //helpers
 var _                     = require('lodash')
   , Promise               = require('promise')
@@ -134,6 +139,7 @@ StateManager.prototype.nodes = function(assignmentId, cb) {
  * @param {number} tabId - The ID of the Tab to start recording
  * @param {number} assignmentId - the ID of the Assignment to record to
  */
+//DEPRECATED 
 StateManager.prototype.startRecording = function(tabId, assignmentId) {
   if (!this.getNode(tabId).recording) {
     var assignment;
@@ -259,6 +265,7 @@ StateManager.prototype.getCurrentNode = function() {
  * @function StateManager#_flushBuffer
  * @private
  */
+//DEPRECATED
 StateManager.prototype._flushBuffer = _.debounce( function() {
   //Move the event buffer into a local variable (sorted by ID) and reset it
   //ready for the next flush
@@ -477,6 +484,7 @@ StateManager.prototype.redirectPending = function(evt) {
  * (buffered) handler
  * @private
  */
+//DEPRECATED
 StateManager.prototype._bindEvent = function(name) {
   this._eventAdapter[name].addListener( function(tabEvent) {
     this._eventBuffer.push(tabEvent);

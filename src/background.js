@@ -8,11 +8,15 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 var StateManager          = require('./core/state-manager')
   , tabIdMap              = require('./core/tab-id-map')
   , popupStates           = require('./core/popup-states')
-  , updateUIState         = require('./core/update-ui-state');
+  , updateUIState         = require('./core/update-ui-state')
+  , Fluxxor               = require('fluxxor');
 
 //actions
 var getMap                = require('./lib/get-map')
-  , getNode               = require('./lib/get-node');
+  , getNode               = require('./lib/get-node')
+  // , resumeRecording       = require('./lib/resume-recording');
+  , startRecording        = require('./lib/start-recording');
+
 
 // helpers
 var Keen                  = require('../vendor/keen')
@@ -314,7 +318,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
      * @function BackgroundJS.startRecording
      */
     case 'startRecording':
-      stateManager.startRecording(request.tabId, request.assignmentId).then(
+      startRecording(request.tabId, request.assignmentId).then(
           function() {
             updateUIState(request.tabId, "recording");
             sendResponse({ success: true });
