@@ -12,6 +12,7 @@ var extensionStates       = require('./extension-states');
 var startRecording        = require('../lib/start-recording');
 var getCurrentNode        = require('../lib/get-current-node');
 var createdTab            = require('../lib/created-tab');
+var updatedTab            = require('../lib/updated-tab');
 
 
 //actions
@@ -294,7 +295,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
         createdTab(evt);
         break;
       case "updated_tab":
-        this.updatedTab(evt);
+        updatedTab(evt);
         break;
       case "switched_tab":
         this.switchedTab(evt);
@@ -370,6 +371,7 @@ StateManager.prototype.createdTab = function(evt) {
  * @param {Object} evt - The event object emitted by `eventAdapter`
  * @private
  */
+ //DEPRECATED
 StateManager.prototype.updatedTab = function(evt) {
   var node = Node.cache.read(tabIdMap[evt.data.tabId]);
   var parentNode = (node && node.parentId) ? Node.cache.read(node.parentId) : undefined;
