@@ -13,6 +13,7 @@ var startRecording        = require('../lib/start-recording');
 var getCurrentNode        = require('../lib/get-current-node');
 var createdTab            = require('../lib/created-tab');
 var updatedTab            = require('../lib/updated-tab');
+var switchedTab           = require('../lib/switched-tab');
 
 
 //actions
@@ -260,6 +261,7 @@ StateManager.prototype.getNode = function(tabId) {
  * @function StateManager#getCurrentNode
  * @returns {Node} Returns the node if found, otherwise `null`
  */
+//DEPRECATED
 StateManager.prototype.getCurrentNode = function() {
   var nodeId = tabIdMap[extensionStates.currentTabId];
 
@@ -279,7 +281,6 @@ StateManager.prototype.getCurrentNode = function() {
  * @function StateManager#_flushBuffer
  * @private
  */
-//DEPRECATED
 StateManager.prototype._flushBuffer = _.debounce( function() {
   //Move the event buffer into a local variable (sorted by ID) and reset it
   //ready for the next flush
@@ -299,7 +300,7 @@ StateManager.prototype._flushBuffer = _.debounce( function() {
         updatedTab(evt);
         break;
       case "switched_tab":
-        this.switchedTab(evt);
+        switchedTab(evt);
         break;
       case "closed_tab":
         this.closedTab(evt);
@@ -431,6 +432,7 @@ StateManager.prototype.updatedTab = function(evt) {
  * @param {Object} evt - The event object emitted by `eventAdapter`
  * @private
  */
+//DEPRECATED
 StateManager.prototype.switchedTab = function(evt) {
   extensionStates.currentTabId = evt.data.tabId;
 };
