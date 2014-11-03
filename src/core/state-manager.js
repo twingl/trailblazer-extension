@@ -8,6 +8,9 @@ var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
   , tabIdMap              = require('./tab-id-map');
 
 
+//actions
+var getNode               = require('../lib/get-node');
+
 //events 
 // var Fluxxor               = require('fluxxor');
 // var eventManager          = require('./event-manager');
@@ -141,7 +144,7 @@ StateManager.prototype.nodes = function(assignmentId, cb) {
  */
 //DEPRECATED 
 StateManager.prototype.startRecording = function(tabId, assignmentId) {
-  if (!this.getNode(tabId).recording) {
+  if (!getNode(tabId).recording) {
     var assignment;
     if (assignmentId) {
       // It's an existing assignment
@@ -151,15 +154,15 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
       assignment = new Assignment();
     }
 
-    assignment.currentNodeId = this.getNode(tabId).id;
+    assignment.currentNodeId = getNode(tabId).id;
 
     // Ensure we have a valid ID for the assignment so we can start saving
     // the trail
     return new Promise(function(resolve, reject) {
       assignment.save().then(function(assignment) {
-        this.getNode(tabId).assignmentId = assignment.id;
-        this.getNode(tabId).recording = true;
-        this.getNode(tabId).save();
+        getNode(tabId).assignmentId = assignment.id;
+        getNode(tabId).recording = true;
+        getNode(tabId).save();
         // TODO Feature? Iterate over the existing, in-memory nodes and save the
         // connected graph - this will save the entire tree, if desirable.
         // Pending team discussion
@@ -179,7 +182,7 @@ StateManager.prototype.startRecording = function(tabId, assignmentId) {
  * @param {number} tabId - the ID of the Tab to stop monitoring
  */
 StateManager.prototype.stopRecording = function(tabId) {
-  this.getNode(tabId).recording = false;
+  getNode(tabId).recording = false;
 };
 
 /**
