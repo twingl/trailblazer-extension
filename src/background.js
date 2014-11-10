@@ -8,8 +8,7 @@ var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 var StateManager          = require('./core/state-manager')
   , tabIdMap              = require('./core/tab-id-map')
   , extensionStates       = require('./core/extension-states')
-  , updateUIState         = require('./core/update-ui-state')
-  , Fluxxor               = require('fluxxor');
+  , updateUIState         = require('./core/update-ui-state');
 
 //actions
 var getMap                = require('./lib/get-map')
@@ -24,17 +23,24 @@ var getMap                = require('./lib/get-map')
 var Keen                  = require('../vendor/keen')
   , _                     = require('lodash');
 
-/**
- * **This is not an actual class, and functions documented here are actually
- * chrome.runtime messages**
- *
- * background.js is the "main.c" equivalent - it is responsible for creating
- * an instance of {@link StateManager} and wiring up handlers for messages
- * that originate from the UI.
- *
- * @class BackgroundJS
- * @classname BackgroundJS
- */
+// Begin Fluxxor Experiment
+// require('./background/livereload');
+// var Fluxxor = require('fluxxor');
+// // var Store = require('./stores/generic');
+// var app = require('./background/app');
+// var store = new Store();
+// var stores = {
+//   Store: store
+// };
+// var flux = new Fluxxor.Flux(stores, require('./actions'));
+
+// app(flux, 'Store');
+
+
+
+// End Fluxxor Experiment
+
+
 
 var keenClient = new Keen({
   requestType: "xhr",

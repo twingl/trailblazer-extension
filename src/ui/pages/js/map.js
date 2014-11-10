@@ -5,6 +5,7 @@ var React = require('react');
 var _ = require('lodash');
 var domready = require('domready');
 
+
 //components
 var MapView = require('app/components/map-view');
 
@@ -65,5 +66,24 @@ domready(function() {
   getMap(assignmentId);
 });
 
+
+//Begin Flux Experiment
+var NodesStore = require('../../../stores/node-store');
+var stores = {
+  NodesStore: new NodesStore()
+};
+var actions = require('../../../actions');
+
+var Fluxxor = require('fluxxor');
+var flux = new Fluxxor.Flux(stores, actions);
+
+console.log('flux', flux)
+flux.actions.loadNodes(assignmentId);
+flux.on("dispatch", function(type, payload) {
+  if (console && console.log) {
+    console.log("[Dispatch]", type, payload);
+  }
+});
+///
 
 
