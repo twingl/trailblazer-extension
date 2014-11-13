@@ -64,7 +64,7 @@ var App = React.createClass({
   render: function () {
     switch (this.state.mode) {
       case 'ASSIGNMENTS':
-        return this.renderTrails();
+        return this.renderAssignments();
       case 'MAP':
       default:
         return this.renderMap();
@@ -72,7 +72,9 @@ var App = React.createClass({
   },
 
   renderAssignments: function () {
+    console.log('im rederng')
 
+    console.log(this.state.AssignmentState)
   },
 
   renderMap: function () {
@@ -99,14 +101,14 @@ var AppWrap = function(initialState, actions) {
     },
 
     update: function(state) {
-      React.renderComponent(<App actions={actions} ={state}/>, document.getElementsByTagName('body')[0]);
+      React.renderComponent(<App actions={actions} st={state}/>, document.getElementsByTagName('body')[0]);
     }
   }
 
   return app.initialize();
 };
 
-module.exports = AppWrap;
+module.exports = App;
 
 
 

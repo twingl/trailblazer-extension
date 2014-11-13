@@ -62,28 +62,26 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   };
 });
 
-domready(function() {
-  getMap(assignmentId);
-});
-
 
 //Begin Flux Experiment
-var NodesStore = require('../../../stores/node-store');
-var stores = {
-  NodesStore: new NodesStore()
-};
-var actions = require('../../../actions');
+var App = require('../../../content/app');
 
-var Fluxxor = require('fluxxor');
-var flux = new Fluxxor.Flux(stores, actions);
 
-console.log('flux', flux)
-flux.actions.loadNodes(assignmentId);
-flux.on("dispatch", function(type, payload) {
-  if (console && console.log) {
-    console.log("[Dispatch]", type, payload);
-  }
+
+domready(function() {
+  getMap(assignmentId);
+
+  React.renderComponent(<App/>, document.getElementsByTagName('body')[0])
+
+
+
 });
+
+
+
+
+
+
 ///
 
 
