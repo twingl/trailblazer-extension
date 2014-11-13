@@ -28,8 +28,8 @@ flux.on("dispatch", function(type, payload) {
 });
 
 //components
-var AssignmentList  = require('app/assignment-list');
-var Map             = require('app/map');
+var AssignmentList  = require('app/components/assignment-list');
+var Map             = require('app/components/map');
 
 var App = React.createClass({
 

@@ -6,7 +6,7 @@
     "watching": "{node_modules/app/**,ui/pages/js/src,ui/popup/js/src}/*"
   },
   "scripts": {
-    "components": "jsx node_modules/app/src node_modules/app/components",
+    "components": "jsx -x js --follow-requires node_modules/app/src node_modules/app/components",
     "watch-map": "browserify src/ui/pages/js/src/map.js -o src/ui/pages/js/build/map.js --debug --verbose",
     "watch-trails": "browserify src/ui/pages/js/src/trails.js -o src/ui/pages/js/build/trails.js --debug --verbose",
     "watch-popup": "browserify src/ui/popup/js/src/popup.js -o src/ui/popup/js/build/popup.js --debug --verbose",
@@ -26,7 +26,7 @@
     ]
   },
   "dependencies": {
-    "d3": "^3.4.11",
+    "d3": "~3.0",
     "d3-tip": "git://github.com/jansegre/d3-tip",
     "domready": "^1.0.7",
     "fluxxor": "^1.5.0",
