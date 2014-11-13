@@ -1,11 +1,8 @@
 var _       = require('lodash');
 var Node = require('../model/node');
 
-var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
-
 var Fluxxor = require('fluxxor');
 
-//TODO put constants in
 var constants = require('../constants');
 
 var NodeStore = Fluxxor.createStore({

@@ -31,30 +31,37 @@ flux.on("dispatch", function(type, payload) {
 var AssignmentList  = require('app/assignment-list');
 var Map             = require('app/map');
 
-
 var App = React.createClass({
 
-  mixins: [FluxMixin, StoreWatchMixin('AssignmentStore'), StoreWatchMixin('NodesStore')],
+  mixins: [FluxMixin, StoreWatchMixin('AssignmentStore', 'NodeStore')],
 
   getInitialState: function() {
+    //QUESTION: might use props instead!
     return {
       mode: 'ASSIGNMENTS'
     };
   },
 
-  getStateFromFlux: function(name) {
-    //name = 'nodes' || 'assignments'; storeName = 'NodeStore' || 'AssignmentStore'
-    var storeName = name[0].toUpperCase() + name.slice(1, -1) + "Store"
-
-    var store = this.getFlux().store(storeName);
+  //bind top level component to 'change' events on stores
+  getStateFromFlux: function() {
+    var flux = this.getFlux();
+    var NodeStore = flux.store('NodeStore');
+    var AssignmentStore = flux.store('AssignmentStore');
     return {
-      loading: store.loading,
-      error: store.error,
-      assignments: store[name]
+      nodeState: {
+        loading: NodeStore.loading,
+        error: NodeStore.error,
+        nodes: NodeStore.getState().nodes
+      },
+      AssignmentState: {
+        loading: AssignmentStore.loading,
+        error: AssignmentStore.error,
+        assignments: AssignmentStore.getState().assignments
+      }
     };
   },
 
-  render: function() {
+  render: function () {
     switch (this.state.mode) {
       case 'ASSIGNMENTS':
         return this.renderTrails();
@@ -64,11 +71,16 @@ var App = React.createClass({
     }
   },
 
-  renderAssignments: function() {
+  renderAssignments: function () {
 
   },
 
-  renderMap: function() {
+  renderMap: function () {
+
+  },
+
+  componentDidMount: function () {
+    if (this.state.mode === 'ASSIGNMENTS') this.getFlux().actions.loadAssignments();
 
   }
 
@@ -96,68 +108,6 @@ var AppWrap = function(initialState, actions) {
 
 module.exports = AppWrap;
 
-
-
-
-// //components
-// var MapView = require('app/components/map-view');
-
-// //variables
-// var assignmentId;
-// var chrome = window.chrome;
-
-// var shareAction = function(assignmentId, bool) {
-//   chrome.runtime.sendMessage({ 
-//     action: 'updateAssignment', 
-//     assignmentId: assignmentId, 
-//     props: {
-//       visible: bool
-//     }
-//   })
-// };
-
-// var getMap =  function(assignmentId) {
-//   chrome.runtime.sendMessage({ action: "getMap", assignmentId: assignmentId }, function(response) {
-//       if (response.data && response.data.nodes && Object.keys(response.data.nodes).length > 0) {
-//         React.renderComponent(
-//           <MapView 
-//             mapURL={response.data.assignment.url}
-//             shareAction={shareAction}
-//             assignmentId={assignmentId}
-//             visible={response.data.assignment.visible}
-//             title={response.data.assignment.title} 
-//             data={response.data} />,
-//           document.getElementsByTagName('body')[0]
-//         );
-//       };
-//     });
-// };
-
-// if (window.location.hash) {
-//   var o = {};
-//   _.each(window.location.hash.substring(1).split('&'), function(i) {
-//     var kv = i.split('=');
-//     o[kv[0]] = kv[1];
-//   });
-//   assignmentId = parseInt(o.assignment);
-// };
-
-// //listen for updates to an assignment's nodes and render map (unused)
-// chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-//   if (request.action === "updatedNodes" && request.assignmentId === assignmentId) {
-//     getMap(assignmentId);
-//   };
-// });
-
-// chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-//   if (request.action === "updatedAssignment" && request.assignment.id === assignmentId) {
-//     getMap(assignmentId);
-//   };
-// });
-
-// domready(function() {
-//   getMap(assignmentId);
-// });
 
 
 
