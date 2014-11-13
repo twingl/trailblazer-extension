@@ -8,24 +8,14 @@ var _ = require('lodash');
 var domready = require('domready');
 
 //setup stores, actions and flux
-var NodeStore = require('../stores/node-store');
-var AssignmentStore = require('../stores/assignment-store');
-var stores = {
-  NodeStore: new NodeStore(),
-  AssignmentStore: new AssignmentStore()
-};
-var actions = require('../actions');
-var flux = new Fluxxor.Flux(stores, actions);
 
 var FluxMixin = Fluxxor.FluxMixin(React),
     StoreWatchMixin = Fluxxor.StoreWatchMixin;
 
-//logging
-flux.on("dispatch", function(type, payload) {
-  if (console && console.log) {
-    console.log("[Dispatch]", type, payload);
-  }
-});
+console.log('FluxMixin', FluxMixin)
+
+
+
 
 //components
 var AssignmentList  = require('app/components/assignment-list');
@@ -44,7 +34,9 @@ var App = React.createClass({
 
   //bind top level component to 'change' events on stores
   getStateFromFlux: function() {
+    console.log('calling getStateFromFlux', this)
     var flux = this.getFlux();
+
     var NodeStore = flux.store('NodeStore');
     var AssignmentStore = flux.store('AssignmentStore');
     return {
@@ -72,7 +64,7 @@ var App = React.createClass({
   },
 
   renderAssignments: function () {
-    console.log('im rederng')
+    console.log('im renderng')
 
     console.log(this.state.AssignmentState)
   },
@@ -101,7 +93,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     update: function(state) {
-      React.renderComponent(<App actions={actions} st={state}/>, document.getElementsByTagName('body')[0]);
+      React.renderComponent(<App actions={actions} st={state} />, document.getElementsByTagName('body')[0]);
     }
   }
 

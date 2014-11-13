@@ -33,7 +33,7 @@
     "jsdoc": "~3.3.0-alpha9",
     "lodash": "^2.4.1",
     "promise": "^6.0.1",
-    "react": "^0.11.2"
+    "react": "^0.12"
   },
   "repository": {
     "type": "git",
@@ -65,7 +65,7 @@
     "gulp-zip": "^2.0.2",
     "npm-watch": "0.0.0",
     "pretty-hrtime": "^0.2.2",
-    "reactify": "^0.14.0",
+    "reactify": "^0.16.0",
     "require-dir": "^0.1.0",
     "superagent": "^0.20.0",
     "uglifyify": "^2.5.0",
