@@ -7,6 +7,8 @@ var Fluxxor = require('fluxxor');
 
 var constants = require('../constants');
 
+console.log('constants in AssignmentStore', constants)
+
 var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
@@ -27,6 +29,8 @@ var AssignmentStore = Fluxxor.createStore({
   },
 
   getState: function () {
+    console.log('getting assignment state')
+
     return {
       assignments: this.assignmentInstances
     };

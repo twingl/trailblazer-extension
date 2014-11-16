@@ -25,6 +25,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   getState: function () {
+    console.log('getting node state')
     return {
       nodes: this.nodeInstances
     };

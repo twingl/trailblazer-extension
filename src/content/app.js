@@ -54,28 +54,13 @@ var App = React.createClass({
   },
 
   render: function () {
-    switch (this.state.mode) {
-      case 'ASSIGNMENTS':
-        return this.renderAssignments();
-      case 'MAP':
-      default:
-        return this.renderMap();
-    }
-  },
-
-  renderAssignments: function () {
-    console.log('im renderng')
-
-    console.log(this.state.AssignmentState)
-  },
-
-  renderMap: function () {
-
+    console.log('rendering', this.state)
+    return <div />
   },
 
   componentDidMount: function () {
+    console.log('component mounting')
     if (this.state.mode === 'ASSIGNMENTS') this.getFlux().actions.loadAssignments();
-
   }
 
 

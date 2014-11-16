@@ -1,9 +1,11 @@
 var constants = require('./constants');
 var TrailblazerHTTPStorageAdapter = require('./adapter/trailblazer_http_storage_adapter');
 
+console.log('constants', constants)
+
 module.exports = {
   loadNodes: function (assignmentId) {
-    this.dispatch({type: constants.lOAD_NODES});
+    this.dispatch(constants.LOAD_NODES);
 
     // Request nodes from the storage adapter
     new TrailblazerHTTPStorageAdapter()
@@ -11,37 +13,27 @@ module.exports = {
       .then(function(response) {
         console.log('response in actions', response, constants)
         if (response.nodes) { 
-          this.dispatch({
-            type: constants.lOAD_NODES_SUCCESS, 
-            payload: { nodes: response.nodes }
-          })
+          this.dispatch(constants.LOAD_NODES_SUCCESS, { nodes: response.nodes })
         } else {
-          this.dispatch({
-            type: constants.lOAD_NODES_FAIL, 
-            payload: { error: response.error }
-          })  
+          this.dispatch(constants.LOAD_NODES_FAIL, { error: response.error })  
         }
 
       }.bind(this));
   },
 
   loadAssignments: function () {
-    this.dispatch({type: constants.lOAD_ASSIGMENTS});
+    this.dispatch(constants.LOAD_ASSIGNMENTS);
+    console.log('load assignments action')
 
     // Request assignments from the storage adapter
     new TrailblazerHTTPStorageAdapter()
       .list("assignments")
       .then(function(response) {
-        if (response.assignments) { 
-          this.dispatch({
-            type: constants.lOAD_ASSIGMENTS_SUCCESS, 
-            payload: { assignments: response.assignments }
-          })
+        console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
+        if (response) {
+          this.dispatch(constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: response.assignments })
         } else {
-          this.dispatch({
-            type: constants.lOAD_ASSIGNMENTS_FAIL, 
-            payload: { error: response.error }
-          })  
+          this.dispatch(constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error })  
         }
 
       }.bind(this));
