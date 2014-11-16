@@ -22,10 +22,10 @@ module.exports = {
   //   src: src + "/images/**",
   //   dest: dest + "/images"
   // },
-  // markup: {
-  //   src: src + "/htdocs/**",
-  //   dest: dest
-  // },
+  markup: {
+    src: src + "/htdocs/**",
+    dest: dest
+  },
   browserify: {
     // Enable source maps
     debug: true,
@@ -48,6 +48,11 @@ module.exports = {
         entries: './src/background.js',
         dest: dest,
         outputName: 'background.js'
+      },
+      {
+        entries: './src/content.js',
+        dest: dest,
+        outputName: 'content.js'
       }
     ]
   }

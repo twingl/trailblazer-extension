@@ -51,6 +51,7 @@ var AsssignmentItem = React.createClass({
         userId:       this.props.item.user_id
       }
     });
+    
     window.location.href  = "/src/ui/pages/map.html#assignment=" + id;
   },
 

@@ -55,12 +55,12 @@ var App = React.createClass({
 
   render: function () {
     console.log('rendering', this.state)
-    return <div />
+    return <AssignmentList assignments={this.state.AssignmentState.assignments} />
   },
 
   componentDidMount: function () {
-    console.log('component mounting')
-    if (this.state.mode === 'ASSIGNMENTS') this.getFlux().actions.loadAssignments();
+    console.log('component mounting');
+    if (this.state.mode === 'ASSIGNMENTS') { this.getFlux().actions.loadAssignments(); }
   }
 
 
@@ -68,22 +68,22 @@ var App = React.createClass({
 });
 
 
-var AppWrap = function(initialState, actions) {
-  var app = {
-    initialize: function() {
-     // this._layer = DOM('<div class="{className}"></div>', {className: RESET_CLASSNAME})[0];
-     // DOM('body').add(this._layer);
-     this.update(initialState);
-     return this;
-    },
+// var AppWrap = function(initialState, actions) {
+//   var app = {
+//     initialize: function() {
+//      // this._layer = DOM('<div class="{className}"></div>', {className: RESET_CLASSNAME})[0];
+//      // DOM('body').add(this._layer);
+//      this.update(initialState);
+//      return this;
+//     },
 
-    update: function(state) {
-      React.renderComponent(<App actions={actions} st={state} />, document.getElementsByTagName('body')[0]);
-    }
-  }
+//     update: function(state) {
+//       React.renderComponent(<App actions={actions} st={state} />, document.getElementsByTagName('body')[0]);
+//     }
+//   }
 
-  return app.initialize();
-};
+//   return app.initialize();
+// };
 
 module.exports = App;
 

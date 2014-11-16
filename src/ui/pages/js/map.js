@@ -6,6 +6,9 @@ var _ = require('lodash');
 var domready = require('domready');
 
 
+
+
+
 //components
 var MapView = require('app/components/map-view');
 
@@ -63,32 +66,6 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 });
 
 
-//Begin Flux Experiment
-var Fluxxor = require('fluxxor');
-var App = require('../../../content/app');
-var NodeStore = require('../../../stores/node-store');
-var AssignmentStore = require('../../../stores/assignment-store');
-var stores = {
-  NodeStore: new NodeStore(),
-  AssignmentStore: new AssignmentStore()
-};
-var actions = require('../../../actions');
-var flux = new Fluxxor.Flux(stores, actions);
-//logging
-flux.on("dispatch", function(type, payload) {
-  if (console && console.log) {
-    console.log("[Dispatch]", type, payload);
-  }
-});
-
-domready(function() {
-  getMap(assignmentId);
-
-  React.renderComponent(<App flux={flux}/>, document.getElementsByTagName('body')[0])
-
-
-
-});
 
 
 

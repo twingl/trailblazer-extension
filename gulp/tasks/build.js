@@ -11,4 +11,4 @@ if (argv.production) {
 }
 
 // gulp.task('build', ['browserify', 'sass', 'images', 'markup']);
-gulp.task('build', ['browserify']);
+gulp.task('build', ['browserify', 'markup']);

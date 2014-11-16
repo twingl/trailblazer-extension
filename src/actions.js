@@ -37,5 +37,11 @@ module.exports = {
         }
 
       }.bind(this));
+  },
+
+  pageMode: function (mode) {
+    
+
+
   }
 }
