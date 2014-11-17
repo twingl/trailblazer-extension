@@ -13,11 +13,6 @@ var isArray = require('is-array');
 var FluxMixin = Fluxxor.FluxMixin(React),
     StoreWatchMixin = Fluxxor.StoreWatchMixin;
 
-console.log('FluxMixin', FluxMixin)
-
-
-
-
 //components
 var AssignmentList  = require('app/components/assignment-list');
 var Map             = require('app/components/map');
@@ -29,7 +24,8 @@ var App = React.createClass({
   getInitialState: function() {
     //QUESTION: might use props instead!
     return {
-      mode: 'ASSIGNMENTS'
+      mode: 'ASSIGNMENTS',
+      assignmentId: null
     };
   },
 
@@ -59,12 +55,19 @@ var App = React.createClass({
     var assignments = this.state.AssignmentState.assignments;
     var items = assignments ? _.values(assignments) : [];
     console.log('items', items)
-    return <AssignmentList items={items} />
+    return <AssignmentList items={items} select={this.selectAssignment}  />
   },
 
   componentDidMount: function () {
     console.log('component mounting');
     if (this.state.mode === 'ASSIGNMENTS') { this.getFlux().actions.loadAssignments(); }
+  },
+
+  selectAssignment: function (assignmentId) {
+    console.log('assignmentId in selectAssignment', assignmentId)
+    this.setState({ 
+      assignmentId: assignmentId
+      mode: });
   }
 
 

@@ -1,4 +1,11 @@
-var React = require('react/addons');
+//main
+var React = require('react/addons')
+var Router = require('react-router');
+var Route = Router.Route;
+var Routes = Router.Routes;
+var NotFoundRoute = Router.NotFoundRoute;
+var DefaultRoute = Router.DefaultRoute;
+var Link = Router.Link;
 
 var actions = require('./actions.js');
 var App = require('./content/app.js')
@@ -31,6 +38,17 @@ if (window.location.hash) {
   });
   assignmentId = parseInt(o.assignment);
 };
+
+
+var routes = (
+  <Routes location="history">
+    <Route name='app' path="/" handler={App} >
+      // <Route name="welcome" path="welcome" handler={Welcome} />
+      <Route name="assignment-list" path="assignments" handler={AssignmentList} />
+      <Route name="map" path="map" handler={Map} />
+    </Route>
+  </Routes>
+)
 
 React.render(<App flux={flux} assignment={assignmentId} />, document.getElementsByTagName('body')[0])
 
