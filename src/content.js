@@ -1,3 +1,5 @@
+var React = require('react/addons');
+
 var actions = require('./actions.js');
 var App = require('./content/app.js')
 var Fluxxor = require('fluxxor');
@@ -30,7 +32,7 @@ if (window.location.hash) {
   assignmentId = parseInt(o.assignment);
 };
 
-React.render(<App flux={flux} assignment={assignmentId} />)
+React.render(<App flux={flux} assignment={assignmentId} />, document.getElementsByTagName('body')[0])
 
 
 

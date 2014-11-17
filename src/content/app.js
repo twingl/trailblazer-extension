@@ -6,6 +6,7 @@ var React = require('react/addons');
 var Fluxxor = require('fluxxor');
 var _ = require('lodash');
 var domready = require('domready');
+var isArray = require('is-array');
 
 //setup stores, actions and flux
 
@@ -55,7 +56,10 @@ var App = React.createClass({
 
   render: function () {
     console.log('rendering', this.state)
-    return <AssignmentList assignments={this.state.AssignmentState.assignments} />
+    var assignments = this.state.AssignmentState.assignments;
+    var items = assignments ? _.values(assignments) : [];
+    console.log('items', items)
+    return <AssignmentList items={items} />
   },
 
   componentDidMount: function () {
