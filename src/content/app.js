@@ -55,7 +55,13 @@ var App = React.createClass({
     var assignments = this.state.AssignmentState.assignments;
     var items = assignments ? _.values(assignments) : [];
     console.log('items', items)
-    return <AssignmentList items={items} select={this.selectAssignment}  />
+    // return <AssignmentList items={items} select={this.selectAssignment}  />
+    return (
+      <div id='app'>
+        <this.props.activeRouteHandler/>
+      </div>
+    );
+
   },
 
   componentDidMount: function () {

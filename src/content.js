@@ -42,7 +42,7 @@ if (window.location.hash) {
 
 var routes = (
   <Routes location="history">
-    <Route name='app' path="/" handler={App} >
+    <Route name='app' path="/" handler={App} flux={flux} >
       // <Route name="welcome" path="welcome" handler={Welcome} />
       <Route name="assignment-list" path="assignments" handler={AssignmentList} />
       <Route name="map" path="map" handler={Map} />
@@ -50,7 +50,7 @@ var routes = (
   </Routes>
 )
 
-React.render(<App flux={flux} assignment={assignmentId} />, document.getElementsByTagName('body')[0])
+React.render(routes, document.body)
 
 
 
