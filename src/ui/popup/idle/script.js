@@ -53,7 +53,7 @@
 
       // Open new tab showing list of assignments
       // chrome.tabs.create({ url: "/src/ui/pages/trails.html" });
-      chrome.tabs.create({ url: "/build/content.html" });
+      chrome.tabs.create({ url: "build/content.html" });
 
     });
 

@@ -22,9 +22,7 @@ var App = React.createClass({
   mixins: [FluxMixin, StoreWatchMixin('AssignmentStore', 'NodeStore')],
 
   getInitialState: function() {
-    //QUESTION: might use props instead!
     return {
-      mode: 'ASSIGNMENTS',
       assignmentId: null
     };
   },
@@ -51,52 +49,27 @@ var App = React.createClass({
   },
 
   render: function () {
-    console.log('rendering', this.state)
+    console.log('rendering in app', this.props, this.state)
     var assignments = this.state.AssignmentState.assignments;
     var items = assignments ? _.values(assignments) : [];
-    console.log('items', items)
-    // return <AssignmentList items={items} select={this.selectAssignment}  />
-    return (
-      <div id='app'>
-        <this.props.activeRouteHandler/>
-      </div>
-    );
-
+    return <this.props.activeRouteHandler state={this.state} select={this.selectAssignment} />
   },
 
   componentDidMount: function () {
     console.log('component mounting');
-    if (this.state.mode === 'ASSIGNMENTS') { this.getFlux().actions.loadAssignments(); }
+    this.getFlux().actions.loadAssignments();
   },
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
-    this.setState({ 
-      assignmentId: assignmentId
-      mode: });
+    this.setState({ assignmentId: assignmentId });
+    window.location.href = "/assignments/" + assignmentId
+
   }
 
 
 
 });
-
-
-// var AppWrap = function(initialState, actions) {
-//   var app = {
-//     initialize: function() {
-//      // this._layer = DOM('<div class="{className}"></div>', {className: RESET_CLASSNAME})[0];
-//      // DOM('body').add(this._layer);
-//      this.update(initialState);
-//      return this;
-//     },
-
-//     update: function(state) {
-//       React.renderComponent(<App actions={actions} st={state} />, document.getElementsByTagName('body')[0]);
-//     }
-//   }
-
-//   return app.initialize();
-// };
 
 module.exports = App;
 
