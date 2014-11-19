@@ -13,8 +13,14 @@ var AssignmentList = require('app/components/assignment-list');
 var MapView        = require('app/components/map-view');
 
 //setup stores, actions and flux
-var FluxMixin = Fluxxor.FluxMixin(React),
-    StoreWatchMixin = Fluxxor.StoreWatchMixin;
+var FluxMixin       = Fluxxor.FluxMixin(React)
+ ,  StoreWatchMixin = Fluxxor.StoreWatchMixin
+ ,  RouterMixin     = require('react-mini-router').RouterMixin
+ ,  navigate        = require('react-mini-router').navigate;
+
+
+
+
 
 //TODO make an action
 var shareAction = function(assignmentId, bool) {
@@ -30,7 +36,17 @@ var shareAction = function(assignmentId, bool) {
 
 var App = React.createClass({
 
-  mixins: [FluxMixin, StoreWatchMixin('AssignmentStore', 'NodeStore')],
+  mixins: [
+    FluxMixin, 
+    StoreWatchMixin('AssignmentStore', 'NodeStore'),
+    RouterMixin
+  ],
+
+  routes: {
+    '/build/content.html': 'showAssignments',
+    '/build/content.html/assignments': 'showAssignments',
+    '/build/content.html/assignments/:id': 'showMap' 
+  },
 
   getInitialState: function() {
     return {
@@ -61,20 +77,23 @@ var App = React.createClass({
   },
 
   render: function () {
-    console.log('rendering app', this.state)
+    console.log('rendering app', this.state);
+    return this.renderCurrentRoute();
+  },
 
-    switch (this.state.mode) {
-      case 'ASSIGNMENTS':
-        return <AssignmentList state={this.state} select={this.selectAssignment} />
-      case "MAP":
-        return <MapView state={this.state} shareAction={shareAction}/>
-    }
+  showAssignments: function () {
+    console.log('showAssignments fired')
+    return <AssignmentList state={this.state} select={this.selectAssignment} />
+  },
 
+  showMap: function (req, options) {
+    return <MapView state={this.state} shareAction={shareAction}/>
   },
 
   componentDidMount: function () {
-    console.log('component mounting');
     this.getFlux().actions.loadAssignments();
+    console.log('component mounting');
+    // this.getFlux().actions.loadAssignments();
   },
 
   selectAssignment: function (assignmentId) {
@@ -84,12 +103,14 @@ var App = React.createClass({
       assignmentId: assignmentId,
       mode: 'MAP'
     });
+    navigate('/build/content.html/assignments/'+assignmentId);
     
   }
-
-
-
 });
+
+
+console.log('app', App)
+
 
 module.exports = App;
 
