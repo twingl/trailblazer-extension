@@ -14,10 +14,10 @@ module.exports = {
   //     "!" + dest + "/**.map"
   //   ]
   // },
-  // sass: {
-  //   src: src + "/sass/*.{sass, scss}",
-  //   dest: dest
-  // },
+  sass: {
+    src: src + "/content/styles/*.css",
+    dest: dest
+  },
   // images: {
   //   src: src + "/images/**",
   //   dest: dest + "/images"

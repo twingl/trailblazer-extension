@@ -11,6 +11,7 @@ var domready = require('domready');
 
 //components
 var AssignmentList = require('app/components/assignment-list');
+var MapView = require('app/components/map-view');
 
 var actions = require('./actions.js');
 var App = require('./content/app.js');
@@ -30,18 +31,21 @@ flux.on("dispatch", function(type, payload) {
   }
 });
 
-var routes = (
-  <Routes location="history">
-    <Route name='app' path="build/content.html" handler={App} flux={flux} >
-      <Route name="assignment-list" path="assignments" handler={AssignmentList} />
-      <DefaultRoute handler={AssignmentList} />
-    </Route>
-  </Routes>
-)
+//  window.addEventListener('popstate', function() {console.log('history', history)}, false);
+
+// var routes = (
+//   <Routes location="history">
+//     <Route name='app' path="build/content.html" handler={App} flux={flux} >
+//       <Route name="assignment-list" path="build/content.html/assignments" handler={AssignmentList} />
+//       <Route name="map" path="build/content.html/map/:mapId" handler={MapView} />
+//       <DefaultRoute handler={AssignmentList} />
+//     </Route>
+//   </Routes>
+// )
 
 
 
-React.render(routes, document.body);
+React.render(<App flux={flux} />, document.body);
 
 //example
 // var routes = (

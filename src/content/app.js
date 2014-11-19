@@ -8,14 +8,25 @@ var _ = require('lodash');
 var domready = require('domready');
 var isArray = require('is-array');
 
-//setup stores, actions and flux
+//components
+var AssignmentList = require('app/components/assignment-list');
+var MapView        = require('app/components/map-view');
 
+//setup stores, actions and flux
 var FluxMixin = Fluxxor.FluxMixin(React),
     StoreWatchMixin = Fluxxor.StoreWatchMixin;
 
-//components
-var AssignmentList  = require('app/components/assignment-list');
-var Map             = require('app/components/map');
+//TODO make an action
+var shareAction = function(assignmentId, bool) {
+  chrome.runtime.sendMessage({ 
+    action: 'updateAssignment', 
+    assignmentId: assignmentId, 
+    props: {
+      visible: bool
+    }
+  })
+};
+
 
 var App = React.createClass({
 
@@ -23,7 +34,8 @@ var App = React.createClass({
 
   getInitialState: function() {
     return {
-      assignmentId: null
+      assignmentId: null,
+      mode: 'ASSIGNMENTS'
     };
   },
 
@@ -49,10 +61,15 @@ var App = React.createClass({
   },
 
   render: function () {
-    console.log('rendering in app', this.props, this.state)
-    var assignments = this.state.AssignmentState.assignments;
-    var items = assignments ? _.values(assignments) : [];
-    return <this.props.activeRouteHandler state={this.state} select={this.selectAssignment} />
+    console.log('rendering app', this.state)
+
+    switch (this.state.mode) {
+      case 'ASSIGNMENTS':
+        return <AssignmentList state={this.state} select={this.selectAssignment} />
+      case "MAP":
+        return <MapView state={this.state} shareAction={shareAction}/>
+    }
+
   },
 
   componentDidMount: function () {
@@ -62,9 +79,12 @@ var App = React.createClass({
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
-    this.setState({ assignmentId: assignmentId });
-    window.location.href = "/assignments/" + assignmentId
-
+    this.getFlux().actions.loadNodes(assignmentId);
+    this.setState({ 
+      assignmentId: assignmentId,
+      mode: 'MAP'
+    });
+    
   }
 
 
