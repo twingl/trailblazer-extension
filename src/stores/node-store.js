@@ -1,5 +1,6 @@
 var _       = require('lodash');
 var Node = require('../model/node');
+var camelize = require('camelcase-keys');
 
 var Fluxxor = require('fluxxor');
 
@@ -42,7 +43,7 @@ var NodeStore = Fluxxor.createStore({
 
     this.nodeInstances = payload.nodes.reduce(function(acc, node) {
       var id = node.id;
-      acc[id] = node;
+      acc[id] = camelize(node);
       return acc;
     }, {});
     this.emit("change");
