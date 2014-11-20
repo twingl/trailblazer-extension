@@ -13,7 +13,8 @@
     "storage",
     "tabs",
     "webRequest",
-    "windows"
+    "windows",
+    "webRequestBlocking"
   ],
   "icons": {
     "16": "src/ui/icons/16.png",

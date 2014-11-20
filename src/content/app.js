@@ -19,9 +19,6 @@ var FluxMixin       = Fluxxor.FluxMixin(React)
  ,  navigate        = require('react-mini-router').navigate;
 
 
-
-
-
 //TODO make an action
 var shareAction = function(assignmentId, bool) {
   chrome.runtime.sendMessage({ 
@@ -43,9 +40,9 @@ var App = React.createClass({
   ],
 
   routes: {
-    '/build/content.html': 'showAssignments',
-    '/build/content.html/assignments': 'showAssignments',
-    '/build/content.html/assignments/:id': 'showMap' 
+    '/': 'showAssignments',
+    '/assignments': 'showAssignments',
+    '/assignments/:id': 'showMap' 
   },
 
   getInitialState: function() {
@@ -93,7 +90,6 @@ var App = React.createClass({
   componentDidMount: function () {
     this.getFlux().actions.loadAssignments();
     console.log('component mounting');
-    // this.getFlux().actions.loadAssignments();
   },
 
   selectAssignment: function (assignmentId) {
@@ -103,7 +99,7 @@ var App = React.createClass({
       assignmentId: assignmentId,
       mode: 'MAP'
     });
-    navigate('/build/content.html/assignments/'+assignmentId);
+    navigate('/assignments/'+assignmentId);
     
   }
 });

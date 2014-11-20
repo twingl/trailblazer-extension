@@ -20,4 +20,4 @@ flux.on("dispatch", function(type, payload) {
   }
 });
 
-React.render(<App flux={flux} history={true} />, document.body);
+React.render(<App flux={flux} hash={window.location.hash} />, document.body);
