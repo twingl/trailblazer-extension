@@ -63,12 +63,12 @@ var App = React.createClass({
       nodeState: {
         loading: NodeStore.loading,
         error: NodeStore.error,
-        nodes: NodeStore.getState().nodes
+        nodeMap: NodeStore.getState().nodeMap
       },
       AssignmentState: {
         loading: AssignmentStore.loading,
         error: AssignmentStore.error,
-        assignments: AssignmentStore.getState().assignments
+        assignmentMap: AssignmentStore.getState().assignmentMap
       }
     };
   },
@@ -83,11 +83,11 @@ var App = React.createClass({
     return <AssignmentList state={this.state} select={this.selectAssignment} />
   },
 
-  showMap: function (req, options) {
+  showMap: function () {
     return <MapView state={this.state} shareAction={shareAction}/>
   },
 
-  componentDidMount: function () {
+  componentWillMount: function () {
     this.getFlux().actions.loadAssignments();
     console.log('component mounting');
   },

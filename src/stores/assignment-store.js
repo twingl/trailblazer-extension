@@ -1,19 +1,14 @@
-var _       = require('lodash');
-var Assignment = require('../model/assignment');
-
-var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
-
-var Fluxxor = require('fluxxor');
-
-var constants = require('../constants');
-
-console.log('constants in AssignmentStore', constants)
+var _         = require('lodash')
+ ,  Fluxxor   = require('fluxxor')
+ ,  constants = require('../constants')
+ ,  Immutable = require('immutable')
+ ,  uuid      = require('node-uuid');
 
 var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options = options || {};
-    this.assignmentInstances = options.assignments || {};
+    this.assignmentMap = options.assignmentMap || {};
     this.loading = false;
     this.error = null;
 
@@ -32,7 +27,7 @@ var AssignmentStore = Fluxxor.createStore({
     console.log('getting assignment state')
 
     return {
-      assignments: this.assignmentInstances
+      assignmentMap: this.assignmentMap
     };
   },
 
@@ -45,11 +40,18 @@ var AssignmentStore = Fluxxor.createStore({
     this.loading = false;
     this.error = null;
 
-    this.assignmentInstances = payload.assignments.reduce(function(acc, assignment) {
-      var id = assignment.id;
-      acc[id] = assignment;
-      return acc;
-    }, {});
+
+    //make an immutable map.
+    var map = payload.assignments
+      .reduce(function(acc, assignment) {
+        console.log('reducing', acc, assignment)
+        var id = assignment.id;
+        acc[id] = assignment;
+        return acc;
+      }, {});
+
+    this.assignmentMap = Immutable.fromJS(map);
+
     this.emit("change");
   },
 
@@ -60,23 +62,23 @@ var AssignmentStore = Fluxxor.createStore({
   },
 
   onAddAssignment: function(payload) {
-    var assignment = payload.assignment;
-    var id = assignment.id || Assignment._getId();
-    this.assignmentInstances[id] = assignment;
+    var node = payload.node;
+    var id = node.id || Node._getId();
+    this.assignmentMap.set(id, node);
     this.emit("change");
   },
 
   onAddAssignmentSuccess: function(payload) {
-    var id = payload.assignment.id;
-    this.assignmentInstances[id].status = "OK";
+    var id = payload.node.id;
+    this.assignmentMap.updateIn([id, 'status'], function(val) { return "OK" });
     this.emit("change");
   },
 
   onAddAssignmentFail: function(payload) {
-    var id = payload.assignment.id;
-    this.assignmentInstances[id].status = "ERROR";
-    this.assignmentInstances[id].error = payload.error;
-    this.emit("change");
+    var id = payload.node.id;
+    this.assignmentMap.updateIn([id, 'status'], function(val) { return "ERROR" });
+    this.assignmentMap.updateIn([id, 'error'], function(val) { return payload.error });
+    this.emit("change");Assignment
   }
 
 });

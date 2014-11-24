@@ -1,18 +1,17 @@
-var _       = require('lodash');
-var Node = require('../model/node');
-var camelize = require('camelcase-keys');
-
-var Fluxxor = require('fluxxor');
-
-var constants = require('../constants');
+var _         = require('lodash')
+ ,  camelize  = require('camelcase-keys')
+ ,  constants = require('../constants')
+ ,  Immutable = require('immutable')
+ ,  Fluxxor   = require('fluxxor');
 
 var NodeStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    var options = options || {};
-    this.nodeInstances = options.nodes || {};
-    this.loading = false;
-    this.error = null;
+    var options         = options || {};
+    this.nodeMap        = options.nodeMap || {};
+    this.tabIdMap       = options.tabIdMap || {};
+    this.loading        = false;
+    this.error          = null;
 
     this.bindActions(
       constants.LOAD_NODES, this.onLoadNodes,
@@ -28,7 +27,8 @@ var NodeStore = Fluxxor.createStore({
   getState: function () {
     console.log('getting node state')
     return {
-      nodes: this.nodeInstances
+      nodeMap: this.nodeMap,
+      tabIdMap: this.tabIdMap
     };
   },
 
@@ -41,11 +41,17 @@ var NodeStore = Fluxxor.createStore({
     this.loading = false;
     this.error = null;
 
-    this.nodeInstances = payload.nodes.reduce(function(acc, node) {
+    var nodes = Immutable.List(payload.nodes);
+    console.log('nodes in onLoadNodesSuccess', nodes)
+
+    var map = payload.nodes.reduce(function(acc, node) {
       var id = node.id;
       acc[id] = camelize(node);
       return acc;
     }, {});
+
+    this.nodeMap  = Immutable.fromJS(map);
+
     this.emit("change");
   },
 
@@ -58,20 +64,20 @@ var NodeStore = Fluxxor.createStore({
   onAddNode: function(payload) {
     var node = payload.node;
     var id = node.id || Node._getId();
-    this.nodeInstances[id] = node;
+    this.nodeMap.set(id, node);
     this.emit("change");
   },
 
   onAddNodeSuccess: function(payload) {
     var id = payload.node.id;
-    this.nodeInstances[id].status = "OK";
+    this.nodeMap.updateIn([id, 'status'], function(val) { return "OK" });
     this.emit("change");
   },
 
   onAddNodeFail: function(payload) {
     var id = payload.node.id;
-    this.nodeInstances[id].status = "ERROR";
-    this.nodeInstances[id].error = payload.error;
+    this.nodeMap.updateIn([id, 'status'], function(val) { return "ERROR" });
+    this.nodeMap.updateIn([id, 'error'], function(val) { return payload.error });
     this.emit("change");
   }
 

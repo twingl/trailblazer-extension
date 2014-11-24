@@ -1,8 +1,6 @@
 var constants = require('./constants');
 var TrailblazerHTTPStorageAdapter = require('./adapter/trailblazer_http_storage_adapter');
 
-console.log('constants', constants)
-
 module.exports = {
   loadNodes: function (assignmentId) {
     this.dispatch(constants.LOAD_NODES);
