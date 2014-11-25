@@ -33,9 +33,11 @@ var shareAction = function(assignmentId, bool) {
 
 var App = React.createClass({
 
+  update: function (state) {
+    this.setState(state);
+  }
+
   mixins: [
-    FluxMixin, 
-    StoreWatchMixin('AssignmentStore', 'NodeStore'),
     RouterMixin
   ],
 
@@ -45,33 +47,43 @@ var App = React.createClass({
     '/assignments/:id': 'showMap' 
   },
 
-  getInitialState: function() {
-    return {
-      assignmentId: null,
-      mode: 'ASSIGNMENTS'
-    };
-  },
+  // getInitialState: function() {
+  //   return {
+  //     assignmentId: null,
+  //     mode: 'ASSIGNMENTS',
+  //     nodeState: {
+  //       loading: false,
+  //       error: null,
+  //       nodeMap: NodeStore.getState().nodeMap
+  //     },
+  //     AssignmentState: {
+  //       loading: AssignmentStore.loading,
+  //       error: AssignmentStore.error,
+  //       assignmentMap: AssignmentStore.getState().assignmentMap
+  //     }
+  //   };
+  // },
 
-  //bind top level component to 'change' events on stores
-  getStateFromFlux: function() {
-    console.log('calling getStateFromFlux', this)
-    var flux = this.getFlux();
+  // //bind top level component to 'change' events on stores
+  // getStateFromFlux: function() {
+  //   console.log('calling getStateFromFlux', this)
+  //   var flux = this.getFlux();
 
-    var NodeStore = flux.store('NodeStore');
-    var AssignmentStore = flux.store('AssignmentStore');
-    return {
-      nodeState: {
-        loading: NodeStore.loading,
-        error: NodeStore.error,
-        nodeMap: NodeStore.getState().nodeMap
-      },
-      AssignmentState: {
-        loading: AssignmentStore.loading,
-        error: AssignmentStore.error,
-        assignmentMap: AssignmentStore.getState().assignmentMap
-      }
-    };
-  },
+  //   var NodeStore = flux.store('NodeStore');
+  //   var AssignmentStore = flux.store('AssignmentStore');
+  //   return {
+  //     nodeState: {
+  //       loading: NodeStore.loading,
+  //       error: NodeStore.error,
+  //       nodeMap: NodeStore.getState().nodeMap
+  //     },
+  //     AssignmentState: {
+  //       loading: AssignmentStore.loading,
+  //       error: AssignmentStore.error,
+  //       assignmentMap: AssignmentStore.getState().assignmentMap
+  //     }
+  //   };
+  // },
 
   render: function () {
     console.log('rendering app', this.state);
@@ -80,17 +92,26 @@ var App = React.createClass({
 
   showAssignments: function () {
     console.log('showAssignments fired')
-    return <AssignmentList state={this.state} select={this.selectAssignment} />
+    return <AssignmentList state={this.props.state} actions={this.props.actions} />
   },
 
   showMap: function () {
-    return <MapView state={this.state} shareAction={shareAction}/>
+    return <MapView state={this.props.state} actions={this.props.actions}/>
   },
 
   componentWillMount: function () {
     this.getFlux().actions.loadAssignments();
     console.log('component mounting');
   },
+
+  // componentWillUpdate: function (nextProps, nextState) {
+  // //controler logic
+
+  // //if nextState.nodeState.nodeMap is new -> save nodes
+
+
+
+  // },
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
@@ -103,6 +124,22 @@ var App = React.createClass({
     
   }
 });
+
+
+var AppWrap = function(initialState, actions) {
+  var app = {
+    initialize: function() {
+     this.update(initialState);
+     return this;
+    },
+
+    update: function(state) {
+      React.renderComponent(<App actions={actions} state={state}/>, document.body);
+    }
+  }
+
+  return app.initialize();
+};
 
 
 console.log('app', App)

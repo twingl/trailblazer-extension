@@ -27,7 +27,9 @@ var AssignmentStore = Fluxxor.createStore({
     console.log('getting assignment state')
 
     return {
-      assignmentMap: this.assignmentMap
+      assignmentMap: this.assignmentMap,
+      loading: this.loading,
+      error: this.error
     };
   },
 

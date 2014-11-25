@@ -20,7 +20,8 @@ var NodeStore = Fluxxor.createStore({
 
       constants.ADD_NODE, this.onAddNode,
       constants.ADD_NODE_SUCCESS, this.onAddNodeSuccess,
-      constants.ADD_NODE_FAIL, this.onAddNodeFail
+      constants.ADD_NODE_FAIL, this.onAddNodeFail,
+      constants.TAB_CREATED, this.handleTabCreated
     );
   },
 
@@ -28,7 +29,8 @@ var NodeStore = Fluxxor.createStore({
     console.log('getting node state')
     return {
       nodeMap: this.nodeMap,
-      tabIdMap: this.tabIdMap
+      loading: this.loading,
+      error: this.error
     };
   },
 
@@ -41,15 +43,13 @@ var NodeStore = Fluxxor.createStore({
     this.loading = false;
     this.error = null;
 
-    var nodes = Immutable.List(payload.nodes);
-    console.log('nodes in onLoadNodesSuccess', nodes)
-
-    var map = payload.nodes.reduce(function(acc, node) {
+    var map = payload.nodes.reduce(function(map, node) {
       var id = node.id;
-      acc[id] = camelize(node);
-      return acc;
+      map[id] = camelize(node);
+      return map;
     }, {});
 
+    //TODO currently overwrites, should merge.
     this.nodeMap  = Immutable.fromJS(map);
 
     this.emit("change");
@@ -79,6 +79,27 @@ var NodeStore = Fluxxor.createStore({
     this.nodeMap.updateIn([id, 'status'], function(val) { return "ERROR" });
     this.nodeMap.updateIn([id, 'error'], function(val) { return payload.error });
     this.emit("change");
+  },
+
+  handleTabCreated: function (payload) {
+    var node;
+    var tabId = payload.data.tabId;
+    var nodeId = this.tabIdMap[tabIdMap];
+
+    if (nodeId) {
+    // This is a resumed node
+
+    } else {
+    // This is a new node
+      node = new Node({
+        url: payload.data.url,
+        title: payload.data.title,
+        tabId: tabId
+      });
+
+    }
+
+
   }
 
 });

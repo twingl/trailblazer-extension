@@ -1,31 +1,42 @@
-var App = function(flux, store, actions) {
+var App = function(flux, stores, actions) {
   var connectedTabs = {};
   var app = {
     initialize: function() {
-      this.store = flux.store(store);
-      this.store.on('change', this.dispatch);
+       for (var i=0;i<stores.length;i++) {
+        var store = stores[i];
+        this[store] = flux.store(store);
+        this.store.on('change', this.dispatch);
+       }
 
-      chrome.runtime.onConnect.addListener(function(port) {
-        var id = port.sender.tab.id;
-        connectedTabs[id] = port;
+      //TODO make a big state object that looks like:
+  //   return {
+  //     assignmentId: null,
+  //     mode: 'ASSIGNMENTS',
+  //     nodeState: {
+  //       loading: false,
+  //       error: null,
+  //       nodeMap: NodeStore.getState().nodeMap
+  //     },
+  //     AssignmentState: {
+  //       loading: AssignmentStore.loading,
+  //       error: AssignmentStore.error,
+  //       assignmentMap: AssignmentStore.getState().assignmentMap
+  //     }
+  //   };
 
-        port.onMessage.addListener(function(msg) {
-          flux.dispatcher.dispatch(msg);
-        });
 
-        port.onDisconnect.addListener(function(port) {
-          if (connectedTabs[id]) delete connectedTabs[id];
-        });
+      this.singleSourceOfState = undefined;
 
-      });
     },
 
     dispatch: function() {
-      for (var port in connectedTabs) {
-        if (connectedTabs.hasOwnProperty(port)) {
-          connectedTabs[port].postMessage(this.getState());
-        }
-      }
+      console.log('this in app dispatch', this)
+      var state;
+      var storeState = this.getState();
+
+
+
+      chrome.runtime.sendMessage(state);
     }
 
   }

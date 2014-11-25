@@ -5,19 +5,21 @@ var domready = require('domready');
 var actions = require('./actions.js');
 var App = require('./content/app.js');
 
-var Fluxxor = require('fluxxor');
-var NodeStore = require('./stores/node-store');
-var AssignmentStore = require('./stores/assignment-store');
-var stores = {
-  NodeStore: new NodeStore(),
-  AssignmentStore: new AssignmentStore()
+chrome.runtme.onMessage.addListener(
+	function handleMessage(state) {
+		//TODO ensure this only handles STATE change event (background handles ACTION messages)
+		App.update(state);
+})
+
+
+actions.dispatch = function(actionName, payload) { // override the fluxxor
+  // this allows the background and content to share the same actions
+  chrome.runtime.sendMessage({type: actionName, payload: payload});
 };
-var flux = new Fluxxor.Flux(stores, actions);
-//logging
-flux.on("dispatch", function(type, payload) {
-  if (console && console.log) {
-    console.log("[Dispatch]", type, payload);
-  }
-});
+
+
+
+
+
 
 React.render(<App flux={flux} hash={window.location.hash} />, document.body);

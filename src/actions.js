@@ -37,9 +37,15 @@ module.exports = {
       }.bind(this));
   },
 
-  pageMode: function (mode) {
+  createdTab: function () {
+    this.dispatch(constants.CREATED_TAB);
+
     
 
 
+  },
+
+  closedTab: function () {
+    
   }
 }
