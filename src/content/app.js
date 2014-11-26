@@ -9,8 +9,8 @@ var domready = require('domready');
 var isArray = require('is-array');
 
 //components
-var AssignmentList = require('app/components/assignment-list');
-var MapView        = require('app/components/map-view');
+var AssignmentsIndex = require('app/components/assignments-index');
+var AssignmentsShow  = require('app/components/assignments-show');
 
 //setup routes
 var RouterMixin     = require('react-mini-router').RouterMixin
@@ -23,9 +23,9 @@ var App = React.createClass({
   ],
 
   routes: {
-    '/': 'showAssignments',
-    '/assignments': 'showAssignments',
-    '/assignments/:id': 'showMap' 
+    '/':                'assignmentsIndex',
+    '/assignments':     'assignmentsIndex',
+    '/assignments/:id': 'assignmentsShow'
   },
 
   render: function () {
@@ -33,14 +33,21 @@ var App = React.createClass({
     return this.renderCurrentRoute();
   },
 
-  showAssignments: function () {
-    console.log('showAssignments fired', this.props.state)
 
-    return <AssignmentList state={this.props.state} actions={this.props.actions} selectMap={this.selectMap} />
+  /**
+   * Assignments#index - borrowing naming conventions from Rails
+   */
+  assignmentsIndex: function () {
+    console.log('assignmentsIndex fired', this.props.state)
+
+    return <AssignmentsIndex state={this.props.state} actions={this.props.actions} selectMap={this.selectMap} />
   },
 
-  showMap: function () {
-    return <MapView state={this.props.state} actions={this.props.actions}/>
+  /**
+   * Assignments#show - borrowing naming conventions from Rails
+   */
+  assignmentsShow: function () {
+    return <AssignmentsShow state={this.props.state} actions={this.props.actions}/>
   },
 
   // componentWillMount: function () {
@@ -48,15 +55,14 @@ var App = React.createClass({
   //   console.log('component mounting');
   // },
 
-  selectMap: function (mapId) {
-    console.log('mapId in selectAssignment', mapId)
+  selectAssignment: function (assignmentId) {
+    console.log('assignmentId in selectAssignment', assignmentId)
     this.props.actions.dispatch()
-    this.setState({ 
-      mapId: mapId,
+    this.setState({
+      assignmentId: assignmentId,
       mode: 'MAP'
     });
-    navigate('/assignments/'+mapId);
-    
+    navigate('/assignments/'+assignmentId);
   }
 });
 
@@ -77,8 +83,3 @@ var AppWrap = function(initialState, actions) {
 };
 
 module.exports = AppWrap;
-
-
-
-
-
