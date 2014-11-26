@@ -15,85 +15,85 @@ var _         = require('lodash')
 // handleMapShared
 
 
-var AssignmentStore = Fluxxor.createStore({
+var MapStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options = options || {};
-    this.assignmentMap = options.assignmentMap || {};
+    this.mapObj = options.mapObj || {};
     this.loading = false;
     this.error = null;
 
     this.bindActions(
-      constants.LOAD_ASSIGNMENTS, this.onLoadAssignments,
-      constants.LOAD_ASSIGNMENTS_SUCCESS, this.onLoadAssignmentsSuccess,
-      constants.LOAD_ASSIGNMENTS_FAIL, this.onLoadAssignmentsFail,
+      constants.LOAD_MAP, this.onLoadMaps,
+      constants.LOAD_MAP_SUCCESS, this.onLoadMapsSuccess,
+      constants.LOAD_MAP_FAIL, this.onLoadMapsFail,
 
-      constants.ADD_ASSIGNMENT, this.onAddAssignment,
-      constants.ADD_ASSIGNMENT_SUCCESS, this.onAddAssignmentSuccess,
-      constants.ADD_ASSIGNMENT_FAIL, this.onAddAssignmentFail
+      constants.ADD_MAP, this.onAddMap,
+      constants.ADD_MAP_SUCCESS, this.onAddMapSuccess,
+      constants.ADD_MAP_FAIL, this.onAddMapFail
     );
   },
 
   getState: function () {
-    console.log('getting assignment state')
+    console.log('getting map state')
 
     return {
-      assignmentMap: this.assignmentMap,
+      mapObj: this.mapObj,
       loading: this.loading,
       error: this.error
     };
   },
 
-  onLoadAssignments: function() {
+  onLoadMaps: function() {
     this.loading = true;
     this.emit("change");
   },
 
-  onLoadAssignmentsSuccess: function(payload) {
+  onLoadMapsSuccess: function(payload) {
     this.loading = false;
     this.error = null;
 
 
-    //make an immutable map.
-    var map = payload.assignments
-      .reduce(function(acc, assignment) {
-        console.log('reducing', acc, assignment)
-        var id = assignment.id;
-        acc[id] = assignment;
+    //make an immutable obj.
+    var obj = payload.maps
+      .reduce(function(o, map) {
+        console.log('reducing', o, map)
+        var id = map.id;
+        o[id] = map;
         return acc;
       }, {});
 
-    this.assignmentMap = Immutable.fromJS(map);
+    this.mapObj = Immutable.fromJS(obj);
 
     this.emit("change");
   },
 
-  onLoadAssignmentsFail: function(payload) {
+  onLoadMapsFail: function(payload) {
     this.loading = false;
     this.error = payload.error;
     this.emit("change");
   },
 
-  onAddAssignment: function(payload) {
+  onAddMap: function(payload) {
     var node = payload.node;
     var id = node.id || Node._getId();
-    this.assignmentMap.set(id, node);
+    this.mapObj.set(id, node);
     this.emit("change");
   },
 
-  onAddAssignmentSuccess: function(payload) {
+  onAddMapSuccess: function(payload) {
     var id = payload.node.id;
-    this.assignmentMap.updateIn([id, 'status'], function(val) { return "OK" });
+    this.mapObj.updateIn([id, 'status'], function(val) { return "OK" });
     this.emit("change");
   },
 
-  onAddAssignmentFail: function(payload) {
+  onAddMapFail: function(payload) {
     var id = payload.node.id;
-    this.assignmentMap.updateIn([id, 'status'], function(val) { return "ERROR" });
-    this.assignmentMap.updateIn([id, 'error'], function(val) { return payload.error });
-    this.emit("change");Assignment
+    this.mapObj.updateIn([id, 'status'], function(val) { return "ERROR" });
+    this.mapObj.updateIn([id, 'error'], function(val) { return payload.error });
+    this.emit("change");Map
   }
 
 });
 
-module.exports = AssignmentStore;
+module.exports = MapStore;

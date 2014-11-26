@@ -15,8 +15,7 @@ var NodeStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options         = options || {};
-    this.nodeMap        = options.nodeMap || {};
-    this.tabIdMap       = options.tabIdMap || {};
+    this.indexedDB      = options.indexedDB;
     this.loading        = false;
     this.error          = null;
 
@@ -35,7 +34,7 @@ var NodeStore = Fluxxor.createStore({
   getState: function () {
     console.log('getting node state')
     return {
-      nodeMap: this.nodeMap,
+      indexedDB: this.indexedDB,
       loading: this.loading,
       error: this.error
     };
@@ -50,14 +49,14 @@ var NodeStore = Fluxxor.createStore({
     this.loading = false;
     this.error = null;
 
-    var map = payload.nodes.reduce(function(map, node) {
-      var id = node.id;
-      map[id] = camelize(node);
-      return map;
-    }, {});
+    // var map = payload.nodes.reduce(function(map, node) {
+    //   var id = node.id;
+    //   map[id] = camelize(node);
+    //   return map;
+    // }, {});
 
-    //TODO currently overwrites, should merge.
-    this.nodeMap  = Immutable.fromJS(map);
+    // //TODO currently overwrites, should merge.
+    // this.nodeMap  = Immutable.fromJS(map);
 
     this.emit("change");
   },
