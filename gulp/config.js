@@ -26,6 +26,10 @@ module.exports = {
     src: src + "/htdocs/**",
     dest: dest
   },
+  jsx: {
+    src: "./node_modules/app/src/**/*.js",
+    dest: "./node_modules/app/components"
+  },
   browserify: {
     // Enable source maps
     debug: true,
