@@ -4,6 +4,13 @@ var _         = require('lodash')
  ,  Immutable = require('immutable')
  ,  Fluxxor   = require('fluxxor');
 
+//TODO 
+// handleTabCreated
+// handleTabUpdated
+// handleTabClosed
+// handleStopRecording
+// handleMarkedAsWaypoint
+
 var NodeStore = Fluxxor.createStore({
 
   initialize: function (options) {

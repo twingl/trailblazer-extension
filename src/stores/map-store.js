@@ -4,6 +4,17 @@ var _         = require('lodash')
  ,  Immutable = require('immutable')
  ,  uuid      = require('node-uuid');
 
+//TODO 
+// handleTabCreated
+// handleTabUpdated
+// handleTabClosed
+// handleTabFocused
+// handleStopRecording
+// handleMarkedAsWaypoint
+// handleMapTitleUpdated
+// handleMapShared
+
+
 var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
