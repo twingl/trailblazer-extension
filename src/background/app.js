@@ -5,10 +5,10 @@ var App = function(flux, store, actions) {
       this.store.on('change', this.dispatch);
     },
 
-    dispatch: function (type, data) {
+    dispatch: function (actionName, payload) {
       var message = {
-        type: type,
-        payload: data
+        type: actionName,
+        payload: payload
       };
       //pass background thread data to UI
       chrome.runtime.sendMessage(message);

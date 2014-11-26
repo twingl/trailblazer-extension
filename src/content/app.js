@@ -1,12 +1,14 @@
 /** @jsx React.DOM */
 
 //helpers
-var d3ify = require('app/d3ify');
 var React = require('react/addons');
-var Fluxxor = require('fluxxor');
 var _ = require('lodash');
 var domready = require('domready');
 var isArray = require('is-array');
+var Immutable = require('immutable');
+
+var constants = require('../constants');
+
 
 //components
 var AssignmentsIndex = require('app/components/assignments-index');
@@ -29,7 +31,7 @@ var App = React.createClass({
   },
 
   render: function () {
-    console.log('rendering app', this.state);
+    console.log('rendering app', this.props.state);
     return this.renderCurrentRoute();
   },
 
@@ -39,8 +41,12 @@ var App = React.createClass({
    */
   assignmentsIndex: function () {
     console.log('assignmentsIndex fired', this.props.state)
+    this.props.actions.dispatch(constants.LOAD_MAPS);
 
-    return <AssignmentsIndex state={this.props.state} actions={this.props.actions} selectMap={this.selectMap} />
+    return <AssignmentsIndex 
+              state={this.props.state} 
+              actions={this.props.actions} 
+              selectMap={this.selectMap} />
   },
 
   /**
@@ -57,27 +63,56 @@ var App = React.createClass({
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
-    this.props.actions.dispatch()
-    this.setState({
-      assignmentId: assignmentId,
-      mode: 'MAP'
-    });
+    throw "not implemented"
+    this.props.actions.dispatch(constants.LOAD_NODES, assignmentId);
     navigate('/assignments/'+assignmentId);
   }
 });
 
-
 var AppWrap = function(initialState, actions) {
   var app = {
     initialize: function() {
-     this.update(initialState);
-     return this;
+      var initialState = initialState || {};
+
+      // nodeState: Map
+        // loading: Boolean
+        // error: String
+        // nodeIndex: Map
+      // assignmentState: Map
+      //   loading: Boolean
+      //   error: String
+      //   assignmentsIndex: Map
+      //   currentAssignment: Integer
+
+      this.state = Immutable.fromJS(initialState);
+      this.update();
+      return this;
     },
 
-    update: function(state) {
-      React.renderComponent(<App actions={actions} state={state}/>, document.body);
-    }
-  }
+    update: function(message) {
+      if (message && message.type) {
+        switch (message.type) {
+          case constants.LOAD_MAPS:
+            this.updateAssignmentLoadStatus(true)
+            break;
+        }
+
+
+
+
+      }
+      React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
+    },
+
+    updateAssignmentLoadStatus: function (status) {
+      this.state.updateIn(['assignmentState', 'loading'], function () { return status });
+    },
+
+
+  };
+
+
+
 
   return app.initialize();
 };

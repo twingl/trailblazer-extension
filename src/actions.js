@@ -19,8 +19,8 @@ module.exports = {
       }.bind(this));
   },
 
-  loadAssignments: function () {
-    this.dispatch(constants.LOAD_ASSIGNMENTS);
+  loadMaps: function () {
+    this.dispatch(constants.LOAD_MAPS);
     console.log('load assignments action')
 
     // Request assignments from the storage adapter

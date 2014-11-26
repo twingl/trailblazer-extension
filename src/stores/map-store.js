@@ -24,9 +24,9 @@ var MapStore = Fluxxor.createStore({
     this.error = null;
 
     this.bindActions(
-      constants.LOAD_MAP, this.onLoadMaps,
-      constants.LOAD_MAP_SUCCESS, this.onLoadMapsSuccess,
-      constants.LOAD_MAP_FAIL, this.onLoadMapsFail,
+      constants.LOAD_MAPS, this.onLoadMaps,
+      constants.LOAD_MAPS_SUCCESS, this.onLoadMapsSuccess,
+      constants.LOAD_MAPS_FAIL, this.onLoadMapsFail,
 
       constants.ADD_MAP, this.onAddMap,
       constants.ADD_MAP_SUCCESS, this.onAddMapSuccess,
@@ -46,6 +46,23 @@ var MapStore = Fluxxor.createStore({
 
   onLoadMaps: function() {
     this.loading = true;
+
+    this.emit('change', constants.LOAD_MAPS)
+
+    // Request assignments from the storage adapter
+    new TrailblazerHTTPStorageAdapter()
+      .list("assignments")
+      .then(function(response) {
+        console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
+        if (response) {
+          this.dispatch(constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: response.assignments })
+        } else {
+          this.dispatch(constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error })  
+        }
+
+      }.bind(this));
+
+
     this.emit("change");
   },
 
