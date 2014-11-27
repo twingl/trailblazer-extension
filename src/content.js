@@ -25,9 +25,9 @@ chrome.runtme.onMessage.addListener(
 
 		switch (message.type) {
 			//whitelist of types that trigger a UI state change
-			case 'LOAD_MAPS':
-			case 'LOAD_MAPS_SUCCESS':
-			case 'LOAD_MAPS_FAIL':
+			case 'LOAD_ASSIGNMENTS':
+			case 'LOAD_ASSIGNMENTS_SUCCESS':
+			case 'LOAD_ASSIGNMENTS_FAIL':
 			case 'LOAD_NODES':
 				app.update(message);
 				break;

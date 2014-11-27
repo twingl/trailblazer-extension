@@ -46,7 +46,6 @@ var MapStore = Fluxxor.createStore({
 
   onLoadMaps: function() {
     this.loading = true;
-
     this.emit('change', constants.LOAD_MAPS)
 
     // Request assignments from the storage adapter
@@ -54,16 +53,13 @@ var MapStore = Fluxxor.createStore({
       .list("assignments")
       .then(function(response) {
         console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
-        if (response) {
-          this.dispatch(constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: response.assignments })
+        if (response.assignments) {
+          this.emit('change', constants.LOAD_MAPS_SUCCESS, { assignments: response.assignments });
         } else {
-          this.dispatch(constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error })  
+          this.emit('change', constants.LOAD_MAPS_FAIL, { error: response.error })  
         }
 
       }.bind(this));
-
-
-    this.emit("change");
   },
 
   onLoadMapsSuccess: function(payload) {

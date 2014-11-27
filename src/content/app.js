@@ -41,7 +41,7 @@ var App = React.createClass({
    */
   assignmentsIndex: function () {
     console.log('assignmentsIndex fired', this.props.state)
-    this.props.actions.dispatch(constants.LOAD_MAPS);
+    this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
 
     return <AssignmentsIndex 
               state={this.props.state} 
@@ -92,21 +92,34 @@ var AppWrap = function(initialState, actions) {
     update: function(message) {
       if (message && message.type) {
         switch (message.type) {
-          case constants.LOAD_MAPS:
-            this.updateAssignmentLoadStatus(true)
+          case constants.LOAD_ASSIGNMENTS:
+            this.updateAssignmentState('loading' true);
             break;
+          case constants.LOAD_ASSIGNMENTS_SUCCESS:
+            this.refreshAssignments(message.payload.assignments);
+            break;
+          case constants.LOAD_ASSIGNMENTS_FAIL:
+            this.updateAssignmentState('error', message.payload.error);
         }
-
-
-
-
       }
       React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
     },
 
-    updateAssignmentLoadStatus: function (status) {
-      this.state.updateIn(['assignmentState', 'loading'], function () { return status });
+    updateAssignmentState: function (key, value) {
+      this.state.updateIn(['assignmentState', key], function () { return value });
     },
+
+    refreshAssignments: function (assignments) {
+      //translate from array to an immutable map
+      this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
+        return Immutable.Map(assignments.reduce(function (o, assignment) {
+          o[assignment.id] = assignment;
+          return o;
+        }))
+      })
+    },
+
+
 
 
   };
