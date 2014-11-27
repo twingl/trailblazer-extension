@@ -23,9 +23,28 @@ var getMap                = require('./lib/get-map')
 var Keen                  = require('../vendor/keen')
   , _                     = require('lodash');
 
+//main 
+var App                   = require('./background/app.js')
+ ,  actions               = require('./actions');
+ ,  Fluxxor               = require('fluxxor');
+ ,  TabStore              = require('./stores/tab-store')
+ ,  NodeStore             = require('./stores/node-store')
+ ,  MapStore              = require('./stores/map-store');
+
+var stores = {
+  TabStore: new TabStore(),
+  NodeStore: new NodeStore(),
+  MapStore: new MapStore()
+};
+
+//instantiate flux and background app
+var flux = Fluxxor.Flux(stores, actions);
+App(flux, 'MapStore', actions);
 
 
-//TODO add listener for ACTION messages
+
+//TODO chrome.tabs.listeners
+
 
 
 

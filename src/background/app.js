@@ -1,6 +1,7 @@
 var App = function(flux, store, actions) {
   var app = {
     initialize: function () {
+      //listen to [map] store
       this.store = flux.store(store);
       this.store.on('change', this.dispatch);
     },

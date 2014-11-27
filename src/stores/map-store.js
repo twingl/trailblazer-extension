@@ -56,7 +56,7 @@ var MapStore = Fluxxor.createStore({
         if (response.assignments) {
           this.emit('change', constants.LOAD_MAPS_SUCCESS, { assignments: response.assignments });
         } else {
-          this.emit('change', constants.LOAD_MAPS_FAIL, { error: response.error })  
+          this.emit('change', constants.LOAD_MAPS_FAIL, { error: response.error });
         }
 
       }.bind(this));
