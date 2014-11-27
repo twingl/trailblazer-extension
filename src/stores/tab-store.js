@@ -18,12 +18,12 @@ var TabStore = Fluxxor.createStore({
     this.tabIdMap   = options.tabIdMap || {};
     this.currentTabId = undefined;
 
-    this.bindActions(
-      constants.TAB_CREATED,  this.handleTabCreated,
-      constants.TAB_UPDATED, this.handleTabUpdated,
-      constants.TAB_CLOSED, this.handleTabClosed,
-      constants.STOP_RECORDING, this.handleStopRecording, 
-      constants.START_RECORDING, this.handleStartRecording    );
+  //   this.bindActions(
+  //     constants.TAB_CREATED,  this.handleTabCreated,
+  //     constants.TAB_UPDATED, this.handleTabUpdated,
+  //     constants.TAB_CLOSED, this.handleTabClosed,
+  //     constants.STOP_RECORDING, this.handleStopRecording, 
+  //     constants.START_RECORDING, this.handleStartRecording    );
   },
 
   getState: function () {

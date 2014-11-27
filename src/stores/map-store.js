@@ -24,13 +24,13 @@ var MapStore = Fluxxor.createStore({
     this.error = null;
 
     this.bindActions(
-      constants.LOAD_MAPS, this.onLoadMaps,
-      constants.LOAD_MAPS_SUCCESS, this.onLoadMapsSuccess,
-      constants.LOAD_MAPS_FAIL, this.onLoadMapsFail,
+      constants.LOAD_ASSIGNMENTS, this.onLoadAssignments,
+      constants.LOAD_ASSIGNMENTS_SUCCESS, this.onLoadAssignmentsSuccess,
+      constants.LOAD_ASSIGNMENTS_FAIL, this.onLoadAssignmentsFail
 
-      constants.ADD_MAP, this.onAddMap,
-      constants.ADD_MAP_SUCCESS, this.onAddMapSuccess,
-      constants.ADD_MAP_FAIL, this.onAddMapFail
+      // constants.ADD_ASSIGNMENT, this.onAddMap,
+      // constants.ADD_ASSIGNMENT_SUCCESS, this.onAddMapSuccess,
+      // constants.ADD_ASSIGNMENT_FAIL, this.onAddMapFail
     );
   },
 
@@ -44,9 +44,9 @@ var MapStore = Fluxxor.createStore({
     };
   },
 
-  onLoadMaps: function() {
+  onLoadAssignments: function() {
     this.loading = true;
-    this.emit('change', constants.LOAD_MAPS)
+    this.emit('change', constants.LOAD_ASSIGNMENTS)
 
     // Request assignments from the storage adapter
     new TrailblazerHTTPStorageAdapter()
@@ -54,15 +54,15 @@ var MapStore = Fluxxor.createStore({
       .then(function(response) {
         console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
         if (response.assignments) {
-          this.emit('change', constants.LOAD_MAPS_SUCCESS, { assignments: response.assignments });
+          this.emit('change', constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: response.assignments });
         } else {
-          this.emit('change', constants.LOAD_MAPS_FAIL, { error: response.error });
+          this.emit('change', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
         }
 
       }.bind(this));
   },
 
-  onLoadMapsSuccess: function(payload) {
+  onLoadAssignmentsSuccess: function(payload) {
     this.loading = false;
     this.error = null;
 
@@ -81,7 +81,7 @@ var MapStore = Fluxxor.createStore({
     this.emit("change");
   },
 
-  onLoadMapsFail: function(payload) {
+  onLoadAssignmentsFail: function(payload) {
     this.loading = false;
     this.error = payload.error;
     this.emit("change");

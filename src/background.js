@@ -25,8 +25,8 @@ var Keen                  = require('../vendor/keen')
 
 //main 
 var App                   = require('./background/app.js')
- ,  actions               = require('./actions');
- ,  Fluxxor               = require('fluxxor');
+ ,  actions               = require('./actions')
+ ,  Fluxxor               = require('fluxxor')
  ,  TabStore              = require('./stores/tab-store')
  ,  NodeStore             = require('./stores/node-store')
  ,  MapStore              = require('./stores/map-store');
@@ -37,9 +37,11 @@ var stores = {
   MapStore: new MapStore()
 };
 
+console.log('actions', actions)
+
 //instantiate flux and background app
-var flux = Fluxxor.Flux(stores, actions);
-App(flux, 'MapStore', actions);
+var flux = new Fluxxor.Flux(stores, actions);
+App(flux, 'MapStore');
 
 
 

@@ -15,16 +15,16 @@ var NodeStore = Fluxxor.createStore({
     this.loading  = false;
     this.error    = null;
 
-    this.bindActions(
-      constants.LOAD_NODES, this.onLoadNodes,
-      constants.LOAD_NODES_SUCCESS, this.onLoadNodesSuccess,
-      constants.LOAD_NODES_FAIL, this.onLoadNodesFail,
+    // this.bindActions(
+    //   constants.LOAD_NODES, this.onLoadNodes,
+    //   constants.LOAD_NODES_SUCCESS, this.onLoadNodesSuccess,
+    //   constants.LOAD_NODES_FAIL, this.onLoadNodesFail,
 
-      constants.ADD_NODE, this.onAddNode,
-      constants.ADD_NODE_SUCCESS, this.onAddNodeSuccess,
-      constants.ADD_NODE_FAIL, this.onAddNodeFail,
-      constants.TAB_CREATED, this.handleTabCreated
-    );
+    //   constants.ADD_NODE, this.onAddNode,
+    //   constants.ADD_NODE_SUCCESS, this.onAddNodeSuccess,
+    //   constants.ADD_NODE_FAIL, this.onAddNodeFail,
+    //   constants.TAB_CREATED, this.handleTabCreated
+    // );
   },
 
   getState: function () {
@@ -47,23 +47,23 @@ var NodeStore = Fluxxor.createStore({
       };
     });
     throw "NotImplemented";
-  }
+  },
 
   onTabUpdated: function() {
     throw "NotImplemented";
-  }
+  },
 
   onTabClosed: function() {
     throw "NotImplemented";
-  }
+  },
 
   onStartRecording: function() {
     throw "NotImplemented";
-  }
+  },
 
   onStopRecording: function() {
     throw "NotImplemented";
-  }
+  },
 
   onMarkedAsWaypoint: function() {
     throw "NotImplemented";

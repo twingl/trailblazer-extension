@@ -93,7 +93,7 @@ var AppWrap = function(initialState, actions) {
       if (message && message.type) {
         switch (message.type) {
           case constants.LOAD_ASSIGNMENTS:
-            this.updateAssignmentState('loading' true);
+            this.updateAssignmentState('loading', true);
             break;
           case constants.LOAD_ASSIGNMENTS_SUCCESS:
             this.refreshAssignments(message.payload.assignments);

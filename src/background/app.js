@@ -1,4 +1,4 @@
-var App = function(flux, store, actions) {
+var App = function(flux, store) {
   var app = {
     initialize: function () {
       //listen to [map] store
