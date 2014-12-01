@@ -6,10 +6,12 @@ module.exports = {
   //   this.dispatch(constants.LOAD_NODES);
   // },
 
-  loadMaps: function () {
-    this.dispatch(constants.LOAD_MAPS);
+  loadAssignments: function () {
+    this.dispatch(constants.LOAD_ASSIGNMENTS);
     console.log('load assignments action')
-  }
+  },
+
+  
 
   // createdTab: function () {
   //   this.dispatch(constants.CREATED_TAB);

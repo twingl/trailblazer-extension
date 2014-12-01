@@ -11,8 +11,8 @@ var constants = require('../constants');
 
 
 //components
-var AssignmentsIndex = require('app/components/assignments-index');
-var AssignmentsShow  = require('app/components/assignments-show');
+var AssignmentsIndex = React.createFactory(require('app/components/assignments-index'));
+var AssignmentsShow  = React.createFactory(require('app/components/assignments-show'));
 
 //setup routes
 var RouterMixin     = require('react-mini-router').RouterMixin
@@ -35,18 +35,30 @@ var App = React.createClass({
     return this.renderCurrentRoute();
   },
 
+  // shouldComponentUpdate: function (nextProps) {
+  //   if (nextProps.state !== this.props.state) { 
+  //     return true 
+  //   } else { 
+  //     return false 
+  //   };
+  // },
+
+  componentWillMount: function () {
+   this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
+  },
+
 
   /**
    * Assignments#index - borrowing naming conventions from Rails
    */
   assignmentsIndex: function () {
     console.log('assignmentsIndex fired', this.props.state)
-    this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
+ 
 
     return <AssignmentsIndex 
               state={this.props.state} 
               actions={this.props.actions} 
-              selectMap={this.selectMap} />
+              select={this.selectMap} />
   },
 
   /**
@@ -70,9 +82,13 @@ var App = React.createClass({
 });
 
 var AppWrap = function(initialState, actions) {
+
   var app = {
-    initialize: function() {
+    initialize: function(initialState) {
+      console.log('initialState', initialState)
       var initialState = initialState || {};
+      console.log('initialState', initialState)
+
 
       // nodeState: Map
         // loading: Boolean
@@ -90,6 +106,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     update: function(message) {
+      console.log('app updating', message)
       if (message && message.type) {
         switch (message.type) {
           case constants.LOAD_ASSIGNMENTS:
@@ -102,6 +119,11 @@ var AppWrap = function(initialState, actions) {
             this.updateAssignmentState('error', message.payload.error);
         }
       }
+      this.render();
+    },
+
+    render: function () {
+      console.log('re-render')
       React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
     },
 
@@ -110,24 +132,26 @@ var AppWrap = function(initialState, actions) {
     },
 
     refreshAssignments: function (assignments) {
+      console.log('refreshAssignments fired', assignments)
       //translate from array to an immutable map
-      this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
-        return Immutable.Map(assignments.reduce(function (o, assignment) {
+
+      var assignmentsIndex = Immutable.Map(assignments.reduce(function (o, assignment) {
           o[assignment.id] = assignment;
           return o;
-        }))
-      })
-    },
+        }, {})); 
 
+      console.log(assignmentsIndex)
 
-
-
+      this.state = this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
+        return assignmentsIndex;
+      });
+    }
   };
 
 
 
 
-  return app.initialize();
+  return app.initialize(initialState);
 };
 
 module.exports = AppWrap;

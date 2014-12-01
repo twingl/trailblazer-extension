@@ -39,7 +39,9 @@
     "camelcase-keys": "~1.0.0",
     "react-mini-router": "~1.0.0",
     "immutable": "~3.2.1",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+    "level-browserify": "~0.18.1",
+    "gulp-jsx": "~0.6.0"
   },
   "repository": {
     "type": "git",

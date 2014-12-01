@@ -22,7 +22,9 @@ var watchify     = require('watchify');
 
 var ENV = process.env.NODE;
 
-gulp.task('browserify', ['jsx'], function(callback) {
+//Note remove gulp jsx
+
+gulp.task('browserify', [], function(callback) {
   var bundleQueue = config.bundleConfigs.length;
   var index = 0;
 

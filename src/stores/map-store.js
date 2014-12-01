@@ -1,8 +1,9 @@
-var _         = require('lodash')
- ,  Fluxxor   = require('fluxxor')
- ,  constants = require('../constants')
- ,  Immutable = require('immutable')
- ,  uuid      = require('node-uuid');
+var _                             = require('lodash')
+ ,  Fluxxor                       = require('fluxxor')
+ ,  constants                     = require('../constants')
+ ,  Immutable                     = require('immutable')
+ ,  uuid                          = require('node-uuid')
+ ,  TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
 //TODO 
 // handleTabCreated
@@ -19,7 +20,7 @@ var MapStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options = options || {};
-    this.mapObj = options.mapObj || {};
+    this.db     = options.db;
     this.loading = false;
     this.error = null;
 
@@ -37,54 +38,44 @@ var MapStore = Fluxxor.createStore({
   getState: function () {
     console.log('getting map state')
 
-    return {
-      mapObj: this.mapObj,
-      loading: this.loading,
-      error: this.error
-    };
+    // return {
+    //   mapObj: this.mapObj,
+    //   loading: this.loading,
+    //   error: this.error
+    // };
   },
 
   onLoadAssignments: function() {
     this.loading = true;
     this.emit('change', constants.LOAD_ASSIGNMENTS)
 
+    console.log('onLoadAssignments fired')
     // Request assignments from the storage adapter
     new TrailblazerHTTPStorageAdapter()
       .list("assignments")
       .then(function(response) {
         console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
         if (response.assignments) {
-          this.emit('change', constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: response.assignments });
+          this.emit(
+            'change',
+            constants.LOAD_ASSIGNMENTS_SUCCESS, 
+            { assignments: response.assignments}
+          )
         } else {
-          this.emit('change', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
+
         }
 
       }.bind(this));
   },
 
   onLoadAssignmentsSuccess: function(payload) {
-    this.loading = false;
-    this.error = null;
-
-
-    //make an immutable obj.
-    var obj = payload.maps
-      .reduce(function(o, map) {
-        console.log('reducing', o, map)
-        var id = map.id;
-        o[id] = map;
-        return acc;
-      }, {});
-
-    this.mapObj = Immutable.fromJS(obj);
-
-    this.emit("change");
+    this.emit("change", constants.LOAD_ASSIGNMENTS_SUCCESS, payload);
   },
 
   onLoadAssignmentsFail: function(payload) {
     this.loading = false;
     this.error = payload.error;
-    this.emit("change");
+    this.emit('change', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
   },
 
   onAddMap: function(payload) {
