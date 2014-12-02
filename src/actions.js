@@ -11,6 +11,11 @@ module.exports = {
     console.log('load assignments action')
   },
 
+  loadNodes: function (assignmentId) {
+    this.dispatch({ type: constants.LOAD_NODES, payload: assignmentId});
+    console.log('load nodes action')
+  },
+
   
 
   // createdTab: function () {

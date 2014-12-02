@@ -31,16 +31,18 @@ var App                   = require('./background/app.js')
  ,  NodeStore             = require('./stores/node-store')
  ,  MapStore              = require('./stores/map-store')
  ,  level                 = require('level-browserify')
+ ,  Sublevel              = require('level-sublevel')
  ,  constants             = require('./constants');
 
-//TODO pass db to stores
-
-var db = level('db-name');
+var db      = Sublevel(level('main'))
+ ,  tabDb   = db.sublevel('tabs')
+ ,  nodeDb  = db.sublevel('nodes')
+ ,  mapDb   = db.sublevel('maps');
 
 var stores = {
-  TabStore: new TabStore({ db: db }),
-  NodeStore: new NodeStore({ db: db }),
-  MapStore: new MapStore({ db: db })
+  TabStore: new TabStore({ db: tabDb }),
+  NodeStore: new NodeStore({ db: nodeDb }),
+  MapStore: new MapStore({ db: mapDb })
 };
 
 
@@ -62,6 +64,9 @@ chrome.runtime.onMessage.addListener(function (message) {
   switch (message.action) {
     case constants.LOAD_ASSIGNMENTS:
       flux.actions.loadAssignments();
+      break;
+    case constants.LOAD_NODES:
+      flux.actions.loadNodes(message.payload);
       break;
 
 

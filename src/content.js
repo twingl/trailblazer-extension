@@ -34,14 +34,13 @@ chrome.runtime.onMessage.addListener(
 	function handleMessage(message) {
 		// RECEIVE
 		//only handles STATE change event (background handles ACTION messages)
-		console.log('messgae recieved from background!', message)
+		console.log('message recieved from background!', message)
 		switch (message.type) {
 			//whitelist of types that trigger a UI state change
 			case 'LOAD_ASSIGNMENTS':
 			case 'LOAD_ASSIGNMENTS_SUCCESS':
 			case 'LOAD_ASSIGNMENTS_FAIL':
 			case 'LOAD_NODES':
-				console.log('gonna update app')
 				app.update(message);
 				break;
 			default:

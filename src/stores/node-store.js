@@ -4,6 +4,9 @@ var _         = require('lodash')
  ,  Immutable = require('immutable')
  ,  Fluxxor   = require('fluxxor');
 
+ var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
+
+
 
 var NodeStore = Fluxxor.createStore({
 
@@ -35,6 +38,20 @@ var NodeStore = Fluxxor.createStore({
       error: this.error
     };
   },
+
+  loadNodes: function (assignmentId) {
+
+    new TrailblazerHTTPStorageAdapter()
+      .list(["assignments", assignmentId, "nodes"].join("/"))
+      .then(function(response) {
+        if (response.error) this.emit('update-ui', constants.LOAD_NODES_FAIL)
+
+      }.bind(this));
+
+
+  },
+
+
 
   onTabCreated: function(tab) {
     // This is, presently, just a kind of pseudo code until flux is wired up on
@@ -70,73 +87,7 @@ var NodeStore = Fluxxor.createStore({
   }
 
 
-  //onLoadNodes: function() {
-  //  this.loading = true;
-  //  this.emit("change");
-  //},
 
-  //onLoadNodesSuccess: function(payload) {
-  //  this.loading = false;
-  //  this.error = null;
-
-  //  // var map = payload.nodes.reduce(function(map, node) {
-  //  //   var id = node.id;
-  //  //   map[id] = camelize(node);
-  //  //   return map;
-  //  // }, {});
-
-  //  // //TODO currently overwrites, should merge.
-  //  // this.nodeMap  = Immutable.fromJS(map);
-
-  //  this.emit("change");
-  //},
-
-  //onLoadNodesFail: function(payload) {
-  //  this.loading = false;
-  //  this.error = payload.error;
-  //  this.emit("change");
-  //},
-
-  //onAddNode: function(payload) {
-  //  var node = payload.node;
-  //  var id = node.id || Node._getId();
-  //  this.nodeMap.set(id, node);
-  //  this.emit("change");
-  //},
-
-  //onAddNodeSuccess: function(payload) {
-  //  var id = payload.node.id;
-  //  this.nodeMap.updateIn([id, 'status'], function(val) { return "OK" });
-  //  this.emit("change");
-  //},
-
-  //onAddNodeFail: function(payload) {
-  //  var id = payload.node.id;
-  //  this.nodeMap.updateIn([id, 'status'], function(val) { return "ERROR" });
-  //  this.nodeMap.updateIn([id, 'error'], function(val) { return payload.error });
-  //  this.emit("change");
-  //},
-
-  //handleTabCreated: function (payload) {
-  //  var node;
-  //  var tabId = payload.data.tabId;
-  //  var nodeId = this.tabIdMap[tabIdMap];
-
-  //  if (nodeId) {
-  //  // This is a resumed node
-
-  //  } else {
-  //  // This is a new node
-  //    node = new Node({
-  //      url: payload.data.url,
-  //      title: payload.data.title,
-  //      tabId: tabId
-  //    });
-
-  //  }
-
-
-  //}
 
 });
 

@@ -70,7 +70,6 @@ var App = React.createClass({
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
-    throw "not implemented"
     this.props.actions.dispatch(constants.LOAD_NODES, assignmentId);
     navigate('/assignments/'+assignmentId);
   }
@@ -107,7 +106,7 @@ var AppWrap = function(initialState, actions) {
           case constants.LOAD_ASSIGNMENTS:
             this.updateAssignmentState('loading', true);
             break;
-          case constants.LOAD_ASSIGNMENTS_SUCCESS:
+          case constants.ASSIGNMENTS_READY:
             this.refreshAssignments(message.payload.assignments);
             break;
           case constants.LOAD_ASSIGNMENTS_FAIL:
