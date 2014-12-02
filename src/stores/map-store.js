@@ -29,7 +29,7 @@ var MapStore = Fluxxor.createStore({
       constants.LOAD_ASSIGNMENTS, this.loadAssignments,
       constants.LOAD_ASSIGNMENTS_SUCCESS, this.handleLoadAssignmentsSuccess,
       constants.LOAD_ASSIGNMENTS_FAIL, this.handleLoadAssignmentsFail,
-      constants.PERSIST_ASSIGNMENTS, this.persistAssignments
+      constants.PERSIST_ASSIGNMENTS, this.handlePersistAssignments
 
       // constants.ADD_ASSIGNMENT, this.onAddMap,
       // constants.ADD_ASSIGNMENT_SUCCESS, this.onAddMapSuccess,
@@ -58,10 +58,8 @@ var MapStore = Fluxxor.createStore({
       .then(function(response) {
         console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
         if (response.assignments) {
-          this.emit(
-            constants.LOAD_ASSIGNMENTS_SUCCESS, 
-            { assignments: response.assignments }
-          )
+          console.log('this actions', this.flux.actions)
+          this.flux.actions.loadAssignmentsSuccess(response.assignments);
         } else {
 
         }
@@ -72,9 +70,9 @@ var MapStore = Fluxxor.createStore({
   handleLoadAssignmentsSuccess: function(payload) {
     console.log('handleLoadAssignmentsSuccess fired')
     var assignments = payload.assignments.map(function (assignment) { return camelize(assignment) });
-    var payload = { assignments: assignments };
-    this.emit(constants.PERSIST_ASSIGNMENTS, payload);
-    this.emit('update-ui', constants.ASSIGNMENTS_READY, payload)
+    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
+    this.flux.actions.persistAssignments(assignments);
+    
   },
 
   handleLoadAssignmentsFail: function(payload) {
@@ -83,8 +81,8 @@ var MapStore = Fluxxor.createStore({
     this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
   },
 
-  persistAssignments: function(payload) {
-    console.log('PERSIST_ASSIGNMENTS fired')
+  handlePersistAssignments: function(payload) {
+    console.log('handle PERSIST_ASSIGNMENTS fired', payload)
     var ops = payload.assignments.map(function (assignment) { 
       return { type: 'put', key: assignment.id, value: assignment }
     });

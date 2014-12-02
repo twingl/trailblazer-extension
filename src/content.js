@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener(
 		switch (message.type) {
 			//whitelist of types that trigger a UI state change
 			case 'LOAD_ASSIGNMENTS':
-			case 'LOAD_ASSIGNMENTS_SUCCESS':
+			case 'ASSIGNMENTS_READY':
 			case 'LOAD_ASSIGNMENTS_FAIL':
 			case 'LOAD_NODES':
 				app.update(message);
