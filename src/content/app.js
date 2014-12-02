@@ -43,7 +43,7 @@ var App = React.createClass({
   //   };
   // },
 
-  componentWillMount: function () {
+  componentDidMount: function () {
    this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
   },
 
@@ -58,7 +58,7 @@ var App = React.createClass({
     return <AssignmentsIndex 
               state={this.props.state} 
               actions={this.props.actions} 
-              select={this.selectMap} />
+              select={this.selectAssignment} />
   },
 
   /**
@@ -67,11 +67,6 @@ var App = React.createClass({
   assignmentsShow: function () {
     return <AssignmentsShow state={this.props.state} actions={this.props.actions}/>
   },
-
-  // componentWillMount: function () {
-  //   this.getFlux().actions.loadAssignments();
-  //   console.log('component mounting');
-  // },
 
   selectAssignment: function (assignmentId) {
     console.log('assignmentId in selectAssignment', assignmentId)
@@ -123,7 +118,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     render: function () {
-      console.log('re-render')
+      console.log('re-render', this.state)
       React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
     },
 

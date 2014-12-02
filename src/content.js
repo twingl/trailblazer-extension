@@ -1,5 +1,6 @@
 var React = require('react/addons')
 var domready = require('domready');
+var constants =	require('./constants');
 
 var actions = require('./actions.js');
 var state = {
