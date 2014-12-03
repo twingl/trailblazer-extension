@@ -5,19 +5,8 @@ var config                = require('./config');
 var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 
 // core
-var StateManager          = require('./core/state-manager')
-  , tabIdMap              = require('./core/tab-id-map')
-  , extensionStates       = require('./core/extension-states')
+var extensionStates       = require('./core/extension-states')
   , updateUIState         = require('./core/update-ui-state');
-
-//actions
-var getMap                = require('./lib/get-map')
-  , getNode               = require('./lib/get-node')
-  // , resumeRecording       = require('./lib/resume-recording');
-  , startRecording        = require('./lib/start-recording')
-  , stopRecording         = require('./lib/stop-recording')
-  , getCurrentNode        = require('./lib/get-current-node');
-
 
 // helpers
 var Keen                  = require('../vendor/keen')
