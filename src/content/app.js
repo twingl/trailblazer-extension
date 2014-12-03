@@ -144,7 +144,6 @@ var AppWrap = function(initialState, actions) {
     },
 
     addNodes: function (nodes) {
-
       nodes.forEach(function (node) {
         this.state.updateIn['nodeState', 'nodeIndex', node.id], function () {
           return node;
