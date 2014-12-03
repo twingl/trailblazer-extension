@@ -39,11 +39,11 @@ var NodeStore = Fluxxor.createStore({
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(function(response) {
-        console.log('response' response)
-        if (response.error) { 
-          this.flux.actions.loadNodesSuccess(response.nodes)
+        console.log('response', response);
+        if (response.error) {
+          this.flux.actions.loadNodesFail(response.error)
         } else if (response.nodes) {
-          this.
+          this.flux.actions.loadNodesSuccess(response.nodes)
         }
 
       }.bind(this));
