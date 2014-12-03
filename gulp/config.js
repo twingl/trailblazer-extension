@@ -39,16 +39,6 @@ module.exports = {
     // bundle config in the list below
     bundleConfigs: [
       {
-        entries: './src/ui/pages/js/map.js',
-        dest: dest,
-        outputName: 'map.js'
-      },
-      {
-        entries: './src/ui/pages/js/trails.js',
-        dest: dest,
-        outputName: 'trails.js'
-      },
-      {
         entries: './src/background.js',
         dest: dest,
         outputName: 'background.js'

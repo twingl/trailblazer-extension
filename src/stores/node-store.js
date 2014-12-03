@@ -6,8 +6,6 @@ var _         = require('lodash')
 
  var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
-
-
 var NodeStore = Fluxxor.createStore({
 
   initialize: function (options) {
