@@ -40,9 +40,8 @@
     "react-mini-router": "~1.0.0",
     "immutable": "~3.2.1",
     "node-uuid": "~1.4.1",
-    "level-browserify": "~0.18.1",
     "gulp-jsx": "~0.6.0",
-    "level-sublevel": "~6.3.15"
+    "idb-wrapper": "~1.4.1"
   },
   "repository": {
     "type": "git",

@@ -34,6 +34,14 @@ var NodeStore = Fluxxor.createStore({
     };
   },
 
+  onDbSuccess: function () {
+    console.log('node db updated')
+  },
+
+  onDbFail: function (err) {
+    console.log('node db error ', err)
+  }, 
+
   handleloadNodes: function (assignmentId) {
 
     new TrailblazerHTTPStorageAdapter()
@@ -60,24 +68,10 @@ var NodeStore = Fluxxor.createStore({
   handleLoadNodesSuccess: function (nodes) {
     var nodes = nodes.map(function (node) { return camelize(node) });
 
-    this.emit('update-ui', constants.NODES_READY, { nodes: nodes })
-
-    var ops = nodes.map(function (node) { 
-      return { type: 'put', key: node.id, value: node }
-    });
-
-    this.db.batch(ops, function (err) {
-      if (err) throw err;
-      console.log('nodes persisted')
-
-      this.db.createReadStream()
-        .on('data', function (data) {
-          console.log(data.key, ' = ', data.value)
-        })
-        .on('end', function () {
-          console.log("Stream closed")
-        })
-    }.bind(this)) 
+    //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
+    nodes.forEach(function (node) {
+      this.db.put(node.id, node, this.onDbSuccess, this.onDbFail)
+    }.bind(this))
 
   },
 

@@ -20,10 +20,10 @@ var _                             = require('lodash')
 var MapStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    var options = options || {};
-    this.db     = options.db;
-    this.loading = false;
-    this.error = null;
+    var options   = options || {};
+    this.db       = options.db;
+    this.loading  = false;
+    this.error     = null;
 
     console.log('this' ,this)
 
@@ -37,12 +37,21 @@ var MapStore = Fluxxor.createStore({
   getState: function () {
     console.log('getting map state')
 
-    // return {
-    //   mapObj: this.mapObj,
-    //   loading: this.loading,
-    //   error: this.error
-    // };
+    return {
+      db: this.db,
+      loading: this.loading,
+      error: this.error
+    };
   },
+
+  onDbSuccess: function () {
+    console.log('db updated')
+  },
+
+  onDbFail: function (err) {
+    console.log('db error ', err)
+  },
+
 
   handleLoadAssignments: function() {
     this.loading = true;
@@ -70,27 +79,13 @@ var MapStore = Fluxxor.createStore({
     console.log('handleLoadAssignmentsSuccess fired');
     var assignments = payload.assignments;
     
+    //send assignments to the UI
     this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
   
-    var ops = assignments.map(function (assignment) { 
-      return { type: 'put', key: assignment.id, value: assignment }
-    });
-
-    this.db.batch(ops, function (err) {
-      if (err) throw err;
-      console.log('assignments persisted')
-
-      this.db.createReadStream()
-        .on('data', function (data) {
-          console.log(data.key, ' = ', data.value)
-        })
-        .on('end', function () {
-          console.log("Stream closed")
-        })
+    //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
+    assignments.forEach(function (assignment) {
+      this.db.put(assignment.id, assignment, this.onDbSuccess, this.onDbFail)
     }.bind(this))
-    
-
-
   },
 
   handleLoadAssignmentsFail: function(payload) {

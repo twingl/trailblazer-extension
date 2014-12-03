@@ -30,19 +30,37 @@ var App                   = require('./background/app.js')
  ,  TabStore              = require('./stores/tab-store')
  ,  NodeStore             = require('./stores/node-store')
  ,  MapStore              = require('./stores/map-store')
- ,  level                 = require('level-browserify')
- ,  Sublevel              = require('level-sublevel')
- ,  constants             = require('./constants');
+ ,  constants             = require('./constants')
+ ,  IDBStore              = require('idb-wrapper');
 
-var db      = Sublevel(level('main'))
- ,  tabDb   = db.sublevel('tabs')
- ,  nodeDb  = db.sublevel('nodes')
- ,  mapDb   = db.sublevel('maps');
+var tabDb = new IDBStore({
+  storeName: 'tabs',
+  dbVersion: 1,
+  keyPath: 'id',
+  autoIncrement: false,
+  indexes: ['nodeId'],
+});
+
+var nodeDb = new IDBStore({
+  storeName: 'nodes',
+  dbVersion: 1,
+  keyPath: 'id',
+  autoIncrement: false,
+  indexes: ['tabId', 'assignmentId'],
+});
+
+var assignmentDb = new IDBStore({
+  storeName: 'assignments',
+  dbVersion: 1,
+  keyPath: 'id',
+  autoIncrement: false,
+  indexes: [],
+});
 
 var stores = {
   TabStore: new TabStore({ db: tabDb }),
   NodeStore: new NodeStore({ db: nodeDb }),
-  MapStore: new MapStore({ db: mapDb })
+  MapStore: new MapStore({ db: assignmentDb })
 };
 
 

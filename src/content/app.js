@@ -8,6 +8,7 @@ var isArray = require('is-array');
 var Immutable = require('immutable');
 
 var constants = require('../constants');
+var log = require('debug')('content/app.js');
 
 
 //components
