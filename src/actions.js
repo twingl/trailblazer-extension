@@ -19,7 +19,7 @@ module.exports = {
   },
 
   persistAssignments: function (assignments) {
-    console.log('persistAssignments fired')
+    console.log('persistAssignments fired', constants)
     this.dispatch(constants.PERSIST_ASSIGNMENTS, { assignments: assignments });
   }
 

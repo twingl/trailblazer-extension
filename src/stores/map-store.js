@@ -25,15 +25,12 @@ var MapStore = Fluxxor.createStore({
     this.loading = false;
     this.error = null;
 
-    this.bindActions(
-      constants.LOAD_ASSIGNMENTS, this.loadAssignments,
-      constants.LOAD_ASSIGNMENTS_SUCCESS, this.handleLoadAssignmentsSuccess,
-      constants.LOAD_ASSIGNMENTS_FAIL, this.handleLoadAssignmentsFail,
-      constants.PERSIST_ASSIGNMENTS, this.handlePersistAssignments
+    console.log('this' ,this)
 
-      // constants.ADD_ASSIGNMENT, this.onAddMap,
-      // constants.ADD_ASSIGNMENT_SUCCESS, this.onAddMapSuccess,
-      // constants.ADD_ASSIGNMENT_FAIL, this.onAddMapFail
+    this.bindActions(
+      constants.LOAD_ASSIGNMENTS, this.handleLoadAssignments,
+      constants.LOAD_ASSIGNMENTS_SUCCESS, this.handleLoadAssignmentsSuccess,
+      constants.LOAD_ASSIGNMENTS_FAIL, this.handleLoadAssignmentsFail
     );
   },
 
@@ -47,7 +44,7 @@ var MapStore = Fluxxor.createStore({
     // };
   },
 
-  loadAssignments: function() {
+  handleLoadAssignments: function() {
     this.loading = true;
     // this.emit('update-ui', constants.LOAD_ASSIGNMENTS)
 
@@ -68,22 +65,12 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleLoadAssignmentsSuccess: function(payload) {
-    console.log('handleLoadAssignmentsSuccess fired')
-    var assignments = payload.assignments.map(function (assignment) { return camelize(assignment) });
-    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
-    this.flux.actions.persistAssignments(assignments);
+    console.log('handleLoadAssignmentsSuccess fired');
+    var assignments = payload.assignments;
     
-  },
-
-  handleLoadAssignmentsFail: function(payload) {
-    this.loading = false;
-    this.error = payload.error;
-    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
-  },
-
-  handlePersistAssignments: function(payload) {
-    console.log('handle PERSIST_ASSIGNMENTS fired', payload)
-    var ops = payload.assignments.map(function (assignment) { 
+    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
+  
+    var ops = assignments.map(function (assignment) { 
       return { type: 'put', key: assignment.id, value: assignment }
     });
 
@@ -91,6 +78,13 @@ var MapStore = Fluxxor.createStore({
       if (err) throw err;
       console.log('assignments persisted')
     })
+    
+  },
+
+  handleLoadAssignmentsFail: function(payload) {
+    this.loading = false;
+    this.error = payload.error;
+    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
   },
 
   onAddMap: function(payload) {

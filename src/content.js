@@ -22,7 +22,6 @@ var App = require('./content/app.js');
 actions.dispatch = function(actionName, payload) { 
 
 	console.log('ui action dispatched', actionName, payload)
-	//SEND
 	// override the fluxxor
   // this allows the background and content to share the same actions
   chrome.runtime.sendMessage({action: actionName, payload: payload});

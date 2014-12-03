@@ -53,7 +53,9 @@ console.log('MapStore', flux)
 
 App(flux, 'MapStore');
 
-
+flux.on("dispatch", function(type, payload) {
+  console.log("Dispatched", type, payload);
+})
 
 //TODO chrome.tabs.listeners
 
