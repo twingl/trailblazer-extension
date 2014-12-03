@@ -65,6 +65,8 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleLoadAssignmentsSuccess: function(payload) {
+    this.loading = false
+    this.error  = null;
     console.log('handleLoadAssignmentsSuccess fired');
     var assignments = payload.assignments;
     
@@ -77,8 +79,18 @@ var MapStore = Fluxxor.createStore({
     this.db.batch(ops, function (err) {
       if (err) throw err;
       console.log('assignments persisted')
-    })
+
+      this.db.createReadStream()
+        .on('data', function (data) {
+          console.log(data.key, ' = ', data.value)
+        })
+        .on('end', function () {
+          console.log("Stream closed")
+        })
+    }.bind(this))
     
+
+
   },
 
   handleLoadAssignmentsFail: function(payload) {

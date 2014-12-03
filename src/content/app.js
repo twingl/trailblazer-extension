@@ -111,6 +111,8 @@ var AppWrap = function(initialState, actions) {
             break;
           case constants.LOAD_ASSIGNMENTS_FAIL:
             this.updateAssignmentState('error', message.payload.error);
+          case constants.NODES_READY:
+            this.addNodes(message.payload.nodes)
         }
       }
       this.render();
@@ -139,7 +141,18 @@ var AppWrap = function(initialState, actions) {
       this.state = this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
         return assignmentsIndex;
       });
+    },
+
+    addNodes: function (nodes) {
+
+      nodes.forEach(function (node) {
+        this.state.updateIn['nodeState', 'nodeIndex', node.id], function () {
+          return node;
+        }
+      }.bind(this))
     }
+
+
   };
 
 

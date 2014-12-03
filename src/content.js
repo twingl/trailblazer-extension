@@ -39,7 +39,8 @@ chrome.runtime.onMessage.addListener(
 			case 'LOAD_ASSIGNMENTS':
 			case 'ASSIGNMENTS_READY':
 			case 'LOAD_ASSIGNMENTS_FAIL':
-			case 'LOAD_NODES':
+			case 'LOAD_NODES_FAIL':
+			case 'NODES_READY':
 				app.update(message);
 				break;
 			default:

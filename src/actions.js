@@ -9,7 +9,7 @@ module.exports = {
   },
 
   loadNodes: function (assignmentId) {
-    this.dispatch(constants.LOAD_NODES, {payload: assignmentId});
+    this.dispatch(constants.LOAD_NODES, {assignmentId: assignmentId});
     console.log('load nodes action')
   },
 
@@ -18,10 +18,10 @@ module.exports = {
     this.dispatch(constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: assignments })
   },
 
-  persistAssignments: function (assignments) {
-    console.log('persistAssignments fired', constants)
-    this.dispatch(constants.PERSIST_ASSIGNMENTS, { assignments: assignments });
-  }
+  loadNodesSuccess: function (assignments) {
+    console.log('loadNodesSuccess fired')
+    this.dispatch(constants.LOAD_NODES_SUCCESS, { nodes: nodes })
+  },
 
   
 

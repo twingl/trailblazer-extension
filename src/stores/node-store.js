@@ -18,16 +18,11 @@ var NodeStore = Fluxxor.createStore({
     this.loading  = false;
     this.error    = null;
 
-    // this.bindActions(
-    //   constants.LOAD_NODES, this.onLoadNodes,
-    //   constants.LOAD_NODES_SUCCESS, this.onLoadNodesSuccess,
-    //   constants.LOAD_NODES_FAIL, this.onLoadNodesFail,
-
-    //   constants.ADD_NODE, this.onAddNode,
-    //   constants.ADD_NODE_SUCCESS, this.onAddNodeSuccess,
-    //   constants.ADD_NODE_FAIL, this.onAddNodeFail,
-    //   constants.TAB_CREATED, this.handleTabCreated
-    // );
+    this.bindActions(
+      constants.LOAD_NODES, this.handleLoadNodes,
+      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
+      constants.LOAD_NODES_FAIL, this.handleLoadNodesFail
+    );
   },
 
   getState: function () {
@@ -39,18 +34,52 @@ var NodeStore = Fluxxor.createStore({
     };
   },
 
-  loadNodes: function (assignmentId) {
+  handleloadNodes: function (assignmentId) {
 
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(function(response) {
-        if (response.error) this.emit('update-ui', constants.LOAD_NODES_FAIL)
+        console.log('response' response)
+        if (response.error) { 
+          this.flux.actions.loadNodesSuccess(response.nodes)
+        } else if (response.nodes) {
+          this.
+        }
 
       }.bind(this));
 
 
   },
 
+  handleLoadNodesFail: function (error) {
+    this.emit('update-ui', constants.LOAD_NODES_FAIL) 
+
+  },
+
+
+  handleLoadNodesSuccess: function (nodes) {
+    var nodes = nodes.map(function (node) { return camelize(node) });
+
+    this.emit('update-ui', constants.NODES_READY, { nodes: nodes })
+
+    var ops = nodes.map(function (node) { 
+      return { type: 'put', key: node.id, value: node }
+    });
+
+    this.db.batch(ops, function (err) {
+      if (err) throw err;
+      console.log('nodes persisted')
+
+      this.db.createReadStream()
+        .on('data', function (data) {
+          console.log(data.key, ' = ', data.value)
+        })
+        .on('end', function () {
+          console.log("Stream closed")
+        })
+    }.bind(this)) 
+
+  },
 
 
   onTabCreated: function(tab) {
