@@ -33,7 +33,8 @@ var nodeDb = new IDBStore({
   storeName: 'nodes',
   dbVersion: 1,
   keyPath: 'id',
-  autoIncrement: false
+  autoIncrement: false,
+  index: [ { name: 'tabId' }, { name: 'assignmentId' } ]
 });
 
 var assignmentDb = new IDBStore({
@@ -73,6 +74,8 @@ chrome.runtime.onMessage.addListener(function (message) {
     case constants.LOAD_NODES:
       flux.actions.loadNodes(message.payload);
       break;
+    case constants.SELECT_ASSIGNMENT:
+      flux.actions.selectAssignment(message.payload.assignmentId);
   }
 });
 

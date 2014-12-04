@@ -24,6 +24,13 @@ module.exports = {
     this.dispatch(constants.LOAD_NODES_SUCCESS, { nodes: nodes })
   },
 
+  //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
+  //which then calls the *same* method in background. [Mind Blown]
+  selectAssignment: function (assignmentId) {
+    log('selectAssignment');
+    this.dispatch(constants.SELECT_ASSIGNMENT, { assignmentId: assignmentId });
+  }
+
   
 
   // createdTab: function () {

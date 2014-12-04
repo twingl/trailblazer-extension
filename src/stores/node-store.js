@@ -40,7 +40,6 @@ var NodeStore = Fluxxor.createStore({
   }, 
 
   handleLoadNodes: function (assignmentId) {
-
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(function(response) {
@@ -59,15 +58,14 @@ var NodeStore = Fluxxor.createStore({
 
   },
 
-
   handleLoadNodesSuccess: function (nodes) {
     var nodes = nodes.map(function (node) { return camelize(node) });
 
     //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
-    nodes.forEach(function (node) {
+    for (var i=0;i<nodes.length;i++) {
+      var node = nodes[i];
       this.db.put(node.id, node, this.onDbSuccess, this.onDbFail)
-    }.bind(this))
-
+    }
   },
 
 

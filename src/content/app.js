@@ -8,7 +8,7 @@ var isArray = require('is-array');
 var Immutable = require('immutable');
 
 var constants = require('../constants');
-var log = require('debug')('content/app.js');
+var log = require('debug')('content:app.js');
 
 
 //components
@@ -113,7 +113,9 @@ var AppWrap = function(initialState, actions) {
           case constants.LOAD_ASSIGNMENTS_FAIL:
             this.updateAssignmentState('error', message.payload.error);
           case constants.NODES_READY:
-            this.addNodes(message.payload.nodes)
+            this.addNodes(message.payload.nodes);
+          case constants.CURRENT_ASSIGNMENT_CHANGED:
+            this.updateAssignmentState('currentAssignment', message.payload.assignmentId);
         }
       }
       this.render();
