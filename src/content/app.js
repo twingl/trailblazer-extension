@@ -66,13 +66,8 @@ var App = React.createClass({
    * Assignments#show - borrowing naming conventions from Rails
    */
   assignmentsShow: function () {
+    console.log('assignmentsShow')
     return <AssignmentsShow state={this.props.state} actions={this.props.actions}/>
-  },
-
-  selectAssignment: function (assignmentId) {
-    console.log('assignmentId in selectAssignment', assignmentId)
-    this.props.actions.dispatch(constants.LOAD_NODES, assignmentId);
-    navigate('/assignments/'+assignmentId);
   }
 });
 
@@ -153,8 +148,6 @@ var AppWrap = function(initialState, actions) {
         }
       }.bind(this))
     }
-
-
   };
 
 

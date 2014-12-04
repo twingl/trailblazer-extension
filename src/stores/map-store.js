@@ -97,12 +97,20 @@ var MapStore = Fluxxor.createStore({
     this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
   },
 
+  dispatchNodes: function (data) {
+    this.emit('update-ui', constants.NODES_READY, { nodes: data });
+  },
+
+  handleGetAllNodesFail: function (error) {
+    console.log('handleGetAllNodesFail', error)
+  },
+
   handleLoadNodesSuccess: function (payload) {
     log('handleLoadNodesSuccess', log);
     this.waitFor(['NodeStore'], function (nodeStore) {
       //TODO search by currentAssignment index
-      var nodes = nodeStore.getState().db
-    })
+      var nodes = nodeStore.getState().db.getAll(this.dispatchNodes, this.handleGetAllNodesFail)
+    }.bind(this))
   },
 
   handleSelectAssignment: function (payload) {
