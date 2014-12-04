@@ -18,8 +18,7 @@ var NodeStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.LOAD_NODES, this.handleLoadNodes,
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
-      constants.LOAD_NODES_FAIL, this.handleLoadNodesFail
+      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess
     );
   },
 
@@ -40,7 +39,7 @@ var NodeStore = Fluxxor.createStore({
     console.log('node db error ', err)
   }, 
 
-  handleloadNodes: function (assignmentId) {
+  handleLoadNodes: function (assignmentId) {
 
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
@@ -53,8 +52,6 @@ var NodeStore = Fluxxor.createStore({
         }
 
       }.bind(this));
-
-
   },
 
   handleLoadNodesFail: function (error) {

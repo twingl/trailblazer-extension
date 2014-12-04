@@ -26,24 +26,21 @@ var tabDb = new IDBStore({
   storeName: 'tabs',
   dbVersion: 1,
   keyPath: 'id',
-  autoIncrement: false,
-  indexes: ['nodeId'],
+  autoIncrement: false
 });
 
 var nodeDb = new IDBStore({
   storeName: 'nodes',
   dbVersion: 1,
   keyPath: 'id',
-  autoIncrement: false,
-  indexes: ['tabId', 'assignmentId'],
+  autoIncrement: false
 });
 
 var assignmentDb = new IDBStore({
   storeName: 'assignments',
   dbVersion: 1,
   keyPath: 'id',
-  autoIncrement: false,
-  indexes: [],
+  autoIncrement: false
 });
 
 var stores = {
@@ -56,10 +53,9 @@ var stores = {
 //instantiate flux and background app
 var flux = new Fluxxor.Flux(stores, actions);
 
-console.log('MapStore', flux)
-
 App(flux, 'MapStore');
 
+//logging
 flux.on("dispatch", function(type, payload) {
   console.log("Dispatched", type, payload);
 })
