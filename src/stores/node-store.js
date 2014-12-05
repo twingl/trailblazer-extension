@@ -18,7 +18,8 @@ var NodeStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.LOAD_NODES, this.handleLoadNodes,
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess
+      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
+      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
     );
   },
 
@@ -39,7 +40,12 @@ var NodeStore = Fluxxor.createStore({
     console.log('node db error ', err)
   }, 
 
-  handleLoadNodes: function (assignmentId) {
+  handleSelectAssignment: function (payload) {
+    this.handleLoadNodes(payload);
+  },
+
+  handleLoadNodes: function (payload) {
+    var assignmentId = payload.assignmentId;
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(function(response) {
@@ -58,8 +64,10 @@ var NodeStore = Fluxxor.createStore({
 
   },
 
-  handleLoadNodesSuccess: function (nodes) {
-    var nodes = nodes.map(function (node) { return camelize(node) });
+  handleLoadNodesSuccess: function (payload) {
+    console.log('handleLoadNodesSuccess')
+    var nodes = payload.nodes.map(function (node) { return camelize(node) });
+
 
     //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
     for (var i=0;i<nodes.length;i++) {

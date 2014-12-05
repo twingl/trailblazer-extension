@@ -28,6 +28,7 @@ var MapStore = Fluxxor.createStore({
     this.currentAssignment  = null;
     this.loading            = false;
     this.error              = null;
+    this.index              = 0;
 
     this.bindActions(
       constants.LOAD_ASSIGNMENTS, this.handleLoadAssignments,
@@ -48,8 +49,17 @@ var MapStore = Fluxxor.createStore({
     };
   },
 
-  onDbSuccess: function () {
-    log('db updated')
+  insertAssignment: function (assignments, index) {
+    throw 'wip'
+    var assignment = assignments[index]
+    console.log('db updated')
+  },
+
+  onInsertSuccess: function () {
+    throw 'wip'
+    if (nextIndex < assignments.length) {
+      this.insertAssignment()
+    }
   },
 
   onDbFail: function (err) {
@@ -86,7 +96,9 @@ var MapStore = Fluxxor.createStore({
     this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
   
     //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
+    //and this will fire once and then stop as the IDBWrapper put api is asynchrnous 
     assignments.forEach(function (assignment) {
+      console.log('putting assignments', assignment)
       this.db.put(assignment.id, assignment, this.onDbSuccess, this.onDbFail)
     }.bind(this))
   },
@@ -106,7 +118,7 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleLoadNodesSuccess: function (payload) {
-    log('handleLoadNodesSuccess', log);
+    console.log('handleLoadNodesSuccess', payload);
     this.waitFor(['NodeStore'], function (nodeStore) {
       //TODO search by currentAssignment index
       var nodes = nodeStore.getState().db.getAll(this.dispatchNodes, this.handleGetAllNodesFail)

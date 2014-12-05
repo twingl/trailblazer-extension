@@ -19,7 +19,7 @@ module.exports = {
     this.dispatch(constants.LOAD_ASSIGNMENTS_SUCCESS, { assignments: assignments })
   },
 
-  loadNodesSuccess: function (assignments) {
+  loadNodesSuccess: function (nodes) {
     log('loadNodesSuccess')
     this.dispatch(constants.LOAD_NODES_SUCCESS, { nodes: nodes })
   },
@@ -27,7 +27,7 @@ module.exports = {
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
   //which then calls the *same* method in background. [Mind Blown]
   selectAssignment: function (assignmentId) {
-    log('selectAssignment');
+    console.log('selectAssignment');
     this.dispatch(constants.SELECT_ASSIGNMENT, { assignmentId: assignmentId });
   }
 
