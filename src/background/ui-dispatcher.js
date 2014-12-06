@@ -1,4 +1,4 @@
-var info = require('debug')('background/app.js:info');
+var info = require('debug')('background/ui-dispatcher.js:info');
 
 /**
  * This is the main entry point for communications to the UI. It handles events

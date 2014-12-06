@@ -31,16 +31,20 @@ if (config.logging) {
 
 /**
  * Main dependencies.
- *
  */
 var UIDispatcher          = require('./background/ui-dispatcher.js')
+  , UIReceiver            = require('./background/ui-receiver.js')
   , actions               = require('./actions')
   , stores                = require('./stores')
-  , Fluxxor               = require('fluxxor')
-  , constants             = require('./constants');
+  , Fluxxor               = require('fluxxor');
 
-info("Initializing!", { actions: actions });
+info("Initializing Trailblazer!");
 
+/**
+ * Initialize the extension.
+ *
+ * Set the initial UI state and run the install hooks
+ */
 info("Initializing extension UI state");
 var extensionUIState = require('./core/extension-ui-state');
 extensionUIState.init();
@@ -48,37 +52,25 @@ extensionUIState.init();
 info("Running install hooks");
 chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
 
-info("Initializing Flux");
+/**
+ * Set up Flux.
+ *
+ * Initialize with the stores and actions, and set up a listener to log all
+ * dispatches to the console.
+ */
+info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
-// log each dispatch to the console
 flux.on("dispatch", function(type, payload) {
   info("Dispatched", { type: type, payload: payload });
 })
 
+/**
+ * Initialize the dispatcher and receiver to allow communication between the
+ * background process and the UI
+ */
 info("Initializing UI Dispatcher");
 UIDispatcher(flux, ['MapStore']);
 
-
-/**
- * Listen for select messages that are sent over chrome.runtime and dispatch
- * their actions
- */
-chrome.runtime.onMessage.addListener(function (message) {
-  info("Recieved message over chrome.runtime", {message: message});
-
-  switch (message.action) {
-    case constants.LOAD_ASSIGNMENTS:
-      flux.actions.loadAssignments();
-      break;
-    case constants.LOAD_NODES:
-      flux.actions.loadNodes(message.payload);
-      break;
-    case constants.SELECT_ASSIGNMENT:
-      flux.actions.selectAssignment(message.payload.assignmentId);
-      break;
-  }
-});
-
-
-
+info("Initializing UI Receiver");
+chrome.runtime.onMessage.addListener(UIReceiver(flux));
