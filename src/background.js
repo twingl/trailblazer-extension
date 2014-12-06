@@ -14,42 +14,10 @@ var Keen                  = require('../vendor/keen')
 
 //main 
 var App                   = require('./background/app.js')
- ,  actions               = require('./actions')
- ,  Fluxxor               = require('fluxxor')
- ,  TabStore              = require('./stores/tab-store')
- ,  NodeStore             = require('./stores/node-store')
- ,  MapStore              = require('./stores/map-store')
- ,  constants             = require('./constants')
- ,  IDBStore              = require('idb-wrapper');
-
-var tabDb = new IDBStore({
-  storeName: 'tabs',
-  dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false
-});
-
-var nodeDb = new IDBStore({
-  storeName: 'nodes',
-  dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false,
-  index: [ { name: 'tabId' }, { name: 'assignmentId' } ]
-});
-
-var assignmentDb = new IDBStore({
-  storeName: 'assignments',
-  dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false
-});
-
-var stores = {
-  TabStore: new TabStore({ db: tabDb }),
-  NodeStore: new NodeStore({ db: nodeDb }),
-  MapStore: new MapStore({ db: assignmentDb })
-};
-
+  , actions               = require('./actions')
+  , stores                = require('./stores')
+  , Fluxxor               = require('fluxxor')
+  , constants             = require('./constants');
 
 //instantiate flux and background app
 var flux = new Fluxxor.Flux(stores, actions);
