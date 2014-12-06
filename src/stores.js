@@ -17,29 +17,28 @@ var db = {};
 db.tab = new IDBStore({
   storeName: 'tabs',
   dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false
+  keyPath: 'localId',
+  autoIncrement: true
 });
 
 db.node = new IDBStore({
   storeName: 'nodes',
   dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false,
+  keyPath: 'localId',
+  autoIncrement: true,
   index: [ { name: 'tabId' }, { name: 'assignmentId' } ]
 });
 
 db.assignment = new IDBStore({
   storeName: 'assignments',
   dbVersion: 1,
-  keyPath: 'id',
-  autoIncrement: false
+  keyPath: 'localId',
+  autoIncrement: true
 });
-
 
 /**
  * Initialize the Flux stores
- */ 
+ */
 var fluxStores = {
   TabStore: new TabStore({ db: db }),
   NodeStore: new NodeStore({ db: db }),

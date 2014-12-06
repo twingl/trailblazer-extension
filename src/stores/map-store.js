@@ -1,12 +1,13 @@
 var _                             = require('lodash')
- ,  Fluxxor                       = require('fluxxor')
- ,  constants                     = require('../constants')
- ,  Immutable                     = require('immutable')
- ,  uuid                          = require('node-uuid')
- ,  TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
- ,  camelize                      = require('camelcase-keys')
- ,  info                          = require('debug')('stores/map-store.js:info')
- ,  warn                          = require('debug')('stores/map-store.js:warn');
+  , Fluxxor                       = require('fluxxor')
+  , constants                     = require('../constants')
+  , Immutable                     = require('immutable')
+  , uuid                          = require('node-uuid')
+  , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
+  , camelize                      = require('camelcase-keys')
+  , info                          = require('debug')('stores/map-store.js:info')
+  , warn                          = require('debug')('stores/map-store.js:warn')
+  , error                         = require('debug')('stores/map-store.js:error');
 
 
 //TODO 
@@ -41,7 +42,7 @@ var MapStore = Fluxxor.createStore({
   },
 
   getState: function () {
-    info('getting map state')
+    info('getting map state');
 
     return {
       db: this.db,
@@ -50,41 +51,68 @@ var MapStore = Fluxxor.createStore({
     };
   },
 
-  insertAssignment: function (assignments, index) {
-    throw 'wip'
-    var assignment = assignments[index]
-    info('db updated')
-  },
-
-  onInsertSuccess: function () {
-    throw 'wip'
-    if (nextIndex < assignments.length) {
-      this.insertAssignment()
-    }
-  },
-
   onDbFail: function (err) {
-    info('db error ', { error: err })
+    error('db error', { error: err });
   },
 
 
+  /**
+   * Retrieves a list of assignments from the server, attempting to store them
+   * in the local IDB. Fires LOAD_ASSIGNMENTS_SUCCESS with the assignments if
+   * the above was without error, or LOAD_ASSIGNMENTS_FAIL with the error if
+   * there was a problem.
+   *
+   * It first retrieves a current list of Assignments from the server, and
+   * matches them up to the local IDB by `id` to avoid duplicates, as `localId`
+   * is the primary key for the IDB.
+   *
+   *                                   * * *
+   *
+   * TODO: Deletion handling. How do we deal with the case where an assignment
+   * was deleted on the server, and is propagating out to the clients? Do we
+   * set the state as "deleted", but which can be "undone"?
+   *
+   * Proposal 1:
+   * Perhaps if a local assignment *with* a *server id* disappears, it can be
+   * removed from the local IDB
+   */
   handleLoadAssignments: function() {
-    info('handleLoadAssignments')
     this.loading = true;
-    // this.emit('update-ui', constants.LOAD_ASSIGNMENTS)
+
     // Request assignments from the storage adapter
+    info('handleLoadAssignments: Requesting /assignments')
     new TrailblazerHTTPStorageAdapter()
       .list("assignments")
-      .then(function(response) {
-        info('response in load assignments action', { type: constants.LOAD_ASSIGNMENTS_SUCCESS, response: response });
-        if (response.assignments) {
-          info('this actions', { actions: this.flux.actions })
-          this.flux.actions.loadAssignmentsSuccess(response.assignments);
-        } else {
+      .then(
+        // Success
+        function(response) {
+          info('handleLoadAssignments: Successful response', { response: response });
+          //this.flux.actions.loadAssignmentsSuccess(response.assignments);
 
-        }
+          /**
+           * We first need to read the local assignments so we can figure out
+           * what needs to be updated.
+           *
+           * - If a local record has a server ID, and its server ID is present
+           *   in the response from the server, it is UPDATED.
+           *
+           * - If a local record has a server ID, and its server ID is NOT
+           *   present in the response from the server, it is DELETED.
+           *
+           * - If a local record does not exist, it is CREATED
+           *
+           * When the WRITE is completed (or fails), the appropriate next
+           * action is fired. A successful action ALWAYS carries the entire
+           * collection of Assignments.
+           */
+        }.bind(this),
 
-      }.bind(this));
+        // Error
+        function(response) {
+          warn('handleLoadAssignments: Unsuccessful response', { response: response })
+          this.flux.actions.loadAssignmentsFail({ error: response.error });
+        }.bind(this)
+      );
   },
 
   handleLoadAssignmentsSuccess: function(payload) {
@@ -94,7 +122,7 @@ var MapStore = Fluxxor.createStore({
     var assignments = payload.assignments;
     
     //send assignments to the UI
-    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments })
+    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments }) //FIXME rename to LOAD_ASSIGNMENTS_SUCCESS?
   
     //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
     //and this will fire once and then stop as the IDBWrapper put api is asynchrnous 
@@ -106,8 +134,8 @@ var MapStore = Fluxxor.createStore({
 
   handleLoadAssignmentsFail: function (payload) {
     this.loading = false;
-    this.error = payload.error;
-    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: response.error });
+    this.error = payload.error; //unnecessary state
+    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: payload.error });
   },
 
   dispatchNodes: function (data) {
@@ -128,29 +156,8 @@ var MapStore = Fluxxor.createStore({
 
   handleSelectAssignment: function (payload) {
     info('handleSelectAssignment', { payload: payload })
-    this.currentAssignment = payload.assignmentId;
+    this.currentAssignment = payload.assignmentId; //NO
     this.emit('update-ui', constants.CURRENT_ASSIGNMENT_CHANGED, payload)
-  },
-
-
-  onAddMap: function (payload) {
-    var node = payload.node;
-    var id = node.id || Node._getId();
-    this.mapObj.set(id, node);
-    this.emit("change");
-  },
-
-  onAddMapSuccess: function(payload) {
-    var id = payload.node.id;
-    this.mapObj.updateIn([id, 'status'], function(val) { return "OK" });
-    this.emit("change");
-  },
-
-  onAddMapFail: function(payload) {
-    var id = payload.node.id;
-    this.mapObj.updateIn([id, 'status'], function(val) { return "ERROR" });
-    this.mapObj.updateIn([id, 'error'], function(val) { return payload.error });
-    this.emit("change");Map
   }
 
 });
