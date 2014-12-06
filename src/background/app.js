@@ -1,3 +1,5 @@
+var info = require('debug')('background/app.js:info');
+
 var App = function(flux, store) {
   var app = {
     initialize: function () {
@@ -13,7 +15,7 @@ var App = function(flux, store) {
         payload: payload
       };
 
-      console.log('passing message to UI ', message)
+      info('passing message to UI ', { message: message })
       //pass background thread data to UI
       chrome.runtime.sendMessage(message);
     }

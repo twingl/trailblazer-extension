@@ -5,7 +5,8 @@ var _                             = require('lodash')
  ,  uuid                          = require('node-uuid')
  ,  TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
  ,  camelize                      = require('camelcase-keys')
- ,  log                           = require('debug')('map-store');
+ ,  info                          = require('debug')('stores/map-store.js:info')
+ ,  warn                          = require('debug')('stores/map-store.js:warn');
 
 
 //TODO 
@@ -22,7 +23,7 @@ var _                             = require('lodash')
 var MapStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    log('initialize')
+    info('initialize')
     var options             = options || {};
     this.db                 = options.db;
     this.currentAssignment  = null;
@@ -40,7 +41,7 @@ var MapStore = Fluxxor.createStore({
   },
 
   getState: function () {
-    log('getting map state')
+    info('getting map state')
 
     return {
       db: this.db,
@@ -52,7 +53,7 @@ var MapStore = Fluxxor.createStore({
   insertAssignment: function (assignments, index) {
     throw 'wip'
     var assignment = assignments[index]
-    console.log('db updated')
+    info('db updated')
   },
 
   onInsertSuccess: function () {
@@ -63,21 +64,21 @@ var MapStore = Fluxxor.createStore({
   },
 
   onDbFail: function (err) {
-    log('db error ', err)
+    info('db error ', { error: err })
   },
 
 
   handleLoadAssignments: function() {
-    log('handleLoadAssignments')
+    info('handleLoadAssignments')
     this.loading = true;
     // this.emit('update-ui', constants.LOAD_ASSIGNMENTS)
     // Request assignments from the storage adapter
     new TrailblazerHTTPStorageAdapter()
       .list("assignments")
       .then(function(response) {
-        console.log('response in load assignments action', response, constants.LOAD_ASSIGNMENTS_SUCCESS)
+        info('response in load assignments action', { type: constants.LOAD_ASSIGNMENTS_SUCCESS, response: response });
         if (response.assignments) {
-          console.log('this actions', this.flux.actions)
+          info('this actions', { actions: this.flux.actions })
           this.flux.actions.loadAssignmentsSuccess(response.assignments);
         } else {
 
@@ -87,7 +88,7 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleLoadAssignmentsSuccess: function(payload) {
-    log('handleLoadAssignmentsSuccess');
+    info('handleLoadAssignmentsSuccess');
     this.loading = false
     this.error  = null;
     var assignments = payload.assignments;
@@ -98,7 +99,7 @@ var MapStore = Fluxxor.createStore({
     //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
     //and this will fire once and then stop as the IDBWrapper put api is asynchrnous 
     assignments.forEach(function (assignment) {
-      console.log('putting assignments', assignment)
+      info('putting assignments', { assignment: assignment })
       this.db.put(assignment.id, assignment, this.onDbSuccess, this.onDbFail)
     }.bind(this))
   },
@@ -114,11 +115,11 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleGetAllNodesFail: function (error) {
-    console.log('handleGetAllNodesFail', error)
+    warn('handleGetAllNodesFail', { error: error })
   },
 
   handleLoadNodesSuccess: function (payload) {
-    console.log('handleLoadNodesSuccess', payload);
+    info('handleLoadNodesSuccess', { payload: payload });
     this.waitFor(['NodeStore'], function (nodeStore) {
       //TODO search by currentAssignment index
       var nodes = nodeStore.getState().db.getAll(this.dispatchNodes, this.handleGetAllNodesFail)
@@ -126,7 +127,7 @@ var MapStore = Fluxxor.createStore({
   },
 
   handleSelectAssignment: function (payload) {
-    log('handleSelectAssignment', payload)
+    info('handleSelectAssignment', { payload: payload })
     this.currentAssignment = payload.assignmentId;
     this.emit('update-ui', constants.CURRENT_ASSIGNMENT_CHANGED, payload)
   },

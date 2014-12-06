@@ -1,6 +1,30 @@
 // config
 var config                = require('./config');
 
+/**
+ * Initialize logging.
+ *
+ * Logger name should be the file path, relative to src/ (e.g. background.js,
+ * stores/map-store.js)
+ *
+ * Debug objects that are passed to the logger should be wrapped in an object
+ * to minimise console noise (e.g. { assignments: assignments } instead of
+ * assignments)
+ *
+ * Log levels are:
+ * - INFO
+ * - WARN
+ * - ERROR
+ */
+var debug                 = require('debug')
+  , info                  = debug('background.js:info');
+
+if (config.logging) {
+  debug.enable('*');
+} else {
+  debug.disable('*');
+}
+
 // adapters
 var ChromeIdentityAdapter = require('./adapter/chrome_identity_adapter');
 
@@ -19,14 +43,15 @@ var App                   = require('./background/app.js')
   , Fluxxor               = require('fluxxor')
   , constants             = require('./constants');
 
+info("Initializing!", { actions: actions });
+
 //instantiate flux and background app
 var flux = new Fluxxor.Flux(stores, actions);
-
 App(flux, 'MapStore');
 
-//logging
+// log each dispatch to the console
 flux.on("dispatch", function(type, payload) {
-  console.log("Dispatched", type, payload);
+  info("Dispatched", { type: type, payload: payload });
 })
 
 //TODO chrome.tabs.listeners
@@ -34,7 +59,7 @@ flux.on("dispatch", function(type, payload) {
 
 //receive messages from UI thread
 chrome.runtime.onMessage.addListener(function (message) {
-  console.log('message', message)
+  info({message: message});
   switch (message.action) {
     case constants.LOAD_ASSIGNMENTS:
       flux.actions.loadAssignments();

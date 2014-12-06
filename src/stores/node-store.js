@@ -1,8 +1,10 @@
 var _         = require('lodash')
- ,  camelize  = require('camelcase-keys')
- ,  constants = require('../constants')
- ,  Immutable = require('immutable')
- ,  Fluxxor   = require('fluxxor');
+  , info      = require('debug')('stores/node-store.js:info')
+  , error     = require('debug')('stores/node-store.js:error')
+  , camelize  = require('camelcase-keys')
+  , constants = require('../constants')
+  , Immutable = require('immutable')
+  , Fluxxor   = require('fluxxor');
 
  var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
@@ -24,7 +26,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   getState: function () {
-    console.log('getting node state')
+    info('getting node state')
     return {
       db: this.db,
       loading: this.loading,
@@ -33,11 +35,11 @@ var NodeStore = Fluxxor.createStore({
   },
 
   onDbSuccess: function () {
-    console.log('node db updated')
+    info('node db updated')
   },
 
   onDbFail: function (err) {
-    console.log('node db error ', err)
+    error('node db error ', { error: error })
   }, 
 
   handleSelectAssignment: function (payload) {
@@ -49,7 +51,7 @@ var NodeStore = Fluxxor.createStore({
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(function(response) {
-        console.log('response', response);
+        info('response', { response: response });
         if (response.error) {
           this.flux.actions.loadNodesFail(response.error)
         } else if (response.nodes) {
@@ -65,7 +67,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleLoadNodesSuccess: function (payload) {
-    console.log('handleLoadNodesSuccess')
+    info('handleLoadNodesSuccess')
     var nodes = payload.nodes.map(function (node) { return camelize(node) });
 
 
@@ -80,13 +82,13 @@ var NodeStore = Fluxxor.createStore({
   onTabCreated: function(tab) {
     // This is, presently, just a kind of pseudo code until flux is wired up on
     // the background.
-    waitFor(["tabStore"], function(tabStore) {
-      var objectStore = db.transaction(["nodes"], "readwrite").objectStore("nodes");
+    // waitFor(["tabStore"], function(tabStore) {
+    //   var objectStore = db.transaction(["nodes"], "readwrite").objectStore("nodes");
 
-      var request = objectStore.index("tabId").get(tab.id).onsuccess = function(evt) {
-        console.log("onTabCreated: nodes.where tabId = tab.id", evt.target.result);
-      };
-    });
+    //   var request = objectStore.index("tabId").get(tab.id).onsuccess = function(evt) {
+    //     info("onTabCreated: nodes.where tabId = tab.id", evt.target.result);
+    //   };
+    // });
     throw "NotImplemented";
   },
 

@@ -8,7 +8,7 @@ var isArray = require('is-array');
 var Immutable = require('immutable');
 
 var constants = require('../constants');
-var log = require('debug')('content:app.js');
+var info = require('debug')('content/app.js:info');
 
 
 //components
@@ -32,7 +32,7 @@ var App = React.createClass({
   },
 
   render: function () {
-    console.log('rendering app', this.props.state);
+    info('rendering app', { state: this.props.state });
     return this.renderCurrentRoute();
   },
 
@@ -53,7 +53,7 @@ var App = React.createClass({
    * Assignments#index - borrowing naming conventions from Rails
    */
   assignmentsIndex: function () {
-    console.log('assignmentsIndex fired', this.props.state)
+    info('assignmentsIndex fired', { state: this.props.state })
  
 
     return <AssignmentsIndex 
@@ -66,7 +66,7 @@ var App = React.createClass({
    * Assignments#show - borrowing naming conventions from Rails
    */
   assignmentsShow: function () {
-    console.log('assignmentsShow')
+    info('assignmentsShow')
     return <AssignmentsShow state={this.props.state} actions={this.props.actions}/>
   }
 });
@@ -75,9 +75,9 @@ var AppWrap = function(initialState, actions) {
 
   var app = {
     initialize: function(initialState) {
-      console.log('initialState', initialState)
+      info('initialState', { state: initialState })
       var initialState = initialState || {};
-      console.log('initialState', initialState)
+      info('initialState', { state: initialState })
 
 
       // nodeState: Map
@@ -96,7 +96,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     update: function(message) {
-      console.log('app updating', message)
+      info('app updating', { message: message })
       if (message && message.type) {
         switch (message.type) {
           case constants.LOAD_ASSIGNMENTS:
@@ -117,7 +117,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     render: function () {
-      console.log('re-render', this.state)
+      info('re-render', { state: this.state })
       React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
     },
 
@@ -126,7 +126,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     refreshAssignments: function (assignments) {
-      console.log('refreshAssignments fired', assignments)
+      info('refreshAssignments fired', { assignments: assignments })
       //translate from array to an immutable map
 
       var assignmentsIndex = Immutable.Map(assignments.reduce(function (o, assignment) {
@@ -134,7 +134,7 @@ var AppWrap = function(initialState, actions) {
           return o;
         }, {})); 
 
-      console.log(assignmentsIndex)
+      info({ assignmentsIndex: assignmentsIndex })
 
       this.state = this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
         return assignmentsIndex;
@@ -142,7 +142,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     addNodes: function (nodes) {
-      console.log('addNodes fired', nodes)
+      info('addNodes fired', { nodes: nodes })
       nodes.forEach(function (node) {
         this.state.updateIn['nodeState', 'nodeIndex', node.id], function () {
           return node;

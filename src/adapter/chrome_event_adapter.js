@@ -1,5 +1,6 @@
 // helpers
-var _          = require('lodash');
+var _         = require('lodash'),
+  , warn      = require('debug')('adapter/chrome_event_adapter.js:warn');
 
 /**
  * Creates a new ChromeEventAdapter
@@ -172,7 +173,7 @@ ChromeEventAdapter.prototype.ready = function(fireCreate) {
       }.bind(this));
     }
   } else {
-    console.log("[W] ChromeEventAdapter.ready() called multiple times. Skipping.")
+    warn("ready() called multiple times. Skipping.")
   }
 };
 
