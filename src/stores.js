@@ -14,14 +14,14 @@ var db = {};
 /**
  * Initialize the IDB stores for each data model
  */
-db.tab = new IDBStore({
+db.tabs = new IDBStore({
   storeName: 'tabs',
   dbVersion: 1,
   keyPath: 'localId',
   autoIncrement: true
 });
 
-db.node = new IDBStore({
+db.nodes = new IDBStore({
   storeName: 'nodes',
   dbVersion: 1,
   keyPath: 'localId',
@@ -29,7 +29,7 @@ db.node = new IDBStore({
   index: [ { name: 'tabId' }, { name: 'assignmentId' } ]
 });
 
-db.assignment = new IDBStore({
+db.assignments = new IDBStore({
   storeName: 'assignments',
   dbVersion: 1,
   keyPath: 'localId',
