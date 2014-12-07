@@ -63,7 +63,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 
 flux.on("dispatch", function(type, payload) {
   info("Dispatched", { type: type, payload: payload });
-})
+});
 
 /**
  * Initialize the dispatcher and receiver to allow communication between the

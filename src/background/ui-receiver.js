@@ -10,8 +10,8 @@ module.exports = function (flux) {
     info("Received message over chrome.runtime", {message: message});
 
     switch (message.action) {
-      case constants.LOAD_ASSIGNMENTS:
-        flux.actions.loadAssignments();
+      case constants.FETCH_ASSIGNMENTS:
+        flux.actions.fetchAssignments();
         break;
       case constants.LOAD_NODES:
         flux.actions.loadNodes(message.payload);
@@ -19,6 +19,9 @@ module.exports = function (flux) {
       case constants.SELECT_ASSIGNMENT:
         flux.actions.selectAssignment(message.payload.assignmentId);
         break;
+      default:
+        info("Ignoring received message \"" + message.action + "\": no action bound.");
+        console.log(flux);
     }
   }
 };

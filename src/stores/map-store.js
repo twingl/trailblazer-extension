@@ -33,9 +33,13 @@ var MapStore = Fluxxor.createStore({
     this.index              = 0;
 
     this.bindActions(
-      constants.LOAD_ASSIGNMENTS, this.handleLoadAssignments,
-      constants.LOAD_ASSIGNMENTS_SUCCESS, this.handleLoadAssignmentsSuccess,
-      constants.LOAD_ASSIGNMENTS_FAIL, this.handleLoadAssignmentsFail,
+      constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
+      constants.FETCH_ASSIGNMENTS_SUCCESS, this.handleFetchAssignmentsSuccess,
+      constants.FETCH_ASSIGNMENTS_FAIL, this.handleFetchAssignmentsFail,
+      constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
+      constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
+      constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
+      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized,
       constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
       constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
     );
@@ -57,17 +61,58 @@ var MapStore = Fluxxor.createStore({
 
 
   /**
-   * Retrieves a list of assignments from the server, attempting to store them
-   * in the local IDB. Fires LOAD_ASSIGNMENTS_SUCCESS with the assignments if
-   * the above was without error, or LOAD_ASSIGNMENTS_FAIL with the error if
-   * there was a problem.
+   * Fetches the assignments from Trailblazer's HTTP API
    *
-   * It first retrieves a current list of Assignments from the server, and
-   * matches them up to the local IDB by `id` to avoid duplicates, as `localId`
-   * is the primary key for the IDB.
-   *
-   *                                   * * *
-   * LOGIC SUMMARY
+   * Fires FETCH_ASSIGNMENTS_SUCCESS if successful, FETCH_ASSIGNMENTS_FAIL if
+   * not
+   */
+  handleFetchAssignments: function() {
+    this.loading = true;
+
+    // Request assignments from the storage adapter
+    info('handleFetchAssignments: Requesting /assignments')
+    new TrailblazerHTTPStorageAdapter()
+      .list("assignments")
+      .then(
+        // Success
+        function(response) {
+          info('handleFetchAssignments: Assignments received', { response: response });
+          this.flux.actions.fetchAssignmentsSuccess(response.assignments);
+        }.bind(this),
+
+        // Error
+        function(response) {
+          warn('handleFetchAssignments: Unsuccessful response', { response: response });
+          this.flux.actions.fetchAssignmentsFail({ error: response.error });
+        }.bind(this)
+      );
+  },
+
+  /**
+   * Camelizes the object keys on the assignments in the payload before firing
+   * UPDATE_ASSIGNMENT_CACHE
+   */
+  handleFetchAssignmentsSuccess: function (payload) {
+    info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
+    var assignments = _.collect(payload.assignments, camelize);
+
+    // FIXME We can't dispatch actions directly while an action is already being dispatched
+    setTimeout(function() {
+      this.flux.actions.updateAssignmentCache(assignments);
+    }.bind(this), 1);
+  },
+
+  /**
+   * Failure handler for FETCH_ASSIGNMENTS
+   */
+  handleFetchAssignmentsFail: function (payload) {
+    this.loading = false;
+    this.error = payload.error; //unnecessary state
+    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: payload.error });
+  },
+
+  /**
+   * Updating the cache: logic summary
    *
    * We first read the local assignments so we can figure out what needs to be
    * updated.
@@ -94,138 +139,117 @@ var MapStore = Fluxxor.createStore({
    * action is fired. A successful action ALWAYS carries the entire
    * collection of Assignments returned from the server (which may not have
    * `localId`s populated).
-   *
-   * TODO: Address whether deletes of stale assignments should be carried out
-   * here or through a separate action. See TODO below.
-   *
-   * FIXME: This (MapStore#handleLoadAssignments) is a candidate for refactor
-   * and method extraction, based on the size of the function and
-   * responsibility.
    */
-  handleLoadAssignments: function() {
-    this.loading = true;
+  handleUpdateAssignmentCache: function (payload) {
+    var assignments = payload.assignments;
 
-    // Request assignments from the storage adapter
-    info('handleLoadAssignments: Requesting /assignments')
-    new TrailblazerHTTPStorageAdapter()
-      .list("assignments")
-      .then(
-        // Success
-        function(response) {
-          info('handleLoadAssignments: Successful response', { response: response });
-          //this.flux.actions.loadAssignmentsSuccess(response.assignments);
-          this.db.assignments.getAll(
+    this.db.assignments.getAll(
+      // Success
+      function (localAssignments) {
+        info("Fetched assignments");
+        var put = []
+          , del = [];
+
+        var remoteIDs = _.pluck(assignments, 'id');
+        var persistedAssignments = _.filter(localAssignments, 'id');
+
+        // Iterate over the local assignments that have a server ID,
+        // checking if they still exist on the server. If they do, set
+        // the `localId` on the server's response so we can update our
+        // local copy. If not, push it to the delete queue.
+        _.each(persistedAssignments, function(a) {
+          if (remoteIDs.indexOf(a.id) >= 0) {
+            _.find(assignments, { 'id': a.id }).localId = a.localId;
+          } else {
+            del.push(a.localId);
+          }
+        });
+        put = assignments;
+
+        // We've added our `localId` to the assignments in the response, so
+        // now all we need to do is use putBatch to update the local DB.
+        // If there are new assignments without a localId, they'll just
+        // be inserted as a new record.
+        //
+        // Only attempt this if there's something to put. IDBWrapper
+        // fails with an empty array.
+        info("handleUpdateAssignmentCache: Assignment changes to commit:", { put: put, del: del});
+        if (put.length > 0) {
+          this.db.assignments.putBatch(put,
             // Success
-            function (localAssignments) {
-              var put = []
-                , del = [];
+            function () {
+              info('handleUpdateAssignmentCache: Successfully inserted new records.');
 
-              // We've got to camelize the keys before we operate on anything
-              var assignments = _.collect(response.assignments, camelize);
-
-              var remoteIDs = _.pluck(assignments, 'id');
-              var persistedAssignments = _.filter(localAssignments, 'id');
-
-              // Iterate over the local assignments that have a server ID,
-              // checking if they still exist on the server. If they do, set
-              // the `localId` on the server's response so we can update our
-              // local copy. If not, push it to the delete queue.
-              _.each(persistedAssignments, function(a) {
-                if (remoteIDs.indexOf(a.id) >= 0) {
-                  _.find(assignments, { 'id': a.id }).localId = a.localId;
-                } else {
-                  del.push(a.localId);
-                }
-              });
-              put = assignments;
-
-              // We've added our `localId` to the assignments in the response, so
-              // now all we need to do is use putBatch to update the local DB.
-              // If there are new assignments without a localId, they'll just
-              // be inserted as a new record.
-              //
-              // Only attempt this if there's something to put. IDBWrapper
-              // fails with an empty array.
-              if (put.length > 0) {
-                this.db.assignments.putBatch(put,
-                  // Success (putBatch)
+              // Only attempt deletion if there's something to delete
+              if (del.length > 0) {
+                info('handleUpdateAssignmentCache: Cleaning up old records', { del: del });
+                this.db.assignments.removeBatch(del,
+                  // Success (removeBatch)
                   function () {
-                    info('handleLoadAssignments: Successfully inserted new records.');
-                    this.flux.actions.loadAssignmentsSuccess(assignments);
-                  
-                    // Only attempt deletion if there's something to delete
-                    if (del.length > 0) {
-                      // TODO QN: Do we remove here, or fire REMOVE_ASSIGNMENT
-                      // (or whatever action removes local copies of
-                      // assignments) for each? Looking to minimize logic
-                      // duplication here.
-                      info('handleLoadAssignments: Cleaning up old records', { del: del });
-                      this.db.assignments.removeBatch(del,
-                        // Success (removeBatch)
-                        function () {
-                          info('handleLoadAssignments: Successfully removed old records.');
-                        }.bind(this),
-
-                        // Error (removeBatch)
-                        function (error) {
-                          error('handleLoadAssignments: Error in batch delete from DB', { error: error })
-                          this.flux.actions.loadAssignmentsFail({ error: error });
-                        }.bind(this));
-                    }
+                    info('handleUpdateAssignmentCache: Successfully removed old records.');
+                    this.flux.actions.updateAssignmentCacheSuccess();
                   }.bind(this),
 
-                  // Error (putBatch)
+                  // Error (removeBatch)
                   function (error) {
-                    error('handleLoadAssignments: Error in batch insert into DB', { error: error })
-                    this.flux.actions.loadAssignmentsFail({ error: error });
+                    error('handleUpdateAssignmentCache: Error in batch delete from DB', { error: error })
+                    this.flux.actions.updateAssignmentCacheFail(error);
                   }.bind(this));
               } else {
-                info("handleLoadAssignments: No assignments to load.");
-                this.flux.actions.loadAssignmentsSuccess(assignments);
+                info("handleUpdateAssignmentCache: No assignments to delete.");
+                this.flux.actions.updateAssignmentCacheSuccess();
               }
-
-              info("handleLoadAssignments: Assignment changes:", { put: put, del: del});
             }.bind(this),
 
-            // Error
+            // Error (putBatch)
             function (error) {
-              error('handleLoadAssignments: Error reading from DB', { error: error })
-              this.flux.actions.loadAssignmentsFail({ error: error });
+              error('handleUpdateAssignmentCache: Error in batch insert into DB', { error: error })
+              this.flux.actions.updateAssignmentCacheFail(error);
             }.bind(this));
-        }.bind(this),
+        } else {
+          info("handleUpdateAssignmentCache: No assignments to load.");
+          this.flux.actions.updateAssignmentCacheSuccess();
+        }
+      }.bind(this),
 
-        // Error
-        function(response) {
-          warn('handleLoadAssignments: Unsuccessful response', { response: response })
-          this.flux.actions.loadAssignmentsFail({ error: response.error });
-        }.bind(this)
-      );
+      // Error
+      function (error) {
+        error('handleUpdateAssignmentCache: Error reading from DB', { error: error })
+        this.flux.actions.updateAssignmentCacheFail(error);
+      }.bind(this)
+    );
   },
 
-  handleLoadAssignmentsSuccess: function(payload) {
-    info('handleLoadAssignmentsSuccess');
-    this.loading = false
-    this.error  = null;
-    var assignments = payload.assignments;
-    
-    //send assignments to the UI
-    this.emit('update-ui', constants.ASSIGNMENTS_READY, { assignments: assignments }) //FIXME rename to LOAD_ASSIGNMENTS_SUCCESS?
-  
-    //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
-    //and this will fire once and then stop as the IDBWrapper put api is asynchrnous 
-    // assignments.forEach(function (assignment) {
-    //   info('putting assignments', { assignment: assignment })
-    //   this.db.put(assignment.id, assignment, this.onDbSuccess, this.onDbFail)
-    // }.bind(this))
+  /**
+   * Success handler for UPDATE_ASSIGNMENT_CACHE
+   *
+   * Fires ASSIGNMENTS_SYNCHRONIZED
+   */
+  handleUpdateAssignmentCacheSuccess: function () {
+    // FIXME We can't dispatch actions directly while an action is already being dispatched
+    setTimeout(function() {
+      this.flux.actions.assignmentsSynchronized();
+    }.bind(this), 1);
   },
 
-  handleLoadAssignmentsFail: function (payload) {
-    this.loading = false;
-    this.error = payload.error; //unnecessary state
-    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: payload.error });
+  /**
+   * Failure handler for UPDATE_ASSIGNMENT_CACHE
+   */
+  handleUpdateAssignmentCacheFail: function (payload) {
+    error('updateAssignmentCacheFail', { error: payload.error });
   },
 
-  dispatchNodes: function (data) {
+  /**
+   * Emits a change event from this store with the complete list of assignments
+   */
+  handleAssignmentsSynchronized: function () {
+    // Fetch all assignments and tell the UI
+    this.db.assignments.getAll(function (assignments) {
+      this.emit('update-ui', constants.ASSIGNMENTS_SYNCHRONIZED, { assignments: assignments });
+    }.bind(this));
+  },
+
+  handleDispatchNodes: function (data) {
     this.emit('update-ui', constants.NODES_READY, { nodes: data });
   },
 

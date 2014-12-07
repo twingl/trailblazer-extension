@@ -17,6 +17,17 @@ var UIDispatcher = function(flux, stores) {
     },
 
     // Dispatch the action over chrome.runtime to the UI
+    //
+    // Instead of pushing Actions over chrome.runtime, it should just send the store `change` events.
+    // The UI is only concerned with data changes, and the back end should know
+    // nothing about what's handling the store change events.
+    // This would involve renaming 'update-ui' to 'change', and when a 'change'
+    // is emitted from a store, it simply attaches the relevant data.
+    //
+    // AssignmentStore: all assignments
+    // NodeStore: the node that changed
+    // TabStore: unknown
+    // MapStore: the assignment and its nodes? TBD
     dispatch: function (actionName, payload) {
       var message = {
         type: actionName,
