@@ -100,10 +100,7 @@ var MapStore = Fluxxor.createStore({
     info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
     var assignments = _.collect(payload.assignments, camelize);
 
-    // FIXME We can't dispatch actions directly while an action is already being dispatched
-    setTimeout(function() {
-      this.flux.actions.updateAssignmentCache(assignments);
-    }.bind(this), 1);
+    this.flux.actions.updateAssignmentCache(assignments);
   },
 
   /**
@@ -235,10 +232,7 @@ var MapStore = Fluxxor.createStore({
    * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCacheSuccess: function () {
-    // FIXME We can't dispatch actions directly while an action is already being dispatched
-    setTimeout(function() {
-      this.flux.actions.assignmentsSynchronized();
-    }.bind(this), 1);
+    this.flux.actions.assignmentsSynchronized();
   },
 
   /**
