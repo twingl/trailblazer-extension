@@ -14,13 +14,6 @@ var db = {};
 /**
  * Initialize the IDB stores for each data model
  */
-db.tabs = new IDBStore({
-  storeName: 'tabs',
-  dbVersion: 1,
-  keyPath: 'localId',
-  autoIncrement: true
-});
-
 db.nodes = new IDBStore({
   storeName: 'nodes',
   dbVersion: 1,
