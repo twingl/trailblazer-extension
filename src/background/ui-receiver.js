@@ -7,7 +7,7 @@ var info      = require('debug')('background/ui-receiver.js:info')
  */
 module.exports = function (flux) {
   return function (message) {
-    info("Recieved message over chrome.runtime", {message: message});
+    info("Received message over chrome.runtime", {message: message});
 
     switch (message.action) {
       case constants.LOAD_ASSIGNMENTS:
