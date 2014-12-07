@@ -32,9 +32,7 @@ if (config.logging) {
 /**
  * Main dependencies.
  */
-var UIDispatcher          = require('./background/ui-dispatcher.js')
-  , UIReceiver            = require('./background/ui-receiver.js')
-  , actions               = require('./actions')
+var actions               = require('./actions')
   , stores                = require('./stores')
   , Fluxxor               = require('fluxxor');
 
@@ -61,16 +59,16 @@ chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
 info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
-flux.on("dispatch", function(type, payload) {
-  info("Dispatched", { type: type, payload: payload });
+// Wire up Flux's dispatcher to listen for chrome.runtime messages
+chrome.runtime.onMessage.addListener(function (message) {
+  if (message.action) {
+    var o = { type: message.action };
+    if (message.payload) o.payload = message.payload;
+
+    flux.dispatcher.dispatch(o);
+    info("Dispatched", o);
+  };
 });
 
-/**
- * Initialize the dispatcher and receiver to allow communication between the
- * background process and the UI
- */
-info("Initializing UI Dispatcher");
-UIDispatcher(flux, ['MapStore']);
-
-info("Initializing UI Receiver");
-chrome.runtime.onMessage.addListener(UIReceiver(flux));
+// Allow 'change' events to proxy through chrome.runtime messaging to the UI
+require('./background/proxy-change')(flux, ['MapStore']);

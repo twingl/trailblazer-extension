@@ -65,6 +65,8 @@ var MapStore = Fluxxor.createStore({
    *
    * Fires FETCH_ASSIGNMENTS_SUCCESS if successful, FETCH_ASSIGNMENTS_FAIL if
    * not
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignments: function() {
     this.loading = true;
@@ -91,6 +93,8 @@ var MapStore = Fluxxor.createStore({
   /**
    * Camelizes the object keys on the assignments in the payload before firing
    * UPDATE_ASSIGNMENT_CACHE
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignmentsSuccess: function (payload) {
     info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
@@ -104,11 +108,12 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Failure handler for FETCH_ASSIGNMENTS
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignmentsFail: function (payload) {
     this.loading = false;
     this.error = payload.error; //unnecessary state
-    this.emit('update-ui', constants.LOAD_ASSIGNMENTS_FAIL, { error: payload.error });
   },
 
   /**
@@ -139,6 +144,8 @@ var MapStore = Fluxxor.createStore({
    * action is fired. A successful action ALWAYS carries the entire
    * collection of Assignments returned from the server (which may not have
    * `localId`s populated).
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCache: function (payload) {
     var assignments = payload.assignments;
@@ -224,6 +231,8 @@ var MapStore = Fluxxor.createStore({
    * Success handler for UPDATE_ASSIGNMENT_CACHE
    *
    * Fires ASSIGNMENTS_SYNCHRONIZED
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCacheSuccess: function () {
     // FIXME We can't dispatch actions directly while an action is already being dispatched
@@ -234,6 +243,8 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Failure handler for UPDATE_ASSIGNMENT_CACHE
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCacheFail: function (payload) {
     error('updateAssignmentCacheFail', { error: payload.error });
@@ -241,16 +252,18 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Emits a change event from this store with the complete list of assignments
+   *
+   * FIXME: Belongs on AssignmentStore
    */
   handleAssignmentsSynchronized: function () {
     // Fetch all assignments and tell the UI
     this.db.assignments.getAll(function (assignments) {
-      this.emit('update-ui', constants.ASSIGNMENTS_SYNCHRONIZED, { assignments: assignments });
+      this.emit('change', { assignments: assignments });
     }.bind(this));
   },
 
   handleDispatchNodes: function (data) {
-    this.emit('update-ui', constants.NODES_READY, { nodes: data });
+    this.emit('change', { nodes: data });
   },
 
   handleGetAllNodesFail: function (error) {
@@ -268,7 +281,6 @@ var MapStore = Fluxxor.createStore({
   handleSelectAssignment: function (payload) {
     info('handleSelectAssignment', { payload: payload })
     this.currentAssignment = payload.assignmentId; //NO
-    this.emit('update-ui', constants.CURRENT_ASSIGNMENT_CHANGED, payload)
   }
 
 });

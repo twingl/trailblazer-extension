@@ -20,34 +20,29 @@ var state = {
 
 var App = require('./content/app.js');
 
-actions.dispatch = function(actionName, payload) { 
-	info('ui action dispatched', { action: actionName, payload: payload })
-	// override the fluxxor
-  // this allows the background and content to share the same actions
-  chrome.runtime.sendMessage({action: actionName, payload: payload});
-};
-
 var app = App(state, actions);
 
-chrome.runtime.onMessage.addListener(
-	function handleMessage(message) {
-		info('message recieved from background!', { message: message })
-		// RECEIVE
-		//only handles STATE change event (background handles ACTION messages)
-		switch (message.type) {
-			//whitelist of types that trigger a UI state change
-			case 'LOAD_ASSIGNMENTS':
-			case 'ASSIGNMENTS_READY':
-			case 'LOAD_ASSIGNMENTS_FAIL':
-			case 'LOAD_NODES_FAIL':
-			case 'NODES_READY':
-			case 'CURRENT_ASSIGNMENT_CHANGED':
-				app.update(message);
-				break;
-			default:
-				return;
-		}
-
+// Listen for actions, and react to ones that the UI cares about
+chrome.runtime.onMessage.addListener(function (message) {
+  // RECEIVE
+  //only handles STATE change event (background handles ACTION messages)
+  switch (message.action) {
+    //whitelist of types that trigger a UI state change
+    case constants.FETCH_ASSIGNMENTS:
+    case constants.FETCH_ASSIGNMENTS_FAIL:
+    case constants.ASSIGNMENTS_SYNCHRONIZED:
+      info("Action: ", message);
+      app.update(message);
+      break;
+    // Extra case for 'change' events emitted by the stores
+    case 'change':
+      info("Change: ", message);
+      app.update(message);
+      break;
+    default:
+      info("Ignoring message " + message.action, message);
+      return;
+  }
 });
 
 // TODO?
