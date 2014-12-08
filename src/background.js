@@ -60,6 +60,7 @@ info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
+// FIXME Candidate for refactor/extraction into a better location
 chrome.runtime.onMessage.addListener(function (message) {
   if (message.action === "change") return;
   if (message.action) {
