@@ -24,21 +24,23 @@ var app = App(state, actions);
 
 // Listen for actions, and react to ones that the UI cares about
 chrome.runtime.onMessage.addListener(function (message) {
-  // RECEIVE
-  //only handles STATE change event (background handles ACTION messages)
   switch (message.action) {
-    //whitelist of types that trigger a UI state change
+    // White-list of actions that trigger a UI state change
     case constants.FETCH_ASSIGNMENTS:
     case constants.FETCH_ASSIGNMENTS_FAIL:
     case constants.ASSIGNMENTS_SYNCHRONIZED:
       info("Action: ", message);
+      // TODO Update our state objects here before updating the app
       app.update(message);
       break;
+
     // Extra case for 'change' events emitted by the stores
     case 'change':
       info("Change: ", message);
       app.update(message);
       break;
+
+    // Log anything we don't explicitly handle
     default:
       info("Ignoring message " + message.action, message);
       return;
@@ -46,4 +48,4 @@ chrome.runtime.onMessage.addListener(function (message) {
 });
 
 // TODO?
-// actions.init(); // refresh the store to get whatever existing data
+// actions.init(); // request the store's existing data
