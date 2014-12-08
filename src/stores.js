@@ -7,6 +7,7 @@ var IDBStore              = require('idb-wrapper');
 
 var TabStore              = require('./stores/tab-store')
   , NodeStore             = require('./stores/node-store')
+  , AssignmentStore       = require('./stores/assignment-store')
   , MapStore              = require('./stores/map-store');
 
 var db = {};
@@ -35,6 +36,7 @@ db.assignments = new IDBStore({
 var fluxStores = {
   TabStore: new TabStore({ db: db }),
   NodeStore: new NodeStore({ db: db }),
+  AssignmentStore: new AssignmentStore({ db: db }),
   MapStore: new MapStore({ db: db })
 };
 

@@ -72,4 +72,4 @@ chrome.runtime.onMessage.addListener(function (message) {
 });
 
 // Allow 'change' events to proxy through chrome.runtime messaging to the UI
-require('./background/proxy-change')(flux, ['MapStore']);
+require('./background/proxy-change')(flux, ['MapStore', 'AssignmentStore']);
