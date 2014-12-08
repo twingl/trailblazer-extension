@@ -1,5 +1,5 @@
 var _         = require('lodash')
- ,  camelize  = require('camelcase-keys')
+ ,  camelize  = require('camelize')
  ,  constants = require('../constants')
  ,  Fluxxor   = require('fluxxor');
 

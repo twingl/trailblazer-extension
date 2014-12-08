@@ -4,11 +4,14 @@ var _                             = require('lodash')
   , Immutable                     = require('immutable')
   , uuid                          = require('node-uuid')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
-  , camelize                      = require('camelcase-keys')
+  , camelize                      = require('camelize')
   , info                          = require('debug')('stores/map-store.js:info')
   , warn                          = require('debug')('stores/map-store.js:warn')
   , error                         = require('debug')('stores/map-store.js:error');
 
+
+//lib
+var createDbBatch = require('../lib/create-db-batch');
 
 //TODO 
 // handleTabCreated
@@ -30,7 +33,6 @@ var MapStore = Fluxxor.createStore({
     this.currentAssignment  = null;
     this.loading            = false;
     this.error              = null;
-    this.index              = 0;
 
     this.bindActions(
       constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
@@ -151,24 +153,8 @@ var MapStore = Fluxxor.createStore({
       // Success
       function (localAssignments) {
         info("Fetched assignments");
-        var put = []
-          , del = [];
 
-        var remoteIDs = _.pluck(assignments, 'id');
-        var persistedAssignments = _.filter(localAssignments, 'id');
-
-        // Iterate over the local assignments that have a server ID,
-        // checking if they still exist on the server. If they do, set
-        // the `localId` on the server's response so we can update our
-        // local copy. If not, push it to the delete queue.
-        _.each(persistedAssignments, function(a) {
-          if (remoteIDs.indexOf(a.id) >= 0) {
-            _.find(assignments, { 'id': a.id }).localId = a.localId;
-          } else {
-            del.push(a.localId);
-          }
-        });
-        put = assignments;
+        var batch = createDbBatch(localAssignments, assignments);
 
         // We've added our `localId` to the assignments in the response, so
         // now all we need to do is use putBatch to update the local DB.

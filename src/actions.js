@@ -38,14 +38,19 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED, payload: { assignments: assignments } });
   },
 
-  loadNodes: function (assignmentId) {
-    info('loadNodes');
-    chrome.runtime.sendMessage({ action: constants.LOAD_NODES, payload: {assignmentId: assignmentId} });
+  fetchNodes: function () {
+    info('fetchNodes');
+    chrome.runtime.sendMessage({ action: constants.FETCH_NODES });
   },
 
-  loadNodesSuccess: function (nodes) {
-    info('loadNodesSuccess');
-    chrome.runtime.sendMessage({ action: constants.LOAD_NODES_SUCCESS, payload: { nodes: nodes } });
+  fetchNodesSuccess: function (nodes) {
+    info('fetchNodesSuccess');
+    chrome.runtime.sendMessage({ action: constants.FETCH_NODES_SUCCESS, payload: { nodes: nodes } });
+  },
+
+  fetchNodesFail: function (error) {
+    info('fetchNodesFail');
+    chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime

@@ -1,7 +1,7 @@
 var _         = require('lodash')
   , info      = require('debug')('stores/node-store.js:info')
   , error     = require('debug')('stores/node-store.js:error')
-  , camelize  = require('camelcase-keys')
+  , camelize  = require('camelize')
   , constants = require('../constants')
   , Immutable = require('immutable')
   , Fluxxor   = require('fluxxor');
@@ -19,6 +19,13 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
+      constants.FETCH_NODES, this.handleFetchNodes,
+      constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
+      constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
+      constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
+      constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
+      constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
+      constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
       constants.LOAD_NODES, this.handleLoadNodes,
       constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
       constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
@@ -34,50 +41,70 @@ var NodeStore = Fluxxor.createStore({
     };
   },
 
-  onDbSuccess: function () {
-    info('node db updated')
-  },
-
-  onDbFail: function (err) {
-    error('node db error ', { error: error })
-  }, 
-
   handleSelectAssignment: function (payload) {
     this.handleLoadNodes(payload);
   },
 
-  handleLoadNodes: function (payload) {
-    var assignmentId = payload.assignmentId;
+  handleFetchNodes: function(assignmentId) {
+    this.loading = true;
+
+    // Request nodes from the storage adapter
+    info('handleFetchNodess: Requesting /assignments/:id/nodes')
     new TrailblazerHTTPStorageAdapter()
       .list(["assignments", assignmentId, "nodes"].join("/"))
-      .then(function(response) {
-        info('response', { response: response });
-        if (response.error) {
-          this.flux.actions.loadNodesFail(response.error)
-        } else if (response.nodes) {
-          this.flux.actions.loadNodesSuccess(response.nodes)
-        }
+      .then(
+        // Success
+        function(response) {
+          info('handleFetchNodes: Nodes received', { response: response });
+          this.flux.actions.fetchNodesSuccess(response.assignments);
+        }.bind(this),
 
-      }.bind(this));
+        // Error
+        function(response) {
+          warn('handleFetchNodes: Unsuccessful response', { response: response });
+          this.flux.actions.fetchNodesFail({ error: response.error });
+        }.bind(this)
+      );
   },
 
-  handleLoadNodesFail: function (error) {
-    this.emit('update-ui', constants.LOAD_NODES_FAIL) 
+  /**
+   * Camelizes the object keys on the nodes in the payload before firing
+   * UPDATE_NODE_CACHE
+   */
+  handleFetchNodesSuccess: function (payload) {
+    info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
+    var nodes = _.collect(payload.nodes, camelize);
+
+    this.flux.actions.updateNodeCache(nodes);
+  },
+
+  /**
+   * Failure handler for FETCH_NODES
+   */
+  handleFetchNodesFail: function (payload) {
+    this.loading = false;
+    this.error = payload.error; //unnecessary state
+  },
+
+  getAllSuccessUpdate: function(localNodes) {
+
+
 
   },
 
-  handleLoadNodesSuccess: function (payload) {
-    info('handleLoadNodesSuccess')
-    var nodes = payload.nodes.map(function (node) { return camelize(node) });
-
-
-    //NOTE IDB wrapper doesnt support putBatch for out-of-line keys
-    for (var i=0;i<nodes.length;i++) {
-      var node = nodes[i];
-      this.db.put(node.id, node, this.onDbSuccess, this.onDbFail)
-    }
+  getAllFail: function (error) {
+    error('handleUpdateAssignmentCache: Error reading from DB', { error: error })
+    this.flux.actions.updateAssignmentCacheFail(error);
   },
 
+  handleUpdateNodeCache: function (localNodes) {
+    info("Fetched nodes");
+    var nodes = payload.nodes;
+    this.db.nodes.getAll(
+      this.getAllSuccessUpdate,
+      this.getAllFail,
+    );
+  },
 
   onTabCreated: function(tab) {
     // This is, presently, just a kind of pseudo code until flux is wired up on

@@ -36,12 +36,12 @@
     "is-array": "~1.0.1",
     "react-router": "~0.10.2",
     "react": "~0.12.0",
-    "camelcase-keys": "~1.0.0",
     "react-mini-router": "~1.0.0",
     "immutable": "~3.2.1",
     "node-uuid": "~1.4.1",
     "gulp-jsx": "~0.6.0",
-    "idb-wrapper": "~1.4.1"
+    "idb-wrapper": "~1.4.1",
+    "camelize": "~1.0.0"
   },
   "repository": {
     "type": "git",
