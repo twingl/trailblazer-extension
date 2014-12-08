@@ -86,8 +86,17 @@ var NodeStore = Fluxxor.createStore({
     this.error = payload.error; //unnecessary state
   },
 
-  getAllSuccessUpdate: function(localNodes) {
+  getAll: function (callback) {
+    //
+    var 
 
+    this.db.nodes.getAll(
+      function()
+      )
+  }
+
+  getAllSuccessUpdate: function(localNodes) {
+    var batch = createDbBatch(localNodes, assignments);
 
 
   },
