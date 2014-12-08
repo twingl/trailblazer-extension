@@ -1,8 +1,9 @@
 // config
-var config                = require('./config');
+var config      = require('./config');
 
 // helpers
-var _                     = require('lodash');
+var _           = require('lodash')
+ ,  treo        = require('treo');
 
 /**
  * Initialize logging.
@@ -33,11 +34,13 @@ if (config.logging) {
  * Main dependencies.
  */
 var actions               = require('./actions')
-  , stores                = require('./stores')
+  , AssignmentStore       = require('./stores/assignment-store')
+  , MapStore              = require('./stores/map-store')
+  , NodeStore             = require('./stores/node-store')
+  , TabStore              = require('./stores/tab-store')
   , Fluxxor               = require('fluxxor');
 
 info("Initializing Trailblazer!");
-
 /**
  * Initialize the extension.
  *
@@ -56,6 +59,34 @@ chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
  * Initialize with the stores and actions, and set up a listener to log all
  * dispatches to the console.
  */
+
+info("Initializing Indexdb");
+var schema = treo.schema()
+  .version(1)
+  .addStore('tabs', { key: 'id' })
+    .addIndex('byNodeId', 'nodeId', { unique: true })
+  .addStore('nodes', { key: 'id' })
+    .addIndex('byTabId', 'tabId', { unique: true })
+  .addStore('assignments', { key: 'id' })
+  .addStore('maps', { key: 'id' });
+
+//initialize db and provide a wrapper object around the treo api
+var db = treo('db', schema)
+ ,  dbObj = {
+    assignments: db.store('assignments'),
+    maps: db.store('maps'),
+    nodes: db.store('nodes'),
+    tabs: db.store('tabs')
+ }
+
+//initialize stores
+var stores = {
+  AssignmentStore: AssignmentStore({ db: dbObj }),
+  MapStore: MapStore({ db: dbObj }),
+  TabStore: TabStore({ db: dbObj }),
+  NodeStore: NodeStore({ db: dbObj })
+}
+
 info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
