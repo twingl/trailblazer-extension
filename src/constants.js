@@ -1,4 +1,5 @@
 module.exports = {
+  __change__:                      'change', // NOTE: reserved for emit('change')
   FETCH_ASSIGNMENTS:               'FETCH_ASSIGNMENTS',
   FETCH_ASSIGNMENTS_SUCCESS:       'FETCH_ASSIGNMENTS_SUCCESS',
   FETCH_ASSIGNMENTS_FAIL:          'FETCH_ASSIGNMENTS_FAIL',

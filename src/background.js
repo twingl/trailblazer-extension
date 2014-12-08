@@ -61,6 +61,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 chrome.runtime.onMessage.addListener(function (message) {
+  if (message.action === "change") return;
   if (message.action) {
     var o = { type: message.action };
     if (message.payload) o.payload = message.payload;
