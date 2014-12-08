@@ -1,52 +1,30 @@
 var _                             = require('lodash')
   , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
-  , Immutable                     = require('immutable')
-  , uuid                          = require('node-uuid')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
-  , camelize                      = require('camelize')
-  , info                          = require('debug')('stores/map-store.js:info')
-  , warn                          = require('debug')('stores/map-store.js:warn')
-  , error                         = require('debug')('stores/map-store.js:error');
+  , camelize                      = require('camelcase-keys')
+  , info                          = require('debug')('stores/assignment-store.js:info')
+  , warn                          = require('debug')('stores/assignment-store.js:warn')
+  , error                         = require('debug')('stores/assignment-store.js:error');
 
-//lib
-var createDbBatch = require('../lib/create-db-batch');
-
-//TODO 
-// handleTabCreated
-// handleTabUpdated
-// handleTabClosed
-// handleTabFocused
-// handleStopRecording
-// handleMarkedAsWaypoint
-// handleMapTitleUpdated
-// handleMapShared
-
-
-var MapStore = Fluxxor.createStore({
+var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
     info('initialize')
     var options             = options || {};
     this.db                 = options.db;
-    this.currentAssignment  = null;
     this.loading            = false;
     this.error              = null;
 
     this.bindActions(
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
-      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
+      constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
+      constants.FETCH_ASSIGNMENTS_SUCCESS, this.handleFetchAssignmentsSuccess,
+      constants.FETCH_ASSIGNMENTS_FAIL, this.handleFetchAssignmentsFail,
+      constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
+      constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
+      constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
+      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
     );
-  },
-
-  getState: function () {
-    info('getting map state');
-
-    return {
-      db: this.db,
-      loading: this.loading,
-      error: this.error
-    };
   },
 
   /**
@@ -54,8 +32,6 @@ var MapStore = Fluxxor.createStore({
    *
    * Fires FETCH_ASSIGNMENTS_SUCCESS if successful, FETCH_ASSIGNMENTS_FAIL if
    * not
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignments: function() {
     this.loading = true;
@@ -82,8 +58,6 @@ var MapStore = Fluxxor.createStore({
   /**
    * Camelizes the object keys on the assignments in the payload before firing
    * UPDATE_ASSIGNMENT_CACHE
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignmentsSuccess: function (payload) {
     info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
@@ -94,8 +68,6 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Failure handler for FETCH_ASSIGNMENTS
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleFetchAssignmentsFail: function (payload) {
     this.loading = false;
@@ -130,8 +102,6 @@ var MapStore = Fluxxor.createStore({
    * action is fired. A successful action ALWAYS carries the entire
    * collection of Assignments returned from the server (which may not have
    * `localId`s populated).
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCache: function (payload) {
     var assignments = payload.assignments;
@@ -140,8 +110,24 @@ var MapStore = Fluxxor.createStore({
       // Success
       function (localAssignments) {
         info("Fetched assignments");
+        var put = []
+          , del = [];
 
-        var batch = createDbBatch(localAssignments, assignments);
+        var remoteIDs = _.pluck(assignments, 'id');
+        var persistedAssignments = _.filter(localAssignments, 'id');
+
+        // Iterate over the local assignments that have a server ID,
+        // checking if they still exist on the server. If they do, set
+        // the `localId` on the server's response so we can update our
+        // local copy. If not, push it to the delete queue.
+        _.each(persistedAssignments, function(a) {
+          if (remoteIDs.indexOf(a.id) >= 0) {
+            _.find(assignments, { 'id': a.id }).localId = a.localId;
+          } else {
+            del.push(a.localId);
+          }
+        });
+        put = assignments;
 
         // We've added our `localId` to the assignments in the response, so
         // now all we need to do is use putBatch to update the local DB.
@@ -201,8 +187,6 @@ var MapStore = Fluxxor.createStore({
    * Success handler for UPDATE_ASSIGNMENT_CACHE
    *
    * Fires ASSIGNMENTS_SYNCHRONIZED
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCacheSuccess: function () {
     this.flux.actions.assignmentsSynchronized();
@@ -210,8 +194,6 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Failure handler for UPDATE_ASSIGNMENT_CACHE
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleUpdateAssignmentCacheFail: function (payload) {
     error('updateAssignmentCacheFail', { error: payload.error });
@@ -219,8 +201,6 @@ var MapStore = Fluxxor.createStore({
 
   /**
    * Emits a change event from this store with the complete list of assignments
-   *
-   * FIXME: Belongs on AssignmentStore
    */
   handleAssignmentsSynchronized: function () {
     // Fetch all assignments and tell the UI
@@ -229,27 +209,6 @@ var MapStore = Fluxxor.createStore({
     }.bind(this));
   },
 
-  handleDispatchNodes: function (data) { //TBD
-    this.emit('change', { nodes: data });
-  },
-
-  handleGetAllNodesFail: function (error) {
-    warn('handleGetAllNodesFail', { error: error })
-  },
-
-  handleLoadNodesSuccess: function (payload) { //TBD
-    info('handleLoadNodesSuccess', { payload: payload });
-    this.waitFor(['NodeStore'], function (nodeStore) { //TBD
-      //TODO search by currentAssignment index //TBD
-      var nodes = nodeStore.getState().db.getAll(this.dispatchNodes, this.handleGetAllNodesFail) //TBD
-    }.bind(this))
-  },
-
-  handleSelectAssignment: function (payload) { //TBD
-    info('handleSelectAssignment', { payload: payload })
-    this.currentAssignment = payload.assignmentId; //NO
-  }
-
 });
 
-module.exports = MapStore;
+module.exports = AssignmentStore;
