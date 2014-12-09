@@ -53,6 +53,22 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
+  updateNodeCache: function (nodes) {
+    info('updateNodeCache');
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE, payload: { nodes: nodes } });
+  },
+
+  updateNodeCacheSuccess: function () {
+    info('updateNodeCacheSuccess');
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_SUCCESS });
+  },
+
+  updateNodeCacheFail: function (error) {
+    info('updateNodeCacheFail');
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
+  },
+  
+
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
   //which then calls the *same* method in background. [Mind Blown]
   selectAssignment: function (assignmentId) {

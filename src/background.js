@@ -67,6 +67,7 @@ var schema = treo.schema()
     .addIndex('byNodeId', 'nodeId', { unique: true })
   .addStore('nodes', { key: 'id' })
     .addIndex('byTabId', 'tabId', { unique: true })
+    .addIndex('byAssignmentId', 'assignmentID', { unique: false })
   .addStore('assignments', { key: 'id' })
   .addStore('maps', { key: 'id' });
 

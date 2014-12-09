@@ -3,8 +3,13 @@ var _         = require('lodash')
   , error     = require('debug')('stores/node-store.js:error')
   , camelize  = require('camelize')
   , constants = require('../constants')
+  , Promise   = require('promise')
   , Immutable = require('immutable')
   , Fluxxor   = require('fluxxor');
+
+var debug = require('debug')
+  , info  = debug('background.js:info')
+  , warn  = debug('node-store.js:warn');
 
  var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
@@ -42,6 +47,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleSelectAssignment: function (payload) {
+    warn('handleSelectAssignment not implemented')
     this.handleLoadNodes(payload);
   },
 
@@ -74,7 +80,6 @@ var NodeStore = Fluxxor.createStore({
   handleFetchNodesSuccess: function (payload) {
     info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
-
     this.flux.actions.updateNodeCache(nodes);
   },
 
@@ -86,34 +91,41 @@ var NodeStore = Fluxxor.createStore({
     this.error = payload.error; //unnecessary state
   },
 
-  getAll: function (callback) {
-    //
-    var 
-
-    this.db.nodes.getAll(
-      function()
-      )
-  }
-
-  getAllSuccessUpdate: function(localNodes) {
-    var batch = createDbBatch(localNodes, assignments);
-
-
+  getIds: function (nodes) {
+    return _.pluck(nodes, 'id')
   },
 
-  getAllFail: function (error) {
-    error('handleUpdateAssignmentCache: Error reading from DB', { error: error })
-    this.flux.actions.updateAssignmentCacheFail(error);
-  },
-
-  handleUpdateNodeCache: function (localNodes) {
+  handleUpdateNodeCache: function (payload) {
     info("Fetched nodes");
-    var nodes = payload.nodes;
-    this.db.nodes.getAll(
-      this.getAllSuccessUpdate,
-      this.getAllFail,
-    );
+    var nodes = payload.nodes
+     ,  del   = [];
+
+    var remoteIds = _.pluck(nodes, 'id');
+
+    //synch local nodes with remote
+    // 1. remove nonexisting nodes
+    // 2. create/update existing nodes
+
+    this.allAsync()
+        .then(this.getIds)
+        .then(function(localIds) {
+          return _.difference(localIds, remoteIds);
+        })
+
+
+
   },
+
+  allAsync: function () {
+    var promise = Promise(function (resolve, reject) {
+      this.db.nodes.all(function (err, res) {
+        if (err) reject(err)
+        resolve(res)
+      })
+    }.bind(this))
+
+    return promise;
+  }
 
   onTabCreated: function(tab) {
     // This is, presently, just a kind of pseudo code until flux is wired up on
