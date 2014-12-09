@@ -53,9 +53,9 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
-  updateNodeCache: function (nodes) {
+  updateNodeCache: function (payload) {
     info('updateNodeCache');
-    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE, payload: { nodes: nodes } });
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE, payload: payload });
   },
 
   updateNodeCacheSuccess: function () {

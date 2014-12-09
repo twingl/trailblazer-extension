@@ -23,6 +23,9 @@ var NodeStore = Fluxxor.createStore({
     this.loading  = false;
     this.error    = null;
 
+
+    this.batchAsync = Promise.denodeify(this.db.nodes.batch)
+
     this.bindActions(
       constants.FETCH_NODES, this.handleFetchNodes,
       constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
@@ -62,7 +65,7 @@ var NodeStore = Fluxxor.createStore({
         // Success
         function(response) {
           info('handleFetchNodes: Nodes received', { response: response });
-          this.flux.actions.fetchNodesSuccess(response.assignments);
+          this.flux.actions.fetchNodesSuccess({ nodes: response.nodes, assignmentId: assignmentId });
         }.bind(this),
 
         // Error
@@ -80,21 +83,24 @@ var NodeStore = Fluxxor.createStore({
   handleFetchNodesSuccess: function (payload) {
     info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
-    this.flux.actions.updateNodeCache(nodes);
+    this.flux.actions.updateNodeCache({ nodes: nodes, assignmentId: assignmentId });
   },
 
   /**
    * Failure handler for FETCH_NODES
    */
   handleFetchNodesFail: function (payload) {
+    info('handleFetchNodesFail');
     this.loading = false;
-    this.error = payload.error; //unnecessary state
   },
 
   getIds: function (nodes) {
     return _.pluck(nodes, 'id')
   },
 
+  /* *
+   * expects payload: Object {nodes: Array, assignmentId: Integer}
+   */
   handleUpdateNodeCache: function (payload) {
     info("Fetched nodes");
     var nodes = payload.nodes
@@ -106,26 +112,59 @@ var NodeStore = Fluxxor.createStore({
     // 1. remove nonexisting nodes
     // 2. create/update existing nodes
 
-    this.allAsync()
+    //get all local nodes that match assignmentID
+    this.getByIndexAsync('assignmentId', payload.assignmentId)
         .then(this.getIds)
         .then(function(localIds) {
-          return _.difference(localIds, remoteIds);
+          //prepare a batch deletion object
+          return localIds.reduce(function (acc, id) {
+            if (remoteIds.indexOf(id) !== -1) {
+            // local nodes do not match remote nodes -> to delete
+              acc[id] = null;
+            }
+            return acc;
+          }, {})
         })
-
-
-
+        //batch delete nodes not present remotely
+        .then(this.batchAsync)
+        .then(function () {
+          return this.batchAsync(nodes)
+        })
+        .done(
+          //success
+          function () {
+            this.flux.actions
+              .updateNodeCacheSuccess
+          },
+          //fail. If any methods up the chain throw an error they will propogate here.
+          function (err) {
+            this.flux.actions
+              .updateNodeCacheFail({ error: err });
+          }
+        )
   },
 
-  allAsync: function () {
-    var promise = Promise(function (resolve, reject) {
-      this.db.nodes.all(function (err, res) {
-        if (err) reject(err)
-        resolve(res)
+  handleUpdateNodeCacheFail: function (err) {
+    error('updateNodeCache Failed', { error: err })
+  },
+
+  handleUpdateNodeCacheSuccess: function () {
+    this.flux.actions.nodesSynchronised();
+  },
+
+  /**
+   * Promisify db index call
+   */
+  getByIndexAsync: function (index, key) {
+    var promise = new Promise(function (resolve, reject) {
+      this.db.nodes.index(index).get(key, function (err, res) {
+        if (err) reject(err);
+        else resolve(res);
       })
-    }.bind(this))
+    }.bind(this));
 
     return promise;
-  }
+  },
 
   onTabCreated: function(tab) {
     // This is, presently, just a kind of pseudo code until flux is wired up on
