@@ -57,14 +57,13 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleStartRecording: function (payload) {
-    var tabId = payload.tabId;
+    info("handleStartRecording:", { payload: payload });
+    throw "NotImplementedError";
+  },
 
-    var assignment = new Assignment();
-    var nodeStub = new Node();
-
-    this.tabIdMap[tabId] = nodeStub;
-
-
+  handleStopRecording: function (payload) {
+    info("handleStopRecording:", { payload: payload });
+    throw "NotImplementedError";
   }
 
 });
