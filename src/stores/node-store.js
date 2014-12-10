@@ -3,7 +3,6 @@ var _         = require('lodash')
   , error     = require('debug')('stores/node-store.js:error')
   , camelize  = require('camelize')
   , constants = require('../constants')
-  , Immutable = require('immutable')
   , Fluxxor   = require('fluxxor');
 
  var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
