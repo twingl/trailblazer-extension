@@ -33,9 +33,9 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
-  assignmentsSynchronized: function (assignments) {
+  assignmentsSynchronized: function () {
     info('assignmentsSynchronized');
-    chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED, payload: { assignments: assignments } });
+    chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
   },
 
   fetchNodes: function () {
