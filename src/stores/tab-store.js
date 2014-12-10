@@ -4,7 +4,7 @@ var _         = require('lodash')
  ,  constants = require('../constants')
  ,  Fluxxor   = require('fluxxor');
 
-//TODO 
+//TODO
 // handleTabCreated
 // handleTabUpdated
 // handleTabClosed
@@ -66,9 +66,6 @@ var TabStore = Fluxxor.createStore({
 
 
   }
-
-
-
 
 });
 
