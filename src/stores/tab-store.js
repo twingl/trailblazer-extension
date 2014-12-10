@@ -1,4 +1,5 @@
 var _         = require('lodash')
+  , info      = require('debug')('stores/tab-store.js:info')
  ,  camelize  = require('camelize')
  ,  constants = require('../constants')
  ,  Fluxxor   = require('fluxxor');
@@ -18,12 +19,14 @@ var TabStore = Fluxxor.createStore({
     this.tabIdMap   = options.tabIdMap || {};
     this.currentTabId = undefined;
 
-  //   this.bindActions(
-  //     constants.TAB_CREATED,  this.handleTabCreated,
-  //     constants.TAB_UPDATED, this.handleTabUpdated,
-  //     constants.TAB_CLOSED, this.handleTabClosed,
-  //     constants.STOP_RECORDING, this.handleStopRecording, 
-  //     constants.START_RECORDING, this.handleStartRecording    );
+    this.bindActions(
+      constants.TAB_CREATED,  this.handleTabCreated,
+      constants.TAB_UPDATED, this.handleTabUpdated,
+      constants.TAB_FOCUSED, this.handleTabFocused,
+      constants.TAB_CLOSED, this.handleTabClosed
+      // constants.START_RECORDING, this.handleStartRecording,
+      // constants.STOP_RECORDING, this.handleStopRecording
+    );
   },
 
   getState: function () {
@@ -34,32 +37,23 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleTabCreated: function (payload) {
-    var tabObj = payload.tabObj;
-    var nodeStub
-
-    this.tabIdMap[tabId] = nodeStub;
+    info("handleTabCreated:", { payload: payload });
+    throw "NotImplementedError";
   },
 
   handleTabUpdated: function (payload) {
-    // body...
-  },
-
-  handleTabClosed: function (payload) {
-
-    this.waitFor(['NodeStore'], function (nodeStore) {
-      var tabId = payload.tabId;
-      var node = tabIdMap[tabId];
-
-      if (node) {
-        delete tabIdMap[tabId]
-      }
-
-
-    })
+    info("handleTabUpdated:", { payload: payload });
+    throw "NotImplementedError";
   },
 
   handleTabFocused: function (payload) {
-    this.currentTabId = payload.tabId;
+    info("handleTabFocused:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
+  handleTabClosed: function (payload) {
+    info("handleTabClosed:", { payload: payload });
+    throw "NotImplementedError";
   },
 
   handleStartRecording: function (payload) {
