@@ -53,6 +53,43 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
+  tabCreated: function(tabId, url, title, parentTabId, tabObj) {
+    info('tabCreated');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_CREATED,
+      payload: {
+        tabId: tabId,
+        url: url,
+        title: title,
+        parentTabId: parentTabId,
+        tabObj: tabObj
+      }
+    });
+  },
+
+  tabUpdated: function(tabId, url, title, tabObj) {
+    info('tabUpdated');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_CREATED,
+      payload: {
+        tabId: tabId,
+        url: url,
+        title: title,
+        tabObj: tabObj
+      }
+    });
+  },
+
+  tabFocused: function(tabId) {
+    info('tabFocused');
+    chrome.runtime.sendMessage({ action: constants.TAB_FOCUSED, payload: { tabId: tabId } });
+  },
+
+  tabClosed: function(tabData) {
+    info('tabClosed');
+    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
+  },
+
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
   //which then calls the *same* method in background. [Mind Blown]
   selectAssignment: function (assignmentId) {
