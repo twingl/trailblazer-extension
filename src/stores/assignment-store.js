@@ -1,7 +1,7 @@
 var _                             = require('lodash')
   , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
-  , Promise                       = require('promse')
+  , Promise                       = require('promise')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
   , camelize                      = require('camelize')
   , info                          = require('debug')('stores/assignment-store.js:info')
@@ -11,13 +11,12 @@ var _                             = require('lodash')
 var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    info('initialize')
+    info('initialize', { options: options })
     var options             = options || {};
     this.db                 = options.db;
     this.loading            = false;
-    this.error              = null;
 
-
+    info('bindActions', this, constants)
 
     this.bindActions(
       constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,

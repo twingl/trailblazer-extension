@@ -20,7 +20,8 @@ var MapStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
-      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
+      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment,
+      constants.ASSIGNMENTS_SYNCHRONISED, this.handleAssignmentsSynchronised
     );
   },
 
@@ -53,6 +54,15 @@ var MapStore = Fluxxor.createStore({
   handleSelectAssignment: function (payload) { //TBD
     info('handleSelectAssignment', { payload: payload })
     this.currentAssignment = payload.assignmentId; //NO
+  },
+
+  handleAssignmentsSynchronised: function () {
+    this.waitFor(['AssignmentStore'], function (assignmentStore) {
+      assignmentStore.db.assignments.all()
+        .then(function (maps) {
+            this.emit('change', { maps: maps })
+        })
+    })
   }
 
 });

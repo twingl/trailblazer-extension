@@ -35,11 +35,11 @@ if (config.logging) {
  * Main dependencies.
  */
 var actions               = require('./actions')
+  , Fluxxor               = require('fluxxor')
   , AssignmentStore       = require('./stores/assignment-store')
   , MapStore              = require('./stores/map-store')
   , NodeStore             = require('./stores/node-store')
-  , TabStore              = require('./stores/tab-store')
-  , Fluxxor               = require('fluxxor');
+  , TabStore              = require('./stores/tab-store');
 
 info("Initializing Trailblazer!");
 /**
@@ -85,10 +85,10 @@ var dbObj = {
 
 //initialize stores
 var stores = {
-  AssignmentStore: AssignmentStore({ db: dbObj }),
-  MapStore: MapStore({ db: dbObj }),
-  TabStore: TabStore({ db: dbObj }),
-  NodeStore: NodeStore({ db: dbObj })
+  AssignmentStore: new AssignmentStore({ db: dbObj }),
+  MapStore: new MapStore({ db: dbObj }),
+  TabStore: new TabStore({ db: dbObj }),
+  NodeStore: new NodeStore({ db: dbObj })
 }
 
 info("Initializing Flux", { stores: stores, actions: actions });
