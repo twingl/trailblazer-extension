@@ -19,16 +19,16 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
-      constants.FETCH_NODES, this.handleFetchNodes,
-      constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
-      constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
-      constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
-      constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
-      constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
-      constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
-      constants.LOAD_NODES, this.handleLoadNodes,
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
-      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
+      // constants.FETCH_NODES, this.handleFetchNodes,
+      // constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
+      // constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
+      // constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
+      // constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
+      // constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
+      // constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
+      // constants.LOAD_NODES, this.handleLoadNodes,
+      // constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
+      // constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
     );
   },
 
@@ -88,12 +88,12 @@ var NodeStore = Fluxxor.createStore({
 
   getAll: function (callback) {
     //
-    var 
+    // var 
 
-    this.db.nodes.getAll(
-      function()
-      )
-  }
+    // this.db.nodes.getAll(
+    //   function()
+    //   )
+  },
 
   getAllSuccessUpdate: function(localNodes) {
     var batch = createDbBatch(localNodes, assignments);
@@ -111,7 +111,7 @@ var NodeStore = Fluxxor.createStore({
     var nodes = payload.nodes;
     this.db.nodes.getAll(
       this.getAllSuccessUpdate,
-      this.getAllFail,
+      this.getAllFail
     );
   },
 
