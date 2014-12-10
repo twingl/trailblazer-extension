@@ -3,7 +3,8 @@ var config      = require('./config');
 
 // helpers
 var _           = require('lodash')
- ,  treo        = require('treo');
+ ,  treo        = require('treo')
+ ,  treoPromise = require('treo/plugins/treo-promise');
 
 /**
  * Initialize logging.
@@ -73,12 +74,14 @@ var schema = treo.schema()
 
 //initialize db and provide a wrapper object around the treo api
 var db = treo('db', schema)
- ,  dbObj = {
-    assignments: db.store('assignments'),
-    maps: db.store('maps'),
-    nodes: db.store('nodes'),
-    tabs: db.store('tabs')
- }
+  .use(treoPromise());
+
+var dbObj = {
+  assignments: db.store('assignments'),
+  maps: db.store('maps'),
+  nodes: db.store('nodes'),
+  tabs: db.store('tabs')
+ };
 
 //initialize stores
 var stores = {

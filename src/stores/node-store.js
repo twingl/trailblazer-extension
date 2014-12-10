@@ -23,9 +23,6 @@ var NodeStore = Fluxxor.createStore({
     this.loading  = false;
     this.error    = null;
 
-
-    this.batchAsync = Promise.denodeify(this.db.nodes.batch)
-
     this.bindActions(
       constants.FETCH_NODES, this.handleFetchNodes,
       constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
@@ -83,7 +80,7 @@ var NodeStore = Fluxxor.createStore({
   handleFetchNodesSuccess: function (payload) {
     info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
-    this.flux.actions.updateNodeCache({ nodes: nodes, assignmentId: assignmentId });
+    this.flux.actions.updateNodeCache(nodes, payload.assignmentId);
   },
 
   /**
@@ -113,33 +110,34 @@ var NodeStore = Fluxxor.createStore({
     // 2. create/update existing nodes
 
     //get all local nodes that match assignmentID
-    this.getByIndexAsync('assignmentId', payload.assignmentId)
+    this.db.nodes.index('assignmentId').get(payload.assignmentId)
         .then(this.getIds)
         .then(function(localIds) {
           //prepare a batch deletion object
           return localIds.reduce(function (acc, id) {
             if (remoteIds.indexOf(id) !== -1) {
-            // local nodes do not match remote nodes -> to delete
+            // local nodes do not match remote nodes set id as null to delete
               acc[id] = null;
             }
             return acc;
           }, {})
         })
         //batch delete nodes not present remotely
-        .then(this.batchAsync)
+        .then(this.db.nodes.batch)
+        //batch create/update nodes in local cache
         .then(function () {
-          return this.batchAsync(nodes)
-        })
+          return this.db.nodes.batch(nodes)
+        }.bind(this))
         .done(
           //success
           function () {
             this.flux.actions
-              .updateNodeCacheSuccess
+              .updateNodeCacheSuccess();
           },
           //fail. If any methods up the chain throw an error they will propogate here.
           function (err) {
             this.flux.actions
-              .updateNodeCacheFail({ error: err });
+              .updateNodeCacheFail(err);
           }
         )
   },
@@ -150,20 +148,6 @@ var NodeStore = Fluxxor.createStore({
 
   handleUpdateNodeCacheSuccess: function () {
     this.flux.actions.nodesSynchronised();
-  },
-
-  /**
-   * Promisify db index call
-   */
-  getByIndexAsync: function (index, key) {
-    var promise = new Promise(function (resolve, reject) {
-      this.db.nodes.index(index).get(key, function (err, res) {
-        if (err) reject(err);
-        else resolve(res);
-      })
-    }.bind(this));
-
-    return promise;
   },
 
   onTabCreated: function(tab) {
