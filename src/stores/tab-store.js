@@ -20,7 +20,7 @@ var TabStore = Fluxxor.createStore({
     this.currentTabId = undefined;
 
     this.bindActions(
-      constants.TAB_CREATED,  this.handleTabCreated,
+      constants.TAB_CREATED, this.handleTabCreated,
       constants.TAB_UPDATED, this.handleTabUpdated,
       constants.TAB_FOCUSED, this.handleTabFocused,
       constants.TAB_CLOSED, this.handleTabClosed
