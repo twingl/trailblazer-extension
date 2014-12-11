@@ -19,9 +19,8 @@ var MapStore = Fluxxor.createStore({
     this.error              = null;
 
     this.bindActions(
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
       constants.SELECT_ASSIGNMENT, this.handleSelectAssignment,
-      constants.ASSIGNMENTS_SYNCHRONISED, this.handleAssignmentsSynchronised
+      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronised
     );
   },
 
@@ -58,7 +57,7 @@ var MapStore = Fluxxor.createStore({
 
   handleAssignmentsSynchronised: function () {
     this.waitFor(['AssignmentStore'], function (assignmentStore) {
-      assignmentStore.db.assignments.all()
+      assignmentStore.getState().db.assignments.all()
         .then(function (maps) {
             this.emit('change', { maps: maps })
         })

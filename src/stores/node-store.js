@@ -31,8 +31,6 @@ var NodeStore = Fluxxor.createStore({
       constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
       constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
       constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
-      constants.LOAD_NODES, this.handleLoadNodes,
-      constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
       constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
     );
   },
@@ -148,6 +146,10 @@ var NodeStore = Fluxxor.createStore({
 
   handleUpdateNodeCacheSuccess: function () {
     this.flux.actions.nodesSynchronised();
+  },
+
+  handleNodesSynchronized: function () {
+    warn('not implemented')
   },
 
   onTabCreated: function(tab) {
