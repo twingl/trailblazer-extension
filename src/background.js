@@ -76,12 +76,19 @@ var schema = treo.schema()
 var db = treo('db', schema)
   .use(treoPromise());
 
+var dbObj = {
+  assignments: db.store('assignments'),
+  maps: db.store('maps'),
+  nodes: db.store('nodes'),
+  tabs: db.store('tabs')
+ };
+
 //initialize stores
 var stores = {
-  AssignmentStore: new AssignmentStore({ db: db }),
-  MapStore: new MapStore({ db: db }),
-  TabStore: new TabStore({ db: db }),
-  NodeStore: new NodeStore({ db: db })
+  AssignmentStore: new AssignmentStore({ db: dbObj }),
+  MapStore: new MapStore({ db: dbObj }),
+  TabStore: new TabStore({ db: dbObj }),
+  NodeStore: new NodeStore({ db: dbObj })
 }
 
 info("Initializing Flux", { stores: stores, actions: actions });

@@ -108,7 +108,6 @@ var AssignmentStore = Fluxxor.createStore({
     var assignments = payload.assignments;
 
     var remoteIds = _.pluck(assignments, 'id');
-    var dbAssignments = this.db.store('assignments');
 
     this.db.assignments.all()
       .then(this.getIds)
@@ -124,9 +123,12 @@ var AssignmentStore = Fluxxor.createStore({
         }, {})
       })
       //batch delete assignments not present remotely
-      .then(dbAssignments.batch)
+      .then(function (delObj) {
+        return this.db.assignments.batch(delObj)
+      }.bind(this)
+        )
       .then(function () {
-        return dbAssignments.batch(assignments)
+        return this.db.assignments.batch(assignments)
       }.bind(this))
       .done(
       //success
@@ -164,7 +166,7 @@ var AssignmentStore = Fluxxor.createStore({
    */
   handleAssignmentsSynchronized: function () {
     // Fetch all assignments and tell the UI
-    this.db.assignments.getAll(function (assignments) {
+    this.db.assignments.all(function (assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
   },
