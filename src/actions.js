@@ -29,7 +29,7 @@ module.exports = {
   },
 
   updateAssignmentCacheFail: function (error) {
-    info('updateAssignmentCacheFail');
+    info('updateAssignmentCacheFail', {error: error });
     chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 

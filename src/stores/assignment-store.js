@@ -16,7 +16,7 @@ var AssignmentStore = Fluxxor.createStore({
     this.db                 = options.db;
     this.loading            = false;
 
-    info('bindActions', this, constants)
+    info('bindActions', { this: this })
 
     this.bindActions(
       constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
@@ -108,10 +108,12 @@ var AssignmentStore = Fluxxor.createStore({
     var assignments = payload.assignments;
 
     var remoteIds = _.pluck(assignments, 'id');
+    var dbAssignments = this.db.store('assignments');
 
     this.db.assignments.all()
       .then(this.getIds)
       .then(function (localIds) {
+        info({localIds: localIds})
         //prepare a batch deletion object
         return localIds.reduce(function (acc, id) {
           if (remoteIds.indexOf(id) !== -1) {
@@ -122,21 +124,21 @@ var AssignmentStore = Fluxxor.createStore({
         }, {})
       })
       //batch delete assignments not present remotely
-      .then(this.db.nodes.batch)
+      .then(dbAssignments.batch)
       .then(function () {
-        this.db.batch(assignments)
+        return dbAssignments.batch(assignments)
       }.bind(this))
       .done(
       //success
       function () {
         this.flux.actions
           .updateAssignmentCacheSuccess();
-      },
+      }.bind(this),
       //fail. If any methods up the chain throw an error they will propogate here.
       function (err) {
         this.flux.actions
-          .updateAssignmntCacheFail(err);
-      }
+          .updateAssignmentCacheFail(err);
+      }.bind(this)
     )
 
   },

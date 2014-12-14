@@ -45,7 +45,8 @@ var App = React.createClass({
   // },
 
   componentDidMount: function () {
-   this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
+    info('component mountng', { props: this.props })
+   this.props.actions.fetchAssignments();
   },
 
 
@@ -58,8 +59,7 @@ var App = React.createClass({
 
     return <AssignmentsIndex 
               state={this.props.state} 
-              actions={this.props.actions} 
-              select={this.selectAssignment} />
+              actions={this.props.actions} />
   },
 
   /**
