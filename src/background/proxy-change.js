@@ -26,10 +26,10 @@ var ProxyChange = function(flux, stores) {
     /**
      * Dispatches a 'change' event over chrome.runtime messaging
      */
-    proxy: function (store, payload) {
+    proxy: function (storeName, payload) {
       var message = {
         action: 'change',
-        store: store,
+        storeName: storeName,
         payload: payload
       };
 
