@@ -60,7 +60,7 @@ var MapStore = Fluxxor.createStore({
       assignmentStore.db.assignments.all()
         .then(function (maps) {
             info('handleAssignmentsSynchronised', { maps: maps })
-            this.emit('change', { maps: maps })
+            this.emit('change', { maps: maps, type: constants.ASSIGNMENTS_SYNCHRONIZED })
         }.bind(this))
     })
   }
