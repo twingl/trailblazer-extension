@@ -165,10 +165,6 @@ var AssignmentStore = Fluxxor.createStore({
    * Emits a change event from this store with the complete list of assignments
    */
   handleAssignmentsSynchronized: function () {
-    // Fetch all assignments and tell the UI
-    this.db.assignments.all(function (assignments) {
-      this.emit('change', { assignments: assignments });
-    }.bind(this));
   },
 
 });

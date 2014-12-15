@@ -34,7 +34,7 @@ module.exports = {
   },
 
   assignmentsSynchronized: function (assignments) {
-    info('assignmentsSynchronized');
+    info('assignmentsSynchronized', {assignments: assignments});
     chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED, payload: { assignments: assignments } });
   },
 

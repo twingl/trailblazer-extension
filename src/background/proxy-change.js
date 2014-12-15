@@ -12,13 +12,14 @@ var ProxyChange = function(flux, stores) {
      * sent to the UI
      */
     initialize: function () {
+      info('initialize proxy-change dispatcher')
       for (var i = 0; i < stores.length; i++) {
-        info('Binding store: ' + stores[i]);
-        var store = stores[i];
-        flux.store(stores[i]).on('change', function (payload) {
-          info('Proxying change event from ' + store, payload);
-          this.proxy(store, payload);
+        var store = flux.store(stores[i]);
+        store.on('change', function (payload) {
+          info('Proxying change event', {payload: payload, this: this});
+          this.proxy(store[i], payload);
         }.bind(this));
+        info('Bound store: ' + stores[i], { store: store });
       }
       info("Initialized ProxyChange", { stores: stores });
     },
@@ -26,13 +27,13 @@ var ProxyChange = function(flux, stores) {
     /**
      * Dispatches a 'change' event over chrome.runtime messaging
      */
-    proxy: function (store, payload) {
+    proxy: function (storeName, payload) {
+
       var message = {
         action: 'change',
-        store: store,
+        storeName: storeName,
         payload: payload
       };
-
       chrome.runtime.sendMessage(message);
       info("Dispatched to UI", { message: message });
     }
