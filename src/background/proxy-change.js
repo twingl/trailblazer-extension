@@ -4,7 +4,7 @@ var info = require('debug')('background/proxy-change.js:info');
  * This listens for 'change' events in the background, and sends them over
  * chrome.runtime to a listener in the UI
  */
-var ProxyChange = function(flux, stores) {
+var ProxyChange = function(flux, storeNames) {
   var dispatcher = {
 
     /**
@@ -14,12 +14,14 @@ var ProxyChange = function(flux, stores) {
     initialize: function () {
       info('initialize proxy-change dispatcher')
       for (var i = 0; i < stores.length; i++) {
-        var store = flux.store(stores[i]);
+
+        var storeName = storeNames[i];
+        var store = flux.store(storeName);
         store.on('change', function (payload) {
           info('Proxying change event', {payload: payload, this: this});
-          this.proxy(store[i], payload);
+          this.proxy(storeName, payload);
         }.bind(this));
-        info('Bound store: ' + stores[i], { store: store });
+        info('Bound store: ' + storeName, { store: store });
       }
       info("Initialized ProxyChange", { stores: stores });
     },
