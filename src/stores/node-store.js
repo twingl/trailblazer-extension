@@ -38,6 +38,7 @@ var NodeStore = Fluxxor.createStore({
   getState: function () {
     info('getting node state')
     return {
+      //NOTE: Unsure if this is needed when the all stores can access the main dbObj
       db: this.db,
       loading: this.loading,
       error: this.error
