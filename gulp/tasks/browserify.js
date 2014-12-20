@@ -24,7 +24,7 @@ var ENV = process.env.NODE;
 
 //Note remove gulp jsx
 
-gulp.task('browserify', [], function(callback) {
+gulp.task('browserify', ['jsx'], function(callback) {
   var bundleQueue = config.bundleConfigs.length;
   var index = 0;
 
