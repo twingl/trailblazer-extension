@@ -45,7 +45,8 @@ var App = React.createClass({
   // },
 
   componentDidMount: function () {
-   this.props.actions.dispatch(constants.LOAD_ASSIGNMENTS);
+    info('component mountng', { props: this.props })
+   this.props.actions.fetchAssignments();
   },
 
 
@@ -58,8 +59,7 @@ var App = React.createClass({
 
     return <AssignmentsIndex 
               state={this.props.state} 
-              actions={this.props.actions} 
-              select={this.selectAssignment} />
+              actions={this.props.actions} />
   },
 
   /**
@@ -97,20 +97,20 @@ var AppWrap = function(initialState, actions) {
 
     update: function(message) {
       info('app updating', { message: message })
-      if (message && message.type) {
-        switch (message.type) {
+      if (message && message.payload && message.payload.type) {
+        var type = message.payload.type;
+        switch (type) {
           case constants.LOAD_ASSIGNMENTS:
             this.updateAssignmentState('loading', true);
             break;
-          case constants.ASSIGNMENTS_READY:
-            this.refreshAssignments(message.payload.assignments);
+          case constants.ASSIGNMENTS_SYNCHRONIZED:
+            info(constants.ASSIGNMENTS_SYNCHRONIZED, {message: message})
+            this.refreshAssignments(message.payload.maps);
             break;
-          case constants.LOAD_ASSIGNMENTS_FAIL:
-            this.updateAssignmentState('error', message.payload.error);
-          case constants.NODES_READY:
-            this.addNodes(message.payload.nodes);
-          case constants.CURRENT_ASSIGNMENT_CHANGED:
-            this.updateAssignmentState('currentAssignment', message.payload.assignmentId);
+          // case constants.LOAD_ASSIGNMENTS_FAIL:
+          //   this.updateAssignmentState('error', message.payload.error);
+          // case constants.NODES_READY:
+          //   this.addNodes(message.payload.nodes);
         }
       }
       this.render();
@@ -126,7 +126,7 @@ var AppWrap = function(initialState, actions) {
     },
 
     refreshAssignments: function (assignments) {
-      info('refreshAssignments fired', { assignments: assignments })
+      info('refreshAssignments fired', { assignments: assignments });
       //translate from array to an immutable map
 
       var assignmentsIndex = Immutable.Map(assignments.reduce(function (o, assignment) {

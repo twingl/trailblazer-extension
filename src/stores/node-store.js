@@ -5,7 +5,11 @@ var _         = require('lodash')
   , constants = require('../constants')
   , Fluxxor   = require('fluxxor');
 
- var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
+var debug = require('debug')
+  , info  = debug('background.js:info')
+  , warn  = debug('node-store.js:warn');
+
+var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
 var NodeStore = Fluxxor.createStore({
 
@@ -18,22 +22,21 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
-      // constants.FETCH_NODES, this.handleFetchNodes,
-      // constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
-      // constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
-      // constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
-      // constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
-      // constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
-      // constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
-      // constants.LOAD_NODES, this.handleLoadNodes,
-      // constants.LOAD_NODES_SUCCESS, this.handleLoadNodesSuccess,
-      // constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
+      constants.FETCH_NODES, this.handleFetchNodes,
+      constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
+      constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
+      constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
+      constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
+      constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
+      constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
+      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
     );
   },
 
   getState: function () {
     info('getting node state')
     return {
+      //NOTE: Unsure if this is needed when the all stores can access the main dbObj
       db: this.db,
       loading: this.loading,
       error: this.error
@@ -41,6 +44,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleSelectAssignment: function (payload) {
+    warn('handleSelectAssignment not implemented')
     this.handleLoadNodes(payload);
   },
 
@@ -55,7 +59,7 @@ var NodeStore = Fluxxor.createStore({
         // Success
         function(response) {
           info('handleFetchNodes: Nodes received', { response: response });
-          this.flux.actions.fetchNodesSuccess(response.assignments);
+          this.flux.actions.fetchNodesSuccess({ nodes: response.nodes, assignmentId: assignmentId });
         }.bind(this),
 
         // Error
@@ -73,45 +77,78 @@ var NodeStore = Fluxxor.createStore({
   handleFetchNodesSuccess: function (payload) {
     info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
-
-    this.flux.actions.updateNodeCache(nodes);
+    this.flux.actions.updateNodeCache(nodes, payload.assignmentId);
   },
 
   /**
    * Failure handler for FETCH_NODES
    */
   handleFetchNodesFail: function (payload) {
+    info('handleFetchNodesFail');
     this.loading = false;
-    this.error = payload.error; //unnecessary state
   },
 
-  getAll: function (callback) {
-    //
-    // var 
-
-    // this.db.nodes.getAll(
-    //   function()
-    //   )
+  getIds: function (nodes) {
+    return _.pluck(nodes, 'id')
   },
 
-  getAllSuccessUpdate: function(localNodes) {
-    var batch = createDbBatch(localNodes, assignments);
-
-
-  },
-
-  getAllFail: function (error) {
-    error('handleUpdateAssignmentCache: Error reading from DB', { error: error })
-    this.flux.actions.updateAssignmentCacheFail(error);
-  },
-
-  handleUpdateNodeCache: function (localNodes) {
+  /* *
+   * expects payload: Object {nodes: Array, assignmentId: Integer}
+   */
+  handleUpdateNodeCache: function (payload) {
     info("Fetched nodes");
-    var nodes = payload.nodes;
-    this.db.nodes.getAll(
-      this.getAllSuccessUpdate,
-      this.getAllFail
-    );
+    var nodes = payload.nodes
+     ,  del   = [];
+
+    var remoteIds = _.pluck(nodes, 'id');
+
+    //synch local nodes with remote
+    // 1. remove nonexisting nodes
+    // 2. create/update existing nodes
+
+    //get all local nodes that match assignmentID
+    this.db.nodes.index('assignmentId').get(payload.assignmentId)
+        .then(this.getIds)
+        .then(function(localIds) {
+          //prepare a batch deletion object
+          return localIds.reduce(function (acc, id) {
+            if (remoteIds.indexOf(id) !== -1) {
+            // local nodes do not match remote nodes set id as null to delete
+              acc[id] = null;
+            }
+            return acc;
+          }, {})
+        })
+        //batch delete nodes not present remotely
+        .then(this.db.nodes.batch)
+        //batch create/update nodes in local cache
+        .then(function () {
+          return this.db.nodes.batch(nodes)
+        }.bind(this))
+        .done(
+          //success
+          function () {
+            this.flux.actions
+              .updateNodeCacheSuccess();
+          },
+          //fail. If any methods up the chain throw an error they will propogate here.
+          function (err) {
+            this.flux.actions
+              .updateNodeCacheFail(err);
+          }
+        )
+  },
+
+  handleUpdateNodeCacheFail: function (err) {
+    error('updateNodeCache Failed', { error: err })
+  },
+
+  handleUpdateNodeCacheSuccess: function () {
+    this.flux.actions.nodesSynchronised();
+  },
+
+  handleNodesSynchronized: function () {
+    warn('not implemented')
   },
 
   onTabCreated: function(tab) {

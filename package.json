@@ -41,7 +41,8 @@
     "node-uuid": "~1.4.1",
     "gulp-jsx": "~0.6.0",
     "idb-wrapper": "~1.4.1",
-    "camelize": "~1.0.0"
+    "camelize": "~1.0.0",
+    "treo": "~0.3.0"
   },
   "repository": {
     "type": "git",
@@ -76,7 +77,7 @@
     "npm-watch": "0.0.0",
     "pretty-hrtime": "^0.2.2",
     "reactify": "^0.16.0",
-    "require-dir": "^0.1.0",
+    "require-dir": "~0.1.0",
     "superagent": "^0.20.0",
     "uglifyify": "^2.5.0",
     "vinyl-buffer": "^1.0.0",

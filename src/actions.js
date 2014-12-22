@@ -29,7 +29,7 @@ module.exports = {
   },
 
   updateAssignmentCacheFail: function (error) {
-    info('updateAssignmentCacheFail');
+    info('updateAssignmentCacheFail', {error: error });
     chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
@@ -88,6 +88,27 @@ module.exports = {
   tabClosed: function(tabData) {
     info('tabClosed');
     chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
+  },
+
+  updateNodeCache: function (nodes, assignmentId) {
+    info('updateNodeCache');
+    chrome.runtime.sendMessage({
+      action: constants.UPDATE_NODE_CACHE,
+      payload: {
+        nodes: nodes,
+        assignmentId: assignmentId
+      }
+    });
+  },
+
+  updateNodeCacheSuccess: function () {
+    info('updateNodeCacheSuccess');
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_SUCCESS });
+  },
+
+  updateNodeCacheFail: function (error) {
+    info('updateNodeCacheFail');
+    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
   },
 
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime

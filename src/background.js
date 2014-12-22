@@ -1,8 +1,10 @@
 // config
-var config                = require('./config');
+var config      = require('./config');
 
 // helpers
-var _                     = require('lodash');
+var _           = require('lodash')
+ ,  treo        = require('treo')
+ ,  treoPromise = require('treo/plugins/treo-promise');
 
 /**
  * Initialize logging.
@@ -33,11 +35,13 @@ if (config.logging) {
  * Main dependencies.
  */
 var actions               = require('./actions')
-  , stores                = require('./stores')
-  , Fluxxor               = require('fluxxor');
+  , Fluxxor               = require('fluxxor')
+  , AssignmentStore       = require('./stores/assignment-store')
+  , MapStore              = require('./stores/map-store')
+  , NodeStore             = require('./stores/node-store')
+  , TabStore              = require('./stores/tab-store');
 
 info("Initializing Trailblazer!");
-
 /**
  * Initialize the extension.
  *
@@ -56,13 +60,45 @@ chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
  * Initialize with the stores and actions, and set up a listener to log all
  * dispatches to the console.
  */
+
+info("Initializing Indexdb");
+var schema = treo.schema()
+  .version(1)
+  .addStore('tabs', { key: 'id' })
+    .addIndex('byNodeId', 'nodeId', { unique: true })
+  .addStore('nodes', { key: 'id' })
+    .addIndex('byTabId', 'tabId', { unique: true })
+    .addIndex('byAssignmentId', 'assignmentID', { unique: false })
+  .addStore('assignments', { key: 'id' })
+  .addStore('maps', { key: 'id' });
+
+//initialize db and provide a wrapper object around the treo api
+var db = treo('db', schema)
+  .use(treoPromise());
+
+var dbObj = {
+  assignments: db.store('assignments'),
+  maps: db.store('maps'),
+  nodes: db.store('nodes'),
+  tabs: db.store('tabs')
+ };
+
+//initialize stores
+var stores = {
+  AssignmentStore: new AssignmentStore({ db: dbObj }),
+  MapStore: new MapStore({ db: dbObj }),
+  TabStore: new TabStore({ db: dbObj }),
+  NodeStore: new NodeStore({ db: dbObj })
+}
+
 info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
 chrome.runtime.onMessage.addListener(function (message) {
-  if (message.action === "change") return;
+  info('message listener', {message: message})
+  // if (message.action === "change") return;
   if (message.action) {
     var o = { type: message.action };
     if (message.payload) o.payload = message.payload;
