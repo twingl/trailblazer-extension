@@ -29,10 +29,6 @@ var AssignmentStore = Fluxxor.createStore({
     );
   },
 
-  getIds: function (nodes) {
-    return _.pluck(nodes, 'id')
-  },
-
   /**
    * Fetches the assignments from Trailblazer's HTTP API
    *
@@ -98,50 +94,76 @@ var AssignmentStore = Fluxxor.createStore({
    * server ID still exists.
    *
    * It should be noted that the CREATE and UPDATE actions are both rolled into
-   * a single `batch` call.
+   * a single array (UPDATEs have `localId` populated on their objects).
+   * CREATE, UPDATE and DELETE are all rolled into a single transaction.
+   *
    * When the WRITE is completed (or fails), the appropriate next
    * action is fired. A successful action ALWAYS carries the entire
    * collection of Assignments returned from the server (which may not have
    * `localId`s populated).
    */
   handleUpdateAssignmentCache: function (payload) {
-    var assignments = payload.assignments;
+    info("handleUpdateAssignmentCache: Updating cache", { payload: payload });
 
-    var remoteIds = _.pluck(assignments, 'id');
+    var assignments = payload.assignments;
+    info("Assignments", assignments);
 
     this.db.assignments.all()
-      .then(this.getIds)
-      .then(function (localIds) {
-        info({localIds: localIds})
-        //prepare a batch deletion object
-        return localIds.reduce(function (acc, id) {
-          if (remoteIds.indexOf(id) !== -1) {
-          // local assignments do not match remote asssignments set id as null to delete
-            acc[id] = null;
+      .then(function(localAssignments) {
+        var changes = {
+          put: [],
+          del: []
+        };
+
+        var remoteIds = _.pluck(assignments, 'id');
+        var persistedAssignments = _.filter(localAssignments, 'id');
+
+        // Iterate over the local assignments that have a server ID,
+        // checking if they still exist on the server. If they do, set
+        // the `localId` on the server's response so we can update our
+        // local copy. If not, push it to the delete queue.
+        _.each(persistedAssignments, function(localAssignment) {
+          if (localAssignment.id && remoteIds.indexOf(localAssignment.id) >= 0) {
+            var remoteAssignment = _.find(assignments, { 'id': localAssignment.id });
+            // Set the localId on the remoteAssignment we just received
+            remoteAssignment.localId = localAssignment.localId;
+          } else {
+            // Push the localId of the record to be removed from the store
+            changes.del.push(localAssignment.localId);
           }
-          return acc;
-        }, {})
+        });
+
+        changes.put = assignments;
+
+        return changes;
       })
-      //batch delete assignments not present remotely
-      .then(function (delObj) {
-        return this.db.assignments.batch(delObj)
-      }.bind(this)
-        )
-      .then(function () {
-        return this.db.assignments.batch(assignments)
+      .then(function (changes) {
+        // We're doing this in a manual transaction instead of a single `batch`
+        // call as there are bugs in Treo's batch function.
+        // When passing in an array of records incorrect primary keys are used
+        // (because Object.keys). When passing in an object to batch delete
+        // records, keys are stringified (again, Object.keys) and so no records
+        // are deleted
+        var storeName = this.db.assignments.name;
+        this.db.assignments.db.transaction("readwrite", [storeName], function(err, tx) {
+          var store = tx.objectStore(storeName);
+
+          info("handleUpdateAssignmentCache: Deleting records", { del: changes.del });
+          _.each(changes.del, function(key) { store.delete(key); });
+
+          info("handleUpdateAssignmentCache: Putting records", { put: changes.put });
+          _.each(changes.put, function(record) { store.put(record); });
+        });
       }.bind(this))
       .done(
-      //success
-      function () {
-        this.flux.actions
-          .updateAssignmentCacheSuccess();
-      }.bind(this),
-      //fail. If any methods up the chain throw an error they will propogate here.
-      function (err) {
-        this.flux.actions
-          .updateAssignmentCacheFail(err);
-      }.bind(this)
-    )
+        //success
+        function () {
+          this.flux.actions.updateAssignmentCacheSuccess();
+        }.bind(this),
+        //fail. If any methods up the chain throw an error they will propagate here.
+        function (err) {
+          this.flux.actions.updateAssignmentCacheFail(err);
+        }.bind(this));
 
   },
 
