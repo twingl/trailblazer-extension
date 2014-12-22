@@ -24,7 +24,7 @@ var ProxyChange = function(flux, stores) {
 
         info('Bound proxy for ' + storeName);
       }
-      info("Initialized ProxyChange: " + stores.join(", "); });
+      info("Initialized ProxyChange: " + stores.join(", "));
     },
 
     /**
