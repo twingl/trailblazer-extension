@@ -3,41 +3,46 @@
  * object ready to be passed to flux.
  */
 
-var IDBStore              = require('idb-wrapper');
+var debug           = require('debug')
+  , info            = debug('stores.js:info')
+  , treo            = require('treo')
+  , treoPromise     = require('treo/plugins/treo-promise')
+  , TabStore        = require('./stores/tab-store')
+  , NodeStore       = require('./stores/node-store')
+  , AssignmentStore = require('./stores/assignment-store')
+  , MapStore        = require('./stores/map-store');
 
-var TabStore              = require('./stores/tab-store')
-  , NodeStore             = require('./stores/node-store')
-  , AssignmentStore       = require('./stores/assignment-store')
-  , MapStore              = require('./stores/map-store');
+info("Initializing Indexdb");
+var schema = treo.schema()
+  .version(1)
+    // Node storage
+    .addStore('nodes', { keyPath: 'localId', autoIncrement: true })
+    .addIndex('id',           'id',           { unique: true })
+    .addIndex('tabId',        'tabId',        { unique: false })
+    .addIndex('assignmentId', 'assignmentId', { unique: false })
 
-var db = {};
+    // Assignment storage
+    .addStore('assignments', { keyPath: 'localId', autoIncrement: true })
+    .addIndex('id', 'id', { unique: true });
 
-/**
- * Initialize the IDB stores for each data model
- */
-db.nodes = new IDBStore({
-  storeName: 'nodes',
-  dbVersion: 1,
-  keyPath: 'localId',
-  autoIncrement: true,
-  index: [ { name: 'tabId' }, { name: 'assignmentId' } ]
-});
+//initialize db and provide a wrapper object around the treo api
+var db = treo('trailblazer-wash', schema)
+  .use(treoPromise());
 
-db.assignments = new IDBStore({
-  storeName: 'assignments',
-  dbVersion: 1,
-  keyPath: 'localId',
-  autoIncrement: true
-});
+var objectStores = {
+  assignments: db.store('assignments'),
+  nodes: db.store('nodes')
+};
+
 
 /**
  * Initialize the Flux stores
  */
 var fluxStores = {
-  TabStore: new TabStore({ db: db }),
-  NodeStore: new NodeStore({ db: db }),
-  AssignmentStore: new AssignmentStore({ db: db }),
-  MapStore: new MapStore({ db: db })
+  TabStore: new TabStore({ db: objectStores }),
+  NodeStore: new NodeStore({ db: objectStores }),
+  AssignmentStore: new AssignmentStore({ db: objectStores }),
+  MapStore: new MapStore({ db: objectStores })
 };
 
 module.exports = fluxStores;

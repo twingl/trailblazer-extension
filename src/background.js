@@ -2,9 +2,7 @@
 var config      = require('./config');
 
 // helpers
-var _           = require('lodash')
- ,  treo        = require('treo')
- ,  treoPromise = require('treo/plugins/treo-promise');
+var _           = require('lodash');
 
 /**
  * Initialize logging.
@@ -61,36 +59,7 @@ chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
  * dispatches to the console.
  */
 
-info("Initializing Indexdb");
-var schema = treo.schema()
-  .version(1)
-  .addStore('tabs', { key: 'id' })
-    .addIndex('byNodeId', 'nodeId', { unique: true })
-  .addStore('nodes', { key: 'id' })
-    .addIndex('byTabId', 'tabId', { unique: true })
-    .addIndex('byAssignmentId', 'assignmentID', { unique: false })
-  .addStore('assignments', { key: 'id' })
-  .addStore('maps', { key: 'id' });
-
-//initialize db and provide a wrapper object around the treo api
-var db = treo('db', schema)
-  .use(treoPromise());
-
-var dbObj = {
-  assignments: db.store('assignments'),
-  maps: db.store('maps'),
-  nodes: db.store('nodes'),
-  tabs: db.store('tabs')
- };
-
-//initialize stores
-var stores = {
-  AssignmentStore: new AssignmentStore({ db: dbObj }),
-  MapStore: new MapStore({ db: dbObj }),
-  TabStore: new TabStore({ db: dbObj }),
-  NodeStore: new NodeStore({ db: dbObj })
-}
-
+var stores = require('./stores');
 info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
