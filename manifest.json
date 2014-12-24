@@ -12,7 +12,8 @@
     "identity",
     "storage",
     "unlimitedStorage",
-    "tabs"
+    "tabs",
+    "webNavigation"
   ],
   "icons": {
     "16": "src/ui/icons/16.png",

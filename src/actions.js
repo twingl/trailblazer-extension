@@ -53,38 +53,6 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
-  tabCreated: function(tabId, url, title, parentTabId, tabObj) {
-    info('tabCreated');
-    chrome.runtime.sendMessage({
-      action: constants.TAB_CREATED,
-      payload: {
-        tabId: tabId,
-        url: url,
-        title: title,
-        parentTabId: parentTabId,
-        tabObj: tabObj
-      }
-    });
-  },
-
-  tabUpdated: function(tabId, url, title, tabObj) {
-    info('tabUpdated');
-    chrome.runtime.sendMessage({
-      action: constants.TAB_CREATED,
-      payload: {
-        tabId: tabId,
-        url: url,
-        title: title,
-        tabObj: tabObj
-      }
-    });
-  },
-
-  tabClosed: function(tabData) {
-    info('tabClosed');
-    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
-  },
-
   updateNodeCache: function (nodes, assignmentId) {
     info('updateNodeCache');
     chrome.runtime.sendMessage({
@@ -104,6 +72,100 @@ module.exports = {
   updateNodeCacheFail: function (error) {
     info('updateNodeCacheFail');
     chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
+  },
+
+  tabCreated: function(tabId, url, title, parentTabId, tabObj) {
+    info('tabCreated');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_CREATED,
+      payload: {
+        tabId: tabId,
+        url: url,
+        title: title,
+        parentTabId: parentTabId,
+        tabObj: tabObj
+      }
+    });
+  },
+
+  createdNavigationTarget: function(parentTabId, tabId, url, timestamp) {
+    info('createdNavigationTarget');
+    chrome.tabs.get(tabId, function(tabObj) {
+      chrome.runtime.sendMessage({
+        action: constants.CREATED_NAVIGATION_TARGET,
+        payload: {
+          parentTabId: parentTabId,
+          tabId: tabId,
+          url: url,
+          timestamp: timestamp,
+          tabObj: tabObj
+        }
+      });
+    });
+  },
+
+  tabUpdated: function(tabId, url, title, tabObj) {
+    info('tabUpdated');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_CREATED,
+      payload: {
+        tabId: tabId,
+        url: url,
+        title: title,
+        tabObj: tabObj
+      }
+    });
+  },
+
+  historyStateUpdated: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
+    info('historyStateUpdated');
+    chrome.tabs.get(tabId, function(tabObj) {
+      chrome.runtime.sendMessage({
+        action: constants.HISTORY_STATE_UPDATED,
+        payload: {
+          tabId: tabId,
+          url: url,
+          transitionType: transitionType,
+          transitionQualifiers: transitionQualifiers,
+          timestamp: timestamp,
+          tabObj: tabObj
+        }
+      });
+    });
+  },
+
+  webNavCommitted: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
+    info('webNavCommitted');
+    chrome.tabs.get(tabId, function(tabObj) {
+      chrome.runtime.sendMessage({
+        action: constants.WEB_NAV_COMMITTED,
+        payload: {
+          tabId: tabId,
+          url: url,
+          transitionType: transitionType,
+          transitionQualifiers: transitionQualifiers,
+          timestamp: timestamp,
+          tabObj: tabObj
+        }
+      });
+    });
+  },
+
+  tabClosed: function(tabData) {
+    info('tabClosed');
+    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
+  },
+
+  tabReplaced: function(oldTabId, newTabId, timestamp) {
+    info('tabReplaced');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_REPLACED,
+      payload: {
+        oldTabId: oldTabId,
+        newTabId: newTabId,
+        timestamp: timestamp
+      }
+    });
   },
 
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime

@@ -21,8 +21,13 @@ var TabStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.TAB_CREATED, this.handleTabCreated,
+      constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
       constants.TAB_UPDATED, this.handleTabUpdated,
-      constants.TAB_CLOSED, this.handleTabClosed
+      constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
+      constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
+      constants.TAB_CLOSED, this.handleTabClosed,
+      constants.TAB_REPLACED, this.handleTabReplaced
+
       // constants.START_RECORDING, this.handleStartRecording,
       // constants.STOP_RECORDING, this.handleStopRecording
     );
@@ -40,13 +45,33 @@ var TabStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
+  handleCreatedNavigationTarget: function (payload) {
+    info("handleCreatedNavigationTarget:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
   handleTabUpdated: function (payload) {
     info("handleTabUpdated:", { payload: payload });
     throw "NotImplementedError";
   },
 
+  handleHistoryStateUpdated: function (payload) {
+    info("handleHistoryStateUpdated:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
+  handleWebNavCommitted: function (payload) {
+    info("handleWebNavCommitted:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
   handleTabClosed: function (payload) {
     info("handleTabClosed:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
+  handleTabReplaced: function (payload) {
+    info("handleTabReplaced:", { payload: payload });
     throw "NotImplementedError";
   },
 
