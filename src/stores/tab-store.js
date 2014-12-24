@@ -4,13 +4,6 @@ var _         = require('lodash')
  ,  constants = require('../constants')
  ,  Fluxxor   = require('fluxxor');
 
-//TODO
-// handleTabCreated
-// handleTabUpdated
-// handleTabClosed
-// handleStopRecording
-// handleStartRecording
-
 
 var TabStore = Fluxxor.createStore({
 
