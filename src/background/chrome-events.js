@@ -9,11 +9,6 @@ chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab) {
   actions.tabUpdated(tabId, tab.url, tab.title, tab);
 });
 
-chrome.tabs.onActivated.addListener( function(activeInfo) {
-  // { tabId, windowId }
-  actions.tabFocused(activeInfo.tabId);
-});
-
 chrome.tabs.onRemoved.addListener( function(tabId, removeInfo) {
   actions.tabClosed(tabId);
 });

@@ -22,7 +22,6 @@ var TabStore = Fluxxor.createStore({
     this.bindActions(
       constants.TAB_CREATED, this.handleTabCreated,
       constants.TAB_UPDATED, this.handleTabUpdated,
-      constants.TAB_FOCUSED, this.handleTabFocused,
       constants.TAB_CLOSED, this.handleTabClosed
       // constants.START_RECORDING, this.handleStartRecording,
       // constants.STOP_RECORDING, this.handleStopRecording
@@ -43,11 +42,6 @@ var TabStore = Fluxxor.createStore({
 
   handleTabUpdated: function (payload) {
     info("handleTabUpdated:", { payload: payload });
-    throw "NotImplementedError";
-  },
-
-  handleTabFocused: function (payload) {
-    info("handleTabFocused:", { payload: payload });
     throw "NotImplementedError";
   },
 

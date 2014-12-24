@@ -80,11 +80,6 @@ module.exports = {
     });
   },
 
-  tabFocused: function(tabId) {
-    info('tabFocused');
-    chrome.runtime.sendMessage({ action: constants.TAB_FOCUSED, payload: { tabId: tabId } });
-  },
-
   tabClosed: function(tabData) {
     info('tabClosed');
     chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
