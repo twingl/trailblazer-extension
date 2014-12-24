@@ -12,10 +12,7 @@
     "identity",
     "storage",
     "unlimitedStorage",
-    "tabs",
-    "webRequest",
-    "windows",
-    "webRequestBlocking"
+    "tabs"
   ],
   "icons": {
     "16": "src/ui/icons/16.png",
