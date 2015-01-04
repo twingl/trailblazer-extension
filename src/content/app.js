@@ -4,7 +4,6 @@
 var React = require('react/addons');
 var _ = require('lodash');
 var domready = require('domready');
-var isArray = require('is-array');
 var Immutable = require('immutable');
 
 var constants = require('../constants');
