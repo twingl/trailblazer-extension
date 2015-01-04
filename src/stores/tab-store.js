@@ -9,8 +9,7 @@ var TabStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options     = options || {};
-    this.tabIdMap   = options.tabIdMap || {};
-    this.currentTabId = undefined;
+    this.tabs       = options.tabs || {};
 
     this.bindActions(
       constants.TAB_CREATED, this.handleTabCreated,
@@ -19,17 +18,16 @@ var TabStore = Fluxxor.createStore({
       constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
       constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
       constants.TAB_CLOSED, this.handleTabClosed,
-      constants.TAB_REPLACED, this.handleTabReplaced
+      constants.TAB_REPLACED, this.handleTabReplaced,
 
-      // constants.START_RECORDING, this.handleStartRecording,
-      // constants.STOP_RECORDING, this.handleStopRecording
+      constants.START_RECORDING, this.handleStartRecording,
+      constants.STOP_RECORDING, this.handleStopRecording
     );
   },
 
   getState: function () {
     return {
-      tabIdMap: this.tabIdMap,
-      currentTabId: this.currentTabId
+      tabs: this.tabs
     };
   },
 
@@ -70,12 +68,14 @@ var TabStore = Fluxxor.createStore({
 
   handleStartRecording: function (payload) {
     info("handleStartRecording:", { payload: payload });
-    throw "NotImplementedError";
+    payload.responder({ success: true });
+    this.tabs[payload.tabId] = true;
   },
 
   handleStopRecording: function (payload) {
     info("handleStopRecording:", { payload: payload });
-    throw "NotImplementedError";
+    payload.responder();
+    this.tabs[payload.tabId] = false;
   }
 
 });

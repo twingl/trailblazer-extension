@@ -18,7 +18,7 @@
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         var tab = tabs[0];
 
-        chrome.runtime.sendMessage({ action: "stopRecording", tabId: tab.id }, function() {
+        chrome.runtime.sendMessage({ action: "STOP_RECORDING", payload: { tabId: tab.id } }, function(response) {
           window.location.href = "/src/ui/popup/idle.html";
         });
       });

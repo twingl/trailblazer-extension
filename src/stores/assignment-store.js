@@ -25,7 +25,8 @@ var AssignmentStore = Fluxxor.createStore({
       constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
       constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
       constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
-      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
+      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized,
+      constants.START_RECORDING, this.handleStartRecording
     );
   },
 
@@ -188,6 +189,13 @@ var AssignmentStore = Fluxxor.createStore({
    */
   handleAssignmentsSynchronized: function () {
   },
+
+  handleStartRecording: function (payload) {
+    this.waitFor(["TabStore"], function (tabStore) {
+      // Create the assignment, execute responder with the assignment ID
+      // FIXME: factor out the responder
+    });
+  }
 
 });
 

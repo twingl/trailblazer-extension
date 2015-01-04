@@ -65,12 +65,14 @@ var flux = new Fluxxor.Flux(stores, actions);
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
-chrome.runtime.onMessage.addListener(function (message) {
+chrome.runtime.onMessage.addListener(function (message, sender, responder) {
   info('message listener', {message: message})
   // if (message.action === "change") return;
   if (message.action) {
     var o = { type: message.action };
-    if (message.payload) o.payload = message.payload;
+
+    o.payload = message.payload || {};
+    o.payload.responder = responder;
 
     flux.dispatcher.dispatch(o);
     info("Dispatched", o);
@@ -78,7 +80,11 @@ chrome.runtime.onMessage.addListener(function (message) {
 });
 
 // Allow 'change' events to proxy through chrome.runtime messaging to the UI
-require('./background/proxy-change')(flux, ['MapStore', 'AssignmentStore']);
+require('./background/proxy-change')(flux, [
+    'MapStore',
+    'AssignmentStore',
+    'TabStore'
+]);
 
 // Wire up Chrome events to fire the appropriate actions
 require('./background/chrome-events');
