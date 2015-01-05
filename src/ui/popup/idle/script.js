@@ -22,7 +22,7 @@
         $('.start-recording').addClass('loading');
 
         // We've heard back from the server
-        chrome.runtime.sendMessage({ action: "START_RECORDING", payload: { tabId: tab.id } }, function(response) {
+        chrome.runtime.sendMessage({ action: "START_RECORDING", payload: { tabId: tab.id, tabObj: tab } }, function(response) {
           if (response.success) {
             window.location.href = "/src/ui/popup/recording.html";
           } else {
