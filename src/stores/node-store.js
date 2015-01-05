@@ -29,7 +29,16 @@ var NodeStore = Fluxxor.createStore({
       constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
       constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
       constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
-      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment
+      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment,
+
+      constants.TAB_CREATED, this.handleTabCreated,
+      constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
+      constants.TAB_UPDATED, this.handleTabUpdated,
+      constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
+      constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
+      constants.TAB_CLOSED, this.handleTabClosed,
+      constants.TAB_REPLACED, this.handleTabReplaced,
+      constants.NODE_MARKED_AS_WAYPOINT, this.handleNodeMarkedAsWaypoint
     );
   },
 
@@ -151,41 +160,45 @@ var NodeStore = Fluxxor.createStore({
     warn('not implemented')
   },
 
-  onTabCreated: function(tab) {
-    // This is, presently, just a kind of pseudo code until flux is wired up on
-    // the background.
-    // waitFor(["tabStore"], function(tabStore) {
-    //   var objectStore = db.transaction(["nodes"], "readwrite").objectStore("nodes");
-
-    //   var request = objectStore.index("tabId").get(tab.id).onsuccess = function(evt) {
-    //     info("onTabCreated: nodes.where tabId = tab.id", evt.target.result);
-    //   };
-    // });
-    throw "NotImplemented";
+  handleTabCreated: function (payload) {
+    info("handleTabCreated", { payload: payload });
+    throw "NotImplementedError";
   },
 
-  onTabUpdated: function() {
-    throw "NotImplemented";
+  handleCreatedNavigationTarget: function (payload) {
+    info("handleCreatedNavigationTarget", { payload: payload });
+    throw "NotImplementedError";
   },
 
-  onTabClosed: function() {
-    throw "NotImplemented";
+  handleTabUpdated: function (payload) {
+    info("handleTabUpdated:", { payload: payload });
+    throw "NotImplementedError";
   },
 
-  onStartRecording: function() {
-    throw "NotImplemented";
+  handleHistoryStateUpdated: function (payload) {
+    info("handleHistoryStateUpdated:", { payload: payload });
+    throw "NotImplementedError";
   },
 
-  onStopRecording: function() {
-    throw "NotImplemented";
+  handleWebNavCommitted: function (payload) {
+    info("handleWebNavCommitted:", { payload: payload });
+    throw "NotImplementedError";
   },
 
-  onMarkedAsWaypoint: function() {
+  handleTabClosed: function (payload) {
+    info("handleTabClosed:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
+  handleTabReplaced: function (payload) {
+    info("handleTabReplaced:", { payload: payload });
+    throw "NotImplementedError";
+  },
+
+  handleNodeMarkedAsWaypoint: function(payload) {
+    info("handleNodeMarkedAsWaypoint:", { payload: payload });
     throw "NotImplemented";
   }
-
-
-
 
 });
 
