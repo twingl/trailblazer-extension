@@ -2,13 +2,15 @@ var _         = require('lodash')
   , info      = require('debug')('stores/tab-store.js:info')
  ,  camelize  = require('camelize')
  ,  constants = require('../constants')
- ,  Fluxxor   = require('fluxxor');
+ ,  Fluxxor   = require('fluxxor')
+ ,  RandomName = require('../util/random-name');
 
 
 var TabStore = Fluxxor.createStore({
 
   initialize: function (options) {
     var options     = options || {};
+    this.db         = options.db;
     this.tabs       = options.tabs || {};
 
     this.bindActions(
@@ -66,10 +68,58 @@ var TabStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
+  // Create an assignment and first node in a single transaction, marking the
+  // tab as recording on success
   handleStartRecording: function (payload) {
     info("handleStartRecording:", { payload: payload });
-    payload.responder({ success: true });
-    this.tabs[payload.tabId] = true;
+
+    var success = function (evt) {
+      info("handleStartRecording: success");
+      this.tabs[payload.tabId] = true;
+      payload.responder({ success: true });
+    }.bind(this);
+
+    var error = function (evt) {
+      info("handleStartRecording: error");
+      this.tabs[payload.tabId] = false;
+      payload.responder({ success: false });
+    }.bind(this);
+
+    this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], function(err, tx) {
+      tx.oncomplete = success;
+      tx.onerror    = error;
+
+      var assignmentStore = tx.objectStore("assignments")
+        , nodeStore       = tx.objectStore("nodes");
+
+      var assignment = {
+        title:        "Untitled (" + RandomName.get() + ")",
+        description:  "Created " + new Date().toDateString()
+      };
+
+      assignmentStore.add(assignment).onsuccess = function (evt) {
+        // Update the object with the new local ID
+        assignment.localId = evt.target.result;
+
+        // Notify listeners that an assignment was created locally
+        this.flux.actions.createAssignmentSuccess(assignment);
+
+        var node = {
+          localAssignmentId: evt.target.result,
+          tabId: payload.tabId,
+          title: payload.tabObj.title,
+          url: payload.tabObj.url
+        };
+
+        nodeStore.add(node).onsuccess = function (evt) {
+          // Update the object with the new local ID
+          node.localId = evt.target.result;
+
+          // Notify listeners that a node was created locally
+          this.flux.actions.createNodeSuccess(node);
+        }.bind(this); //nodeStore.add
+      }.bind(this); //assignmentStore.add
+    }.bind(this)); //transaction
   },
 
   handleStopRecording: function (payload) {
