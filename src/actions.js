@@ -127,7 +127,7 @@ module.exports = {
   tabUpdated: function(tabId, url, title, tabObj) {
     info('tabUpdated');
     chrome.runtime.sendMessage({
-      action: constants.TAB_CREATED,
+      action: constants.TAB_UPDATED,
       payload: {
         tabId: tabId,
         url: url,
@@ -171,9 +171,9 @@ module.exports = {
     });
   },
 
-  tabClosed: function(tabData) {
+  tabClosed: function(tabId) {
     info('tabClosed');
-    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabData: tabData } });
+    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
   },
 
   tabReplaced: function(oldTabId, newTabId, timestamp) {
