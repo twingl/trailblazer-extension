@@ -38,6 +38,16 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
   },
 
+  createAssignmentSuccess: function (assignment) {
+    info('createAssignmentSuccess');
+    chrome.runtime.sendMessage({
+      action: constants.CREATE_ASSIGNMENT_SUCCESS,
+      payload: {
+        assignment: assignment
+      }
+    });
+  },
+
   fetchNodes: function () {
     info('fetchNodes');
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES });
@@ -72,6 +82,16 @@ module.exports = {
   updateNodeCacheFail: function (error) {
     info('updateNodeCacheFail');
     chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
+  },
+
+  createNodeSuccess: function (node) {
+    info('createNodeSuccess');
+    chrome.runtime.sendMessage({
+      action: constants.CREATE_NODE_SUCCESS,
+      payload: {
+        node: node
+      }
+    });
   },
 
   tabCreated: function(tabId, url, title, parentTabId, tabObj) {
