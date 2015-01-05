@@ -25,8 +25,7 @@ var AssignmentStore = Fluxxor.createStore({
       constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
       constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
       constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
-      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized,
-      constants.START_RECORDING, this.handleStartRecording
+      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
     );
   },
 
@@ -188,13 +187,6 @@ var AssignmentStore = Fluxxor.createStore({
    * Emits a change event from this store with the complete list of assignments
    */
   handleAssignmentsSynchronized: function () {
-  },
-
-  handleStartRecording: function (payload) {
-    this.waitFor(["TabStore"], function (tabStore) {
-      // Create the assignment, execute responder with the assignment ID
-      // FIXME: factor out the responder
-    });
   }
 
 });
