@@ -17,9 +17,10 @@ var schema = treo.schema()
   .version(1)
     // Node storage
     .addStore('nodes', { keyPath: 'localId', autoIncrement: true })
-    .addIndex('id',           'id',           { unique: true })
-    .addIndex('tabId',        'tabId',        { unique: false })
-    .addIndex('assignmentId', 'assignmentId', { unique: false })
+    .addIndex('id',                'id',                { unique: true })
+    .addIndex('tabId',             'tabId',             { unique: false })
+    .addIndex('assignmentId',      'assignmentId',      { unique: false })
+    .addIndex('localAssignmentId', 'localAssignmentId', { unique: false })
 
     // Assignment storage
     .addStore('assignments', { keyPath: 'localId', autoIncrement: true })
