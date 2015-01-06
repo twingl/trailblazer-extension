@@ -6,7 +6,9 @@ chrome.tabs.onCreated.addListener( function(tab) {
 
 chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab) {
   // filter the update events, so only url/title etc. changes are fired
-  actions.tabUpdated(tabId, tab.url, tab.title, tab);
+  if (changeInfo.url) {
+    actions.tabUpdated(tabId, changeInfo.url, tab.title, tab);
+  }
 });
 
 chrome.tabs.onRemoved.addListener( function(tabId, removeInfo) {
