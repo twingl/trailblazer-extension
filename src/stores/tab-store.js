@@ -35,7 +35,17 @@ var TabStore = Fluxxor.createStore({
 
   handleTabCreated: function (payload) {
     info("handleTabCreated:", { payload: payload });
-    throw "NotImplementedError";
+    var parentId = payload.parentTabId;
+
+    // Look up parent tab (if present) to see if we're recording it
+    // If we are, add an entry into this.tabs
+    if (parentId && this.tabs[parentId] === true) {
+      // Copy over the assignment ID
+      this.tabs[payload.tabId] = true;
+      this.emit('change', this.getState());
+    } else {
+      this.tabs[payload.tabId] = false;
+    }
   },
 
   handleCreatedNavigationTarget: function (payload) {

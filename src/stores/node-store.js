@@ -161,8 +161,30 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleTabCreated: function (payload) {
-    info("handleTabCreated", { payload: payload });
-    throw "NotImplementedError";
+    // Wait until we know if the tab is in a recording state
+    this.waitFor(["TabStore"], function(tabStore) {
+
+      var parentTabId = payload.parentTabId;
+
+      // If the parent tab is recording, then get it from the DB and create a
+      // new child node in the same assignment/localAssignment
+      if (parentTabId && tabStore.tabs[parentTabId] === true) {
+        this.db.nodes.index('tabId').get(payload.tabObj.openerTabId)
+          .then(function (nodes) {
+            var parentNode = _.last(nodes);
+
+            var node = {
+              localAssignmentId:  parentNode.localAssignmentId,
+              assignmentId:       parentNode.assignmentId,
+              tabId:              payload.tabId,
+              url:                payload.tabObj.url,
+              title:              payload.tabObj.title
+            };
+
+            this.db.nodes.put(node);
+          }.bind(this));
+      }
+    });
   },
 
   handleCreatedNavigationTarget: function (payload) {
