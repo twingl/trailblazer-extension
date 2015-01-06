@@ -6,8 +6,8 @@ var _         = require('lodash')
   , Fluxxor   = require('fluxxor');
 
 var debug = require('debug')
-  , info  = debug('node-store.js:info')
-  , warn  = debug('node-store.js:warn');
+  , info  = debug('stores/node-store.js:info')
+  , warn  = debug('stores/node-store.js:warn');
 
 var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
