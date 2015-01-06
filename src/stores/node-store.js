@@ -54,6 +54,21 @@ var NodeStore = Fluxxor.createStore({
       constants.TAB_REPLACED, this.handleTabReplaced,
       constants.NODE_MARKED_AS_WAYPOINT, this.handleNodeMarkedAsWaypoint
     );
+
+    // Assume we're booting, remove all tabId references from the DB
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      var store = tx.objectStore("nodes");
+      store.openCursor().onsuccess = function (evt) {
+        var cursor = evt.target.result;
+
+        if (cursor) {
+          var node = cursor.value;
+          delete node.tabId;
+          store.put(node);
+          cursor.continue();
+        }
+      };
+    });
   },
 
   getState: function () {
