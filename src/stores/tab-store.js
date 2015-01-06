@@ -70,7 +70,7 @@ var TabStore = Fluxxor.createStore({
 
   handleTabClosed: function (payload) {
     info("handleTabClosed:", { payload: payload });
-    throw "NotImplementedError";
+    delete this.tabs[payload.tabId];
   },
 
   handleTabReplaced: function (payload) {

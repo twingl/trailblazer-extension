@@ -209,7 +209,26 @@ var NodeStore = Fluxxor.createStore({
 
   handleTabClosed: function (payload) {
     info("handleTabClosed:", { payload: payload });
-    throw "NotImplementedError";
+
+    // Find the node, remove the tabId
+    this.db.nodes.index('tabId').get(payload.tabId)
+      .then(function (nodes) {
+        if (nodes.length > 0) this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+
+          var nodeStore = tx.objectStore("nodes");
+
+          // Fetch each record within the tx and remove its tabId
+          _.each(nodes, function(node) {
+            nodeStore.get(node.localId).onsuccess = function (evt) {
+              var record = evt.target.result;
+
+              delete record.tabId;
+              nodeStore.put(record);
+            };
+          }); //each
+
+        }); //transaction
+      }.bind(this)); //then
   },
 
   handleTabReplaced: function (payload) {
