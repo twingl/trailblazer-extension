@@ -16,7 +16,6 @@ var TabStore = Fluxxor.createStore({
     this.bindActions(
       constants.TAB_CREATED, this.handleTabCreated,
       constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
-      constants.TAB_UPDATED, this.handleTabUpdated,
       constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
       constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
       constants.TAB_CLOSED, this.handleTabClosed,
@@ -50,11 +49,6 @@ var TabStore = Fluxxor.createStore({
 
   handleCreatedNavigationTarget: function (payload) {
     info("handleCreatedNavigationTarget:", { payload: payload });
-    throw "NotImplementedError";
-  },
-
-  handleTabUpdated: function (payload) {
-    info("handleTabUpdated:", { payload: payload });
     throw "NotImplementedError";
   },
 
