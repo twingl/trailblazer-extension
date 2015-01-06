@@ -11,6 +11,20 @@ var debug = require('debug')
 
 var TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter');
 
+var NodeHelper = {
+  isChild: function(node, candidateChild) {
+    return (candidateChild.localParentId && candidateChild.localParentId === node.localId);
+  },
+
+  isParent: function(node, canidateParent) {
+    return (canidateParent.localId && canidateParent.localId === node.localParentId);
+  },
+
+  isOpenTab: function(node) {
+    return !!node.tabId;
+  }
+}
+
 var NodeStore = Fluxxor.createStore({
 
   initialize: function (options) {
@@ -196,7 +210,69 @@ var NodeStore = Fluxxor.createStore({
 
   handleTabUpdated: function (payload) {
     info("handleTabUpdated:", { payload: payload });
-    throw "NotImplementedError";
+
+    // Find the parent + children of the tabId
+    // Filter out any that don't have the same URL
+    // Check that they don't have any tabIds already
+    // If any nodes remain, it's probably a back/forward nav 
+    //  - move the tabId over to the found node, removing it from the current one
+    // If not, create a new node and move the tabId from the old one to the new one
+
+    // Open up a transaction so no records change while we're figuring stuff out
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      var nodeStore = tx.objectStore("nodes");
+      info("handleTabUpdated: tx");
+
+      // Get the current node associated with the tabId
+      nodeStore.index("tabId").get(payload.tabId).onsuccess = function(evt) {
+        var currentNode = evt.target.result;
+        info("handleTabUpdated: tabId", currentNode);
+
+        if (currentNode && currentNode.url !== payload.url) {
+          nodeStore.index("url").openCursor(IDBKeyRange.only(payload.url), "prev").onsuccess = function(evt) {
+            // Grab everything that matches the URL change and check if any of them
+            // are a parent or child of the current node.
+            info("handleTabUpdated: url");
+            var cursor = evt.target.result;
+
+            // Skip tabs that are open
+            if (cursor && !NodeHelper.isOpenTab(cursor.value)) {
+              var candidateNode = cursor.value;
+
+              // if the candidate node is a child or the parent of the current one
+              if ( NodeHelper.isChild(currentNode, candidateNode) || NodeHelper.isParent(currentNode, candidateNode) ) {
+                candidateNode.tabId = currentNode.tabId;
+                nodeStore.put(candidateNode);
+
+                delete currentNode.tabId;
+                nodeStore.put(currentNode);
+
+              } else {
+                // No match - move on
+                cursor.continue();
+              }
+            } else {
+              // Create a new node!
+
+              var node = {
+                assignmentId:       currentNode.assignmentId,
+                localAssignmentId:  currentNode.localAssignmentId,
+                parentId:           currentNode.id,
+                localParentId:      currentNode.localId,
+                tabId:              currentNode.tabId,
+                url:                payload.url,
+                title:              payload.title
+              };
+              nodeStore.put(node);
+
+              delete currentNode.tabId;
+              nodeStore.put(currentNode);
+            }
+          }; //cursor
+        } //if
+      }; //tx
+    }.bind(this));
+
   },
 
   handleHistoryStateUpdated: function (payload) {

@@ -21,6 +21,7 @@ var schema = treo.schema()
     .addIndex('tabId',             'tabId',             { unique: false })
     .addIndex('assignmentId',      'assignmentId',      { unique: false })
     .addIndex('localAssignmentId', 'localAssignmentId', { unique: false })
+    .addIndex('url',               'url', { unique: false })
 
     // Assignment storage
     .addStore('assignments', { keyPath: 'localId', autoIncrement: true })
