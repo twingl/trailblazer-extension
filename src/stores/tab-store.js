@@ -18,6 +18,7 @@ var TabStore = Fluxxor.createStore({
       constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
       constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
       constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
+      constants.TAB_UPDATED, this.handleTabUpdated,
       constants.TAB_CLOSED, this.handleTabClosed,
       constants.TAB_REPLACED, this.handleTabReplaced,
 
@@ -57,6 +58,10 @@ var TabStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
+  handleTabUpdated: function (payload) {
+    this.emit('change', this.getState());
+  },
+
   handleWebNavCommitted: function (payload) {
     info("handleWebNavCommitted:", { payload: payload });
     throw "NotImplementedError";
@@ -81,6 +86,7 @@ var TabStore = Fluxxor.createStore({
       info("handleStartRecording: success");
       this.tabs[payload.tabId] = true;
       payload.responder({ success: true });
+      this.emit('change', this.getState());
     }.bind(this);
 
     var error = function (evt) {

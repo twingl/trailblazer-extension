@@ -1,5 +1,6 @@
 // config
-var config      = require('./config');
+var config      = require('./config')
+  , constants   = require('./constants');
 
 // helpers
 var _           = require('lodash');
@@ -40,6 +41,7 @@ var actions               = require('./actions')
   , TabStore              = require('./stores/tab-store');
 
 info("Initializing Trailblazer!");
+
 /**
  * Initialize the extension.
  *
@@ -51,6 +53,18 @@ extensionUIState.init();
 
 info("Running install hooks");
 chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
+
+// Listen for recording changes that will change the extension state
+chrome.runtime.onMessage.addListener(function (message, sender, responder) {
+  if (message.action === constants.__change__ && message.storeName === 'TabStore') {
+    info("Tabstore state change!");
+    if (message.payload.tabs) {
+      _.each(message.payload.tabs, function(val, key) {
+        extensionUIState.update(parseInt(key), (val) ? "recording" : "idle");
+      });
+    }
+  }
+});
 
 /**
  * Set up Flux.

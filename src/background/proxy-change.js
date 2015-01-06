@@ -1,4 +1,5 @@
-var info = require('debug')('background/proxy-change.js:info');
+var info      = require('debug')('background/proxy-change.js:info')
+  , constants = require('../constants');
 
 /**
  * This listens for 'change' events in the background, and sends them over
@@ -32,7 +33,7 @@ var ProxyChange = function(flux, stores) {
      */
     proxy: function (storeName, payload) {
       var message = {
-        action: 'change',
+        action: constants.__change__,
         storeName: storeName,
         payload: payload
       };
