@@ -116,9 +116,9 @@ var TabStore = Fluxxor.createStore({
 
         var node = {
           localAssignmentId: evt.target.result,
-          tabId: payload.tabId,
-          title: payload.tabObj.title,
-          url: payload.tabObj.url
+          tabId:             payload.tabId,
+          title:             payload.tabObj.title,
+          url:               payload.tabObj.url
         };
 
         nodeStore.add(node).onsuccess = function (evt) {
