@@ -236,18 +236,15 @@ var NodeStore = Fluxxor.createStore({
     // Open up a transaction so no records change while we're figuring stuff out
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var nodeStore = tx.objectStore("nodes");
-      info("handleTabUpdated: tx");
 
       // Get the current node associated with the tabId
       nodeStore.index("tabId").get(payload.tabId).onsuccess = function(evt) {
         var currentNode = evt.target.result;
-        info("handleTabUpdated: tabId", currentNode);
 
         if (currentNode && currentNode.url !== payload.url) {
           nodeStore.index("url").openCursor(IDBKeyRange.only(payload.url), "prev").onsuccess = function(evt) {
             // Grab everything that matches the URL change and check if any of them
             // are a parent or child of the current node.
-            info("handleTabUpdated: url");
             var cursor = evt.target.result;
 
             // Skip tabs that are open
