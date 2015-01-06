@@ -176,6 +176,8 @@ var NodeStore = Fluxxor.createStore({
             var node = {
               localAssignmentId:  parentNode.localAssignmentId,
               assignmentId:       parentNode.assignmentId,
+              localParentId:      parentNode.localId,
+              parentId:           parentNode.id,
               tabId:              payload.tabId,
               url:                payload.tabObj.url,
               title:              payload.tabObj.title
