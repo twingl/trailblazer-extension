@@ -1,9 +1,9 @@
-var _         = require('lodash')
-  , info      = require('debug')('stores/tab-store.js:info')
- ,  camelize  = require('camelize')
- ,  constants = require('../constants')
- ,  Fluxxor   = require('fluxxor')
- ,  RandomName = require('../util/random-name');
+var _           = require('lodash')
+  , info        = require('debug')('stores/tab-store.js:info')
+  , camelize    = require('camelize')
+  , constants   = require('../constants')
+  , Fluxxor     = require('fluxxor')
+  , RandomName  = require('../util/random-name');
 
 
 var TabStore = Fluxxor.createStore({
