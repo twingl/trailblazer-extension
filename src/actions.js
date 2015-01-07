@@ -216,12 +216,13 @@ module.exports = {
     });
   },
 
-  startRecording: function (tabId) {
+  startRecording: function (tabId, tabObj) {
     info('startRecording');
     chrome.runtime.sendMessage({
       action: constants.START_RECORDING,
       payload: {
-        tabId: tabId
+        tabId: tabId,
+        tabObj: tabObj
       }
     });
   },
@@ -230,6 +231,16 @@ module.exports = {
     info('startRecordingSuccess');
     chrome.runtime.sendMessage({
       action: constants.START_RECORDING_SUCCESS,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
+  startRecordingFail: function (tabId) {
+    info('startRecordingFail');
+    chrome.runtime.sendMessage({
+      action: constants.START_RECORDING_FAIL,
       payload: {
         tabId: tabId
       }

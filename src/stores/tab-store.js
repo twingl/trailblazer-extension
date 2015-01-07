@@ -87,14 +87,14 @@ var TabStore = Fluxxor.createStore({
     var success = function (evt) {
       info("handleStartRecording: success");
       this.tabs[payload.tabId] = true;
-      payload.responder({ success: true });
+      this.flux.actions.startRecordingSuccess(payload.tabId);
       this.emit('change', this.getState());
     }.bind(this);
 
     var error = function (evt) {
       info("handleStartRecording: error");
       this.tabs[payload.tabId] = false;
-      payload.responder({ success: false });
+      this.flux.actions.startRecordingFail(payload.tabId);
     }.bind(this);
 
     this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], function(err, tx) {
