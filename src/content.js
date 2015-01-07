@@ -1,5 +1,4 @@
 var React = require('react/addons')
-var domready = require('domready');
 var constants =	require('./constants');
 var info 			= require('debug')('content.js:info');
 
