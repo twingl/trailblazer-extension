@@ -26,7 +26,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    info('render: Rendering with state', { state: this.props.state });
+    info('render: Rendering with props', { props: this.props });
     return this.renderCurrentRoute();
   },
 
@@ -42,6 +42,7 @@ module.exports = React.createClass({
 
         case constants.REQUEST_TAB_STATE_RESPONSE:
           if (message.payload.state.recording) {
+            this.props.assignment = message.payload.state.assignment;
             navigate('/recording')
           } else {
             navigate('/idle')
@@ -63,8 +64,8 @@ module.exports = React.createClass({
    * Default route, rendered when state is not yet present
    */
   loading: function () {
-    info('loading:', { state: this.props.state });
-    return Loading({ state: this.props.state });
+    info('loading:', { props: this.props });
+    return Loading();
   },
 
   /**
@@ -73,8 +74,8 @@ module.exports = React.createClass({
    * current tab
    */
   idle: function () {
-    info('idle:', { state: this.props.state });
-    return Idle({ state: this.props.state });
+    info('idle:', { props: this.props });
+    return Idle({ tabId: this.props.tabId });
   },
 
   /**
@@ -83,8 +84,8 @@ module.exports = React.createClass({
    * in and recording the current tab.
    */
   recording: function () {
-    info('recording:', { state: this.props.state });
-    return Recording({ state: this.props.state });
+    info('recording:', { props: this.props });
+    return Recording({ tabId: this.props.tabId, assignment: this.props.assignment });
   },
 
   /**
@@ -92,8 +93,8 @@ module.exports = React.createClass({
    * Displays the sign in form when not signed in
    */
   login: function () {
-    info('login:', { state: this.props.state });
-    return Login({ state: this.props.state });
+    info('login:', { props: this.props });
+    return Login({ tabId: this.props.tabId });
   }
 
 });
