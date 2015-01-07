@@ -2,6 +2,8 @@ var _         = require('lodash')
   , React     = require('react/addons')
   , domready  = require('domready')
   , router    = require('react-mini-router')
+  , actions   = require('../actions')
+  , constants = require('../constants')
   , info      = require('debug')('popup/app.js:info');
 
 // Components
@@ -34,15 +36,23 @@ module.exports = React.createClass({
     // Bind listeners
     chrome.runtime.onMessage.addListener( function (message) {
       switch (message.action) {
-        case actions.__change__:
+        case constants.__change__:
           // See if the change affects this popup
           break;
 
+        case constants.REQUEST_TAB_STATE_RESPONSE:
+          if (message.payload.state.recording) {
+            navigate('/recording')
+          } else {
+            navigate('/idle')
+          }
         default:
           info("Ignoring message " + message.action, message);
           return;
       }
     });
+
+    actions.requestTabState(this.props.tabId);
     // Request state
     // Update App state
     // Render App component

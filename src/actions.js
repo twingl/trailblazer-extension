@@ -193,5 +193,26 @@ module.exports = {
   selectAssignment: function (assignmentId) {
     info('selectAssignment');
     chrome.runtime.sendMessage({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
+  },
+
+  requestTabState: function (tabId) {
+    info('requestTabState');
+    chrome.runtime.sendMessage({
+      action: constants.REQUEST_TAB_STATE,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
+  requestTabStateResponse: function (tabId, state) {
+    info('requestTabStateResponse');
+    chrome.runtime.sendMessage({
+      action: constants.REQUEST_TAB_STATE_RESPONSE,
+      payload: {
+        tabId: tabId,
+        state: state
+      }
+    });
   }
 }
