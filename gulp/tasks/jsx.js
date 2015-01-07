@@ -12,7 +12,9 @@ var ENV = process.env.NODE;
 
 gulp.task('jsx', function() {
   return gulp.src(config.src)
-    .pipe(jsx())
+    .pipe(jsx({
+      jsx: "React.createElement"
+    }))
     .pipe(gulp.dest(config.dest));
 });
 
