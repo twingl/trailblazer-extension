@@ -43,10 +43,11 @@ module.exports = React.createClass({
         case constants.REQUEST_TAB_STATE_RESPONSE:
           if (message.payload.state.recording) {
             this.props.assignment = message.payload.state.assignment;
-            navigate('/recording')
+            navigate('/recording');
           } else {
-            navigate('/idle')
+            navigate('/idle');
           }
+          break;
         default:
           info("Ignoring message " + message.action, message);
           return;
