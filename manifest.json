@@ -30,6 +30,6 @@
       "19": "/src/ui/icons/19-unknown.png",
       "38": "/src/ui/icons/38-unknown.png"
     },
-    "default_popup": "/src/ui/popup/unknown.html"
+    "default_popup": "/build/popup.html"
   }
 }

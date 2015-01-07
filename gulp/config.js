@@ -35,6 +35,11 @@ module.exports = {
         entries: './src/content.js',
         dest: dest,
         outputName: 'content.js'
+      },
+      {
+        entries: './src/popup.js',
+        dest: dest,
+        outputName: 'popup.js'
       }
     ]
   }
