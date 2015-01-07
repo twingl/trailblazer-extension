@@ -63,10 +63,6 @@ module.exports = React.createClass({
         navigate('/login');
       }
     }.bind(this));
-
-    // Request state
-    // Update App state
-    // Render App component
   },
 
   /**
