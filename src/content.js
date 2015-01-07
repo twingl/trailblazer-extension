@@ -25,7 +25,7 @@ var app = App(state, actions);
 chrome.runtime.onMessage.addListener(function (message) {
   switch (message.action) {
     // Extra case for 'change' events emitted by the stores
-    case 'change':
+    case constants.__change__:
       info("Change: ", message);
       app.update(message);
       break;
