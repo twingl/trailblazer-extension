@@ -45,7 +45,7 @@ var App = React.createClass({
 
   componentDidMount: function () {
     info('component mountng', { props: this.props })
-   this.props.actions.fetchAssignments();
+    this.props.actions.fetchAssignments();
   },
 
 
