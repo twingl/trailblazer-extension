@@ -1,10 +1,11 @@
-var _         = require('lodash')
-  , React     = require('react/addons')
-  , domready  = require('domready')
-  , router    = require('react-mini-router')
-  , actions   = require('../actions')
-  , constants = require('../constants')
-  , info      = require('debug')('popup/app.js:info');
+var _                     = require('lodash')
+  , React                 = require('react/addons')
+  , domready              = require('domready')
+  , router                = require('react-mini-router')
+  , actions               = require('../actions')
+  , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
+  , constants             = require('../constants')
+  , info                  = require('debug')('popup/app.js:info');
 
 // Components
 var Idle      = React.createFactory(require('app/components/popup/idle'))
@@ -45,6 +46,7 @@ module.exports = React.createClass({
             this.props.assignment = message.payload.state.assignment;
             navigate('/recording');
           } else {
+            delete this.props.assignment;
             navigate('/idle');
           }
           break;
@@ -52,9 +54,16 @@ module.exports = React.createClass({
           info("Ignoring message " + message.action, message);
           return;
       }
-    });
+    }.bind(this));
 
-    actions.requestTabState(this.props.tabId);
+    new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
+      if (signedIn) {
+        actions.requestTabState(this.props.tabId);
+      } else {
+        navigate('/login');
+      }
+    }.bind(this));
+
     // Request state
     // Update App state
     // Render App component
