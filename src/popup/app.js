@@ -70,7 +70,11 @@ module.exports = React.createClass({
    * Default route, rendered when state is not yet present
    */
   loading: function () {
-    info('loading:', { props: this.props });
+    info('loading:', {
+      props: this.props,
+      constants: constants,
+      actions: actions
+    });
     return Loading();
   },
 
@@ -81,7 +85,11 @@ module.exports = React.createClass({
    */
   idle: function () {
     info('idle:', { props: this.props });
-    return Idle({ tabId: this.props.tabId });
+    return Idle({
+      tabId: this.props.tabId,
+      constants: constants,
+      actions: actions
+    });
   },
 
   /**
@@ -91,7 +99,12 @@ module.exports = React.createClass({
    */
   recording: function () {
     info('recording:', { props: this.props });
-    return Recording({ tabId: this.props.tabId, assignment: this.props.assignment });
+    return Recording({
+      tabId: this.props.tabId,
+      assignment: this.props.assignment,
+      constants: constants,
+      actions: actions
+    });
   },
 
   /**
@@ -100,7 +113,11 @@ module.exports = React.createClass({
    */
   login: function () {
     info('login:', { props: this.props });
-    return Login({ tabId: this.props.tabId });
+    return Login({
+      tabId: this.props.tabId,
+      constants: constants,
+      actions: actions
+    });
   }
 
 });

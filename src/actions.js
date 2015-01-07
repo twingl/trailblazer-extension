@@ -214,5 +214,45 @@ module.exports = {
         state: state
       }
     });
+  },
+
+  startRecording: function (tabId) {
+    info('startRecording');
+    chrome.runtime.sendMessage({
+      action: constants.START_RECORDING,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
+  startRecordingSuccess: function (tabId) {
+    info('startRecordingSuccess');
+    chrome.runtime.sendMessage({
+      action: constants.START_RECORDING_SUCCESS,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
+  stopRecording: function (tabId) {
+    info('stopRecording');
+    chrome.runtime.sendMessage({
+      action: constants.STOP_RECORDING,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
+  stopRecordingSuccess: function (tabId) {
+    info('stopRecordingSuccess');
+    chrome.runtime.sendMessage({
+      action: constants.STOP_RECORDING_SUCCESS,
+      payload: {
+        tabId: tabId
+      }
+    });
   }
 }

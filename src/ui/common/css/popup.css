@@ -2,11 +2,17 @@
 *:focus {outline: none;}
 
 body {
-	width: 160px;
-	padding: 26px 10px 6px 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
 	font-size: 14px;
+}
+
+body>.wrap {
+	width: 160px;
+	padding: 26px 10px 6px 10px;
 }
 
 h1 {
@@ -19,7 +25,8 @@ h1 {
 .idle {
   background-image: url(/src/ui/icons/idle-background.png);
   background-repeat: none;
-  background-size: 100%
+  background-size: 100%;
+  background-position: top center;
 }
 
 .cf:before,
