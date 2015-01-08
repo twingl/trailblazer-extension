@@ -52,7 +52,8 @@ var NodeStore = Fluxxor.createStore({
       constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
       constants.TAB_CLOSED, this.handleTabClosed,
       constants.TAB_REPLACED, this.handleTabReplaced,
-      constants.NODE_MARKED_AS_WAYPOINT, this.handleNodeMarkedAsWaypoint
+      constants.RANK_NODE_WAYPOINT, this.handleRankNodeWaypoint,
+      constants.RANK_NODE_NEUTRAL, this.handleRankNodeNeutral
     );
 
     // Assume we're booting, remove all tabId references from the DB
@@ -326,9 +327,40 @@ var NodeStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
-  handleNodeMarkedAsWaypoint: function(payload) {
-    info("handleNodeMarkedAsWaypoint:", { payload: payload });
-    throw "NotImplemented";
+  handleRankNodeWaypoint: function(payload) {
+    info("handleRankNodeWaypoint:", { payload: payload });
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      var store = tx.objectStore("nodes");
+
+      store.get(payload.localId).onsuccess = function (evt) {
+        var node = evt.target.result;
+
+        if (node) {
+          node.rank = 1;
+          store.put(node).onsuccess = function (evt) {
+            this.emit('change', { node: node });
+          }.bind(this);
+        }
+      }.bind(this);
+    }.bind(this));
+  },
+
+  handleRankNodeNeutral: function(payload) {
+    info("handleRankNodeNeutral:", { payload: payload });
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      var store = tx.objectStore("nodes");
+
+      store.get(payload.localId).onsuccess = function (evt) {
+        var node = evt.target.result;
+
+        if (node) {
+          node.rank = 0;
+          store.put(node).onsuccess = function (evt) {
+            this.emit('change', { node: node });
+          }.bind(this);
+        }
+      }.bind(this);
+    }.bind(this));
   }
 
 });

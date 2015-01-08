@@ -267,6 +267,26 @@ module.exports = {
     });
   },
 
+  rankNodeWaypoint: function (localId) {
+    info('rankNodeWaypoint');
+    chrome.runtime.sendMessage({
+      action: constants.RANK_NODE_WAYPOINT,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
+  rankNodeNeutral: function (localId) {
+    info('rankNodeNeutral');
+    chrome.runtime.sendMessage({
+      action: constants.RANK_NODE_NEUTRAL,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
   signIn: function () {
     info('signIn');
     chrome.runtime.sendMessage({

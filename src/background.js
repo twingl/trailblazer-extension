@@ -98,6 +98,7 @@ require('./background/proxy-change')(flux, [
     'MapStore',
     'AssignmentStore',
     'TabStore',
+    'NodeStore',
     'AuthenticationStore'
 ]);
 
