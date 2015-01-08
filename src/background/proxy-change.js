@@ -17,6 +17,8 @@ var ProxyChange = function(flux, stores) {
       info('initialize proxy-change dispatcher');
       _.each(stores, function (storeName) {
         flux.store(storeName).on('change', function (payload) {
+          payload.store = payload.store || {};
+
           payload.store = storeName;
           info('Proxying change event from ' + storeName, { payload: payload });
           this.proxy(storeName, payload);
