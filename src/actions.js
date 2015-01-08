@@ -265,5 +265,19 @@ module.exports = {
         tabId: tabId
       }
     });
+  },
+
+  signIn: function () {
+    info('signIn');
+    chrome.runtime.sendMessage({
+      action: constants.SIGN_IN
+    });
+  },
+
+  signOut: function () {
+    info('signOut');
+    chrome.runtime.sendMessage({
+      action: constants.SIGN_OUT
+    });
   }
 }

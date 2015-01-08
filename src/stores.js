@@ -3,14 +3,15 @@
  * object ready to be passed to flux.
  */
 
-var debug           = require('debug')
-  , info            = debug('stores.js:info')
-  , treo            = require('treo')
-  , treoPromise     = require('treo/plugins/treo-promise')
-  , TabStore        = require('./stores/tab-store')
-  , NodeStore       = require('./stores/node-store')
-  , AssignmentStore = require('./stores/assignment-store')
-  , MapStore        = require('./stores/map-store');
+var debug               = require('debug')
+  , info                = debug('stores.js:info')
+  , treo                = require('treo')
+  , treoPromise         = require('treo/plugins/treo-promise')
+  , TabStore            = require('./stores/tab-store')
+  , NodeStore           = require('./stores/node-store')
+  , AssignmentStore     = require('./stores/assignment-store')
+  , MapStore            = require('./stores/map-store')
+  , AuthenticationStore = require('./stores/authentication-store');
 
 info("Initializing Indexdb");
 var schema = treo.schema()
@@ -44,7 +45,8 @@ var fluxStores = {
   TabStore: new TabStore({ db: objectStores }),
   NodeStore: new NodeStore({ db: objectStores }),
   AssignmentStore: new AssignmentStore({ db: objectStores }),
-  MapStore: new MapStore({ db: objectStores })
+  MapStore: new MapStore({ db: objectStores }),
+  AuthenticationStore: new AuthenticationStore({ db: objectStores })
 };
 
 module.exports = fluxStores;

@@ -97,7 +97,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
 require('./background/proxy-change')(flux, [
     'MapStore',
     'AssignmentStore',
-    'TabStore'
+    'TabStore',
+    'AuthenticationStore'
 ]);
 
 // Wire up Chrome events to fire the appropriate actions
