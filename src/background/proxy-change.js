@@ -1,4 +1,5 @@
-var info      = require('debug')('background/proxy-change.js:info')
+var _         = require('lodash')
+  , info      = require('debug')('background/proxy-change.js:info')
   , constants = require('../constants');
 
 /**
@@ -13,11 +14,8 @@ var ProxyChange = function(flux, stores) {
      * sent to the UI
      */
     initialize: function () {
-      info('initialize proxy-change dispatcher')
-      for (var i = 0; i < stores.length; i++) {
-
-        var storeName = stores[i];
-
+      info('initialize proxy-change dispatcher');
+      _.each(stores, function (storeName) {
         flux.store(storeName).on('change', function (payload) {
           payload.store = storeName;
           info('Proxying change event from ' + storeName, { payload: payload });
@@ -25,7 +23,7 @@ var ProxyChange = function(flux, stores) {
         }.bind(this));
 
         info('Bound proxy for ' + storeName);
-      }
+      }.bind(this));
       info("Initialized ProxyChange: " + stores.join(", "));
     },
 
