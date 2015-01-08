@@ -150,12 +150,12 @@ a {
 	fill: #FFD463;
 }
 
-.logout {
+.sign-out {
 	float: right;
 	fill: #C5C5C5;
 }
 
-.logout:hover {
+.sign-out:hover {
 	fill: #989898;
 }
 

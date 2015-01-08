@@ -10,7 +10,7 @@ var _                     = require('lodash')
 // Components
 var Idle      = React.createFactory(require('app/components/popup/idle'))
   , Loading   = React.createFactory(require('app/components/popup/loading'))
-  , Login     = React.createFactory(require('app/components/popup/login'))
+  , SignIn    = React.createFactory(require('app/components/popup/sign-in'))
   , Recording = React.createFactory(require('app/components/popup/recording'));
 
 // Set up routes
@@ -23,7 +23,7 @@ module.exports = React.createClass({
     '/':          'loading',
     '/idle':      'idle',
     '/recording': 'recording',
-    '/login':     'login'
+    '/sign_in':   'signIn'
   },
 
   render: function () {
@@ -60,7 +60,7 @@ module.exports = React.createClass({
       if (signedIn) {
         actions.requestTabState(this.props.tabId);
       } else {
-        navigate('/login');
+        navigate('/sign_in');
       }
     }.bind(this));
   },
@@ -108,12 +108,12 @@ module.exports = React.createClass({
   },
 
   /**
-   * /login
+   * /sign_in
    * Displays the sign in form when not signed in
    */
-  login: function () {
-    info('login:', { props: this.props });
-    return Login({
+  signIn: function () {
+    info('signIn:', { props: this.props });
+    return SignIn({
       tabId: this.props.tabId,
       constants: constants,
       actions: actions
