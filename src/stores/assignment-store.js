@@ -25,6 +25,7 @@ var AssignmentStore = Fluxxor.createStore({
       constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
       constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
       constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
+      constants.UPDATE_ASSIGNMENT_TITLE, this.handleUpdateAssignmentTitle,
       constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
     );
   },
@@ -181,6 +182,25 @@ var AssignmentStore = Fluxxor.createStore({
    */
   handleUpdateAssignmentCacheFail: function (payload) {
     error('updateAssignmentCacheFail', { error: payload.error });
+  },
+
+  /**
+   * Updates an assignment record with a new title
+   */
+  handleUpdateAssignmentTitle: function (payload) {
+    info('handleUpdateAssignmentTitle', { payload: payload });
+    this.db.assignments.db.transaction("readwrite", ["assignments"], function(err, tx) {
+      var store = tx.objectStore("assignments");
+
+      store.get(payload.localId).onsuccess = function(evt) {
+        var assignment = evt.target.result;
+
+        assignment.title = payload.title;
+        store.put(assignment).onsuccess = function(evt) {
+          this.emit('change', { assignment: assignment });
+        }.bind(this);
+      }.bind(this);
+    }.bind(this));
   },
 
   /**

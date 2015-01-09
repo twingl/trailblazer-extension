@@ -33,6 +33,17 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
+  updateAssignmentTitle: function (localId, title) {
+    info('updateAssignmentTitle', { localId: localId, title: title });
+    chrome.runtime.sendMessage({
+      action: constants.UPDATE_ASSIGNMENT_TITLE,
+      payload: {
+        localId: localId,
+        title: title
+      }
+    });
+  },
+
   assignmentsSynchronized: function () {
     info('assignmentsSynchronized');
     chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED });

@@ -136,8 +136,9 @@ var TabStore = Fluxxor.createStore({
 
   handleStopRecording: function (payload) {
     info("handleStopRecording:", { payload: payload });
-    payload.responder();
     this.tabs[payload.tabId] = false;
+    this.flux.actions.stopRecordingSuccess(payload.tabId);
+    this.emit('change', this.getState());
   },
 
   handleRequestTabState: function (payload) {
@@ -145,7 +146,8 @@ var TabStore = Fluxxor.createStore({
     if (this.tabs[payload.tabId]) {
       var state = {
         recording: this.tabs[payload.tabId],
-        assignment: undefined
+        assignment: undefined,
+        node: undefined
       };
       this.db.nodes.index('tabId').get(payload.tabId)
         .then(function(nodes) {
@@ -153,6 +155,7 @@ var TabStore = Fluxxor.createStore({
           this.db.assignments.get(node.localAssignmentId)
             .then(function(assignment) {
               state.assignment = assignment;
+              state.node = node;
               this.flux.actions.requestTabStateResponse(payload.tabId, state);
             }.bind(this));
         }.bind(this));

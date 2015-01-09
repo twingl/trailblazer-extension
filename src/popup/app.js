@@ -47,9 +47,11 @@ module.exports = React.createClass({
 
         case constants.REQUEST_TAB_STATE_RESPONSE:
           if (message.payload.state.recording) {
+            this.props.node = message.payload.state.node;
             this.props.assignment = message.payload.state.assignment;
             navigate('/recording');
           } else {
+            delete this.props.node;
             delete this.props.assignment;
             navigate('/idle');
           }
@@ -105,6 +107,7 @@ module.exports = React.createClass({
     info('recording:', { props: this.props });
     return Recording({
       tabId: this.props.tabId,
+      node: this.props.node,
       assignment: this.props.assignment,
       constants: constants,
       actions: actions
