@@ -3,7 +3,7 @@ var src = './src';
 
 module.exports = {
   sass: {
-    src: src + "/content/styles/*.css",
+    src: src + "/style/**/*",
     dest: dest
   },
   // images: {
