@@ -3,6 +3,11 @@ var info = require('debug')('actions.js:info');
 
 module.exports = {
 
+  requestAssignments: function () {
+    info('requestAssignments');
+    chrome.runtime.sendMessage({ action: constants.REQUEST_ASSIGNMENTS });
+  },
+
   fetchAssignments: function () {
     info('fetchAssignments');
     chrome.runtime.sendMessage({ action: constants.FETCH_ASSIGNMENTS });
