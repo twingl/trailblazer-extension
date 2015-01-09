@@ -19,6 +19,7 @@ var AssignmentStore = Fluxxor.createStore({
     info('bindActions', { this: this })
 
     this.bindActions(
+      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
       constants.REQUEST_ASSIGNMENTS, this.handleRequestAssignments,
       constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
       constants.FETCH_ASSIGNMENTS_SUCCESS, this.handleFetchAssignmentsSuccess,
@@ -29,6 +30,21 @@ var AssignmentStore = Fluxxor.createStore({
       constants.UPDATE_ASSIGNMENT_TITLE, this.handleUpdateAssignmentTitle,
       constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
     );
+  },
+
+  handleDestroyAssignment: function (payload) {
+    this.db.assignments.get(payload.localId).then(function(assignment) {
+
+      // Fire API deletion
+      this.db.assignments.del(payload.localId).then(function() {
+
+        this.db.assignments.all().then(function(assignments) {
+          this.emit('change', { assignments: assignments });
+        }.bind(this));
+
+      }.bind(this));
+
+    }.bind(this));
   },
 
   handleRequestAssignments: function () {

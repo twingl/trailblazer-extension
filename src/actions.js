@@ -64,6 +64,16 @@ module.exports = {
     });
   },
 
+  destroyAssignment: function (localId) {
+    info('destroyAssignment');
+    chrome.runtime.sendMessage({
+      action: constants.DESTROY_ASSIGNMENT,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
   fetchNodes: function () {
     info('fetchNodes');
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES });
