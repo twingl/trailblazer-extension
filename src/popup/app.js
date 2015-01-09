@@ -1,6 +1,5 @@
 var _                     = require('lodash')
   , React                 = require('react/addons')
-  , domready              = require('domready')
   , router                = require('react-mini-router')
   , actions               = require('../actions')
   , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')

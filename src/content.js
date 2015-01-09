@@ -1,41 +1,11 @@
-var React = require('react/addons')
-var constants =	require('./constants');
-var info 			= require('debug')('content.js:info');
+var React     = require('react')
+  , domready  = require('domready');
 
-var actions = require('./actions.js');
-var state = {
-      nodeState: {
-      	loading: false,
-      	error: null,
-      	nodeIndex: {}
-      },
-      assignmentState: {
-        loading: false,
-        error: null,
-        assignmentsIndex: {},
-        currentAssignment: null
-      }
-};
+// Content 'App' component
+var App = require('./content/app');
 
-var App = require('./content/app.js');
-
-var app = App(state, actions);
-
-// Listen for actions, and react to ones that the UI cares about
-chrome.runtime.onMessage.addListener(function (message) {
-  switch (message.action) {
-    // Extra case for 'change' events emitted by the stores
-    case constants.__change__:
-      info("Change: ", message);
-      app.update(message);
-      break;
-
-    // Log anything we don't explicitly handle
-    default:
-      info("Ignoring message " + message.action, message);
-      return;
-  }
+domready(function() {
+  React.render( React.createElement(App, {
+    history: false
+  }), document.body);
 });
-
-// TODO?
-// actions.init(); // request the store's existing data

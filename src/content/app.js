@@ -1,51 +1,65 @@
-/** @jsx React.DOM */
-
-//helpers
-var React = require('react/addons');
-var _ = require('lodash');
-var domready = require('domready');
-var Immutable = require('immutable');
-
-var constants = require('../constants');
-var info = require('debug')('content/app.js:info');
-
+var _                     = require('lodash')
+  , React                 = require('react')
+  , router                = require('react-mini-router')
+  , actions               = require('../actions')
+  , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
+  , constants             = require('../constants')
+  , info                  = require('debug')('content/app.js:info');
 
 //components
-var AssignmentsIndex = React.createFactory(require('app/components/assignments-index'));
-var AssignmentsShow  = React.createFactory(require('app/components/assignments-show'));
+var AssignmentsIndex = React.createFactory(require('app/components/content/assignments-index'));
+var AssignmentsShow  = React.createFactory(require('app/components/content/assignments-show'));
 
 //setup routes
-var RouterMixin     = require('react-mini-router').RouterMixin
- ,  navigate        = require('react-mini-router').navigate;
+var RouterMixin     = router.RouterMixin
+  , navigate        = router.navigate;
 
-var App = React.createClass({
-
-  mixins: [
-    RouterMixin
-  ],
-
+module.exports = React.createClass({
+  mixins: [ RouterMixin ], 
   routes: {
-    '/':                'assignmentsIndex',
+    '/':                'defaultRoute',
     '/assignments':     'assignmentsIndex',
     '/assignments/:id': 'assignmentsShow'
   },
 
+  defaultRoute: function() {
+    navigate('/assignments');
+  },
+
   render: function () {
-    info('rendering app', { state: this.props.state });
+    info('render: Rendering with props', { props: this.props });
     return this.renderCurrentRoute();
   },
 
-  // shouldComponentUpdate: function (nextProps) {
-  //   if (nextProps.state !== this.props.state) { 
-  //     return true 
-  //   } else { 
-  //     return false 
-  //   };
-  // },
-
   componentDidMount: function () {
-    info('component mountng', { props: this.props })
-    this.props.actions.fetchAssignments();
+    info('componentDidMount:', { props: this.props });
+
+    // Bind listeners
+    chrome.runtime.onMessage.addListener( function (message) {
+      switch (message.action) {
+        case constants.__change__:
+          if (message.storeName === "AssignmentStore" &&
+              message.payload.assignments) {
+            console.log("setting assignments: ", { assignments: message.payload.assignments });
+            this.setState({ assignments: message.payload.assignments });
+          }
+
+          if (message.storeName === "AuthenticationStore" &&
+              message.payload.authenticated !== true) {
+            // Show a sign in page
+          }
+      }
+    }.bind(this));
+
+    new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
+      if (signedIn) {
+        actions.requestTabState(this.props.tabId);
+      } else {
+        navigate('/sign_in');
+      }
+    }.bind(this));
+
+    actions.requestAssignments();
   },
 
 
@@ -53,107 +67,24 @@ var App = React.createClass({
    * Assignments#index - borrowing naming conventions from Rails
    */
   assignmentsIndex: function () {
-    info('assignmentsIndex fired', { state: this.props.state })
- 
+    info('assignmentsIndex:', { props: this.props, state: this.state });
 
-    return <AssignmentsIndex 
-              state={this.props.state} 
-              actions={this.props.actions} />
+    return AssignmentsIndex({
+      assignments: this.state.assignments,
+      actions: actions
+    });
   },
 
   /**
    * Assignments#show - borrowing naming conventions from Rails
    */
-  assignmentsShow: function () {
-    info('assignmentsShow')
-    return <AssignmentsShow state={this.props.state} actions={this.props.actions}/>
+  assignmentsShow: function (localId) {
+    info('assignmentsShow:', { props: this.props, state: this.state });
+    var assignment = this.state.assignments[localId];
+
+    return AssignmentShow({
+      assignment: this.state.assignment,
+      actions: actions
+    });
   }
 });
-
-var AppWrap = function(initialState, actions) {
-
-  var app = {
-    initialize: function(initialState) {
-      info('initialState', { state: initialState })
-      var initialState = initialState || {};
-      info('initialState', { state: initialState })
-
-
-      // nodeState: Map
-        // loading: Boolean
-        // error: String
-        // nodeIndex: Map
-      // assignmentState: Map
-      //   loading: Boolean
-      //   error: String
-      //   assignmentsIndex: Map
-      //   currentAssignment: Integer
-
-      this.state = Immutable.fromJS(initialState);
-      this.update();
-      return this;
-    },
-
-    update: function(message) {
-      info('app updating', { message: message })
-      if (message && message.payload && message.payload.type) {
-        var type = message.payload.type;
-        switch (type) {
-          case constants.LOAD_ASSIGNMENTS:
-            this.updateAssignmentState('loading', true);
-            break;
-          case constants.ASSIGNMENTS_SYNCHRONIZED:
-            info(constants.ASSIGNMENTS_SYNCHRONIZED, {message: message})
-            this.refreshAssignments(message.payload.maps);
-            break;
-          // case constants.LOAD_ASSIGNMENTS_FAIL:
-          //   this.updateAssignmentState('error', message.payload.error);
-          // case constants.NODES_READY:
-          //   this.addNodes(message.payload.nodes);
-        }
-      }
-      this.render();
-    },
-
-    render: function () {
-      info('re-render', { state: this.state })
-      React.renderComponent(<App actions={actions} state={this.state}/>, document.body);
-    },
-
-    updateAssignmentState: function (key, value) {
-      this.state.updateIn(['assignmentState', key], function () { return value });
-    },
-
-    refreshAssignments: function (assignments) {
-      info('refreshAssignments fired', { assignments: assignments });
-      //translate from array to an immutable map
-
-      var assignmentsIndex = Immutable.Map(assignments.reduce(function (o, assignment) {
-          o[assignment.id] = assignment;
-          return o;
-        }, {})); 
-
-      info({ assignmentsIndex: assignmentsIndex })
-
-      this.state = this.state.updateIn(['assignmentState', 'assignmentsIndex'], function () {
-        return assignmentsIndex;
-      });
-    },
-
-    addNodes: function (nodes) {
-      info('addNodes fired', { nodes: nodes })
-      nodes.forEach(function (node) {
-        this.state.updateIn['nodeState', 'nodeIndex', node.id], function () {
-          return node;
-        }
-      }.bind(this))
-    }
-  };
-
-
-
-
-  return app.initialize(initialState);
-};
-
-module.exports = AppWrap;
