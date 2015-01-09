@@ -9,7 +9,7 @@ var _           = require('lodash');
  * Initialize logging.
  *
  * Logger name should be the file path, relative to src/ (e.g. background.js,
- * stores/map-store.js)
+ * stores/node-store.js)
  *
  * Debug objects that are passed to the logger should be wrapped in an object
  * to minimise console noise (e.g. { assignments: assignments } instead of
@@ -36,7 +36,6 @@ if (config.logging) {
 var actions               = require('./actions')
   , Fluxxor               = require('fluxxor')
   , AssignmentStore       = require('./stores/assignment-store')
-  , MapStore              = require('./stores/map-store')
   , NodeStore             = require('./stores/node-store')
   , TabStore              = require('./stores/tab-store');
 
@@ -95,7 +94,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
 
 // Allow 'change' events to proxy through chrome.runtime messaging to the UI
 require('./background/proxy-change')(flux, [
-    'MapStore',
     'AssignmentStore',
     'TabStore',
     'NodeStore',

@@ -10,7 +10,6 @@ var debug               = require('debug')
   , TabStore            = require('./stores/tab-store')
   , NodeStore           = require('./stores/node-store')
   , AssignmentStore     = require('./stores/assignment-store')
-  , MapStore            = require('./stores/map-store')
   , AuthenticationStore = require('./stores/authentication-store');
 
 info("Initializing Indexdb");
@@ -45,7 +44,6 @@ var fluxStores = {
   TabStore: new TabStore({ db: objectStores }),
   NodeStore: new NodeStore({ db: objectStores }),
   AssignmentStore: new AssignmentStore({ db: objectStores }),
-  MapStore: new MapStore({ db: objectStores }),
   AuthenticationStore: new AuthenticationStore({ db: objectStores })
 };
 
