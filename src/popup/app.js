@@ -39,6 +39,10 @@ module.exports = React.createClass({
       switch (message.action) {
         case constants.__change__:
           // See if the change affects this popup
+          if (message.storeName === "AuthenticationStore" &&
+              message.payload.authenticated !== true) {
+            navigate('/sign_in');
+          }
           break;
 
         case constants.REQUEST_TAB_STATE_RESPONSE:
