@@ -1,3 +1,7 @@
+/**
+ * Special thanks to Adrien from a SO post.
+ * http://stackoverflow.com/questions/7666516/fancy-name-generator-in-node-js
+ */
 module.exports = {
   get: function () {
     var adjs = ["autumn", "hidden", "bitter", "misty", "silent", "empty", "dry",
