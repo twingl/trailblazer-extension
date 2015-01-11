@@ -87,8 +87,8 @@ var NodeStore = Fluxxor.createStore({
     this.handleLoadNodes(payload);
   },
 
-  handleFetchNodes: function(assignmentId) {
-    this.loading = true;
+  handleFetchNodes: function (payload) {
+    var assignmentId = payload.assignmentId;
 
     // Request nodes from the storage adapter
     info('handleFetchNodess: Requesting /assignments/:id/nodes')
@@ -98,13 +98,13 @@ var NodeStore = Fluxxor.createStore({
         // Success
         function(response) {
           info('handleFetchNodes: Nodes received', { response: response });
-          this.flux.actions.fetchNodesSuccess({ nodes: response.nodes, assignmentId: assignmentId });
+          this.flux.actions.fetchNodesSuccess(assignmentId, response.nodes);
         }.bind(this),
 
         // Error
         function(response) {
           warn('handleFetchNodes: Unsuccessful response', { response: response });
-          this.flux.actions.fetchNodesFail({ error: response.error });
+          this.flux.actions.fetchNodesFail(error);
         }.bind(this)
       );
   },
@@ -116,7 +116,7 @@ var NodeStore = Fluxxor.createStore({
   handleFetchNodesSuccess: function (payload) {
     info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
-    this.flux.actions.updateNodeCache(nodes, payload.assignmentId);
+    this.flux.actions.updateNodeCache(payload.assignmentId, nodes);
   },
 
   /**
@@ -127,17 +127,38 @@ var NodeStore = Fluxxor.createStore({
     this.loading = false;
   },
 
-  getIds: function (nodes) {
-    return _.pluck(nodes, 'id')
-  },
-
-  /* *
-   * expects payload: Object {nodes: Array, assignmentId: Integer}
+  /**
+   * Expects payload: Object {nodes: Array, assignmentId: Integer}
+   *
+   * Updating the cache: logic summary
+   *
+   * We first read the local nodes so we can figure out what needs to be
+   * updated.
+   *
+   * - If a local record has a server ID, and its server ID is present
+   *   in the response from the server, it is UPDATED.
+   *
+   * - If a local record has a server ID, and its server ID is NOT
+   *   present in the response from the server, it is DELETED.
+   *
+   * - If a local record does not exist, it is CREATED
+   *
+   * The action does this by iterating over the local nodes which have server
+   * IDs populated, and querying the server's response to see if the server ID
+   * still exists.
+   *
+   * It should be noted that the CREATE and UPDATE actions are both rolled into
+   * a single array (UPDATEs have `localId` populated on their objects).
+   * CREATE, UPDATE and DELETE are all rolled into a single transaction.
+   *
+   * When the WRITE is completed (or fails), the appropriate next
+   * action is fired. A successful action ALWAYS carries the entire
+   * collection of Nodes returned from the server for that assignment (which
+   * may not have `localId`s populated).
    */
   handleUpdateNodeCache: function (payload) {
-    info("Fetched nodes");
-    var nodes = payload.nodes
-     ,  del   = [];
+    info("handleUpdateNodeCache: Updating cache", { payload: payload });
+    var nodes = payload.nodes;
 
     var remoteIds = _.pluck(nodes, 'id');
 
@@ -145,49 +166,92 @@ var NodeStore = Fluxxor.createStore({
     // 1. remove nonexisting nodes
     // 2. create/update existing nodes
 
-    //get all local nodes that match assignmentID
-    this.db.nodes.index('assignmentId').get(payload.assignmentId)
-        .then(this.getIds)
-        .then(function(localIds) {
-          //prepare a batch deletion object
-          return localIds.reduce(function (acc, id) {
-            if (remoteIds.indexOf(id) !== -1) {
-            // local nodes do not match remote nodes set id as null to delete
-              acc[id] = null;
-            }
-            return acc;
-          }, {})
-        })
-        //batch delete nodes not present remotely
-        .then(this.db.nodes.batch)
-        //batch create/update nodes in local cache
-        .then(function () {
-          return this.db.nodes.batch(nodes)
-        }.bind(this))
-        .done(
-          //success
-          function () {
-            this.flux.actions
-              .updateNodeCacheSuccess();
-          },
-          //fail. If any methods up the chain throw an error they will propogate here.
-          function (err) {
-            this.flux.actions
-              .updateNodeCacheFail(err);
-          }
-        )
+    //TODO this sync process should be in one transaction
+    this.db.assignments.index('id').get(payload.assignmentId)
+      .then(function(assignment) {
+        if (!assignment) throw "Unsynchronised Assignment";
+        return assignment;
+      })
+      .then(function(assignment) {
+        this.db.nodes.index('localAssignmentId').get(assignment.localId)
+          .then(function(localNodes) {
+            changes = {
+              put: [],
+              del: []
+            };
+
+            var remoteIds = _.pluck(nodes, 'id');
+            var persistedNodes = _.filter(localNodes, 'id');
+
+            // Iterate over the local nodes that have a server ID, checking if they
+            // still exist on the server. If they do, set the `localId` on the
+            // server's response so we can update our local copy. If not, push it
+            // to the delete queue.
+            _.each(persistedNodes, function(localNode) {
+              if (localNode.id && remoteIds.indexOf(localNode.id) >= 0) {
+                var remoteNode = _.find(nodes, { 'id': localNode.id });
+                // Set the localId on the remoteNode we just received
+                remoteNode.localId = localNode.localId;
+              } else {
+                // Push the localId of the record to be removed from the store
+                changes.del.push(localNode.localId);
+              }
+            });
+
+            _.each(nodes, function(remoteNode) {
+              remoteNode.localAssignmentId = assignment.localId;
+            });
+
+
+            changes.put = nodes;
+
+            return changes;
+          })
+          .then(function(changes) {
+            // We're doing this in a manual transaction instead of a single `batch`
+            // call as there are bugs in Treo's batch function.
+            // When passing in an array of records incorrect primary keys are used
+            // (because Object.keys). When passing in an object to batch delete
+            // records, keys are stringified (again, Object.keys) and so no records
+            // are deleted
+            this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+              var store = tx.objectStore("nodes");
+
+              info("handleUpdateNodeCache: Deleting records", { del: changes.del });
+              _.each(changes.del, function(key) { store.delete(key); });
+
+              info("handleUpdateNodeCache: Putting records", { put: changes.put });
+              _.each(changes.put, function(record) { store.put(record) });
+            });
+            return assignment;
+          }.bind(this))
+          .done(
+            //success
+            function (assignment) {
+              this.flux.actions.updateNodeCacheSuccess(assignment);
+            }.bind(this),
+            //fail. If any methods up the chain throw an error they will propagate here.
+            function (err) {
+              this.flux.actions.updateNodeCacheFail(err);
+            }.bind(this));
+
+      }.bind(this)); //assignments.index('id').get
   },
 
   handleUpdateNodeCacheFail: function (err) {
     error('updateNodeCache Failed', { error: err })
   },
 
-  handleUpdateNodeCacheSuccess: function () {
-    this.flux.actions.nodesSynchronised();
+  handleUpdateNodeCacheSuccess: function (payload) {
+    this.flux.actions.nodesSynchronized(payload.assignment);
   },
 
-  handleNodesSynchronized: function () {
-    warn('not implemented')
+  handleNodesSynchronized: function (payload) {
+    this.db.nodes.index('localAssignmentId')
+      .get(payload.assignment.localId)
+      .then(function(nodes) {
+        this.emit('change', { assignment: payload.assignment, nodes: nodes });
+      }.bind(this));
   },
 
   handleTabCreated: function (payload) {

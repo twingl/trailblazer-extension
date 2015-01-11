@@ -134,6 +134,7 @@ var AssignmentStore = Fluxxor.createStore({
     var assignments = payload.assignments;
     info("Assignments", assignments);
 
+    //TODO this sync process should be in one transaction
     this.db.assignments.all()
       .then(function(localAssignments) {
         var changes = {

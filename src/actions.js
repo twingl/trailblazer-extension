@@ -74,14 +74,25 @@ module.exports = {
     });
   },
 
-  fetchNodes: function () {
+  fetchNodes: function (assignmentId) {
     info('fetchNodes');
-    chrome.runtime.sendMessage({ action: constants.FETCH_NODES });
+    chrome.runtime.sendMessage({
+      action: constants.FETCH_NODES,
+      payload: {
+        assignmentId: assignmentId
+      }
+    });
   },
 
-  fetchNodesSuccess: function (nodes) {
+  fetchNodesSuccess: function (assignmentId, nodes) {
     info('fetchNodesSuccess');
-    chrome.runtime.sendMessage({ action: constants.FETCH_NODES_SUCCESS, payload: { nodes: nodes } });
+    chrome.runtime.sendMessage({
+      action: constants.FETCH_NODES_SUCCESS,
+      payload: {
+        nodes: nodes,
+        assignmentId: assignmentId
+      }
+    });
   },
 
   fetchNodesFail: function (error) {
@@ -89,7 +100,7 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
-  updateNodeCache: function (nodes, assignmentId) {
+  updateNodeCache: function (assignmentId, nodes) {
     info('updateNodeCache');
     chrome.runtime.sendMessage({
       action: constants.UPDATE_NODE_CACHE,
@@ -100,15 +111,31 @@ module.exports = {
     });
   },
 
-  updateNodeCacheSuccess: function () {
+  updateNodeCacheSuccess: function (assignment) {
     info('updateNodeCacheSuccess');
-    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_SUCCESS });
+    chrome.runtime.sendMessage({
+      action: constants.UPDATE_NODE_CACHE_SUCCESS,
+      payload: {
+        assignment: assignment
+      }
+    });
   },
 
   updateNodeCacheFail: function (error) {
     info('updateNodeCacheFail');
     chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
   },
+
+  nodesSynchronized: function (assignment) {
+    info('nodesSynchronized');
+    chrome.runtime.sendMessage({
+      action: constants.NODES_SYNCHRONIZED,
+      payload: {
+        assignment: assignment
+      }
+    });
+  },
+
 
   createNodeSuccess: function (node) {
     info('createNodeSuccess');
