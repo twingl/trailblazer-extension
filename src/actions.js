@@ -74,6 +74,16 @@ module.exports = {
     });
   },
 
+  requestNodes: function (localAssignmentId) {
+    info('requestNodes');
+    chrome.runtime.sendMessage({
+      action: constants.REQUEST_NODES,
+      payload: {
+        localAssignmentId: localAssignmentId
+      }
+    });
+  },
+
   fetchNodes: function (assignmentId) {
     info('fetchNodes');
     chrome.runtime.sendMessage({

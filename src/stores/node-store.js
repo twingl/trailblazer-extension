@@ -36,6 +36,7 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
+      constants.REQUEST_NODES, this.handleRequestNodes,
       constants.FETCH_NODES, this.handleFetchNodes,
       constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
       constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
@@ -43,7 +44,6 @@ var NodeStore = Fluxxor.createStore({
       constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
       constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
       constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
-      constants.SELECT_ASSIGNMENT, this.handleSelectAssignment,
 
       constants.TAB_CREATED, this.handleTabCreated,
       constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
@@ -82,9 +82,22 @@ var NodeStore = Fluxxor.createStore({
     };
   },
 
-  handleSelectAssignment: function (payload) {
-    warn('handleSelectAssignment not implemented')
-    this.handleLoadNodes(payload);
+  handleRequestNodes: function (payload) {
+    this.db.assignments.get(payload.localAssignmentId)
+      .then(function(assignment) {
+        this.db.nodes.index('localAssignmentId').get(assignment.localId)
+          .then(function(nodes) {
+            this.emit('change', {
+              assignment: assignment,
+              nodes: nodes
+            });
+          }.bind(this));
+
+        if (assignment.id) {
+          // We've got a remote ID, so let's get the updated nodes
+          this.flux.actions.fetchNodes(assignment.id);
+        }
+      }.bind(this));
   },
 
   handleFetchNodes: function (payload) {

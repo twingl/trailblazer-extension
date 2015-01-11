@@ -80,10 +80,9 @@ module.exports = React.createClass({
    */
   assignmentsShow: function (localId) {
     info('assignmentsShow:', { props: this.props, state: this.state });
-    var assignment = this.state.assignments[localId];
 
-    return AssignmentShow({
-      assignment: this.state.assignment,
+    return AssignmentsShow({
+      localId: localId,
       actions: actions
     });
   }
