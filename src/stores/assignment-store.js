@@ -36,7 +36,7 @@ var AssignmentStore = Fluxxor.createStore({
   handleCreateAssignmentSuccess: function () {
     this.db.assignments.all().then( function (assignments) {
       this.emit('change', { assignments: assignments });
-    });
+    }.bind(this));
   },
 
   handleDestroyAssignment: function (payload) {
