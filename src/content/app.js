@@ -41,7 +41,7 @@ module.exports = React.createClass({
           if (message.storeName === "AssignmentStore" &&
               message.payload.assignments) {
             console.log("setting assignments: ", { assignments: message.payload.assignments });
-            this.setState({ assignments: message.payload.assignments });
+            if (this.isMounted()) this.setState({ assignments: message.payload.assignments });
           }
 
           if (message.storeName === "AuthenticationStore" &&
@@ -58,8 +58,6 @@ module.exports = React.createClass({
         navigate('/sign_in');
       }
     }.bind(this));
-
-    actions.requestAssignments();
   },
 
 
@@ -79,11 +77,14 @@ module.exports = React.createClass({
    * Assignments#show - borrowing naming conventions from Rails
    */
   assignmentsShow: function (localId) {
+    var localId = parseInt(localId);
+
     info('assignmentsShow:', { props: this.props, state: this.state });
 
     return AssignmentsShow({
       localId: localId,
-      actions: actions
+      actions: actions,
+      constants: constants
     });
   }
 });

@@ -362,5 +362,9 @@ module.exports = {
     chrome.runtime.sendMessage({
       action: constants.SIGN_OUT
     });
+  },
+
+  shareAssignment: function (localId) {
+    info('shareAssignment', { localId: localId });
   }
 }
