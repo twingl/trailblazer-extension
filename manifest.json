@@ -16,9 +16,9 @@
     "webNavigation"
   ],
   "icons": {
-    "16": "src/ui/icons/16.png",
-    "48": "src/ui/icons/48.png",
-    "128": "src/ui/icons/128.png"
+    "16": "assets/icons/16.png",
+    "48": "assets/icons/48.png",
+    "128": "assets/icons/128.png"
   },
   "background": {
     "scripts": [
@@ -27,8 +27,8 @@
   },
   "browser_action": {
     "default_icon": {
-      "19": "/src/ui/icons/19-unknown.png",
-      "38": "/src/ui/icons/38-unknown.png"
+      "19": "/assets/icons/19-unknown.png",
+      "38": "/assets/icons/38-unknown.png"
     },
     "default_popup": "/build/popup.html"
   }

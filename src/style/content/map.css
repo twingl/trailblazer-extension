@@ -58,7 +58,7 @@ Gradient Combos
 #map-container {
 	width: 100%;
 	height: 100%;
-	background-image:url(/src/ui/icons/logo-watermark.svg);
+	background-image:url(/assets/icons/logo-watermark.svg);
 	background-repeat: no-repeat;
 	background-position:30px 30px;
 }
