@@ -6,15 +6,15 @@ build up a map, helping them make sense of the places they visit.
 ## Install
 
     $ git clone git://github.com/twingl/trailblazer-wash.git
-    
+
     $ cd trailblazer-wash
-    
+
     $ npm install
 
 
 ## Develop
 
-From the root directory 
+From the root directory
 
     $ npm run watch
 
