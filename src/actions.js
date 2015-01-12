@@ -310,23 +310,23 @@ module.exports = {
     });
   },
 
-  resumeRecording: function (localNodeId, focus) {
+  resumeRecording: function (localId, focus) {
     info('startRecording');
     chrome.runtime.sendMessage({
       action: constants.RESUME_RECORDING,
       payload: {
-        localNodeId: localNodeId,
+        localId: localId,
         focus: focus
       }
     });
   },
 
-  resumeRecordingFail: function (localNodeId) {
+  resumeRecordingFail: function (localId) {
     info('startRecordingFail');
     chrome.runtime.sendMessage({
       action: constants.RESUME_RECORDING_FAIL,
       payload: {
-        localNodeId: localNodeId
+        localId: localId
       }
     });
   },

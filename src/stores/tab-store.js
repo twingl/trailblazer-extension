@@ -136,7 +136,7 @@ var TabStore = Fluxxor.createStore({
   handleResumeRecording: function (payload) {
     info("handleResumeRecording");
 
-    this.db.nodes.get(payload.localNodeId).then(function(node) {
+    this.db.nodes.get(payload.localId).then(function(node) {
       if (payload.focus && node.tabId) {
         info("handleResumeRecording: success");
         this.tabs[node.tabId] = true;
@@ -153,12 +153,12 @@ var TabStore = Fluxxor.createStore({
             // Error handler
             tx.onerror = function (evt) {
               info("handleResumeRecording: error");
-              this.flux.actions.resumeRecordingFail(payload.localNodeId);
+              this.flux.actions.resumeRecordingFail(payload.localId);
             }.bind(this);
 
             var nodeStore = tx.objectStore("nodes");
 
-            nodeStore.get(payload.localNodeId).onsuccess = function(evt) {
+            nodeStore.get(payload.localId).onsuccess = function(evt) {
               var node = evt.target.result;
 
               node.tabId = tab.id;
