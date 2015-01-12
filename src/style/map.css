@@ -1,9 +1,6 @@
-
-*,
-*:after,
-*:before {
-	margin:0;
-	padding:0;
+.wrap.assignment-show *,
+.wrap.assignment-show *:after,
+.wrap.assignment-show *:before {
 	box-sizing:border-box;
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
@@ -12,7 +9,12 @@
 	text-rendering:optimizeLegibility;
 }
 
-body {
+html, body, .wrap.assignment-show {
+  width: 100%;
+  height: 100%;
+}
+
+body>.wrap.assignment-show {
 	background-image: linear-gradient(#757F9A, #A5ADC1);
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
@@ -26,10 +28,6 @@ Gradient Combos
 #5CC8CB, #80E0D5
 #9bc5c3, #616161
 */
-
-html {
-  	width: 100%;
-}
 
 /* tooltip */
 
