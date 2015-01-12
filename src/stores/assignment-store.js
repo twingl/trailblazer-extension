@@ -19,6 +19,7 @@ var AssignmentStore = Fluxxor.createStore({
     info('bindActions', { this: this })
 
     this.bindActions(
+      constants.CREATE_ASSIGNMENT_SUCCESS, this.handleCreateAssignmentSuccess,
       constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
       constants.REQUEST_ASSIGNMENTS, this.handleRequestAssignments,
       constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
@@ -30,6 +31,12 @@ var AssignmentStore = Fluxxor.createStore({
       constants.UPDATE_ASSIGNMENT_TITLE, this.handleUpdateAssignmentTitle,
       constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
     );
+  },
+
+  handleCreateAssignmentSuccess: function () {
+    this.db.assignments.all().then( function (assignments) {
+      this.emit('change', { assignments: assignments });
+    });
   },
 
   handleDestroyAssignment: function (payload) {

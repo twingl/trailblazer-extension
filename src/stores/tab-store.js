@@ -25,6 +25,7 @@ var TabStore = Fluxxor.createStore({
       constants.START_RECORDING, this.handleStartRecording,
       constants.RESUME_RECORDING, this.handleResumeRecording,
       constants.STOP_RECORDING, this.handleStopRecording,
+      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
 
       constants.REQUEST_TAB_STATE, this.handleRequestTabState
     );
@@ -178,6 +179,28 @@ var TabStore = Fluxxor.createStore({
     this.tabs[payload.tabId] = false;
     this.flux.actions.stopRecordingSuccess(payload.tabId);
     this.emit('change', this.getState());
+  },
+
+  handleDestroyAssignment: function (payload) {
+    info("handleDestroyAssignment", { payload: payload });
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      tx.oncomplete = function() {
+        this.emit('change', this.getState());
+      }.bind(this);
+      // Get all nodes associated w/ asgmt, remove from tab array
+      var nodeStore = tx.objectStore("nodes");
+
+      nodeStore.index('localAssignmentId').openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+        var cursor = evt.target.result;
+        if (cursor) {
+          if (cursor.value.tabId) {
+            console.log("Removing tab! " + cursor);
+            this.tabs[cursor.value.tabId] = false;
+          }
+          cursor.continue();
+        }
+      }.bind(this);
+    }.bind(this));
   },
 
   handleRequestTabState: function (payload) {

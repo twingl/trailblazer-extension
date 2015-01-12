@@ -45,6 +45,8 @@ var NodeStore = Fluxxor.createStore({
       constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail,
       constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
 
+      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
+
       constants.TAB_CREATED, this.handleTabCreated,
       constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
       constants.TAB_UPDATED, this.handleTabUpdated,
@@ -81,6 +83,35 @@ var NodeStore = Fluxxor.createStore({
       error: this.error
     };
   },
+
+  handleDestroyAssignment: function (payload) {
+    this.waitFor(["AssignmentStore", "TabStore"], function() {
+      this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+        var nodeStore = tx.objectStore("nodes");
+
+        nodeStore.index('localAssignmentId').openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+          var cursor = evt.target.result;
+          if (cursor) {
+            nodeStore.delete(cursor.value.localId);
+            cursor.continue();
+          }
+        };
+      });
+    });
+    this.db.nodes.index('localAssignmentId').get(payload.localId).then(function(nodes) {
+
+      // Fire API deletion
+      this.db.assignments.del(payload.localId).then(function() {
+
+        this.db.assignments.all().then(function(assignments) {
+          this.emit('change', { assignments: assignments });
+        }.bind(this));
+
+      }.bind(this));
+
+    }.bind(this));
+  },
+
 
   handleRequestNodes: function (payload) {
     this.db.assignments.get(payload.localAssignmentId)
