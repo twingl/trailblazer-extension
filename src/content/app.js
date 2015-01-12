@@ -17,7 +17,7 @@ var RouterMixin     = router.RouterMixin
 module.exports = React.createClass({
   mixins: [ RouterMixin ], 
   routes: {
-    '/':                'defaultRoute',
+    '/':                'assignmentsIndex',
     '/assignments':     'assignmentsIndex',
     '/assignments/:id': 'assignmentsShow'
   },
