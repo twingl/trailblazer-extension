@@ -213,6 +213,9 @@ var NodeStore = Fluxxor.createStore({
 
             _.each(nodes, function(remoteNode) {
               remoteNode.localAssignmentId = assignment.localId;
+              if (remoteNode.parentId) {
+                remoteNode.localParentId = _.find(nodes, { 'id': remoteNode.parentId }).localId;
+              }
             });
 
 
