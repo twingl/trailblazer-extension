@@ -3,8 +3,18 @@ var src = './src';
 
 module.exports = {
   sass: {
-    src: src + "/style/**/*",
-    dest: dest
+    bundles: [
+      {
+        name: "popup.css",
+        src: src + "/style/popup/**/*",
+        dest: dest
+      },
+      {
+        name: "content.css",
+        src: src + "/style/content/**/*",
+        dest: dest
+      }
+    ]
   },
   // images: {
   //   src: src + "/images/**",
