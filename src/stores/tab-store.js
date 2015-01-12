@@ -23,6 +23,7 @@ var TabStore = Fluxxor.createStore({
       constants.TAB_REPLACED, this.handleTabReplaced,
 
       constants.START_RECORDING, this.handleStartRecording,
+      constants.RESUME_RECORDING, this.handleResumeRecording,
       constants.STOP_RECORDING, this.handleStopRecording,
 
       constants.REQUEST_TAB_STATE, this.handleRequestTabState
@@ -45,8 +46,6 @@ var TabStore = Fluxxor.createStore({
       // Copy over the assignment ID
       this.tabs[payload.tabId] = true;
       this.emit('change', this.getState());
-    } else {
-      this.tabs[payload.tabId] = false;
     }
   },
 
@@ -132,6 +131,46 @@ var TabStore = Fluxxor.createStore({
         }.bind(this); //nodeStore.add
       }.bind(this); //assignmentStore.add
     }.bind(this)); //transaction
+  },
+
+  handleResumeRecording: function (payload) {
+    info("handleResumeRecording");
+
+    this.db.nodes.get(payload.localNodeId).then(function(node) {
+      if (payload.focus && node.tabId) {
+        info("handleResumeRecording: success");
+        this.tabs[node.tabId] = true;
+        this.emit('change', this.getState());
+      } else {
+        chrome.tabs.create({ url: node.url }, function(tab) {
+          this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+            tx.oncomplete = function (evt) {
+              info("handleResumeRecording: success");
+              this.tabs[tab.id] = true;
+              this.emit('change', this.getState());
+            }.bind(this);
+
+            // Error handler
+            tx.onerror = function (evt) {
+              info("handleResumeRecording: error");
+              this.flux.actions.resumeRecordingFail(payload.localNodeId);
+            }.bind(this);
+
+            var nodeStore = tx.objectStore("nodes");
+
+            nodeStore.get(payload.localNodeId).onsuccess = function(evt) {
+              var node = evt.target.result;
+
+              node.tabId = tab.id;
+
+              // Update the node record
+              nodeStore.put(node);
+            };
+          }.bind(this)); //tx
+        }.bind(this));//create tab
+      }
+    }.bind(this));
+
   },
 
   handleStopRecording: function (payload) {

@@ -310,6 +310,27 @@ module.exports = {
     });
   },
 
+  resumeRecording: function (localNodeId, focus) {
+    info('startRecording');
+    chrome.runtime.sendMessage({
+      action: constants.RESUME_RECORDING,
+      payload: {
+        localNodeId: localNodeId,
+        focus: focus
+      }
+    });
+  },
+
+  resumeRecordingFail: function (localNodeId) {
+    info('startRecordingFail');
+    chrome.runtime.sendMessage({
+      action: constants.RESUME_RECORDING_FAIL,
+      payload: {
+        localNodeId: localNodeId
+      }
+    });
+  },
+
   stopRecording: function (tabId) {
     info('stopRecording');
     chrome.runtime.sendMessage({
