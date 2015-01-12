@@ -15,6 +15,10 @@ body>.wrap {
 	padding: 34px 18px 10px 18px;
 }
 
+body>.wrap.loading {
+  height: 290px;
+}
+
 h1 {
 	font-size: inherit;
 	font-weight: inherit;
