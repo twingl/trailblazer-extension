@@ -4,7 +4,7 @@ var dotenv = require('dotenv')
 
 //set environment variables from command line with flag '--production'
 if (argv.production) {
-  dotenv._getKeyAndValueFromLine('./.env-production');
+  dotenv._getKeysAndValuesFromEnvFilePath('./.env-production');
   dotenv._setEnvs();
 } else {
   dotenv.load();
