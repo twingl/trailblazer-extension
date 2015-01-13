@@ -15,6 +15,7 @@ var TabStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.TAB_CREATED, this.handleTabCreated,
+      constants.TAB_FOCUSED, this.handleTabFocused,
       constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
       constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
       constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
@@ -48,6 +49,11 @@ var TabStore = Fluxxor.createStore({
       this.tabs[payload.tabId] = true;
       this.emit('change', this.getState());
     }
+  },
+
+  handleTabFocused: function (payload) {
+    info("handleTabFocused:", { payload: payload });
+    this.emit('change', this.getState());
   },
 
   handleCreatedNavigationTarget: function (payload) {

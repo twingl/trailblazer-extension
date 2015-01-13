@@ -171,6 +171,16 @@ module.exports = {
     });
   },
 
+  tabFocused: function(tabId) {
+    info('tabFocused');
+    chrome.runtime.sendMessage({
+      action: constants.TAB_FOCUSED,
+      payload: {
+        tabId: tabId
+      }
+    });
+  },
+
   createdNavigationTarget: function(parentTabId, tabId, url, timestamp) {
     info('createdNavigationTarget');
     chrome.tabs.get(tabId, function(tabObj) {
