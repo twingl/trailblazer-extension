@@ -9,9 +9,6 @@ module.exports = {
     new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
       if (signedIn) {
         // Set the extension to Idle
-        chrome.browserAction.setPopup({
-          popup: extensionStates.idle.popup
-        });
         chrome.browserAction.setIcon({
           path: extensionStates.idle.browserAction
         });
@@ -20,9 +17,6 @@ module.exports = {
         //recording, restoring their recording state where needed
       } else {
         // Set the extension to Idle
-        chrome.browserAction.setPopup({
-          popup: extensionStates.notAuthenticated.popup
-        });
         chrome.browserAction.setIcon({
           path: extensionStates.notAuthenticated.browserAction
         });
@@ -38,10 +32,6 @@ module.exports = {
       case "recording":
       case "notAuthenticated":
       case "idle":
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates[state].popup
-        });
         chrome.browserAction.setIcon({
           tabId: tabId,
           path: extensionStates[state].browserAction
@@ -49,10 +39,6 @@ module.exports = {
         break;
       case "unknown":
       default:
-        chrome.browserAction.setPopup({
-          tabId: tabId,
-          popup: extensionStates.default.popup
-        });
         chrome.browserAction.setIcon({
           tabId: tabId,
           path: extensionStates.default.browserAction
