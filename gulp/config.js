@@ -2,6 +2,14 @@ var dest = "./build";
 var src = './src';
 
 module.exports = {
+  release: {
+    src: [
+      "./build/**/*",
+      "./assets/**/*",
+      "./manifest.json"
+    ],
+    dest: "./release/"
+  },
   sass: {
     bundles: [
       {
