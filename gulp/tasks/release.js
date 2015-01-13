@@ -21,7 +21,7 @@ gulp.task('release', ['build', 'version-bump'], function() {
 
       util.log("Packaging", "'" + util.colors.yellow(config.dest + pkgName) + "'");
 
-      return gulp.src(config.src)
+      return gulp.src(config.src, { base: "./" })
           .pipe(zip(pkgName))
           .pipe(gulp.dest(config.dest));
     });
