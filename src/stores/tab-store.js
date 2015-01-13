@@ -67,6 +67,7 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleTabUpdated: function (payload) {
+    info("handleTabUpdated:", { payload: payload });
     this.emit('change', this.getState());
   },
 
