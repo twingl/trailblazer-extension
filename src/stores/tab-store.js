@@ -63,7 +63,7 @@ var TabStore = Fluxxor.createStore({
 
   handleHistoryStateUpdated: function (payload) {
     info("handleHistoryStateUpdated:", { payload: payload });
-    throw "NotImplementedError";
+    this.emit('change', this.getState());
   },
 
   handleTabUpdated: function (payload) {
@@ -73,7 +73,7 @@ var TabStore = Fluxxor.createStore({
 
   handleWebNavCommitted: function (payload) {
     info("handleWebNavCommitted:", { payload: payload });
-    throw "NotImplementedError";
+    this.emit('change', this.getState());
   },
 
   handleTabClosed: function (payload) {
