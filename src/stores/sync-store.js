@@ -19,7 +19,22 @@ var NodeHelper = {
   isOpenTab: function(node) {
     return !!node.tabId;
   }
-}
+};
+
+var AssignmentHelper = {
+  getAPIData: function (assignment) {
+    var data = {
+      assignment: {
+        title: assignment.title,
+      }
+    };
+
+    if (assignment.description) data.assignment.description = assignment.description;
+    if (assignment.visible === true || assignment.visible === false) data.assignment.visible = assignment.visible;
+
+    return data;
+  }
+};
 
 
 var SyncStore = Fluxxor.createStore({
@@ -28,6 +43,10 @@ var SyncStore = Fluxxor.createStore({
     info('initialize', { options: options })
     var options = options || {};
     this.db = options.db;
+
+    this.pending = {
+      assignments: {}
+    };
 
     info('bindActions', { this: this });
 
@@ -79,11 +98,72 @@ var SyncStore = Fluxxor.createStore({
 
   /**
    * Starts the persistence process for a newly created Assignment
-   * On successful response, it will search for un-persisted root nodes and
-   * invoke the persistence process for them.
+   * On successful response, it will update all nodes which point to the
+   * assignment's localId, and search for un-persisted root nodes and invoke
+   * the persistence process for them.
    */
   handlePersistAssignment: function (payload) {
     info('handlePersistAssignment');
+    this.db.assignments.get(payload.localId).done(function(assignment) {
+      var data = AssignmentHelper.getAPIData(assignment);
+
+      this.pending.assignments[assignment.localId] = true;
+
+      new TrailblazerHTTPStorageAdapter().create("assignments", data, {})
+        .then(
+            function(response) {
+              this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], function(err, tx) {
+                var nodeStore       = tx.objectStore("nodes")
+                  , assignmentStore = tx.objectStore("assignments");
+
+                assignmentStore.get(assignment.localId).onsuccess = function(evt) {
+                  var assignment  = evt.target.result;
+                  assignment.id   = response.id;
+                  assignmentStore.put(assignment);
+                };
+
+                // Get nodes and add the newly created assignmentId to them
+                nodeStore.index('localAssignmentId')
+                  .openCursor(IDBKeyRange.only(assignment.localId)).onsuccess = function(evt) {
+                    var cursor = evt.target.result;
+                    if (cursor) {
+                      var node = cursor.value;
+                      node.assignmentId = response.id;
+                      nodeStore.put(node).onsuccess = function(evt) {
+                        // Persist any root nodes we come across that don't have IDs
+                        if (!node.localParentId && !node.id) {
+                          this.flux.actions.persistNode(node.localId);
+                        }
+                      }.bind(this);
+
+                      cursor.continue();
+                    }
+                  }.bind(this);
+
+                // Fire the success event when the transaction is finished
+                tx.oncomplete = function() {
+                  delete this.pending.assignments[assignment.localId];
+                  this.flux.actions.persistAssignmentSuccess(assignment.localId);
+                }.bind(this);
+
+                tx.onerror = function() {
+                  delete this.pending.assignments[assignment.localId];
+                  // error
+                }.bind(this);
+
+              }.bind(this));
+              //success
+              //update record with new ID
+            }.bind(this),
+            function(response) {
+              delete this.pending.assignments[assignment.localId];
+              // error
+            }.bind(this));
+    }.bind(this),
+    function () {
+      delete this.pending.assignments[assignment.localId];
+      // error
+    });
   },
 
   /**
