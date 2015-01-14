@@ -1,46 +1,47 @@
-var constants = require('./constants');
-var info = require('debug')('actions.js:info');
+var constants       = require('./constants')
+  , info            = require('debug')('actions.js:info')
+  , messageChannel  = require('app/message-channel');
 
 module.exports = {
 
   requestAssignments: function () {
     info('requestAssignments');
-    chrome.runtime.sendMessage({ action: constants.REQUEST_ASSIGNMENTS });
+    messageChannel.send({ action: constants.REQUEST_ASSIGNMENTS });
   },
 
   fetchAssignments: function () {
     info('fetchAssignments');
-    chrome.runtime.sendMessage({ action: constants.FETCH_ASSIGNMENTS });
+    messageChannel.send({ action: constants.FETCH_ASSIGNMENTS });
   },
 
   fetchAssignmentsSuccess: function (assignments) {
     info('fetchAssignmentsSuccess');
-    chrome.runtime.sendMessage({ action: constants.FETCH_ASSIGNMENTS_SUCCESS, payload: { assignments: assignments } });
+    messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_SUCCESS, payload: { assignments: assignments } });
   },
 
   fetchAssignmentsFail: function (error) {
     info('fetchAssignmentsFail');
-    chrome.runtime.sendMessage({ action: constants.FETCH_ASSIGNMENTS_FAIL, payload: { error: error } });
+    messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_FAIL, payload: { error: error } });
   },
 
   updateAssignmentCache: function (assignments) {
     info('updateAssignmentCache');
-    chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE, payload: { assignments: assignments } });
+    messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE, payload: { assignments: assignments } });
   },
 
   updateAssignmentCacheSuccess: function () {
     info('updateAssignmentCacheSuccess');
-    chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS });
+    messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS });
   },
 
   updateAssignmentCacheFail: function (error) {
     info('updateAssignmentCacheFail', {error: error });
-    chrome.runtime.sendMessage({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
+    messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
   updateAssignmentTitle: function (localId, title) {
     info('updateAssignmentTitle', { localId: localId, title: title });
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.UPDATE_ASSIGNMENT_TITLE,
       payload: {
         localId: localId,
@@ -51,12 +52,12 @@ module.exports = {
 
   assignmentsSynchronized: function () {
     info('assignmentsSynchronized');
-    chrome.runtime.sendMessage({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
+    messageChannel.send({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
   },
 
   createAssignmentSuccess: function (assignment) {
     info('createAssignmentSuccess');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.CREATE_ASSIGNMENT_SUCCESS,
       payload: {
         assignment: assignment
@@ -66,7 +67,7 @@ module.exports = {
 
   destroyAssignment: function (localId) {
     info('destroyAssignment');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.DESTROY_ASSIGNMENT,
       payload: {
         localId: localId
@@ -76,7 +77,7 @@ module.exports = {
 
   requestNodes: function (localAssignmentId) {
     info('requestNodes');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.REQUEST_NODES,
       payload: {
         localAssignmentId: localAssignmentId
@@ -86,7 +87,7 @@ module.exports = {
 
   fetchNodes: function (assignmentId) {
     info('fetchNodes');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.FETCH_NODES,
       payload: {
         assignmentId: assignmentId
@@ -96,7 +97,7 @@ module.exports = {
 
   fetchNodesSuccess: function (assignmentId, nodes) {
     info('fetchNodesSuccess');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.FETCH_NODES_SUCCESS,
       payload: {
         nodes: nodes,
@@ -107,12 +108,12 @@ module.exports = {
 
   fetchNodesFail: function (error) {
     info('fetchNodesFail');
-    chrome.runtime.sendMessage({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
+    messageChannel.send({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
   updateNodeCache: function (assignmentId, nodes) {
     info('updateNodeCache');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.UPDATE_NODE_CACHE,
       payload: {
         nodes: nodes,
@@ -123,7 +124,7 @@ module.exports = {
 
   updateNodeCacheSuccess: function (assignment) {
     info('updateNodeCacheSuccess');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.UPDATE_NODE_CACHE_SUCCESS,
       payload: {
         assignment: assignment
@@ -133,12 +134,12 @@ module.exports = {
 
   updateNodeCacheFail: function (error) {
     info('updateNodeCacheFail');
-    chrome.runtime.sendMessage({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
+    messageChannel.send({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
   },
 
   nodesSynchronized: function (assignment) {
     info('nodesSynchronized');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.NODES_SYNCHRONIZED,
       payload: {
         assignment: assignment
@@ -159,7 +160,7 @@ module.exports = {
 
   tabCreated: function(tabId, url, title, parentTabId, tabObj) {
     info('tabCreated');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.TAB_CREATED,
       payload: {
         tabId: tabId,
@@ -173,7 +174,7 @@ module.exports = {
 
   tabFocused: function(tabId) {
     info('tabFocused');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.TAB_FOCUSED,
       payload: {
         tabId: tabId
@@ -184,7 +185,7 @@ module.exports = {
   createdNavigationTarget: function(parentTabId, tabId, url, timestamp) {
     info('createdNavigationTarget');
     chrome.tabs.get(tabId, function(tabObj) {
-      chrome.runtime.sendMessage({
+      messageChannel.send({
         action: constants.CREATED_NAVIGATION_TARGET,
         payload: {
           parentTabId: parentTabId,
@@ -199,7 +200,7 @@ module.exports = {
 
   tabUpdated: function(tabId, url, title, tabObj) {
     info('tabUpdated');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.TAB_UPDATED,
       payload: {
         tabId: tabId,
@@ -213,7 +214,7 @@ module.exports = {
   historyStateUpdated: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
     info('historyStateUpdated');
     chrome.tabs.get(tabId, function(tabObj) {
-      chrome.runtime.sendMessage({
+      messageChannel.send({
         action: constants.HISTORY_STATE_UPDATED,
         payload: {
           tabId: tabId,
@@ -233,7 +234,7 @@ module.exports = {
       if (chrome.runtime.lastError) {
         info('webNavCommitted: No tab with that id - assuming background web request and ignoring');
       } else {
-        chrome.runtime.sendMessage({
+        messageChannel.send({
           action: constants.WEB_NAV_COMMITTED,
           payload: {
             tabId: tabId,
@@ -250,12 +251,12 @@ module.exports = {
 
   tabClosed: function(tabId) {
     info('tabClosed');
-    chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
+    messageChannel.send({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
   },
 
   tabReplaced: function(newTabId, oldTabId) {
     info('tabReplaced');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.TAB_REPLACED,
       payload: {
         oldTabId: oldTabId,
@@ -268,12 +269,12 @@ module.exports = {
   //which then calls the *same* method in background. [Mind Blown]
   selectAssignment: function (assignmentId) {
     info('selectAssignment');
-    chrome.runtime.sendMessage({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
+    messageChannel.send({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
   },
 
   requestTabState: function (tabId) {
     info('requestTabState');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.REQUEST_TAB_STATE,
       payload: {
         tabId: tabId
@@ -283,7 +284,7 @@ module.exports = {
 
   requestTabStateResponse: function (tabId, state) {
     info('requestTabStateResponse');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.REQUEST_TAB_STATE_RESPONSE,
       payload: {
         tabId: tabId,
@@ -294,7 +295,7 @@ module.exports = {
 
   startRecording: function (tabId, tabObj) {
     info('startRecording');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.START_RECORDING,
       payload: {
         tabId: tabId,
@@ -305,7 +306,7 @@ module.exports = {
 
   startRecordingSuccess: function (tabId) {
     info('startRecordingSuccess');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.START_RECORDING_SUCCESS,
       payload: {
         tabId: tabId
@@ -315,7 +316,7 @@ module.exports = {
 
   startRecordingFail: function (tabId) {
     info('startRecordingFail');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.START_RECORDING_FAIL,
       payload: {
         tabId: tabId
@@ -325,7 +326,7 @@ module.exports = {
 
   resumeRecording: function (localId, focus) {
     info('startRecording');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.RESUME_RECORDING,
       payload: {
         localId: localId,
@@ -336,7 +337,7 @@ module.exports = {
 
   resumeRecordingFail: function (localId) {
     info('startRecordingFail');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.RESUME_RECORDING_FAIL,
       payload: {
         localId: localId
@@ -346,7 +347,7 @@ module.exports = {
 
   stopRecording: function (tabId) {
     info('stopRecording');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.STOP_RECORDING,
       payload: {
         tabId: tabId
@@ -356,7 +357,7 @@ module.exports = {
 
   stopRecordingSuccess: function (tabId) {
     info('stopRecordingSuccess');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.STOP_RECORDING_SUCCESS,
       payload: {
         tabId: tabId
@@ -366,7 +367,7 @@ module.exports = {
 
   rankNodeWaypoint: function (localId) {
     info('rankNodeWaypoint');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.RANK_NODE_WAYPOINT,
       payload: {
         localId: localId
@@ -376,7 +377,7 @@ module.exports = {
 
   rankNodeNeutral: function (localId) {
     info('rankNodeNeutral');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.RANK_NODE_NEUTRAL,
       payload: {
         localId: localId
@@ -386,14 +387,14 @@ module.exports = {
 
   signIn: function () {
     info('signIn');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.SIGN_IN
     });
   },
 
   signOut: function () {
     info('signOut');
-    chrome.runtime.sendMessage({
+    messageChannel.send({
       action: constants.SIGN_OUT
     });
   },

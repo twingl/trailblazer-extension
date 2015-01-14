@@ -1,6 +1,7 @@
-var _         = require('lodash')
-  , info      = require('debug')('background/proxy-change.js:info')
-  , constants = require('../constants');
+var _               = require('lodash')
+  , info            = require('debug')('background/proxy-change.js:info')
+  , constants       = require('../constants')
+  , messageChannel  = require('app/message-channel');
 
 /**
  * This listens for 'change' events in the background, and sends them over
@@ -38,7 +39,7 @@ var ProxyChange = function(flux, stores) {
         storeName: storeName,
         payload: payload
       };
-      chrome.runtime.sendMessage(message);
+      messageChannel.send(message);
       info("Dispatched to UI", { message: message });
     }
 
