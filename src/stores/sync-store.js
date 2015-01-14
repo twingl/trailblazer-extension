@@ -32,6 +32,15 @@ var SyncStore = Fluxxor.createStore({
     info('bindActions', { this: this });
 
     this.bindActions(
+      constants.CREATE_ASSIGNMENT_SUCCESS,        this.handleCreateAssignmentSuccess,
+      constants.CREATE_NODE_SUCCESS,              this.handleCreateNodeSuccess,
+
+      constants.PERSIST_ASSIGNMENT,               this.handlePersistAssignment,
+      constants.PERSIST_ASSIGNMENT_SUCCESS,       this.handlePersistAssignmentSuccess,
+
+      constants.PERSIST_NODE,                     this.handlePersistNode,
+      constants.PERSIST_NODE_SUCCESS,             this.handlePersistNodeSuccess,
+
       constants.FETCH_ASSIGNMENTS,                this.handleFetchAssignments,
       constants.FETCH_ASSIGNMENTS_SUCCESS,        this.handleFetchAssignmentsSuccess,
       constants.FETCH_ASSIGNMENTS_FAIL,           this.handleFetchAssignmentsFail,
@@ -46,6 +55,56 @@ var SyncStore = Fluxxor.createStore({
       constants.UPDATE_NODE_CACHE_SUCCESS,        this.handleUpdateNodeCacheSuccess,
       constants.UPDATE_NODE_CACHE_FAIL,           this.handleUpdateNodeCacheFail
     );
+  },
+
+  /**
+   * Invokes the persistence event chain for a newly created Assignment.
+   */
+  handleCreateAssignmentSuccess: function (payload) {
+    info('handleCreateAssignmentSuccess', { payload: payload });
+    this.flux.actions.persistAssignment(payload.assignment.localId);
+  },
+
+  /**
+   * Invokes the persistence event chain for a newly created Node.
+   */
+  handleCreateNodeSuccess: function (payload) {
+    info('handleCreateNodeSuccess', { payload: payload });
+    this.flux.actions.persistNode(payload.node.localId);
+  },
+
+  /**
+   * Starts the persistence process for a newly created Assignment
+   * On successful response, it will search for un-persisted root nodes and
+   * invoke the persistence process for them.
+   */
+  handlePersistAssignment: function (payload) {
+    info('handlePersistAssignment');
+  },
+
+  /**
+   * Invokes the persistence process on any logical next targets (root nodes)
+   */
+  handlePersistAssignmentSuccess: function (payload) {
+    info('handlePersistAssignmentSuccess');
+  },
+
+  /**
+   * Starts the persistence process for a newly created Node.
+   * On successful response, it will search for un-persisted child nodes and
+   * invoke the persistence process for them. If the parent of the recently
+   * created node isn't persisted, it will add itself to a pending list.
+   */
+  handlePersistNode: function (payload) {
+    info('handlePersistNode');
+  },
+
+  /**
+   * Invokes the persistence process on any logical next targets (children,
+   * queued nodes)
+   */
+  handlePersistNodeSuccess: function (payload) {
+    info('handlePersistNodeSuccess');
   },
 
   /**

@@ -28,6 +28,11 @@ module.exports = {
   UPDATE_NODE_CACHE_FAIL:           'UPDATE_NODE_CACHE_FAIL',
   NODES_SYNCHRONIZED:               'NODES_SYNCHRONIZED',
 
+  PERSIST_ASSIGNMENT:               'PERSIST_ASSIGNMENT',
+  PERSIST_ASSIGNMENT_SUCCESS:       'PERSIST_ASSIGNMENT_SUCCESS',
+  PERSIST_NODE:                     'PERSIST_NODE',
+  PERSIST_NODE_SUCCESS:             'PERSIST_NODE_SUCCESS',
+
   /**
    * Actions invoked by Chrome
    */

@@ -401,5 +401,45 @@ module.exports = {
 
   shareAssignment: function (localId) {
     info('shareAssignment', { localId: localId });
+  },
+
+  persistAssignment: function (localId) {
+    info('persistAssignment', { localId: localId });
+    messageChannel.send({
+      action: constants.PERSIST_ASSIGNMENT,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
+  persistAssignmentSuccess: function (localId) {
+    info('persistAssignmentSuccess', { localId: localId });
+    messageChannel.send({
+      action: constants.PERSIST_ASSIGNMENT_SUCCESS,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
+  persistNode: function (localId) {
+    info('persistNode', { localId: localId });
+    messageChannel.send({
+      action: constants.PERSIST_NODE,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
+  persistNodeSuccess: function (localId) {
+    info('persistNodeSuccess', { localId: localId });
+    messageChannel.send({
+      action: constants.PERSIST_NODE_SUCCESS,
+      payload: {
+        localId: localId
+      }
+    });
   }
 }
