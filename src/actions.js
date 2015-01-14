@@ -253,7 +253,7 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
   },
 
-  tabReplaced: function(oldTabId, newTabId) {
+  tabReplaced: function(newTabId, oldTabId) {
     info('tabReplaced');
     chrome.runtime.sendMessage({
       action: constants.TAB_REPLACED,

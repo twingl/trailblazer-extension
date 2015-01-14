@@ -31,7 +31,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener( function(details) {
 });
 
 chrome.tabs.onReplaced.addListener( function(addedTabId, removedTabId) {
-  actions.tabReplaced(removedTabId, addedTabId);
+  actions.tabReplaced(addedTabId, removedTabId);
 });
 
 chrome.webNavigation.onCreatedNavigationTarget.addListener( function(details) {
