@@ -435,7 +435,20 @@ var NodeStore = Fluxxor.createStore({
 
   handleTabReplaced: function (payload) {
     info("handleTabReplaced:", { payload: payload });
-    throw "NotImplementedError";
+    this.waitFor(["TabStore"], function(tabStore) {
+      this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+        var store = tx.objectStore("nodes");
+
+        store.index("tabId").get(payload.oldTabId).onsuccess = function(evt) {
+          var node = evt.target.result;
+
+          if (node && tabStore.getState().tabs[payload.newTabId]) {
+            node.tabId = payload.newTabId;
+            store.put(node);
+          }
+        }
+      });
+    });
   },
 
   handleRankNodeWaypoint: function(payload) {

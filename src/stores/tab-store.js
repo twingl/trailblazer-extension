@@ -83,7 +83,8 @@ var TabStore = Fluxxor.createStore({
 
   handleTabReplaced: function (payload) {
     info("handleTabReplaced:", { payload: payload });
-    throw "NotImplementedError";
+    this.tabs[payload.newTabId] = this.tabs[payload.oldTabId];
+    delete this.tabs[payload.oldTabId];
   },
 
   // Create an assignment and first node in a single transaction, marking the

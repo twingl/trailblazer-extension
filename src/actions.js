@@ -230,17 +230,21 @@ module.exports = {
   webNavCommitted: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
     info('webNavCommitted');
     chrome.tabs.get(tabId, function(tabObj) {
-      chrome.runtime.sendMessage({
-        action: constants.WEB_NAV_COMMITTED,
-        payload: {
-          tabId: tabId,
-          url: url,
-          transitionType: transitionType,
-          transitionQualifiers: transitionQualifiers,
-          timestamp: timestamp,
-          tabObj: tabObj
-        }
-      });
+      if (chrome.runtime.lastError) {
+        info('webNavCommitted: No tab with that id - assuming background web request and ignoring');
+      } else {
+        chrome.runtime.sendMessage({
+          action: constants.WEB_NAV_COMMITTED,
+          payload: {
+            tabId: tabId,
+            url: url,
+            transitionType: transitionType,
+            transitionQualifiers: transitionQualifiers,
+            timestamp: timestamp,
+            tabObj: tabObj
+          }
+        });
+      }
     });
   },
 
@@ -249,14 +253,13 @@ module.exports = {
     chrome.runtime.sendMessage({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
   },
 
-  tabReplaced: function(oldTabId, newTabId, timestamp) {
+  tabReplaced: function(oldTabId, newTabId) {
     info('tabReplaced');
     chrome.runtime.sendMessage({
       action: constants.TAB_REPLACED,
       payload: {
         oldTabId: oldTabId,
-        newTabId: newTabId,
-        timestamp: timestamp
+        newTabId: newTabId
       }
     });
   },
