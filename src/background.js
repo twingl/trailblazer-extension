@@ -97,7 +97,8 @@ require('./background/proxy-change')(flux, [
     'AssignmentStore',
     'TabStore',
     'NodeStore',
-    'AuthenticationStore'
+    'AuthenticationStore',
+    'SyncStore'
 ]);
 
 // Wire up Chrome events to fire the appropriate actions
