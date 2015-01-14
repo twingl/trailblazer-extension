@@ -286,6 +286,9 @@ var SyncStore = Fluxxor.createStore({
         return assignment;
       })
       .then(function(assignment) {
+        //FIXME breaks when the nodes exist locally but the assignment doesn't
+        //exist locally (i.e. new node records can't be created due to the
+        //unique constraint on id)
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
           .then(function(localNodes) {
             changes = {
