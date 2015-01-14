@@ -9,7 +9,11 @@
 	text-rendering:optimizeLegibility;
 }
 
-html, body, .wrap.assignment-show {
+body {
+  overflow: hidden;
+}
+
+html, body, .wrap.assignment-show, .map-view-wrapper {
   width: 100%;
   height: 100%;
 }
