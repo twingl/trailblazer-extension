@@ -70,7 +70,11 @@ var SyncStore = Fluxxor.createStore({
    */
   handleCreateNodeSuccess: function (payload) {
     info('handleCreateNodeSuccess', { payload: payload });
-    this.flux.actions.persistNode(payload.node.localId);
+    this.db.nodes.get(payload.node.localId).then(function(node) {
+      if (node.assignmentId) {
+        this.flux.actions.persistNode(payload.node.localId);
+      }
+    }.bind(this));
   },
 
   /**
