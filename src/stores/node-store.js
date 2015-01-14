@@ -32,7 +32,6 @@ var NodeStore = Fluxxor.createStore({
 
     // Instance of IDBDatabase
     this.db       = options.db;
-    this.loading  = false;
     this.error    = null;
 
     this.bindActions(
@@ -79,7 +78,6 @@ var NodeStore = Fluxxor.createStore({
     return {
       //NOTE: Unsure if this is needed when the all stores can access the main dbObj
       db: this.db,
-      loading: this.loading,
       error: this.error
     };
   },
@@ -168,7 +166,6 @@ var NodeStore = Fluxxor.createStore({
    */
   handleFetchNodesFail: function (payload) {
     info('handleFetchNodesFail');
-    this.loading = false;
   },
 
   /**

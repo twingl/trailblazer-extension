@@ -14,7 +14,6 @@ var AssignmentStore = Fluxxor.createStore({
     info('initialize', { options: options })
     var options             = options || {};
     this.db                 = options.db;
-    this.loading            = false;
 
     info('bindActions', { this: this })
 
@@ -69,7 +68,6 @@ var AssignmentStore = Fluxxor.createStore({
    * not
    */
   handleFetchAssignments: function() {
-    this.loading = true;
 
     // Request assignments from the storage adapter
     info('handleFetchAssignments: Requesting /assignments')
@@ -105,7 +103,6 @@ var AssignmentStore = Fluxxor.createStore({
    * Failure handler for FETCH_ASSIGNMENTS
    */
   handleFetchAssignmentsFail: function (payload) {
-    this.loading = false;
   },
 
   /**
