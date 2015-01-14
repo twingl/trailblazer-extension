@@ -14,21 +14,21 @@ var TabStore = Fluxxor.createStore({
     this.tabs       = options.tabs || {};
 
     this.bindActions(
-      constants.TAB_CREATED, this.handleTabCreated,
-      constants.TAB_FOCUSED, this.handleTabFocused,
-      constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
-      constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
-      constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
-      constants.TAB_UPDATED, this.handleTabUpdated,
-      constants.TAB_CLOSED, this.handleTabClosed,
-      constants.TAB_REPLACED, this.handleTabReplaced,
+      constants.REQUEST_TAB_STATE,          this.handleRequestTabState,
 
-      constants.START_RECORDING, this.handleStartRecording,
-      constants.RESUME_RECORDING, this.handleResumeRecording,
-      constants.STOP_RECORDING, this.handleStopRecording,
-      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
+      constants.TAB_CREATED,                this.handleTabCreated,
+      constants.TAB_FOCUSED,                this.handleTabFocused,
+      constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
+      constants.HISTORY_STATE_UPDATED,      this.handleHistoryStateUpdated,
+      constants.WEB_NAV_COMMITTED,          this.handleWebNavCommitted,
+      constants.TAB_UPDATED,                this.handleTabUpdated,
+      constants.TAB_CLOSED,                 this.handleTabClosed,
+      constants.TAB_REPLACED,               this.handleTabReplaced,
 
-      constants.REQUEST_TAB_STATE, this.handleRequestTabState
+      constants.START_RECORDING,            this.handleStartRecording,
+      constants.RESUME_RECORDING,           this.handleResumeRecording,
+      constants.STOP_RECORDING,             this.handleStopRecording,
+      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment
     );
   },
 

@@ -34,13 +34,9 @@ var AuthenticationStore = Fluxxor.createStore({
     };
   },
 
-  handleSignOut: function () {
-    new ChromeIdentityAdapter().signOut().done(function () {
-      this.authenticated = false;
-      this.emit('change', this.getState());
-    }.bind(this));
-  },
-
+  /**
+   * Call on the ChromeIdentityAdapter to initiate the sign in process.
+   */
   handleSignIn: function () {
     new ChromeIdentityAdapter().signIn().done(
         function () {
@@ -51,6 +47,16 @@ var AuthenticationStore = Fluxxor.createStore({
           this.authenticated = false;
           this.emit('change', this.getState());
         }.bind(this));
+  },
+
+  /**
+   * Call on the ChromeIdentityAdapter to invalidate the current session.
+   */
+  handleSignOut: function () {
+    new ChromeIdentityAdapter().signOut().done(function () {
+      this.authenticated = false;
+      this.emit('change', this.getState());
+    }.bind(this));
   }
 
 });

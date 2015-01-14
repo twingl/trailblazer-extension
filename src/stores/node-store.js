@@ -17,20 +17,22 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
-      constants.REQUEST_NODES, this.handleRequestNodes,
-      constants.NODES_SYNCHRONIZED, this.handleNodesSynchronized,
+      constants.REQUEST_NODES,              this.handleRequestNodes,
 
-      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
+      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
 
-      constants.TAB_CREATED, this.handleTabCreated,
-      constants.CREATED_NAVIGATION_TARGET, this.handleCreatedNavigationTarget,
-      constants.TAB_UPDATED, this.handleTabUpdated,
-      constants.HISTORY_STATE_UPDATED, this.handleHistoryStateUpdated,
-      constants.WEB_NAV_COMMITTED, this.handleWebNavCommitted,
-      constants.TAB_CLOSED, this.handleTabClosed,
-      constants.TAB_REPLACED, this.handleTabReplaced,
-      constants.RANK_NODE_WAYPOINT, this.handleRankNodeWaypoint,
-      constants.RANK_NODE_NEUTRAL, this.handleRankNodeNeutral
+      constants.TAB_CREATED,                this.handleTabCreated,
+      constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
+      constants.TAB_UPDATED,                this.handleTabUpdated,
+      constants.HISTORY_STATE_UPDATED,      this.handleHistoryStateUpdated,
+      constants.WEB_NAV_COMMITTED,          this.handleWebNavCommitted,
+      constants.TAB_CLOSED,                 this.handleTabClosed,
+      constants.TAB_REPLACED,               this.handleTabReplaced,
+
+      constants.RANK_NODE_WAYPOINT,         this.handleRankNodeWaypoint,
+      constants.RANK_NODE_NEUTRAL,          this.handleRankNodeNeutral
+
+      constants.NODES_SYNCHRONIZED,         this.handleNodesSynchronized,
     );
 
     // Assume we're booting, remove all tabId references from the DB
@@ -58,6 +60,30 @@ var NodeStore = Fluxxor.createStore({
     };
   },
 
+  /**
+   * Emit a change event containing data for the specified assignment
+   */
+  handleRequestNodes: function (payload) {
+    this.db.assignments.get(payload.localAssignmentId)
+      .then(function(assignment) {
+        this.db.nodes.index('localAssignmentId').get(assignment.localId)
+          .then(function(nodes) {
+            this.emit('change', {
+              assignment: assignment,
+              nodes: nodes
+            });
+          }.bind(this));
+
+        if (assignment.id) {
+          // We've got a remote ID, so let's get the updated nodes
+          this.flux.actions.fetchNodes(assignment.id);
+        }
+      }.bind(this));
+  },
+
+  /**
+   * Remove all nodes associated with the destroyed assignment
+   */
   handleDestroyAssignment: function (payload) {
     this.waitFor(["AssignmentStore", "TabStore"], function() {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -86,33 +112,9 @@ var NodeStore = Fluxxor.createStore({
     }.bind(this));
   },
 
-
-  handleRequestNodes: function (payload) {
-    this.db.assignments.get(payload.localAssignmentId)
-      .then(function(assignment) {
-        this.db.nodes.index('localAssignmentId').get(assignment.localId)
-          .then(function(nodes) {
-            this.emit('change', {
-              assignment: assignment,
-              nodes: nodes
-            });
-          }.bind(this));
-
-        if (assignment.id) {
-          // We've got a remote ID, so let's get the updated nodes
-          this.flux.actions.fetchNodes(assignment.id);
-        }
-      }.bind(this));
-  },
-
-  handleNodesSynchronized: function (payload) {
-    this.db.nodes.index('localAssignmentId')
-      .get(payload.assignment.localId)
-      .then(function(nodes) {
-        this.emit('change', { assignment: payload.assignment, nodes: nodes });
-      }.bind(this));
-  },
-
+  /**
+   * Create a record for a newly created tab
+   */
   handleTabCreated: function (payload) {
     // Wait until we know if the tab is in a recording state
     this.waitFor(["TabStore"], function(tabStore) {
@@ -147,6 +149,9 @@ var NodeStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
+  /**
+   * Handle a tab's state update by mutating or creating nodes
+   */
   handleTabUpdated: function (payload) {
     info("handleTabUpdated:", { payload: payload });
 
@@ -208,7 +213,6 @@ var NodeStore = Fluxxor.createStore({
         } //if
       }; //tx
     }.bind(this));
-
   },
 
   handleHistoryStateUpdated: function (payload) {
@@ -221,6 +225,9 @@ var NodeStore = Fluxxor.createStore({
     throw "NotImplementedError";
   },
 
+  /**
+   * Remove the tabId from an existing node
+   */
   handleTabClosed: function (payload) {
     info("handleTabClosed:", { payload: payload });
 
@@ -245,6 +252,10 @@ var NodeStore = Fluxxor.createStore({
       }.bind(this)); //then
   },
 
+  /**
+   * Replaces an existing node's tabId with a new one when chrome replaces a
+   * tab
+   */
   handleTabReplaced: function (payload) {
     info("handleTabReplaced:", { payload: payload });
     this.waitFor(["TabStore"], function(tabStore) {
@@ -263,6 +274,9 @@ var NodeStore = Fluxxor.createStore({
     });
   },
 
+  /**
+   * Update a node's rank
+   */
   handleRankNodeWaypoint: function(payload) {
     info("handleRankNodeWaypoint:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -281,6 +295,9 @@ var NodeStore = Fluxxor.createStore({
     }.bind(this));
   },
 
+  /**
+   * Update a node's rank
+   */
   handleRankNodeNeutral: function(payload) {
     info("handleRankNodeNeutral:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -297,6 +314,18 @@ var NodeStore = Fluxxor.createStore({
         }
       }.bind(this);
     }.bind(this));
+  },
+
+  /**
+   * Emit a change event containing the data associated with the specified
+   * assignment
+   */
+  handleNodesSynchronized: function (payload) {
+    this.db.nodes.index('localAssignmentId')
+      .get(payload.assignment.localId)
+      .then(function(nodes) {
+        this.emit('change', { assignment: payload.assignment, nodes: nodes });
+      }.bind(this));
   }
 
 });

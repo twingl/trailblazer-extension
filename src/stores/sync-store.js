@@ -32,19 +32,19 @@ var SyncStore = Fluxxor.createStore({
     info('bindActions', { this: this });
 
     this.bindActions(
-      constants.FETCH_ASSIGNMENTS, this.handleFetchAssignments,
-      constants.FETCH_ASSIGNMENTS_SUCCESS, this.handleFetchAssignmentsSuccess,
-      constants.FETCH_ASSIGNMENTS_FAIL, this.handleFetchAssignmentsFail,
-      constants.UPDATE_ASSIGNMENT_CACHE, this.handleUpdateAssignmentCache,
-      constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS, this.handleUpdateAssignmentCacheSuccess,
-      constants.UPDATE_ASSIGNMENT_CACHE_FAIL, this.handleUpdateAssignmentCacheFail,
+      constants.FETCH_ASSIGNMENTS,                this.handleFetchAssignments,
+      constants.FETCH_ASSIGNMENTS_SUCCESS,        this.handleFetchAssignmentsSuccess,
+      constants.FETCH_ASSIGNMENTS_FAIL,           this.handleFetchAssignmentsFail,
+      constants.UPDATE_ASSIGNMENT_CACHE,          this.handleUpdateAssignmentCache,
+      constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS,  this.handleUpdateAssignmentCacheSuccess,
+      constants.UPDATE_ASSIGNMENT_CACHE_FAIL,     this.handleUpdateAssignmentCacheFail,
 
-      constants.FETCH_NODES, this.handleFetchNodes,
-      constants.FETCH_NODES_SUCCESS, this.handleFetchNodesSuccess,
-      constants.FETCH_NODES_FAIL, this.handleFetchNodesFail,
-      constants.UPDATE_NODE_CACHE, this.handleUpdateNodeCache,
-      constants.UPDATE_NODE_CACHE_SUCCESS, this.handleUpdateNodeCacheSuccess,
-      constants.UPDATE_NODE_CACHE_FAIL, this.handleUpdateNodeCacheFail
+      constants.FETCH_NODES,                      this.handleFetchNodes,
+      constants.FETCH_NODES_SUCCESS,              this.handleFetchNodesSuccess,
+      constants.FETCH_NODES_FAIL,                 this.handleFetchNodesFail,
+      constants.UPDATE_NODE_CACHE,                this.handleUpdateNodeCache,
+      constants.UPDATE_NODE_CACHE_SUCCESS,        this.handleUpdateNodeCacheSuccess,
+      constants.UPDATE_NODE_CACHE_FAIL,           this.handleUpdateNodeCacheFail
     );
   },
 
@@ -201,6 +201,10 @@ var SyncStore = Fluxxor.createStore({
     error('updateAssignmentCacheFail', { error: payload.error });
   },
 
+  /**
+   * Initiate the sync process for nodes associated with the specified
+   * assignment by fetching the data from the API
+   */
   handleFetchNodes: function (payload) {
     var assignmentId = payload.assignmentId;
 
@@ -357,10 +361,16 @@ var SyncStore = Fluxxor.createStore({
       }.bind(this)); //assignments.index('id').get
   },
 
+  /**
+   * Log an error when the cache update process fails
+   */
   handleUpdateNodeCacheFail: function (err) {
     error('updateNodeCache Failed', { error: err })
   },
 
+  /**
+   * Emit an event signifying that the cache has been updated successfully
+   */
   handleUpdateNodeCacheSuccess: function (payload) {
     this.flux.actions.nodesSynchronized(payload.assignment);
   },

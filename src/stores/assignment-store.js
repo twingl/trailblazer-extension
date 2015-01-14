@@ -15,40 +15,33 @@ var AssignmentStore = Fluxxor.createStore({
     info('bindActions', { this: this })
 
     this.bindActions(
-      constants.CREATE_ASSIGNMENT_SUCCESS, this.handleCreateAssignmentSuccess,
-      constants.DESTROY_ASSIGNMENT, this.handleDestroyAssignment,
-      constants.REQUEST_ASSIGNMENTS, this.handleRequestAssignments,
-      constants.UPDATE_ASSIGNMENT_TITLE, this.handleUpdateAssignmentTitle,
-      constants.ASSIGNMENTS_SYNCHRONIZED, this.handleAssignmentsSynchronized
+      constants.REQUEST_ASSIGNMENTS,        this.handleRequestAssignments,
+
+      constants.CREATE_ASSIGNMENT_SUCCESS,  this.handleCreateAssignmentSuccess,
+      constants.UPDATE_ASSIGNMENT_TITLE,    this.handleUpdateAssignmentTitle,
+      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
+
+      constants.ASSIGNMENTS_SYNCHRONIZED,   this.handleAssignmentsSynchronized
     );
   },
 
-  handleCreateAssignmentSuccess: function () {
-    this.db.assignments.all().then( function (assignments) {
-      this.emit('change', { assignments: assignments });
-    }.bind(this));
-  },
-
-  handleDestroyAssignment: function (payload) {
-    this.db.assignments.get(payload.localId).then(function(assignment) {
-
-      // Fire API deletion
-      this.db.assignments.del(payload.localId).then(function() {
-
-        this.db.assignments.all().then(function(assignments) {
-          this.emit('change', { assignments: assignments });
-        }.bind(this));
-
-      }.bind(this));
-
-    }.bind(this));
-  },
-
+  /**
+   * Emit all assignment data
+   */
   handleRequestAssignments: function () {
     // Get the assignments from the DB, fire a change, and fire a fetch assignments
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
       this.flux.actions.fetchAssignments();
+    }.bind(this));
+  },
+
+  /**
+   * Emit all assignment data
+   */
+  handleCreateAssignmentSuccess: function () {
+    this.db.assignments.all().then( function (assignments) {
+      this.emit('change', { assignments: assignments });
     }.bind(this));
   },
 
@@ -68,6 +61,24 @@ var AssignmentStore = Fluxxor.createStore({
           this.emit('change', { assignment: assignment });
         }.bind(this);
       }.bind(this);
+    }.bind(this));
+  },
+
+  /**
+   * Removes an assignment from the local DB
+   */
+  handleDestroyAssignment: function (payload) {
+    this.db.assignments.get(payload.localId).then(function(assignment) {
+
+      // Fire API deletion
+      this.db.assignments.del(payload.localId).then(function() {
+
+        this.db.assignments.all().then(function(assignments) {
+          this.emit('change', { assignments: assignments });
+        }.bind(this));
+
+      }.bind(this));
+
     }.bind(this));
   },
 
