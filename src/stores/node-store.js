@@ -30,9 +30,9 @@ var NodeStore = Fluxxor.createStore({
       constants.TAB_REPLACED,               this.handleTabReplaced,
 
       constants.RANK_NODE_WAYPOINT,         this.handleRankNodeWaypoint,
-      constants.RANK_NODE_NEUTRAL,          this.handleRankNodeNeutral
+      constants.RANK_NODE_NEUTRAL,          this.handleRankNodeNeutral,
 
-      constants.NODES_SYNCHRONIZED,         this.handleNodesSynchronized,
+      constants.NODES_SYNCHRONIZED,         this.handleNodesSynchronized
     );
 
     // Assume we're booting, remove all tabId references from the DB
