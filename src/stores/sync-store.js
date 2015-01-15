@@ -3,38 +3,11 @@ var _                             = require('lodash')
   , constants                     = require('../constants')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
   , camelize                      = require('camelize')
+  , NodeHelper                    = require('../helpers/node-helper')
+  , AssignmentHelper              = require('../helpers/assignment-helper')
   , info                          = require('debug')('stores/sync-store.js:info')
   , warn                          = require('debug')('stores/sync-store.js:warn')
   , error                         = require('debug')('stores/sync-store.js:error');
-
-var NodeHelper = {
-  isChild: function(node, candidateChild) {
-    return (candidateChild.localParentId && candidateChild.localParentId === node.localId);
-  },
-
-  isParent: function(node, canidateParent) {
-    return (canidateParent.localId && canidateParent.localId === node.localParentId);
-  },
-
-  isOpenTab: function(node) {
-    return !!node.tabId;
-  }
-};
-
-var AssignmentHelper = {
-  getAPIData: function (assignment) {
-    var data = {
-      assignment: {
-        title: assignment.title,
-      }
-    };
-
-    if (assignment.description) data.assignment.description = assignment.description;
-    if (assignment.visible === true || assignment.visible === false) data.assignment.visible = assignment.visible;
-
-    return data;
-  }
-};
 
 
 var SyncStore = Fluxxor.createStore({
