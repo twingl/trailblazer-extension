@@ -1,11 +1,11 @@
-var _         = require('lodash')
-  , info      = require('debug')('stores/node-store.js:info')
-  , error     = require('debug')('stores/node-store.js:error')
-  , constants = require('../constants')
-  , Fluxxor   = require('fluxxor')
-  , debug     = require('debug')
-  , info      = debug('stores/node-store.js:info')
-  , warn      = debug('stores/node-store.js:warn');
+var _           = require('lodash')
+  , constants   = require('../constants')
+  , Fluxxor     = require('fluxxor')
+  , NodeHelper  = require('../helpers/node-helper')
+  , debug       = require('debug')
+  , info        = debug('stores/node-store.js:info')
+  , warn        = debug('stores/node-store.js:warn')
+  , error       = debug('stores/node-store.js:error');
 
 var NodeStore = Fluxxor.createStore({
 
