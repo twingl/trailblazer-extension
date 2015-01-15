@@ -81,57 +81,55 @@ var SyncStore = Fluxxor.createStore({
     this.db.assignments.get(payload.localId).done(function(assignment) {
       var data = AssignmentHelper.getAPIData(assignment);
 
-      this.pending.assignments[assignment.localId] = true;
+      if (!this.pending.assignments[assignment.localId]) {
+        this.pending.assignments[assignment.localId] = true;
 
-      new TrailblazerHTTPStorageAdapter().create("assignments", data, {})
-        .then(
-            function(response) {
-              this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], function(err, tx) {
-                var nodeStore       = tx.objectStore("nodes")
-                  , assignmentStore = tx.objectStore("assignments");
+        new TrailblazerHTTPStorageAdapter().create("assignments", data, {})
+          .then(
+              function(response) {
+                this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], function(err, tx) {
+                  var nodeStore       = tx.objectStore("nodes")
+                    , assignmentStore = tx.objectStore("assignments");
 
-                assignmentStore.get(assignment.localId).onsuccess = function(evt) {
-                  var assignment  = evt.target.result;
-                  assignment.id   = response.id;
-                  assignmentStore.put(assignment);
-                };
+                  assignmentStore.get(assignment.localId).onsuccess = function(evt) {
+                    var assignment  = evt.target.result;
+                    assignment.id   = response.id;
+                    assignmentStore.put(assignment);
+                  };
 
-                // Get nodes and add the newly created assignmentId to them
-                nodeStore.index('localAssignmentId')
-                  .openCursor(IDBKeyRange.only(assignment.localId)).onsuccess = function(evt) {
-                    var cursor = evt.target.result;
-                    if (cursor) {
-                      var node = cursor.value;
-                      node.assignmentId = response.id;
-                      nodeStore.put(node);
+                  // Get nodes and add the newly created assignmentId to them
+                  nodeStore.index('localAssignmentId')
+                    .openCursor(IDBKeyRange.only(assignment.localId)).onsuccess = function(evt) {
+                      var cursor = evt.target.result;
+                      if (cursor) {
+                        var node = cursor.value;
+                        node.assignmentId = response.id;
+                        nodeStore.put(node);
 
-                      cursor.continue();
-                    }
+                        cursor.continue();
+                      }
+                    }.bind(this);
+
+                  // Fire the success event when the transaction is finished
+                  tx.oncomplete = function() {
+                    delete this.pending.assignments[assignment.localId];
+                    this.flux.actions.persistAssignmentSuccess(assignment.localId);
                   }.bind(this);
 
-                // Fire the success event when the transaction is finished
-                tx.oncomplete = function() {
-                  delete this.pending.assignments[assignment.localId];
-                  this.flux.actions.persistAssignmentSuccess(assignment.localId);
-                }.bind(this);
+                  tx.onerror = function() {
+                    delete this.pending.assignments[assignment.localId];
+                    // error
+                  }.bind(this);
 
-                tx.onerror = function() {
-                  delete this.pending.assignments[assignment.localId];
-                  // error
-                }.bind(this);
-
+                }.bind(this));
+              }.bind(this),
+              function(response) {
+                delete this.pending.assignments[assignment.localId];
               }.bind(this));
-              //success
-              //update record with new ID
-            }.bind(this),
-            function(response) {
-              delete this.pending.assignments[assignment.localId];
-              // error
-            }.bind(this));
+      }
     }.bind(this),
     function () {
       delete this.pending.assignments[assignment.localId];
-      // error
     });
   },
 
@@ -161,51 +159,52 @@ var SyncStore = Fluxxor.createStore({
     var persistNode = function(payload, node) {
       var data = NodeHelper.getAPIData(node);
 
-      this.pending.nodes[payload.localId] = true;
+      if (!this.pending.nodes[payload.localId]) {
+        this.pending.nodes[payload.localId] = true;
 
-      new TrailblazerHTTPStorageAdapter().create("nodes", data, {
-        parentResource: {
-          name: "assignments",
-          id: node.assignmentId
-        }
-      }).then(
-        function(response) {
-          delete this.pending.nodes[payload.localId];
-          //success
-          this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
-            var store = tx.objectStore("nodes");
+        new TrailblazerHTTPStorageAdapter().create("nodes", data, {
+          parentResource: {
+            name: "assignments",
+            id: node.assignmentId
+          }
+        }).then(
+          function(response) {
+            delete this.pending.nodes[payload.localId];
+            this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+              var store = tx.objectStore("nodes");
 
-            var toPersist = [];
+              var toPersist = [];
 
-            store.get(payload.localId).onsuccess = function(evt) {
-              var node = evt.target.result;
+              store.get(payload.localId).onsuccess = function(evt) {
+                var node = evt.target.result;
 
-              node.id = response.id;
-              store.put(node);
-            }.bind(this);
-
-            store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
-              var cursor = evt.target.result;
-
-              if (cursor) {
-                var node = cursor.value;
-
-                node.parentId = response.id;
+                node.id = response.id;
                 store.put(node);
+              }.bind(this);
 
-                cursor.continue();
-              }
-            }.bind(this);
+              store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+                var cursor = evt.target.result;
 
-            tx.oncomplete = function() {
-              this.flux.actions.persistNodeSuccess(node.localId);
-            }.bind(this)
+                if (cursor) {
+                  var node = cursor.value;
 
+                  node.parentId = response.id;
+                  store.put(node);
+
+                  cursor.continue();
+                }
+              }.bind(this);
+
+              tx.oncomplete = function() {
+                this.flux.actions.persistNodeSuccess(node.localId);
+              }.bind(this)
+
+            }.bind(this));
+          }.bind(this),
+          function(response) {
+            delete this.pending.nodes[payload.localId];
           }.bind(this));
-        }.bind(this),
-        function(response) {
-          delete this.pending.nodes[payload.localId];
-        }.bind(this));
+      }
     }.bind(this);
 
     this.db.nodes.get(payload.localId).then(function(node) {
@@ -220,8 +219,7 @@ var SyncStore = Fluxxor.createStore({
   },
 
   /**
-   * Invokes the persistence process on any logical next targets (children,
-   * queued nodes)
+   * Invokes the persistence process on any logical next targets (children)
    */
   handlePersistNodeSuccess: function (payload) {
     info('handlePersistNodeSuccess');
