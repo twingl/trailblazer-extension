@@ -18,7 +18,8 @@ var SyncStore = Fluxxor.createStore({
     this.db = options.db;
 
     this.pending = {
-      assignments: {}
+      assignments: {},
+      nodes: {}
     };
 
     info('bindActions', { this: this });
@@ -102,12 +103,7 @@ var SyncStore = Fluxxor.createStore({
                     if (cursor) {
                       var node = cursor.value;
                       node.assignmentId = response.id;
-                      nodeStore.put(node).onsuccess = function(evt) {
-                        // Persist any root nodes we come across that don't have IDs
-                        if (!node.localParentId && !node.id) {
-                          this.flux.actions.persistNode(node.localId);
-                        }
-                      }.bind(this);
+                      nodeStore.put(node);
 
                       cursor.continue();
                     }
@@ -144,6 +140,13 @@ var SyncStore = Fluxxor.createStore({
    */
   handlePersistAssignmentSuccess: function (payload) {
     info('handlePersistAssignmentSuccess');
+
+    this.db.nodes.index('localAssignmentId').get(payload.localId)
+      .then(function(nodes) {
+        _.each(nodes, function(node) {
+          this.flux.actions.persistNode(node.localId);
+        }.bind(this));
+      }.bind(this));
   },
 
   /**
@@ -154,6 +157,66 @@ var SyncStore = Fluxxor.createStore({
    */
   handlePersistNode: function (payload) {
     info('handlePersistNode');
+
+    var persistNode = function(payload, node) {
+      var data = NodeHelper.getAPIData(node);
+
+      this.pending.nodes[payload.localId] = true;
+
+      new TrailblazerHTTPStorageAdapter().create("nodes", data, {
+        parentResource: {
+          name: "assignments",
+          id: node.assignmentId
+        }
+      }).then(
+        function(response) {
+          delete this.pending.nodes[payload.localId];
+          //success
+          this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+            var store = tx.objectStore("nodes");
+
+            var toPersist = [];
+
+            store.get(payload.localId).onsuccess = function(evt) {
+              var node = evt.target.result;
+
+              node.id = response.id;
+              store.put(node);
+            }.bind(this);
+
+            store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+              var cursor = evt.target.result;
+
+              if (cursor) {
+                var node = cursor.value;
+
+                node.parentId = response.id;
+                store.put(node);
+
+                cursor.continue();
+              }
+            }.bind(this);
+
+            tx.oncomplete = function() {
+              this.flux.actions.persistNodeSuccess(node.localId);
+            }.bind(this)
+
+          }.bind(this));
+        }.bind(this),
+        function(response) {
+          delete this.pending.nodes[payload.localId];
+        }.bind(this));
+    }.bind(this);
+
+    this.db.nodes.get(payload.localId).then(function(node) {
+      if (!node.localParentId && !node.id) {
+        // Persist root nodes that don't have IDs
+        persistNode(payload, node);
+      } else if (node.parentId && !node.id) {
+        // Persist nodes that have a parent persisted and don't have IDs
+        persistNode(payload, node);
+      }
+    }.bind(this));
   },
 
   /**
@@ -162,6 +225,11 @@ var SyncStore = Fluxxor.createStore({
    */
   handlePersistNodeSuccess: function (payload) {
     info('handlePersistNodeSuccess');
+    this.db.nodes.index('localParentId').get(payload.localId).then(function(nodes) {
+      _.each(nodes, function(node) {
+        this.flux.actions.persistNode(node.localId);
+      }.bind(this));
+    }.bind(this));
   },
 
   /**
