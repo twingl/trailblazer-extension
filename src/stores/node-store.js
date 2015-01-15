@@ -124,24 +124,34 @@ var NodeStore = Fluxxor.createStore({
       // If the parent tab is recording, then get it from the DB and create a
       // new child node in the same assignment/localAssignment
       if (parentTabId && tabStore.tabs[parentTabId] === true) {
-        this.db.nodes.index('tabId').get(payload.tabObj.openerTabId)
-          .then(function (nodes) {
-            var parentNode = _.last(nodes);
+        this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+          var store = tx.objectStore("nodes");
 
-            var node = {
-              localAssignmentId:  parentNode.localAssignmentId,
-              assignmentId:       parentNode.assignmentId,
-              localParentId:      parentNode.localId,
-              parentId:           parentNode.id,
-              tabId:              payload.tabId,
-              url:                payload.tabObj.url,
-              title:              payload.tabObj.title
-            };
+          store.index("tabId").openCursor(IDBKeyRange.only(payload.tabObj.openerTabId)).onsuccess = function(evt) {
+            var cursor = evt.target.result;
 
-            this.db.nodes.put(node);
-          }.bind(this));
+            if (cursor) {
+              var parentNode = cursor.value;
+
+              var node = {
+                localAssignmentId:  parentNode.localAssignmentId,
+                assignmentId:       parentNode.assignmentId,
+                localParentId:      parentNode.localId,
+                parentId:           parentNode.id,
+                tabId:              payload.tabId,
+                url:                payload.tabObj.url,
+                title:              payload.tabObj.title
+              };
+
+              store.put(node).onsuccess = function (evt) {
+                this.flux.actions.createNodeSuccess(evt.target.result);
+              }.bind(this);
+            }
+          }.bind(this);
+
+        }.bind(this));
       }
-    });
+    }.bind(this));
   },
 
   handleCreatedNavigationTarget: function (payload) {
@@ -204,14 +214,17 @@ var NodeStore = Fluxxor.createStore({
                 url:                payload.url,
                 title:              payload.title
               };
-              nodeStore.put(node);
+
+              nodeStore.put(node).onsuccess = function(evt) {
+                this.flux.actions.createNodeSuccess(evt.target.result);
+              }.bind(this);
 
               delete currentNode.tabId;
               nodeStore.put(currentNode);
             }
-          }; //cursor
+          }.bind(this); //cursor
         } //if
-      }; //tx
+      }.bind(this); //tx
     }.bind(this));
   },
 
