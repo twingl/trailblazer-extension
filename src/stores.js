@@ -22,11 +22,16 @@ var schema = treo.schema()
     .addIndex('tabId',             'tabId',             { unique: false })
     .addIndex('assignmentId',      'assignmentId',      { unique: false })
     .addIndex('localAssignmentId', 'localAssignmentId', { unique: false })
-    .addIndex('url',               'url', { unique: false })
+    .addIndex('url',               'url',               { unique: false })
 
     // Assignment storage
     .addStore('assignments', { keyPath: 'localId', autoIncrement: true })
-    .addIndex('id', 'id', { unique: true });
+    .addIndex('id',                'id',                { unique: true })
+  .version(2)
+    // Node parent ID indices
+    .getStore('nodes')
+    .addIndex('parentId',          'parentId',          { unique: false })
+    .addIndex('localParentId',     'localParentId',     { unique: false })
 
 //initialize db and provide a wrapper object around the treo api
 var db = treo('trailblazer-wash', schema)
