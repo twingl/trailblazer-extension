@@ -305,7 +305,6 @@ var SyncStore = Fluxxor.createStore({
     info("handleUpdateAssignmentCache: Updating cache", { payload: payload });
 
     var assignments = payload.assignments;
-    info("Assignments", assignments);
 
     //TODO this sync process should be in one transaction
     this.db.assignments.all()
@@ -423,7 +422,7 @@ var SyncStore = Fluxxor.createStore({
    * Failure handler for FETCH_NODES
    */
   handleFetchNodesFail: function (payload) {
-    info('handleFetchNodesFail');
+    warn('handleFetchNodesFail');
   },
 
   /**
