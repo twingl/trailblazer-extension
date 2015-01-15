@@ -148,12 +148,12 @@ module.exports = {
   },
 
 
-  createNodeSuccess: function (node) {
+  createNodeSuccess: function (localId) {
     info('createNodeSuccess');
     chrome.runtime.sendMessage({
       action: constants.CREATE_NODE_SUCCESS,
       payload: {
-        node: node
+        localId: localId
       }
     });
   },
