@@ -2,7 +2,7 @@ var AssignmentHelper = {
   getAPIData: function (assignment) {
     var data = {
       assignment: {
-        title: assignment.title,
+        title: assignment.title
       }
     };
 
