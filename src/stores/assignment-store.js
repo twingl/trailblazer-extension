@@ -82,6 +82,16 @@ var AssignmentStore = Fluxxor.createStore({
       // Fire API deletion
       this.db.assignments.del(payload.localId).then(function() {
 
+        if (payload.localId) {
+          // Only if we have an ID (null index will return all records)
+          this.db.nodes.index('localAssignmentId').get(payload.localId)
+            .then(function(nodes) {
+              _.each(nodes, function(node) {
+                this.db.nodes.del(node.localId);
+              }.bind(this));
+            }.bind(this));
+        }
+
         this.db.assignments.all().then(function(assignments) {
           this.emit('change', { assignments: assignments });
         }.bind(this));
