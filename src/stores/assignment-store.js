@@ -73,6 +73,12 @@ var AssignmentStore = Fluxxor.createStore({
   handleDestroyAssignment: function (payload) {
     this.db.assignments.get(payload.localId).then(function(assignment) {
 
+      //TODO perform checks if it's pending creation on the server
+      if (assignment.id) {
+        // Delete it on the API
+        new TrailblazerHTTPStorageAdapter().destroy("assignments", assignment.id);
+      }
+
       // Fire API deletion
       this.db.assignments.del(payload.localId).then(function() {
 
