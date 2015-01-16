@@ -395,6 +395,26 @@ module.exports = {
     });
   },
 
+  makeAssignmentVisible: function (localId) {
+    info('makeAssignmentVisible');
+    messageChannel.send({
+      action: constants.MAKE_ASSIGNMENT_VISIBLE,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
+  makeAssignmentHidden: function (localId) {
+    info('makeAssignmentHidden');
+    messageChannel.send({
+      action: constants.MAKE_ASSIGNMENT_HIDDEN,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
   signIn: function () {
     info('signIn');
     messageChannel.send({

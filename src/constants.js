@@ -65,6 +65,9 @@ module.exports = {
   RANK_NODE_WAYPOINT:               'RANK_NODE_WAYPOINT',
   RANK_NODE_NEUTRAL:                'RANK_NODE_NEUTRAL',
 
+  MAKE_ASSIGNMENT_VISIBLE:          'MAKE_ASSIGNMENT_VISIBLE',
+  MAKE_ASSIGNMENT_HIDDEN:           'MAKE_ASSIGNMENT_HIDDEN',
+
   SIGN_IN:                          'SIGN_IN',
   SIGN_OUT:                         'SIGN_OUT'
 }
