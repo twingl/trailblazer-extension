@@ -429,10 +429,6 @@ module.exports = {
     });
   },
 
-  shareAssignment: function (localId) {
-    info('shareAssignment', { localId: localId });
-  },
-
   persistAssignment: function (localId) {
     info('persistAssignment', { localId: localId });
     messageChannel.send({
