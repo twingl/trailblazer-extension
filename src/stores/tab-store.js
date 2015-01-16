@@ -92,22 +92,11 @@ var TabStore = Fluxxor.createStore({
   handleStartRecording: function (payload) {
     info("handleStartRecording:", { payload: payload });
 
-    var success = function (evt) {
-      info("handleStartRecording: success");
-      this.tabs[payload.tabId] = true;
-      this.flux.actions.startRecordingSuccess(payload.tabId);
-      this.emit('change', this.getState());
-    }.bind(this);
-
-    var error = function (evt) {
-      info("handleStartRecording: error");
-      this.tabs[payload.tabId] = false;
-      this.flux.actions.startRecordingFail(payload.tabId);
-    }.bind(this);
 
     this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], function(err, tx) {
-      tx.oncomplete = success;
-      tx.onerror    = error;
+
+      // Create a queue of callbacks to execute when the transaction completes
+      var successCallbacks = [];
 
       var assignmentStore = tx.objectStore("assignments")
         , nodeStore       = tx.objectStore("nodes");
@@ -121,8 +110,10 @@ var TabStore = Fluxxor.createStore({
         // Update the object with the new local ID
         assignment.localId = evt.target.result;
 
-        // Notify listeners that an assignment was created locally
-        this.flux.actions.createAssignmentSuccess(assignment);
+        successCallbacks.push( function() {
+          // Notify listeners that an assignment was created locally
+          this.flux.actions.createAssignmentSuccess(assignment);
+        }.bind(this));
 
         var node = {
           localAssignmentId: evt.target.result,
@@ -136,9 +127,25 @@ var TabStore = Fluxxor.createStore({
           node.localId = evt.target.result;
 
           // Notify listeners that a node was created locally
-          this.flux.actions.createNodeSuccess(node);
+          successCallbacks.push( function() {
+            this.flux.actions.createNodeSuccess(node);
+          }.bind(this));
         }.bind(this); //nodeStore.add
       }.bind(this); //assignmentStore.add
+
+      tx.oncomplete = function (evt) {
+        info("handleStartRecording: success");
+        this.tabs[payload.tabId] = true;
+        this.flux.actions.startRecordingSuccess(payload.tabId);
+        _.each(successCallbacks, function(cb) { cb(); });
+        this.emit('change', this.getState());
+      }.bind(this);
+
+      tx.onerror = function (evt) {
+        info("handleStartRecording: error");
+        this.tabs[payload.tabId] = false;
+        this.flux.actions.startRecordingFail(payload.tabId);
+      }.bind(this);
     }.bind(this)); //transaction
   },
 
