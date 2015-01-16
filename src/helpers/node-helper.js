@@ -17,7 +17,7 @@ var NodeHelper = {
       title: node.title
     };
 
-    if (node.rank) data.rank = node.rank;
+    data.rank = (node.rank) ? node.rank : 0;
     if (node.parentId) data.parent_id = node.parentId;
 
     return data;
