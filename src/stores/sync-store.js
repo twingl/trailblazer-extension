@@ -50,6 +50,13 @@ var SyncStore = Fluxxor.createStore({
     );
   },
 
+  //NOTES
+  //When an XHR goes out, an entry is added to
+  //SyncStore.pending.{assignment,node} specifying the localId. When the
+  //response comes in, the entry is removed. This is a very basic semaphore to
+  //ensure that multiple requests don't go out for the same resource resulting
+  //in duplicates.
+
   /**
    * Invokes the persistence event chain for a newly created Assignment.
    */
