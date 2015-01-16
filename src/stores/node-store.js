@@ -302,6 +302,7 @@ var NodeStore = Fluxxor.createStore({
           node.rank = 1;
           store.put(node).onsuccess = function (evt) {
             this.emit('change', { node: node });
+            this.flux.actions.updateNodeSuccess(node.localId);
           }.bind(this);
         }
       }.bind(this);
@@ -323,6 +324,7 @@ var NodeStore = Fluxxor.createStore({
           node.rank = 0;
           store.put(node).onsuccess = function (evt) {
             this.emit('change', { node: node });
+            this.flux.actions.updateNodeSuccess(node.localId);
           }.bind(this);
         }
       }.bind(this);

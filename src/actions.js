@@ -158,6 +158,16 @@ module.exports = {
     });
   },
 
+  updateNodeSuccess: function (localId) {
+    info('updateNodeSuccess');
+    chrome.runtime.sendMessage({
+      action: constants.UPDATE_NODE_SUCCESS,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
   tabCreated: function(tabId, url, title, parentTabId, tabObj) {
     info('tabCreated');
     messageChannel.send({

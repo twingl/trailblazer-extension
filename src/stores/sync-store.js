@@ -28,6 +28,8 @@ var SyncStore = Fluxxor.createStore({
       constants.CREATE_ASSIGNMENT_SUCCESS,        this.handleCreateAssignmentSuccess,
       constants.CREATE_NODE_SUCCESS,              this.handleCreateNodeSuccess,
 
+      constants.UPDATE_NODE_SUCCESS,              this.handleUpdateNodeSuccess,
+
       constants.PERSIST_ASSIGNMENT,               this.handlePersistAssignment,
       constants.PERSIST_ASSIGNMENT_SUCCESS,       this.handlePersistAssignmentSuccess,
 
@@ -77,6 +79,15 @@ var SyncStore = Fluxxor.createStore({
     }.bind(this));
   },
 
+  handleUpdateNodeSuccess: function (payload) {
+    info('handleUpdateNodeSuccess', { payload: payload });
+    this.db.nodes.get(payload.localId).then(function(node) {
+      if (node.assignmentId) {
+        this.flux.actions.persistNode(node.localId);
+      }
+    }.bind(this));
+  },
+
   /**
    * Starts the persistence process for a newly created Assignment
    * On successful response, it will update all nodes which point to the
@@ -86,6 +97,7 @@ var SyncStore = Fluxxor.createStore({
   handlePersistAssignment: function (payload) {
     info('handlePersistAssignment');
     this.db.assignments.get(payload.localId).done(function(assignment) {
+      console.log(assignment);
       var data = AssignmentHelper.getAPIData(assignment);
 
       if (!this.pending.assignments[assignment.localId]) {
@@ -169,12 +181,18 @@ var SyncStore = Fluxxor.createStore({
       if (!this.pending.nodes[payload.localId]) {
         this.pending.nodes[payload.localId] = true;
 
-        new TrailblazerHTTPStorageAdapter().create("nodes", data, {
-          parentResource: {
-            name: "assignments",
-            id: node.assignmentId
-          }
-        }).then(
+        var promise;
+        if (node.id) {
+          promise = new TrailblazerHTTPStorageAdapter().update("nodes", node.id, data, {});
+        } else {
+          promise = new TrailblazerHTTPStorageAdapter().create("nodes", data, {
+            parentResource: {
+              name: "assignments",
+              id: node.assignmentId
+            }
+          });
+        }
+        promise.then(
           function(response) {
             delete this.pending.nodes[payload.localId];
             this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -220,6 +238,9 @@ var SyncStore = Fluxxor.createStore({
         persistNode(payload, node);
       } else if (node.parentId && !node.id) {
         // Persist nodes that have a parent persisted and don't have IDs
+        persistNode(payload, node);
+      } else if (node.id) {
+        // Persist the node - updating it
         persistNode(payload, node);
       }
     }.bind(this));
