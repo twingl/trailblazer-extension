@@ -230,12 +230,96 @@ var NodeStore = Fluxxor.createStore({
 
   handleHistoryStateUpdated: function (payload) {
     info("handleHistoryStateUpdated:", { payload: payload });
-    throw "NotImplementedError";
+
+    this.waitFor(["TabStore"], function(tabStore) {
+
+      var qualifiers = payload.transitionQualifiers;
+
+      if (tabStore.getState().tabs[payload.tabId] && (
+          _.contains(qualifiers, "client_redirect") || 
+          _.contains(qualifiers, "server_redirect"))) {
+        // If the payload is a redirect of some kind
+        var updatedNode;
+
+        this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+          var store = tx.objectStore("nodes");
+
+          store.index("tabId").get(payload.tabId).onsuccess = function(evt) {
+            var node = evt.target.result;
+
+            if (node.url === payload.url) {
+              store.get(node.localParentId).onsuccess = function(evt) {
+                var parentNode = evt.target.result;
+
+                parentNode.redirect = true;
+
+                store.put(parentNode).onsuccess = function(evt) {
+                  updatedNode = parentNode.localId;
+                };
+              };
+            }
+
+          };
+
+          tx.oncomplete = function() {
+            if (updatedNode) {
+              this.flux.actions.updateNodeSuccess(updatedNode);
+            }
+          }.bind(this);
+
+          // Get the node corresponding to the tabId
+          // If its URL matches the payload, set the parent node's metadata to reflect it
+
+        }.bind(this));
+      }
+    }.bind(this));
   },
 
   handleWebNavCommitted: function (payload) {
     info("handleWebNavCommitted:", { payload: payload });
-    throw "NotImplementedError";
+
+    this.waitFor(["TabStore"], function(tabStore) {
+
+      var qualifiers = payload.transitionQualifiers;
+
+      if (tabStore.getState().tabs[payload.tabId] && (
+          _.contains(qualifiers, "client_redirect") || 
+          _.contains(qualifiers, "server_redirect"))) {
+        // If the payload is a redirect of some kind
+        var updatedNode;
+
+        this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+          var store = tx.objectStore("nodes");
+
+          store.index("tabId").get(payload.tabId).onsuccess = function(evt) {
+            var node = evt.target.result;
+
+            if (node.url === payload.url) {
+              store.get(node.localParentId).onsuccess = function(evt) {
+                var parentNode = evt.target.result;
+
+                parentNode.redirect = true;
+
+                store.put(parentNode).onsuccess = function(evt) {
+                  updatedNode = parentNode.localId;
+                };
+              };
+            }
+
+          };
+
+          tx.oncomplete = function() {
+            if (updatedNode) {
+              this.flux.actions.updateNodeSuccess(updatedNode);
+            }
+          }.bind(this);
+
+          // Get the node corresponding to the tabId
+          // If its URL matches the payload, set the parent node's metadata to reflect it
+
+        }.bind(this));
+      }
+    }.bind(this));
   },
 
   /**
