@@ -125,7 +125,8 @@ var NodeStore = Fluxxor.createStore({
       // new child node in the same assignment/localAssignment
       if (parentTabId && tabStore.tabs[parentTabId] === true) {
         this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
-          var store = tx.objectStore("nodes");
+          var store = tx.objectStore("nodes")
+            , oncomplete = [];
 
           store.index("tabId").openCursor(IDBKeyRange.only(payload.tabObj.openerTabId)).onsuccess = function(evt) {
             var cursor = evt.target.result;
@@ -143,11 +144,17 @@ var NodeStore = Fluxxor.createStore({
                 title:              payload.tabObj.title
               };
 
-              store.put(node).onsuccess = function (evt) {
-                this.flux.actions.createNodeSuccess(evt.target.result);
+              store.put(node).onsuccess = function(evt) {
+                oncomplete.push(function() {
+                  this.flux.actions.createNodeSuccess(evt.target.result);
+                }.bind(this));
               }.bind(this);
             }
           }.bind(this);
+
+          tx.oncomplete = function() {
+            _.each(oncomplete, function(cb) { cb(); });
+          };
 
         }.bind(this));
       }
@@ -174,7 +181,8 @@ var NodeStore = Fluxxor.createStore({
 
     // Open up a transaction so no records change while we're figuring stuff out
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
-      var nodeStore = tx.objectStore("nodes");
+      var nodeStore = tx.objectStore("nodes")
+        , oncomplete = [];
 
       // Get the current node associated with the tabId
       nodeStore.index("tabId").get(payload.tabId).onsuccess = function(evt) {
@@ -215,17 +223,24 @@ var NodeStore = Fluxxor.createStore({
                 title:              payload.title
               };
 
-              nodeStore.put(node).onsuccess = function(evt) {
-                this.flux.actions.createNodeSuccess(evt.target.result);
-              }.bind(this);
-
               delete currentNode.tabId;
               nodeStore.put(currentNode);
+              nodeStore.put(node).onsuccess = function(evt) {
+                oncomplete.push(function() {
+                  this.flux.actions.createNodeSuccess(evt.target.result);
+                }.bind(this));
+              }.bind(this);
+
             }
           }.bind(this); //cursor
+
         } //if
-      }.bind(this); //tx
-    }.bind(this));
+      }.bind(this);
+
+      tx.oncomplete = function() {
+        _.each(oncomplete, function(cb) { cb(); });
+      };
+    }.bind(this)); //tx
   },
 
   handleHistoryStateUpdated: function (payload) {
@@ -251,10 +266,17 @@ var NodeStore = Fluxxor.createStore({
               store.get(node.localParentId).onsuccess = function(evt) {
                 var parentNode = evt.target.result;
 
-                parentNode.redirect = true;
+                node.localParentId  = parentNode.localParentId;
+                node.parentId       = parentNode.parentId;
+                node.redirect       = true;
+                node.redirectedFrom = parentNode.url;
 
-                store.put(parentNode).onsuccess = function(evt) {
-                  updatedNode = parentNode.localId;
+                store.put(node).onsuccess = function() {
+                  updatedNode = node.localId;
+                };
+
+                store.delete(parentNode.localId).onsuccess = function () {
+                  // delete from api
                 };
               };
             }
@@ -298,10 +320,17 @@ var NodeStore = Fluxxor.createStore({
               store.get(node.localParentId).onsuccess = function(evt) {
                 var parentNode = evt.target.result;
 
-                parentNode.redirect = true;
+                node.localParentId  = parentNode.localParentId;
+                node.parentId       = parentNode.parentId;
+                node.redirect       = true;
+                node.redirectedFrom = parentNode.url;
 
-                store.put(parentNode).onsuccess = function(evt) {
-                  updatedNode = parentNode.localId;
+                store.put(node).onsuccess = function() {
+                  updatedNode = node.localId;
+                };
+
+                store.delete(parentNode.localId).onsuccess = function () {
+                  // delete from api
                 };
               };
             }
