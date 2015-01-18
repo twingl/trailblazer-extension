@@ -203,8 +203,11 @@ var SyncStore = Fluxxor.createStore({
               store.get(payload.localId).onsuccess = function(evt) {
                 var node = evt.target.result;
 
-                node.id = response.id;
-                store.put(node);
+                // If the node still exists
+                if (node) {
+                  node.id = response.id;
+                  store.put(node);
+                }
               }.bind(this);
 
               store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
