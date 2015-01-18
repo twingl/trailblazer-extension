@@ -18,9 +18,9 @@ var NodeHelper = {
     };
 
     data.rank = (node.rank) ? node.rank : 0;
-    if (node.parentId) data.parent_id         = node.parentId;
-    if (node.redirect) data.redirect          = node.redirect;
-    if (node.redirectedTo) data.redirected_to = node.redirectedTo;
+    if (node.parentId) data.parent_id             = node.parentId;
+    if (node.redirect) data.redirect              = node.redirect;
+    if (node.redirectedFrom) data.redirected_from = node.redirectedFrom;
 
     return data;
   }
