@@ -103,3 +103,6 @@ require('./background/proxy-change')(flux, [
 
 // Wire up Chrome events to fire the appropriate actions
 require('./background/chrome-events');
+
+// Inject content-scripts into pages
+require('./background/content-scripts');

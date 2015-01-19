@@ -58,6 +58,11 @@ module.exports = {
         entries: './src/popup.js',
         dest: dest,
         outputName: 'popup.js'
+      },
+      {
+        entries: './src/content-scripts/page-title.js',
+        dest: dest,
+        outputName: 'page-title.js'
       }
     ]
   }
