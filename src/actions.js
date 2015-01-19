@@ -168,6 +168,29 @@ module.exports = {
     });
   },
 
+  tabTitleUpdated: function (tabId, url, title) {
+    info('tabTitleUpdated');
+    messageChannel.send({
+      action: constants.TAB_TITLE_UPDATED,
+      payload: {
+        tabId: tabId,
+        url: url,
+        title: title
+      }
+    });
+  },
+
+  setNodeTitle: function (localId, title) {
+    info('setNodeTitle');
+    messageChannel.send({
+      action: constants.SET_NODE_TITLE,
+      payload: {
+        localId: localId,
+        title: title
+      }
+    });
+  },
+
   tabCreated: function(tabId, url, title, parentTabId, tabObj) {
     info('tabCreated');
     messageChannel.send({

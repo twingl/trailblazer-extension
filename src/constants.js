@@ -36,6 +36,8 @@ module.exports = {
   /**
    * Actions invoked by Chrome
    */
+  SET_NODE_TITLE:                   'SET_NODE_TITLE',
+  TAB_TITLE_UPDATED:                'TAB_TITLE_UPDATED',
   TAB_CREATED:                      'TAB_CREATED',
   TAB_FOCUSED:                      'TAB_FOCUSED',
   CREATED_NAVIGATION_TARGET:        'CREATED_NAVIGATION_TARGET',
