@@ -16,6 +16,8 @@ var TabStore = Fluxxor.createStore({
     this.bindActions(
       constants.REQUEST_TAB_STATE,          this.handleRequestTabState,
 
+      constants.TAB_TITLE_UPDATED,          this.handleTabTitleUpdated,
+
       constants.TAB_CREATED,                this.handleTabCreated,
       constants.TAB_FOCUSED,                this.handleTabFocused,
       constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
@@ -36,6 +38,17 @@ var TabStore = Fluxxor.createStore({
     return {
       tabs: this.tabs
     };
+  },
+
+  handleTabTitleUpdated: function (payload) {
+    info('handleTabTitleUpdated');
+    this.db.nodes.index('tabId').get(payload.tabId).then(function(nodes) {
+      var node = _.first(nodes);
+
+      if (node && node.url === payload.url) {
+        this.flux.actions.setNodeTitle(node.localId, payload.title);
+      }
+    }.bind(this));
   },
 
   handleTabCreated: function (payload) {

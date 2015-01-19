@@ -21,6 +21,7 @@ var NodeStore = Fluxxor.createStore({
 
       constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
 
+      constants.SET_NODE_TITLE,             this.handleSetNodeTitle,
       constants.TAB_CREATED,                this.handleTabCreated,
       constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
       constants.TAB_UPDATED,                this.handleTabUpdated,
@@ -108,6 +109,32 @@ var NodeStore = Fluxxor.createStore({
         }.bind(this));
 
       }.bind(this));
+
+    }.bind(this));
+  },
+
+  handleSetNodeTitle: function (payload) {
+    info('handleSetNodeTitle');
+
+    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+      var store = tx.objectStore("nodes")
+        , oncomplete = [];
+
+      store.get(payload.localId).onsuccess = function(evt) {
+        var node = evt.target.result;
+
+        node.title = payload.title;
+
+        store.put(node).onsuccess = function(evt) {
+          oncomplete.push(function() {
+            this.flux.actions.updateNodeSuccess(node.localId);
+          }.bind(this));
+        }.bind(this);
+      }.bind(this);
+
+      tx.oncomplete = function() {
+        _.each(oncomplete, function(cb) { cb(); });
+      };
 
     }.bind(this));
   },
