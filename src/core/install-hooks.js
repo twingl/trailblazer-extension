@@ -11,7 +11,7 @@ module.exports = function(details) {
       break;
     case "install":
       // Show onboarding
-      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/src/ui/pages/welcome.html") });
+      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/welcome.html") });
       break;
     case "chrome_update":
       //

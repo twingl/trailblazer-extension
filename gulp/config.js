@@ -21,6 +21,11 @@ module.exports = {
         name: "content.css",
         src: src + "/style/content/**/*",
         dest: dest
+      },
+      {
+        name: "welcome.css",
+        src: src + "/style/welcome/**/*",
+        dest: dest
       }
     ]
   },
