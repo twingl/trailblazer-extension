@@ -531,7 +531,18 @@ var SyncStore = Fluxxor.createStore({
             });
 
             _.each(nodes, function(remoteNode) {
+              var localNode = _.find(localNodes, { 'localId': remoteNode.localId });
+
               remoteNode.localAssignmentId = assignment.localId;
+
+              if (localNode) {
+                remoteNode.tabId = localNode.tabId;
+              }
+
+              if (localNode && remoteNode.title === remoteNode.url && localNode.title) {
+                remoteNode.title = localNode.title;
+              }
+
               if (remoteNode.parentId) {
                 remoteNode.localParentId = _.find(nodes, { 'id': remoteNode.parentId }).localId;
               }
