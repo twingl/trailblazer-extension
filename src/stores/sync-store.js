@@ -155,8 +155,14 @@ var SyncStore = Fluxxor.createStore({
       if (!this.pending.assignments[assignment.localId]) {
         this.pending.assignments[assignment.localId] = true;
 
-        new TrailblazerHTTPStorageAdapter().create("assignments", data, {})
-          .then(
+        var promise;
+        if (assignment.id) {
+          promise = new TrailblazerHTTPStorageAdapter().update("assignments", assignment.id, data, {})
+        } else {
+          promise = new TrailblazerHTTPStorageAdapter().create("assignments", data, {})
+        }
+
+        promise.then(
               function(response) {
                 this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], function(err, tx) {
                   var nodeStore       = tx.objectStore("nodes")
@@ -213,7 +219,7 @@ var SyncStore = Fluxxor.createStore({
     this.db.nodes.index('localAssignmentId').get(payload.localId)
       .then(function(nodes) {
         _.each(nodes, function(node) {
-          this.flux.actions.persistNode(node.localId);
+          if (!node.id) this.flux.actions.persistNode(node.localId);
         }.bind(this));
       }.bind(this));
   },

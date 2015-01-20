@@ -60,7 +60,8 @@ var AssignmentStore = Fluxxor.createStore({
   handleUpdateAssignmentTitle: function (payload) {
     info('handleUpdateAssignmentTitle', { payload: payload });
     this.db.assignments.db.transaction("readwrite", ["assignments"], function(err, tx) {
-      var store = tx.objectStore("assignments");
+      var store = tx.objectStore("assignments")
+        , oncomplete = [];
 
       store.get(payload.localId).onsuccess = function(evt) {
         var assignment = evt.target.result;
@@ -68,7 +69,15 @@ var AssignmentStore = Fluxxor.createStore({
         assignment.title = payload.title;
         store.put(assignment).onsuccess = function(evt) {
           this.emit('change', { assignment: assignment });
+
+          oncomplete.push(function() {
+            this.flux.actions.persistAssignment(assignment.localId);
+          }.bind(this));
         }.bind(this);
+      }.bind(this);
+
+      tx.oncomplete = function() {
+        _.each(oncomplete, function(cb) { cb(); });
       }.bind(this);
     }.bind(this));
   },
