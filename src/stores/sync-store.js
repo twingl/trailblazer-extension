@@ -23,7 +23,8 @@ var SyncStore = Fluxxor.createStore({
     };
 
     this.queue = {
-      assignments: {}
+      assignments: {},
+      nodes: {}
     };
 
     info('bindActions', { this: this });
@@ -34,6 +35,7 @@ var SyncStore = Fluxxor.createStore({
 
       constants.UPDATE_NODE_SUCCESS,              this.handleUpdateNodeSuccess,
 
+      constants.DESTROY_NODE,                     this.handleDestroyNode,
       constants.DESTROY_ASSIGNMENT,               this.handleDestroyAssignment,
 
       constants.PERSIST_ASSIGNMENT,               this.handlePersistAssignment,
@@ -92,6 +94,27 @@ var SyncStore = Fluxxor.createStore({
         this.flux.actions.persistNode(node.localId);
       }
     }.bind(this));
+  },
+
+  handleDestroyNode: function (payload) {
+    info('handleDestroyNode', { payload: payload });
+    var run = function() {
+      this.db.nodes.get(payload.localId).then(function(node) {
+        if (node.id) {
+          new TrailblazerHTTPStorageAdapter().destroy("nodes", node.id);
+        }
+        this.db.nodes.del(node.localId);
+      }.bind(this));
+    }.bind(this);
+
+    if (this.pending.nodes[payload.localId]) {
+      // If there's a transaction pending, queue the deletion
+      this.queue.nodes[payload.localId] = this.queue.nodes[payload.localId] || [];
+      this.queue.nodes[payload.localId].push(run);
+    } else {
+      // Otherwise run it now
+      run();
+    }
   },
 
   handleDestroyAssignment: function (payload) {
@@ -260,6 +283,11 @@ var SyncStore = Fluxxor.createStore({
           }.bind(this),
           function(response) {
             delete this.pending.nodes[payload.localId];
+
+            if (this.queue.nodes[payload.localId] && this.queue.nodes[payload.localId].length > 0) {
+              var run = this.queue.nodes[payload.localId].pop();
+              run();
+            };
           }.bind(this));
       }
     }.bind(this);
@@ -288,6 +316,11 @@ var SyncStore = Fluxxor.createStore({
         this.flux.actions.persistNode(node.localId);
       }.bind(this));
     }.bind(this));
+
+    if (this.queue.nodes[payload.localId] && this.queue.nodes[payload.localId].length > 0) {
+      var run = this.queue.nodes[payload.localId].pop();
+      run();
+    };
   },
 
   /**

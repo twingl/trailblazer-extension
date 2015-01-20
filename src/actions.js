@@ -175,6 +175,16 @@ module.exports = {
     });
   },
 
+  destroyNode: function (localId) {
+    info('deleteNode');
+    chrome.runtime.sendMessage({
+      action: constants.DESTROY_NODE,
+      payload: {
+        localId: localId
+      }
+    });
+  },
+
   tabTitleUpdated: function (tabId, url, title) {
     info('tabTitleUpdated');
     messageChannel.send({

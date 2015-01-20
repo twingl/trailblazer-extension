@@ -99,6 +99,7 @@ var NodeStore = Fluxxor.createStore({
           if (cursor) {
             nodeStore.delete(cursor.value.localId);
             cursor.continue();
+            // Don't worry about remote copies - they're deleted with the assignment
           }
         };
       });
@@ -294,10 +295,8 @@ var NodeStore = Fluxxor.createStore({
                   updatedNode = node.localId;
                 };
 
-                store.delete(parentNode.localId).onsuccess = function () {
-                  // delete from api
-                };
-              };
+                this.flux.actions.destroyNode(parentNode.localId);
+              }.bind(this);
             }
 
           };
@@ -348,13 +347,11 @@ var NodeStore = Fluxxor.createStore({
                   updatedNode = node.localId;
                 };
 
-                store.delete(parentNode.localId).onsuccess = function () {
-                  // delete from api
-                };
-              };
+                this.flux.actions.destroyNode(parentNode.localId);
+              }.bind(this);
             }
 
-          };
+          }.bind(this);
 
           tx.oncomplete = function() {
             if (updatedNode) {
