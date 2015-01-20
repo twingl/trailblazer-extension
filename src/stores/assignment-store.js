@@ -16,6 +16,8 @@ var AssignmentStore = Fluxxor.createStore({
     info('bindActions', { this: this })
 
     this.bindActions(
+      constants.SIGN_OUT,                   this.handleSignOut,
+
       constants.REQUEST_ASSIGNMENTS,        this.handleRequestAssignments,
 
       constants.CREATE_ASSIGNMENT_SUCCESS,  this.handleCreateAssignmentSuccess,
@@ -26,6 +28,10 @@ var AssignmentStore = Fluxxor.createStore({
       constants.MAKE_ASSIGNMENT_VISIBLE,    this.handleMakeAssignmentVisible,
       constants.MAKE_ASSIGNMENT_HIDDEN,     this.handleMakeAssignmentHidden
     );
+  },
+
+  handleSignOut: function () {
+    this.db.assignments.clear();
   },
 
   /**

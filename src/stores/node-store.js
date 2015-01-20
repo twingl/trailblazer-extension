@@ -17,6 +17,8 @@ var NodeStore = Fluxxor.createStore({
     this.error    = null;
 
     this.bindActions(
+      constants.SIGN_OUT,                   this.handleSignOut,
+
       constants.REQUEST_NODES,              this.handleRequestNodes,
 
       constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
@@ -59,6 +61,10 @@ var NodeStore = Fluxxor.createStore({
       db: this.db,
       error: this.error
     };
+  },
+
+  handleSignOut: function () {
+    this.db.nodes.clear();
   },
 
   /**

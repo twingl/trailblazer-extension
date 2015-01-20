@@ -14,6 +14,8 @@ var TabStore = Fluxxor.createStore({
     this.tabs       = options.tabs || {};
 
     this.bindActions(
+      constants.SIGN_OUT,                   this.handleSignOut,
+
       constants.REQUEST_TAB_STATE,          this.handleRequestTabState,
 
       constants.TAB_TITLE_UPDATED,          this.handleTabTitleUpdated,
@@ -38,6 +40,13 @@ var TabStore = Fluxxor.createStore({
     return {
       tabs: this.tabs
     };
+  },
+
+  handleSignOut: function () {
+    _.each(this.tabs, function(tab, index, tabs) {
+      tabs[index] = false;
+    });
+    this.emit('change', this.getState());
   },
 
   handleTabTitleUpdated: function (payload) {
