@@ -22,7 +22,7 @@ var AssignmentStore = Fluxxor.createStore({
 
       constants.CREATE_ASSIGNMENT_SUCCESS,  this.handleCreateAssignmentSuccess,
       constants.UPDATE_ASSIGNMENT_TITLE,    this.handleUpdateAssignmentTitle,
-      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
+      constants.DESTROY_ASSIGNMENT_SUCCESS, this.handleDestroyAssignmentSuccess,
 
       constants.ASSIGNMENTS_SYNCHRONIZED,   this.handleAssignmentsSynchronized,
       constants.MAKE_ASSIGNMENT_VISIBLE,    this.handleMakeAssignmentVisible,
@@ -74,36 +74,11 @@ var AssignmentStore = Fluxxor.createStore({
   },
 
   /**
-   * Removes an assignment from the local DB
+   * Emits a change with the assignment list
    */
-  handleDestroyAssignment: function (payload) {
-    this.db.assignments.get(payload.localId).then(function(assignment) {
-
-      //TODO perform checks if it's pending creation on the server
-      if (assignment.id) {
-        // Delete it on the API
-        new TrailblazerHTTPStorageAdapter().destroy("assignments", assignment.id);
-      }
-
-      // Fire API deletion
-      this.db.assignments.del(payload.localId).then(function() {
-
-        if (payload.localId) {
-          // Only if we have an ID (null index will return all records)
-          this.db.nodes.index('localAssignmentId').get(payload.localId)
-            .then(function(nodes) {
-              _.each(nodes, function(node) {
-                this.db.nodes.del(node.localId);
-              }.bind(this));
-            }.bind(this));
-        }
-
-        this.db.assignments.all().then(function(assignments) {
-          this.emit('change', { assignments: assignments });
-        }.bind(this));
-
-      }.bind(this));
-
+  handleDestroyAssignmentSuccess: function (payload) {
+    this.db.assignments.all().then(function(assignments) {
+      this.emit('change', { assignments: assignments });
     }.bind(this));
   },
 

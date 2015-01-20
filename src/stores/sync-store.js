@@ -22,6 +22,10 @@ var SyncStore = Fluxxor.createStore({
       nodes: {}
     };
 
+    this.queue = {
+      assignments: {}
+    };
+
     info('bindActions', { this: this });
 
     this.bindActions(
@@ -29,6 +33,8 @@ var SyncStore = Fluxxor.createStore({
       constants.CREATE_NODE_SUCCESS,              this.handleCreateNodeSuccess,
 
       constants.UPDATE_NODE_SUCCESS,              this.handleUpdateNodeSuccess,
+
+      constants.DESTROY_ASSIGNMENT,               this.handleDestroyAssignment,
 
       constants.PERSIST_ASSIGNMENT,               this.handlePersistAssignment,
       constants.PERSIST_ASSIGNMENT_SUCCESS,       this.handlePersistAssignmentSuccess,
@@ -86,6 +92,29 @@ var SyncStore = Fluxxor.createStore({
         this.flux.actions.persistNode(node.localId);
       }
     }.bind(this));
+  },
+
+  handleDestroyAssignment: function (payload) {
+    info('handleDestroyAssignment', { payload: payload });
+    var run = function() {
+      this.db.assignments.get(payload.localId).then(function(assignment) {
+        if (assignment.id) {
+          new TrailblazerHTTPStorageAdapter().destroy("assignments", assignment.id);
+        }
+        this.db.assignments.del(assignment.localId).then(function() {
+          this.flux.actions.destroyAssignmentSuccess();
+        }.bind(this));
+      }.bind(this));
+    }.bind(this);
+
+    if (this.pending.assignments[payload.localId]) {
+      // If there's a transaction pending, queue the deletion
+      this.queue.assignments[payload.localId] = this.queue.assignments[payload.localId] || [];
+      this.queue.assignments[payload.localId].push(run);
+    } else {
+      // Otherwise run it now
+      run();
+    }
   },
 
   /**

@@ -21,8 +21,6 @@ var NodeStore = Fluxxor.createStore({
 
       constants.REQUEST_NODES,              this.handleRequestNodes,
 
-      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment,
-
       constants.SET_NODE_TITLE,             this.handleSetNodeTitle,
       constants.TAB_CREATED,                this.handleTabCreated,
       constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
@@ -105,18 +103,6 @@ var NodeStore = Fluxxor.createStore({
         };
       });
     });
-    this.db.nodes.index('localAssignmentId').get(payload.localId).then(function(nodes) {
-
-      // Fire API deletion
-      this.db.assignments.del(payload.localId).then(function() {
-
-        this.db.assignments.all().then(function(assignments) {
-          this.emit('change', { assignments: assignments });
-        }.bind(this));
-
-      }.bind(this));
-
-    }.bind(this));
   },
 
   handleSetNodeTitle: function (payload) {

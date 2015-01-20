@@ -75,6 +75,13 @@ module.exports = {
     });
   },
 
+  destroyAssignmentSuccess: function () {
+    info('destroyAssignmentSuccess');
+    messageChannel.send({
+      action: constants.DESTROY_ASSIGNMENT_SUCCESS
+    });
+  },
+
   requestNodes: function (localAssignmentId) {
     info('requestNodes');
     messageChannel.send({
