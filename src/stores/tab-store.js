@@ -101,6 +101,7 @@ var TabStore = Fluxxor.createStore({
   handleTabClosed: function (payload) {
     info("handleTabClosed:", { payload: payload });
     delete this.tabs[payload.tabId];
+    this.emit('change', this.getState());
   },
 
   handleTabReplaced: function (payload) {
