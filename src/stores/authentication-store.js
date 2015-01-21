@@ -42,6 +42,7 @@ var AuthenticationStore = Fluxxor.createStore({
         function () {
           this.authenticated = true;
           this.emit('change', this.getState());
+          this.flux.actions.requestAssignments();
         }.bind(this),
         function () {
           this.authenticated = false;
