@@ -10,7 +10,6 @@
 }
 
 body {
-  overflow: hidden;
   margin: 0;
   padding: 0;
   border: 0;
@@ -25,6 +24,7 @@ body>.wrap.assignment-show {
 	background-image: linear-gradient(#757F9A, #A5ADC1);
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
+  overflow: hidden;
 }
 
 /*
