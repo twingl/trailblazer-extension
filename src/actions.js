@@ -462,6 +462,13 @@ module.exports = {
     });
   },
 
+  signInSuccess: function () {
+    info('signInSuccess');
+    messageChannel.send({
+      action: constants.SIGN_IN_SUCCESS
+    });
+  },
+
   signOut: function () {
     info('signOut');
     messageChannel.send({
@@ -509,10 +516,13 @@ module.exports = {
     });
   },
 
-  viewedMap: function () {
+  viewedMap: function (localId) {
     info('viewedMap');
     messageChannel.send({
-      action: constants.VIEWED_MAP
+      action: constants.VIEWED_MAP,
+      payload: {
+        localId: localId
+      }
     });
   },
 
