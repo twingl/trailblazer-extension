@@ -66,6 +66,9 @@ module.exports = {
   STOP_RECORDING:                   'STOP_RECORDING',
   STOP_RECORDING_SUCCESS:           'STOP_RECORDING_SUCCESS',
 
+  VIEWED_ASSIGNMENT_LIST:           'VIEWED_ASSIGNMENT_LIST',
+  VIEWED_MAP:                       'VIEWED_MAP',
+
   RANK_NODE_WAYPOINT:               'RANK_NODE_WAYPOINT',
   RANK_NODE_NEUTRAL:                'RANK_NODE_NEUTRAL',
 
@@ -73,5 +76,6 @@ module.exports = {
   MAKE_ASSIGNMENT_HIDDEN:           'MAKE_ASSIGNMENT_HIDDEN',
 
   SIGN_IN:                          'SIGN_IN',
+  SIGN_IN_SUCCESS:                  'SIGN_IN_SUCCESS',
   SIGN_OUT:                         'SIGN_OUT'
 }

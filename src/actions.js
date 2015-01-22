@@ -507,5 +507,19 @@ module.exports = {
         localId: localId
       }
     });
+  },
+
+  viewedMap: function () {
+    info('viewedMap');
+    messageChannel.send({
+      action: constants.VIEWED_MAP
+    });
+  },
+
+  viewedAssignmentList: function () {
+    info('viewedAssignmentList');
+    messageChannel.send({
+      action: constants.VIEWED_ASSIGNMENT_LIST
+    });
   }
 }
