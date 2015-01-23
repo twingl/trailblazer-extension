@@ -29,7 +29,11 @@ var MetricsStore = Fluxxor.createStore({
       constants.RANK_NODE_WAYPOINT, this.handleRankNodeWaypoint,
       constants.RANK_NODE_NEUTRAL, this.handleRankNodeNeutral,
       constants.MAKE_ASSIGNMENT_VISIBLE, this.handleMakeAssignmentVisible,
-      constants.MAKE_ASSIGNMENT_HIDDEN, this.handleMakeAssignmentHidden
+      constants.MAKE_ASSIGNMENT_HIDDEN, this.handleMakeAssignmentHidden,
+
+      constants.EXTENSION_INSTALLED, this.handleExtensionInstalled,
+      constants.EXTENSION_UPDATED, this.handleExtensionUpdated,
+      constants.CHROME_UPDATED, this.handleChromeUpdated
     );
 
     var initStoreUUID = function(storageType) {
@@ -38,7 +42,7 @@ var MetricsStore = Fluxxor.createStore({
           this.uuid[storageType] = res.uuid;
         } else {
           this.uuid[storageType] = uuid.v4();
-          chrome.storage[storageType].set({ uuid: this.uuid });
+          chrome.storage[storageType].set({ uuid: this.uuid[storageType] });
         }
       }.bind(this));
     }.bind(this);
@@ -74,21 +78,31 @@ var MetricsStore = Fluxxor.createStore({
     this.reportEvent = function(collection, properties) {
       properties = properties || {};
 
-      properties.uuid = {};
+      properties.uuid = properties.uuid || {};
 
       if (this.uuid.sync)  properties.uuid.sync  = this.uuid.sync;
       if (this.uuid.local) properties.uuid.local = this.uuid.local;
 
-      info("Reporting event to " + collection, {
-        collection: collection,
-        properties: properties
-      });
+      chrome.runtime.getPlatformInfo(function(platformInfo) {
+        var manifest = chrome.runtime.getManifest();
 
-      this.keen.addEvent(collection, properties, function(err, res) {
-        if (err) {
-          error("Failed to report event to keen:", { error: err });
-        }
-      });
+        properties.extension = properties.extension || {};
+
+        properties.extension.name = manifest.name;
+        properties.extension.version = manifest.version;
+        properties.extension.platform = platformInfo;
+
+        info("Reporting event to " + collection, {
+          collection: collection,
+          properties: properties
+        });
+
+        this.keen.addEvent(collection, properties, function(err, res) {
+          if (err) {
+            error("Failed to report event to keen:", { error: err });
+          }
+        });
+      }.bind(this));
     };
   },
 
@@ -288,6 +302,31 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
+  },
+
+  handleExtensionInstalled: function () {
+    var collection = "extension.installed";
+    var properties = {};
+
+    this.reportEvent(collection, properties);
+  },
+
+  handleExtensionUpdated: function (payload) {
+    var collection = "extension.updated";
+    var properties = {
+      extension: {
+        oldVersion: payload.oldVersion
+      }
+    };
+
+    this.reportEvent(collection, properties);
+  },
+
+  handleChromeUpdated: function () {
+    var collection = "extension.chrome_updated";
+    var properties = {};
+
+    this.reportEvent(collection, properties);
   }
 });
 

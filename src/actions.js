@@ -531,5 +531,29 @@ module.exports = {
     messageChannel.send({
       action: constants.VIEWED_ASSIGNMENT_LIST
     });
+  },
+
+  extensionInstalled: function () {
+    info('extensionInstalled');
+    messageChannel.send({
+      action: constants.EXTENSION_INSTALLED
+    });
+  },
+
+  extensionUpdated: function (oldVersion) {
+    info('extensionUpdated');
+    messageChannel.send({
+      action: constants.EXTENSION_UPDATED,
+      payload: {
+        oldVersion: oldVersion
+      }
+    });
+  },
+
+  chromeUpdated: function () {
+    info('chromeUpdated');
+    messageChannel.send({
+      action: constants.CHROME_UPDATED
+    });
   }
 }

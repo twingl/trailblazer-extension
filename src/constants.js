@@ -46,6 +46,9 @@ module.exports = {
   WEB_NAV_COMMITTED:                'WEB_NAV_COMMITTED',
   TAB_CLOSED:                       'TAB_CLOSED',
   TAB_REPLACED:                     'TAB_REPLACED',
+  EXTENSION_INSTALLED:              'EXTENSION_INSTALLED',
+  EXTENSION_UPDATED:                'EXTENSION_UPDATED',
+  CHROME_UPDATED:                   'CHROME_UPDATED',
 
   /**
    * User actions
