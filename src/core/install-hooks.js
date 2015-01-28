@@ -11,11 +11,13 @@ module.exports = function(details) {
       });
       actions.extensionUpdated(details.previousVersion);
       break;
+
     case "install":
       // Show onboarding
       chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/welcome.html") });
       actions.extensionInstalled();
       break;
+
     case "chrome_update":
       actions.chromeUpdated();
       break;
