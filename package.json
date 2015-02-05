@@ -21,7 +21,6 @@
   "browserify": {
     "transform": [
       "reactify",
-      "cssify",
       "envify"
     ]
   },
@@ -52,7 +51,6 @@
   "homepage": "http://twin.gl",
   "devDependencies": {
     "browserify": "^5.11.2",
-    "cssify": "^0.6.0",
     "debug": "~2.1.0",
     "dotenv": "^0.4.0",
     "envify": "^3.0.0",

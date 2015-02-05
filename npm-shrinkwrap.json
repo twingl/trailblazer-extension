@@ -809,18 +809,6 @@
       "from": "camelize@>=1.0.0 <1.1.0",
       "resolved": "https://registry.npmjs.org/camelize/-/camelize-1.0.0.tgz"
     },
-    "cssify": {
-      "version": "0.6.0",
-      "from": "cssify@*",
-      "resolved": "https://registry.npmjs.org/cssify/-/cssify-0.6.0.tgz",
-      "dependencies": {
-        "through": {
-          "version": "2.3.6",
-          "from": "through@>=2.3.4 <2.4.0",
-          "resolved": "https://registry.npmjs.org/through/-/through-2.3.6.tgz"
-        }
-      }
-    },
     "d3": {
       "version": "3.0.8",
       "from": "d3@>=3.0.0 <3.1.0",
