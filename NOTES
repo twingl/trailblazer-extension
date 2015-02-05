@@ -1,0 +1,3 @@
+Building to public map:
+
+gulp build && cp build/public-map.js ~git/twingl/edu/trailblazer-web/app/assets/javascripts/map.js && cp build/content.css ~/git/twingl/edu/trailblazer-web/public/content.css
