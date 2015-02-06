@@ -33,6 +33,8 @@ module.exports = {
   PERSIST_NODE:                     'PERSIST_NODE',
   PERSIST_NODE_SUCCESS:             'PERSIST_NODE_SUCCESS',
 
+  SAVE_MAP_LAYOUT:                  'SAVE_MAP_LAYOUT',
+
   /**
    * Actions invoked by Chrome
    */

@@ -516,6 +516,17 @@ module.exports = {
     });
   },
 
+  saveMapLayout: function (localId, coordinates) {
+    info('saveMapLayout', { localId: localId, coordinates: coordinates });
+    messageChannel.send({
+      action: constants.SAVE_MAP_LAYOUT,
+      payload: {
+        localId: localId,
+        coordinates: coordinates
+      }
+    });
+  },
+
   viewedMap: function (localId) {
     info('viewedMap');
     messageChannel.send({
