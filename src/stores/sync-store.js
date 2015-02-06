@@ -1,4 +1,5 @@
 var _                             = require('lodash')
+  , config                        = require('../config')
   , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
@@ -43,6 +44,8 @@ var SyncStore = Fluxxor.createStore({
 
       constants.PERSIST_NODE,                     this.handlePersistNode,
       constants.PERSIST_NODE_SUCCESS,             this.handlePersistNodeSuccess,
+
+      constants.PERSIST_MAP_LAYOUT,               this.handlePersistMapLayout,
 
       constants.FETCH_ASSIGNMENTS,                this.handleFetchAssignments,
       constants.FETCH_ASSIGNMENTS_SUCCESS,        this.handleFetchAssignmentsSuccess,
@@ -327,6 +330,64 @@ var SyncStore = Fluxxor.createStore({
       var run = this.queue.nodes[payload.localId].pop();
       run();
     };
+  },
+
+  /**
+   * Persists the map layout
+   */
+  handlePersistMapLayout: function (payload) {
+    info('handlePersistMapLayout', { payload: payload });
+
+    var assignmentId;
+
+    this.db.assignments.get(payload.localId)
+      .then(function(assignment) {
+        assignmentId = assignment.id;
+
+        this.db.nodes.index('assignmentId')
+          .get(assignmentId)
+          .then(function(nodes) {
+            var url = [
+              config.api.host,
+              config.api.nameSpace,
+              config.api.version,
+              "assignments",
+              assignmentId,
+              "nodes",
+              "coords"
+            ].join('/');
+
+
+            var opts = {
+              data: {
+                nodes: { }
+              }
+            };
+
+            var localIds = _.collect(payload.coordinates, function(v,k) { return parseInt(k); });
+
+            _.each(nodes, function(node) {
+              if (_.contains(localIds, node.localId)) {
+                opts.data.nodes[node.id] = payload.coordinates[node.localId];
+              }
+            });
+
+            new TrailblazerHTTPStorageAdapter()
+              ._request(url, "PUT", opts)
+              .then(
+                // Success
+                function(response) {
+                  info('handlePersistMapLayout: Success', { response: response });
+                }.bind(this),
+
+                // Error
+                function(response) {
+                  warn('handlePersistMapLayout: Unsuccessful response', { response: response });
+                }.bind(this));
+          }.bind(this));
+      }.bind(this));
+
+
   },
 
   /**

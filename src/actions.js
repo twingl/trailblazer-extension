@@ -527,6 +527,17 @@ module.exports = {
     });
   },
 
+  persistMapLayout: function (localId, coordinates) {
+    info('persistMapLayout', { localId: localId, coordinates: coordinates });
+    messageChannel.send({
+      action: constants.PERSIST_MAP_LAYOUT,
+      payload: {
+        localId: localId,
+        coordinates: coordinates
+      }
+    });
+  },
+
   viewedMap: function (localId) {
     info('viewedMap');
     messageChannel.send({
