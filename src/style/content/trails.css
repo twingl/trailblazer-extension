@@ -1,0 +1,49 @@
+
+
+.assignment-menu {
+	color: #555;
+	font-family: 'Open Sans', sans-serif;
+	margin: 0;
+	padding: 1em 0 0 0; /*1em to obliterate the annoying scroll bar from the li margin*/
+}
+
+.assignment-menu li {
+  text-align: left;
+	list-style-type: none;
+	cursor: pointer;
+	background-color: #eee;
+	width: 320px;
+	margin: 1em;
+	padding: 1em;
+	margin-right: auto; 
+	margin-left: auto;
+}
+
+.assignment-menu li:after {
+  content:"";
+  display:table;
+  clear:both;
+}
+
+.assignment-menu li a{
+	float: right;
+}
+
+.assignment-menu li a:hover{
+	fill: red;
+}
+
+.assignment-menu li:hover {
+	background-color: #ddd;
+
+}
+
+.show {
+	opacity: 1;
+  -webkit-transition: opacity 0.4s ease-in;
+}
+
+.destroy {
+	opacity: 0;
+  -webkit-transition: opacity 0.4s ease-in;
+}

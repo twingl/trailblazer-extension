@@ -1,0 +1,250 @@
+
+*:focus {outline: none;}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+}
+
+body>.wrap {
+	width: 160px;
+	padding: 34px 18px 10px 18px;
+}
+
+body>.wrap.loading {
+  height: 290px;
+}
+
+h1 {
+	font-size: inherit;
+	font-weight: inherit;
+	margin: 0;
+}
+
+
+.idle {
+  background-image: url(/assets/images/idle-background.png);
+  background-repeat: none;
+  background-size: 100%;
+  background-position: top center;
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+a {
+  cursor: pointer;
+}
+
+/* Recording Title */
+
+.recording-title {
+	position: relative;
+	font-size: 20px;
+	font-weight: 400;
+	text-align: center;
+	margin: 0;
+}
+
+.recording-title a {
+	position: relative;
+	text-decoration: none;
+	color: #222;
+}
+
+.recording-title a img {
+	position: absolute;
+		right: -12px;
+}
+
+.recording-title input {
+  text-align: center;
+  font-size: 12px;
+}
+
+.recording-title.state {
+	color: #aaa;
+	font-size: 10px;
+	font-weight: 400;
+	margin-bottom: 30px; 
+}
+
+/* Buttons */
+
+.button {
+	width: 130px;
+	padding: 20px 0;
+	margin: 0 auto 20px auto;
+	border-radius: 3px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	background-color: #616161;
+	color: #fff;
+}
+
+.button:hover {
+	background-color: #5B5B5B;
+}
+
+.button-stop {
+	background-color: #F97E76;
+	padding: 10px 0;
+	margin-bottom: 40px;
+	width: 100px;
+}
+
+.button-stop:hover {
+	background-color: #F7766C;
+}
+
+.folder {
+	display: block;
+	width: 78px;
+	margin: 80px auto 60px auto;
+}
+
+.start-recording{
+	background-image:url(/assets/icons/new-icon.svg);
+	background-repeat: no-repeat;
+	background-position:92px 16px;
+}
+
+.folder img {margin-bottom: 8px}
+
+.waypoint {
+	fill: #C5C5C5;
+	text-decoration: none;
+	float: left;
+  margin-right: 1em;
+}
+
+.waypoint:hover {
+	fill: #989898;
+}
+
+/* Retain? - Consider after removing tutorial element 
+
+.waypoint:hover:after {
+	content: "Waypoint";
+	font-size: 10px;
+	color: #989898;
+	position: relative;
+	top: -3px;
+}
+
+ /Retain? */
+
+.waypoint-active {
+	fill: #FFD463;
+	float: left;
+  margin-right: 1em;
+}
+
+.sign-out {
+	float: right;
+	fill: #C5C5C5;
+}
+
+.sign-out:hover {
+	fill: #989898;
+}
+
+.sign-in {
+	width: 150px;
+	padding: 12px 0;
+	background-color: #76A9F9;
+}
+
+.tutorial path{
+	fill: #444;
+}
+
+.tutorial:hover path{
+	fill: #777;
+}
+
+.sign-in {
+	width: 150px;
+	padding: 12px 0;
+	background-color: #76A9F9;
+  position: relative;
+}
+
+.throbber:hover { background-color: #76A9F9; }
+
+.throbber {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.throbber:after {
+  display: block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: rotate .6s linear infinite;
+  animation: rotate .6s linear infinite;
+  -webkit-border-radius: 100%;
+  border-radius: 100;
+  border-top: 1px solid #76A9F9;
+  border-bottom: 1px solid #fff;
+  border-left: 1px solid #76A9F9;
+  border-right: 1px solid #fff;
+  content: '';
+  opacity: 1;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotateZ(-360deg);
+    -webkit-transform: rotateZ(-360deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+    -webkit-transform: rotateZ(0deg);
+  }
+}
+
+@-webkit-keyframes rotate {
+  0% {
+    transform: rotateZ(-360deg);
+    -webkit-transform: rotateZ(-360deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+    -webkit-transform: rotateZ(0deg);
+  }
+}
+
+/* Stop Gap - First to go when we remove tutorial element from dropdown! */
+
+.tutorial-recording {
+	padding-left: 8px;
+}
+
+.tutorial-recording path {
+	fill: #C5C5C5;
+}
+
+/* /Stop Gap - First to go! */

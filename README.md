@@ -6,15 +6,15 @@ build up a map, helping them make sense of the places they visit.
 ## Install
 
     $ git clone git://github.com/twingl/trailblazer-wash.git
-    
+
     $ cd trailblazer-wash
-    
+
     $ npm install
 
 
 ## Develop
 
-From the root directory 
+From the root directory
 
     $ npm run watch
 
@@ -24,12 +24,8 @@ From the root directory
 
   when building for production
 
-## API
-
-Documentation for the API that backs the extension can be found here:
-
-- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
-- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
+**If you change any dependencies, ensure you run `npm shrinkwrap --dev` and
+commit the changes**
 
 ## API
 

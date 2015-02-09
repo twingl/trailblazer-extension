@@ -1,24 +1,3 @@
-APIs
+Building to public map:
 
-webRequest:
-- onBeforeRedirect
-  - Detect and appropriately suppress nodes from redirects (already in master, afaik)
-
-webNavigation:
-- onCommitted
-  - Detect regular navigation (some overlap with onHistoryStateUpdated)
-
-- onCreatedNavigationTarget
-  - Detect when new tabs/windows are created as a result of a user action (supplies parentTabId)
-
-- onErrorOccurred (new stuff)
-  - Detect errors, potentially display this on the map as a distinction or not add it to the map at all
-
-- onHistoryStateUpdated
-  - Replace chrome.tabs.onUpdated events with chrome.webNavigation.onHistoryStateUpdated
-    - Detect redirects (overlap with webRequest)
-    - Detect nav changes in SPA apps (see above)
-    - Detect forward/back UI events and suppress node creation
-
-- onTabReplaced
-  - potential fix for chrome instant bug
+gulp build && cp build/public-map.js ~git/twingl/edu/trailblazer-web/app/assets/javascripts/map.js && cp build/content.css ~/git/twingl/edu/trailblazer-web/public/content.css
