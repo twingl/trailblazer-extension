@@ -1,0 +1,8 @@
+.action-group {
+  .fulfilled { display: none; }
+
+  &.fulfilled {
+    .request { display: none; }
+    .fulfilled { display: block; }
+  }
+}

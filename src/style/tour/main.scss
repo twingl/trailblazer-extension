@@ -1,0 +1,53 @@
+@import '../reset';
+
+@import 'action';
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.wrap {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.btn-group {
+  margin-top: 24px;
+}
+
+.btn {
+  display: block;
+  margin: 12px auto;
+  width: 180px;
+  padding: 12px;
+  border-radius: 4px;
+  background: rgb(29, 175, 173);
+  color: white;
+  text-decoration: none;
+
+  font-variant: small-caps;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+
+  &:hover {
+    background: lighten(rgb(29, 175, 173), 5%);
+  }
+}
+
+h1 {
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 400;
+
+  margin: 24px auto;
+}
+
+p {
+  line-height: 24px;
+  font-size: 18px;
+
+  &.aside {
+    font-size: 14px;
+  }
+}
