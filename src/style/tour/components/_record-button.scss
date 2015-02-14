@@ -1,0 +1,18 @@
+.record-button {
+  width: 70px;
+  padding: 17px 0;
+  border-radius: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  text-decoration: none;
+  background-color: rgb(97, 97, 97);
+  color: rgb(255, 255, 255);
+
+  margin: auto 6px;
+
+  background-image: url(/assets/icons/new-icon.svg), url(/assets/icons/trail-icon.svg);
+  background-repeat: no-repeat, no-repeat;
+  background-position: 52px 6px, 50% 50%;
+  background-size: 7px auto, 35px auto;
+}

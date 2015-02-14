@@ -1,9 +1,20 @@
 @import '../reset';
+@import 'components/task';
+@import 'components/record-button';
+@import 'components/stop-button';
+@import 'components/trailblazer-button';
+@import 'components/waypoint-button';
 
 @import 'action';
 
 body {
   font-family: 'Open Sans', sans-serif;
+  background-color: rgb(255, 250, 243);
+  color: darken(rgb(161, 160, 159), 15%);
+}
+
+a {
+  cursor: pointer;
 }
 
 .wrap {
@@ -35,12 +46,19 @@ body {
   }
 }
 
+.secondary {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(120, 120, 120);
+}
+
 h1 {
   font-size: 36px;
   line-height: 48px;
   font-weight: 400;
 
   margin: 24px auto;
+  margin-top: 10%;
 }
 
 p {
@@ -50,4 +68,9 @@ p {
   &.aside {
     font-size: 14px;
   }
+
+  max-width: 640px;
+
+  margin: 0 auto;
+  margin-bottom: 12px;
 }

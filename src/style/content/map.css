@@ -160,6 +160,7 @@ Gradient Combos
 .root .node-halo{
 	fill-opacity: 0.6;
 	fill: #4B4B4B;
+  stroke: rgba(255, 255, 255, 0.7);
 }
 
 .hub .node-halo{
