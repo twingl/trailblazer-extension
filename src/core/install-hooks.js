@@ -14,7 +14,7 @@ module.exports = function(details) {
 
     case "install":
       // Show onboarding
-      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/welcome.html") });
+      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour/sign-in.html") });
       actions.extensionInstalled();
       break;
 
