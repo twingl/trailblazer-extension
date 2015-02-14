@@ -1,0 +1,23 @@
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: rgba(255, 255, 255, 0.7);
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+
+    svg {
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+      margin-right: 0.5em;
+    }
+  }
+}
+
+.legend .root .node-halo {
+  stroke-width: 2px;
+}
