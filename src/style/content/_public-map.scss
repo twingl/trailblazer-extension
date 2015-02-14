@@ -1,0 +1,42 @@
+.public {
+  #map-container {
+    background-image: none;
+  }
+
+  #title {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    background: none;
+
+    h1 {
+      color: rgb(255, 255, 255);
+      font-size: 36px;
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+
+  #get-trailblazer {
+    position: absolute;
+    top: 56px;
+    right: 84px;
+
+    a {
+      color: rgb(246, 100, 63);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    &::after {
+      content: " ";
+      background-image: url(/assets/icons/38.png);
+      position: absolute;
+      display: block;
+      top: -8px;
+      right: -48px;
+      width: 38px;
+      height: 38px;
+    }
+  }
+}
