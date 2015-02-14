@@ -230,6 +230,12 @@ var NodeStore = Fluxxor.createStore({
                 // No match - move on
                 cursor.continue();
               }
+            } else if (currentNode.url === "" || currentNode.url === "chrome://newtab/") {
+              // Fill in the current node
+              currentNode.url = payload.url;
+              currentNode.title = payload.title;
+
+              nodeStore.put(currentNode);
             } else {
               // Create a new node!
 
