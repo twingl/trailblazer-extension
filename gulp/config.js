@@ -23,11 +23,6 @@ module.exports = {
         dest: dest
       },
       {
-        name: "welcome.css",
-        src: src + "/style/welcome/**/*",
-        dest: dest
-      },
-      {
         name: "tour.css",
         src: src + "/style/tour/**/*",
         dest: dest
