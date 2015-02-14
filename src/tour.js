@@ -12,3 +12,5 @@ for (var i = 0; i < scripts.length; i += 1) {
   if (queryString.match(/6/)) { require('./tour/6') };
   if (queryString.match(/7/)) { require('./tour/7') };
 };
+
+require('./content-scripts/page-title');
