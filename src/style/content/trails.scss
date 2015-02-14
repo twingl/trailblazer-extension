@@ -1,4 +1,19 @@
+.wrap.assignment-index {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
 
+  h1 { font-size: 28px; }
+  p { font-size: 16px; }
+
+  a {
+    color: #666;
+
+    &.primary {
+      color: rgb(246, 100, 63);
+    }
+  }
+}
 
 .assignment-menu {
 	color: #555;
@@ -15,7 +30,7 @@
 	width: 320px;
 	margin: 1em;
 	padding: 1em;
-	margin-right: auto; 
+	margin-right: auto;
 	margin-left: auto;
 }
 
