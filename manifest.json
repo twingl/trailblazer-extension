@@ -32,5 +32,6 @@
       "38": "/assets/icons/38-unknown.png"
     },
     "default_popup": "/build/popup.html"
-  }
+  },
+  "content_security_policy": "script-src 'self' https://platform.twitter.com; object-src 'self'"
 }

@@ -1,0 +1,13 @@
+.trailblazer-button {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  background-size: 22px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin: auto 6px;
+
+  &, &.idle { background-image: url(/assets/icons/38.png); }
+  &.recording { background-image: url(/assets/icons/38-recording.png); }
+}

@@ -668,7 +668,7 @@ var SyncStore = Fluxxor.createStore({
                 remoteNode.tabId = localNode.tabId;
               }
 
-              if (localNode && remoteNode.title === remoteNode.url && localNode.title) {
+              if (localNode && (remoteNode.title === "" || remoteNode.title === remoteNode.url) && localNode.title) {
                 remoteNode.title = localNode.title;
               }
 

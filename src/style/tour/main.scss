@@ -1,0 +1,91 @@
+@import '../reset';
+@import 'components/task';
+@import 'components/record-button';
+@import 'components/stop-button';
+@import 'components/trailblazer-button';
+@import 'components/waypoint-button';
+@import 'components/folder-icon';
+
+@import 'action';
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: rgb(255, 250, 243);
+  color: darken(rgb(161, 160, 159), 15%);
+}
+
+a {
+  cursor: pointer;
+}
+
+#twitter-share-button {
+  position: relative;
+  top: 3px;
+}
+
+.wrap {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.btn-group {
+  margin-top: 24px;
+}
+
+.btn {
+  display: block;
+  margin: 12px auto;
+  width: 180px;
+  padding: 12px;
+  border-radius: 4px;
+  background: rgb(29, 175, 173);
+  color: white;
+  text-decoration: none;
+
+  font-variant: small-caps;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+
+  &:hover {
+    background: lighten(rgb(29, 175, 173), 5%);
+  }
+}
+
+.secondary {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(120, 120, 120);
+}
+
+h1 {
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 400;
+
+  margin: 24px auto;
+  margin-top: 10%;
+}
+
+h2 {
+  font-size: 28px;
+  line-height: 48px;
+  font-weight: 400;
+
+  margin: 24px auto;
+  margin-top: 5%;
+}
+
+p {
+  line-height: 24px;
+  font-size: 18px;
+
+  &.aside {
+    font-size: 14px;
+  }
+
+  max-width: 640px;
+
+  margin: 0 auto;
+  margin-bottom: 12px;
+}

@@ -23,8 +23,8 @@ module.exports = {
         dest: dest
       },
       {
-        name: "welcome.css",
-        src: src + "/style/welcome/**/*",
+        name: "tour.css",
+        src: src + "/style/tour/**/*",
         dest: dest
       }
     ]
@@ -73,6 +73,11 @@ module.exports = {
         entries: './src/public-map.js',
         dest: dest,
         outputName: 'public-map.js'
+      },
+      {
+        entries: './src/tour.js',
+        dest: dest,
+        outputName: 'tour.js'
       }
     ]
   }
