@@ -13,4 +13,6 @@ for (var i = 0; i < scripts.length; i += 1) {
   if (queryString.match(/7/)) { require('./tour/7') };
 };
 
-require('./content-scripts/page-title');
+window.setTimeout( function () {
+  require('./content-scripts/page-title');
+}, 1000);

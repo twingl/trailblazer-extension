@@ -215,7 +215,7 @@ module.exports = {
       payload: {
         tabId: tabId,
         url: url,
-        title: title,
+        title: (title === url) ? null : title,
         parentTabId: parentTabId,
         tabObj: tabObj
       }
@@ -255,7 +255,7 @@ module.exports = {
       payload: {
         tabId: tabId,
         url: url,
-        title: title,
+        title: (title === url) ? null : title,
         tabObj: tabObj
       }
     });
