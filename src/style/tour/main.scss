@@ -4,6 +4,7 @@
 @import 'components/stop-button';
 @import 'components/trailblazer-button';
 @import 'components/waypoint-button';
+@import 'components/folder-icon';
 
 @import 'action';
 
@@ -64,6 +65,15 @@ h1 {
 
   margin: 24px auto;
   margin-top: 10%;
+}
+
+h2 {
+  font-size: 28px;
+  line-height: 48px;
+  font-weight: 400;
+
+  margin: 24px auto;
+  margin-top: 5%;
 }
 
 p {
