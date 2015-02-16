@@ -10,5 +10,3 @@ var revealNextStep = function () {
 chrome.runtime.onMessage.addListener( function (msg) {
   if (msg.action === constants.STOP_RECORDING_SUCCESS) revealNextStep();
 });
-
-$(document).ready( revealNextStep );
