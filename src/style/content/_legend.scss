@@ -16,8 +16,12 @@
       margin-right: 0.5em;
     }
   }
-}
 
-.legend .root .node-halo {
-  stroke-width: 2px;
+  .node {
+    cursor: default;
+  }
+
+  .root .node-halo {
+    stroke-width: 2px;
+  }
 }
