@@ -31,6 +31,8 @@ var MetricsStore = Fluxxor.createStore({
       constants.MAKE_ASSIGNMENT_VISIBLE, this.handleMakeAssignmentVisible,
       constants.MAKE_ASSIGNMENT_HIDDEN, this.handleMakeAssignmentHidden,
 
+      constants.COMPLETED_ONBOARDING_STEP, this.handleCompletedOnboardingStep,
+
       constants.EXTENSION_INSTALLED, this.handleExtensionInstalled,
       constants.EXTENSION_UPDATED, this.handleExtensionUpdated,
       constants.CHROME_UPDATED, this.handleChromeUpdated
@@ -302,6 +304,15 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
+  },
+
+  handleCompletedOnboardingStep: function (payload) {
+    var collection = "extension.completed_onboarding_step";
+    var properties = {
+      step: payload.step
+    };
+
+    this.reportEvent(collection, properties);
   },
 
   handleExtensionInstalled: function () {

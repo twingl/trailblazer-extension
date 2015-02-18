@@ -1,6 +1,19 @@
 module.exports = {
   __change__:                       'change', // NOTE: reserved for emit('change')
 
+  COMPLETED_ONBOARDING_STEP: "COMPLETED_ONBOARDING_STEP",
+
+  onboarding: {
+    STEP_1: "STEP_1",
+    STEP_2: "STEP_2",
+    STEP_3: "STEP_3",
+    STEP_4: "STEP_4",
+    STEP_5: "STEP_5",
+    STEP_6: "STEP_6",
+    STEP_7: "STEP_7",
+    STEP_7_TWEET: "STEP_7_TWEET"
+  },
+
   /**
    * Actions to request 'change' be emitted with current data
    */

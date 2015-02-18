@@ -1,7 +1,10 @@
-var $ = require('jquery');
+var $         = require('jquery')
+  , constants = require('../constants')
+  , actions   = require('../actions');
 
 $(document).ready( function () {
   $('#btnContinue').click( function () {
+    actions.completedOnboardingStep(constants.onboarding.STEP_3)
     // Sneakily navigate to the next step in the background
     window.setTimeout( function () {
       window.location.href = chrome.runtime.getURL('/build/tour/5.html');

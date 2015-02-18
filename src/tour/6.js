@@ -3,6 +3,7 @@ var $         = require('jquery')
   , constants = require('../constants');
 
 var revealNextStep = function () {
+  actions.completedOnboardingStep(constants.onboarding.STEP_6);
   window.location.href = chrome.runtime.getURL('/build/tour/7.html');
 };
 

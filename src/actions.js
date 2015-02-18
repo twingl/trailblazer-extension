@@ -577,5 +577,15 @@ module.exports = {
     messageChannel.send({
       action: constants.CHROME_UPDATED
     });
+  },
+
+  completedOnboardingStep: function (step) {
+    info('completedOnboardingStep', { step: step });
+    messageChannel.send({
+      action: constants.COMPLETED_ONBOARDING_STEP,
+      payload: {
+        step: step
+      }
+    });
   }
 }
