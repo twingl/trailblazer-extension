@@ -11,6 +11,20 @@
   when you run `gulp`.
 */
 
+var argv = require('yargs').argv;
+var dotenv = require('dotenv');
+
+if (argv.production) {
+  console.log("Loading production environment!");
+  dotenv.load({ path: ".env-production" });
+} else if (argv.staging) {
+  console.log("Loading staging environment!");
+  dotenv.load({ path: ".env-staging" });
+} else {
+  console.log("Loading development environment!");
+  dotenv.load();
+}
+
 var requireDir = require('require-dir');
 
 // Require all tasks in gulp/tasks, including subfolders
