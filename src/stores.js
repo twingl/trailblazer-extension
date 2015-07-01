@@ -13,7 +13,8 @@ var debug               = require('debug')
   , AuthenticationStore = require('./stores/authentication-store')
   , SyncStore           = require('./stores/sync-store')
   , MetricsStore        = require('./stores/metrics-store')
-  , MapStore        = require('./stores/map-store');
+  , MapStore            = require('./stores/map-store')
+  , ErrorStore          = require('./stores/error-store');
 
 info("Initializing Indexdb");
 var schema = treo.schema()
@@ -55,7 +56,8 @@ var fluxStores = {
   AuthenticationStore: new AuthenticationStore({ db: objectStores }),
   SyncStore: new SyncStore({ db: objectStores }),
   MetricsStore: new MetricsStore({ db: objectStores }),
-  MapStore: new MapStore({ db: objectStores })
+  MapStore: new MapStore({ db: objectStores }),
+  ErrorStore: new ErrorStore()
 };
 
 module.exports = fluxStores;

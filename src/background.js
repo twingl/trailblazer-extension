@@ -30,14 +30,15 @@ if (config.logging) {
   debug.disable('*');
 }
 
+// Start tracking errors
+var Raven = require('raven-js');
+if (config.raven.url) Raven.config(config.raven.url).install();
+
 /**
  * Main dependencies.
  */
 var actions               = require('./actions')
-  , Fluxxor               = require('fluxxor')
-  , AssignmentStore       = require('./stores/assignment-store')
-  , NodeStore             = require('./stores/node-store')
-  , TabStore              = require('./stores/tab-store');
+  , Fluxxor               = require('fluxxor');
 
 info("Initializing Trailblazer!");
 

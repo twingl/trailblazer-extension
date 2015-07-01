@@ -496,6 +496,17 @@ module.exports = {
     });
   },
 
+  persistAssignmentFail: function (localId, error) {
+    info('persistAssignmentFail', { localId: localId, error: error });
+    messageChannel.send({
+      action: constants.PERSIST_ASSIGNMENT_FAIL,
+      payload: {
+        localId: localId,
+        error: error
+      }
+    });
+  },
+
   persistNode: function (localId) {
     info('persistNode', { localId: localId });
     messageChannel.send({

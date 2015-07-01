@@ -10,5 +10,8 @@ module.exports = {
     host: process.env.API_HOST,
     nameSpace: "api",
     version: "v1"
+  },
+  raven: {
+    url: process.env.SENTRY_URL
   }
 };

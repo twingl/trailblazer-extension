@@ -12340,6 +12340,11 @@
         }
       }
     },
+    "raven-js": {
+      "version": "1.1.19",
+      "from": "raven-js@>=1.1.18 <2.0.0",
+      "resolved": "https://registry.npmjs.org/raven-js/-/raven-js-1.1.19.tgz"
+    },
     "react": {
       "version": "0.12.0",
       "from": "react@>=0.12.0 <0.13.0",

@@ -75,6 +75,7 @@
     "merge-stream": "^0.1.7",
     "npm-watch": "0.0.0",
     "pretty-hrtime": "^0.2.2",
+    "raven-js": "^1.1.18",
     "reactify": "^0.16.0",
     "require-dir": "~0.1.0",
     "superagent": "^0.20.0",

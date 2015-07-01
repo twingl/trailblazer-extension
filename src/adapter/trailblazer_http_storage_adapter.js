@@ -44,11 +44,15 @@ TrailblazerHTTPStorageAdapter.prototype._request = function(url, httpMethod, opt
         .set("Accept", "application/json")
         .send(opts.data || {})
         .query(opts.params || {})
-        .end(function(response) {
-          if (response.ok) {
-            resolve(response.body);
+        .end(function(error, response) {
+          if (error) {
+            reject(error, response);
           } else {
-            reject(response);
+            if (response.ok) {
+              resolve(response.body);
+            } else {
+              reject(error, response);
+            }
           }
         }); //superagent
     }.bind(this), function() {

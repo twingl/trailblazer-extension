@@ -1,3 +1,8 @@
+// Start tracking errors
+var Raven = require('raven-js')
+  , config    = require('./config').raven;
+if (config.url) Raven.config(config.url).install();
+
 var scripts = document.getElementsByTagName('script');
 
 for (var i = 0; i < scripts.length; i += 1) {

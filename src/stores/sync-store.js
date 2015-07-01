@@ -203,7 +203,8 @@ var SyncStore = Fluxxor.createStore({
 
                 }.bind(this));
               }.bind(this),
-              function(response) {
+              function(error, response) {
+                this.flux.actions.persistAssignmentFail(assignment.localId, error);
                 delete this.pending.assignments[assignment.localId];
               }.bind(this));
       }
