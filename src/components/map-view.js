@@ -3,10 +3,10 @@ var React = require('react');
 var _ = require('lodash');
 
 //components
-var AssignmentTitle = require('app/components/assignment-title');
-var Map = require('app/components/map');
-var ShareMap = require('app/components/share-map');
-var Legend = require('app/components/legend');
+var AssignmentTitle = require('./assignment-title');
+var Map = require('./map');
+var ShareMap = require('./share-map');
+var Legend = require('./legend');
 
 // var state = {
 //       nodeState: {

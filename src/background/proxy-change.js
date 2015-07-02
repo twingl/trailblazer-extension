@@ -1,7 +1,7 @@
 var _               = require('lodash')
   , info            = require('debug')('background/proxy-change.js:info')
   , constants       = require('../constants')
-  , messageChannel  = require('app/message-channel');
+  , messageChannel  = require('../util/message-channel');
 
 /**
  * This listens for 'change' events in the background, and sends them over

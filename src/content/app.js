@@ -7,15 +7,15 @@ var _                     = require('lodash')
   , info                  = require('debug')('content/app.js:info');
 
 //components
-var AssignmentsIndex = React.createFactory(require('app/components/content/assignments-index'));
-var AssignmentsShow  = React.createFactory(require('app/components/content/assignments-show'));
+var AssignmentsIndex = React.createFactory(require('../components/content/assignments-index'));
+var AssignmentsShow  = React.createFactory(require('../components/content/assignments-show'));
 
 //setup routes
 var RouterMixin     = router.RouterMixin
   , navigate        = router.navigate;
 
 module.exports = React.createClass({
-  mixins: [ RouterMixin ], 
+  mixins: [ RouterMixin ],
   routes: {
     '/':                'assignmentsIndex',
     '/assignments':     'assignmentsIndex',

@@ -1,6 +1,6 @@
 var constants       = require('./constants')
   , info            = require('debug')('actions.js:info')
-  , messageChannel  = require('app/message-channel');
+  , messageChannel  = require('./util/message-channel');
 
 module.exports = {
 

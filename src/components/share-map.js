@@ -1,10 +1,10 @@
 /** @jsx React.DOM */
 var React = require('react');
-var ImageButton = require('app/components/image-button');
-var Popover = require('app/components/popover');
+var ImageButton = require('./image-button');
+var Popover = require('./popover');
 
 module.exports = React.createClass({
-  
+
   render: function () {
     var content = "Your map is now public and viewable at:";
     var makePrivateText = "Make Private";

@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 var React       = require('react')
-  , MapView     = require('app/components/map-view');
+  , MapView     = require('../map-view');
 
 var _ = require('lodash');
 

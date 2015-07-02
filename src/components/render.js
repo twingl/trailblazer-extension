@@ -1,7 +1,7 @@
 //helpers
 var d3 = require('d3');
 require('d3-tip');
-var tooltipView = require('app/tooltip-view');
+var tooltipView = require('./tooltip-view');
 var _ = require('lodash');
 
 //environment settings
@@ -128,7 +128,7 @@ module.exports = function(data, options, component) {
 
   // Register the click handler for the nodes
   if (ENV === "extension") {
-    var nodeClick = require('app/ext-node-click');
+    var nodeClick = require('./ext-node-click');
 
     map.selectAll(".node")
       .on('click', function(d) {

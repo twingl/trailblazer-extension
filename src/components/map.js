@@ -1,10 +1,10 @@
 /** @jsx React.DOM */
 var React = require('react');
-var renderMap = require('app/render');
-var d3ify = require('app/d3ify');
+var renderMap = require('./render');
+var d3ify = require('./d3ify');
 var d3 = require('d3');
 require('d3-tip');
-var tooltipView = require('app/tooltip-view');
+var tooltipView = require('./tooltip-view');
 
 module.exports = React.createClass({
   getInitialState: function () {
@@ -48,7 +48,7 @@ module.exports = React.createClass({
       };
       renderMap(d3ify(nodeObj), options, this);
       this.setState({ init: true })
-    }    
+    }
   },
 
   registerForceListeners: function () {
@@ -59,7 +59,7 @@ module.exports = React.createClass({
     this.state.force.on('start', function () {
       this.setState({ updateable: false });
     }.bind(this));
-    
+
     this.setState({ listening: true });
   }
 

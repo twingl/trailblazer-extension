@@ -55,7 +55,7 @@ var articles = {
   "http://en.wikipedia.org/wiki/SL-1": "SL-1"
 }
 
-var AssignmentItem = require('app/components/assignment-item');
+var AssignmentItem = require('../assignment-item');
 
 module.exports = React.createClass({
 

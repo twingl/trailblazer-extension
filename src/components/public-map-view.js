@@ -2,10 +2,10 @@
 var React = require('react');
 
 //components
-var PublicMapTitle = require('app/components/public-map-title');
-var Map = require('app/components/map');
-var ShareMap = require('app/components/share-map');
-var Legend = require('app/components/legend');
+var PublicMapTitle = require('./public-map-title');
+var Map = require('./map');
+var ShareMap = require('./share-map');
+var Legend = require('./legend');
 
 module.exports = React.createClass({
   render: function () {

@@ -1,8 +1,8 @@
 /** @jsx React.DOM */
 var React           = require('react')
   , navigate        = require('react-mini-router').navigate
-  , Star            = require('app/components/star')
-  , AssignmentTitle = require('app/components/assignment-title');
+  , Star            = require('../star')
+  , AssignmentTitle = require('../assignment-title');
 
 module.exports = React.createClass({
   componentDidMount: function () {

@@ -7,10 +7,10 @@ var _                     = require('lodash')
   , info                  = require('debug')('popup/app.js:info');
 
 // Components
-var Idle      = React.createFactory(require('app/components/popup/idle'))
-  , Loading   = React.createFactory(require('app/components/popup/loading'))
-  , SignIn    = React.createFactory(require('app/components/popup/sign-in'))
-  , Recording = React.createFactory(require('app/components/popup/recording'));
+var Idle      = React.createFactory(require('../components/popup/idle'))
+  , Loading   = React.createFactory(require('../components/popup/loading'))
+  , SignIn    = React.createFactory(require('../components/popup/sign-in'))
+  , Recording = React.createFactory(require('../components/popup/recording'));
 
 // Set up routes
 var RouterMixin = router.RouterMixin

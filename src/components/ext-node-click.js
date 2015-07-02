@@ -1,5 +1,5 @@
 var d3              = require('d3')
-  , messageChannel  = require('app/message-channel');
+  , messageChannel  = require('../util/message-channel');
 
 module.exports = function(node) {
   // If a link is middle clicked or ctrl/cmd+clicked
