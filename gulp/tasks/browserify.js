@@ -41,7 +41,7 @@ gulp.task('browserify', function(callback) {
       extensions: config.extensions,
       // Enable source maps!
       debug: config.debug
-    }).transform(babelify);
+    }).transform(babelify.configure({ optional: ["runtime"] }));
 
     var bundle = function() {
       // Log when bundling starts
