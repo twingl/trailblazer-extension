@@ -1,34 +1,13 @@
 // config
-var config      = require('./config')
-  , constants   = require('./constants');
+import config from './config';
+import constants from './constants';
 
 // helpers
-var _           = require('lodash');
+import _ from 'lodash';
 
-/**
- * Initialize logging.
- *
- * Logger name should be the file path, relative to src/ (e.g. background.js,
- * stores/node-store.js)
- *
- * Debug objects that are passed to the logger should be wrapped in an object
- * to minimise console noise (e.g. { assignments: assignments } instead of
- * assignments)
- *
- * Log levels are:
- * - INFO
- * - WARN
- * - ERROR
- */
-var debug = require('debug')
-  , info  = debug('background.js:info');
-
-// Enable or disable logging per configuration
-if (config.logging) {
-  debug.enable('*');
-} else {
-  debug.disable('*');
-}
+// Initialize our logger
+import Logger from './util/logger';
+var logger = new Logger('background.js');
 
 // Start tracking errors
 var Raven = require('raven-js');
@@ -40,24 +19,24 @@ if (config.raven.url) Raven.config(config.raven.url).install();
 var actions               = require('./actions')
   , Fluxxor               = require('fluxxor');
 
-info("Initializing Trailblazer!");
+logger.info("Initializing Trailblazer!");
 
 /**
  * Initialize the extension.
  *
  * Set the initial UI state and run the install hooks
  */
-info("Initializing extension UI state");
+logger.info("Initializing extension UI state");
 var extensionUIState = require('./core/extension-ui-state');
 extensionUIState.init();
 
-info("Running install hooks");
+logger.info("Running install hooks");
 chrome.runtime.onInstalled.addListener(require('./core/install-hooks'));
 
 // Listen for recording changes that will change the extension state
 chrome.runtime.onMessage.addListener(function (message, sender, responder) {
   if (message.action === constants.__change__ && message.storeName === 'TabStore') {
-    info("Tabstore state change!");
+    logger.info("Tabstore state change!");
     if (message.payload.tabs) {
       _.each(message.payload.tabs, function(val, key) {
         extensionUIState.update(parseInt(key), (val) ? "recording" : "idle");
@@ -74,13 +53,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
  */
 
 var stores = require('./stores');
-info("Initializing Flux", { stores: stores, actions: actions });
+logger.info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
 chrome.runtime.onMessage.addListener(function (message, sender, responder) {
-  info('message listener', {message: message})
+  logger.info('message listener', {message: message})
   // if (message.action === "change") return;
   if (message.action) {
     var o = { type: message.action };
@@ -89,7 +68,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
     o.payload.responder = responder;
 
     flux.dispatcher.dispatch(o);
-    info("Dispatched", o);
+    logger.info("Dispatched", o);
   };
 });
 

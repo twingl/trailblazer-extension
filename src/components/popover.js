@@ -1,8 +1,7 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 module.exports = React.createClass({
-  
+
   render: function () {
     var arrowStyle = this.props.arrowStyle;
     var display = this.props.display ? 'block' : 'none';
@@ -10,9 +9,9 @@ module.exports = React.createClass({
       display: display
     }
 
-    return  <div 
+    return  <div
               id={this.props.id}
-              className="popover top" 
+              className="popover top"
               style={inlineStyle} >
               <div className="arrow" style={arrowStyle} />
               <div className="popover-content">

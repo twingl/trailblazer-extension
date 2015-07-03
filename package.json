@@ -51,8 +51,8 @@
   },
   "homepage": "http://twin.gl",
   "devDependencies": {
+    "babelify": "^6.1.2",
     "browserify": "^5.11.2",
-    "debug": "~2.1.0",
     "dotenv": "^1.2.0",
     "envify": "^3.0.0",
     "gulp": "^3.8.8",

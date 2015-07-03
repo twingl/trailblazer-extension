@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var _     = require('lodash')
   , React = require('react');
 

@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 var renderMap = require('./render');
 var d3ify = require('./d3ify');

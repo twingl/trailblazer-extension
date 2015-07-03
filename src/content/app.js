@@ -4,7 +4,9 @@ var _                     = require('lodash')
   , actions               = require('../actions')
   , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
   , constants             = require('../constants')
-  , info                  = require('debug')('content/app.js:info');
+  , Logger                = require('../util/logger');
+
+var logger = new Logger('content/app.js');
 
 //components
 var AssignmentsIndex = React.createFactory(require('../components/content/assignments-index'));
@@ -27,12 +29,12 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    info('render: Rendering with props', { props: this.props });
+    logger.info('render: Rendering with props', { props: this.props });
     return this.renderCurrentRoute();
   },
 
   componentDidMount: function () {
-    info('componentDidMount:', { props: this.props });
+    logger.info('componentDidMount:', { props: this.props });
 
     // Bind listeners
     chrome.runtime.onMessage.addListener( function (message) {
@@ -65,7 +67,7 @@ module.exports = React.createClass({
    * Assignments#index - borrowing naming conventions from Rails
    */
   assignmentsIndex: function () {
-    info('assignmentsIndex:', { props: this.props, state: this.state });
+    logger.info('assignmentsIndex:', { props: this.props, state: this.state });
 
     return AssignmentsIndex({
       assignments: this.state.assignments,
@@ -79,7 +81,7 @@ module.exports = React.createClass({
   assignmentsShow: function (localId) {
     var localId = parseInt(localId);
 
-    info('assignmentsShow:', { props: this.props, state: this.state });
+    logger.info('assignmentsShow:', { props: this.props, state: this.state });
 
     return AssignmentsShow({
       localId: localId,

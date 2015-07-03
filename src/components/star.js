@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React           = require('react')
   , messageChannel  = require('../util/message-channel');
 

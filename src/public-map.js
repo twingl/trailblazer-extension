@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 //helpers
 var React = require('react');
 var _ = require('lodash');

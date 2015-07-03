@@ -3,12 +3,10 @@ var _         = require('lodash')
   , Fluxxor   = require('fluxxor')
   , config    = require('../config').keen
   , KeenIO    = require('keen.io')
-  , uuid      = require('node-uuid');
+  , uuid      = require('node-uuid')
+  , Logger = require('../util/logger');
 
-var debug = require('debug')
-  , info  = debug('stores/metrics-store.js:info')
-  , warn  = debug('stores/metrics-store.js:warn')
-  , error = debug('stores/metrics-store.js:error');
+var logger = new Logger('stores/metrics-store.js')
 
 var MetricsStore = Fluxxor.createStore({
 
@@ -94,14 +92,14 @@ var MetricsStore = Fluxxor.createStore({
         properties.extension.version = manifest.version;
         properties.extension.platform = platformInfo;
 
-        info("Reporting event to " + collection, {
+        logger.info("Reporting event to " + collection, {
           collection: collection,
           properties: properties
         });
 
         this.keen.addEvent(collection, properties, function(err, res) {
           if (err) {
-            error("Failed to report event to keen:", { error: err });
+            logger.error("Failed to report event to keen:", { error: err });
           }
         });
       }.bind(this));

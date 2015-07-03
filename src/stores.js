@@ -3,8 +3,7 @@
  * object ready to be passed to flux.
  */
 
-var debug               = require('debug')
-  , info                = debug('stores.js:info')
+var Logger              = require('./util/logger')
   , treo                = require('treo')
   , treoPromise         = require('treo/plugins/treo-promise')
   , TabStore            = require('./stores/tab-store')
@@ -16,7 +15,9 @@ var debug               = require('debug')
   , MapStore            = require('./stores/map-store')
   , ErrorStore          = require('./stores/error-store');
 
-info("Initializing Indexdb");
+var logger = new Logger('stores.js');
+
+logger.info("Initializing Indexdb");
 var schema = treo.schema()
   .version(1)
     // Node storage

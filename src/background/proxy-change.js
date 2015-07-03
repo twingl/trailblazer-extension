@@ -1,7 +1,9 @@
 var _               = require('lodash')
-  , info            = require('debug')('background/proxy-change.js:info')
+  , Logger          = require('../util/logger')
   , constants       = require('../constants')
   , messageChannel  = require('../util/message-channel');
+
+var logger = new Logger('background/proxy-change.js');
 
 /**
  * This listens for 'change' events in the background, and sends them over
@@ -15,19 +17,19 @@ var ProxyChange = function(flux, stores) {
      * sent to the UI
      */
     initialize: function () {
-      info('initialize proxy-change dispatcher');
+      logger.info('initialize proxy-change dispatcher');
       _.each(stores, function (storeName) {
         flux.store(storeName).on('change', function (payload) {
           payload.store = payload.store || {};
 
           payload.store = storeName;
-          info('Proxying change event from ' + storeName, { payload: payload });
+          logger.info('Proxying change event from ' + storeName, { payload: payload });
           this.proxy(storeName, payload);
         }.bind(this));
 
-        info('Bound proxy for ' + storeName);
+        logger.info('Bound proxy for ' + storeName);
       }.bind(this));
-      info("Initialized ProxyChange: " + stores.join(", "));
+      logger.info("Initialized ProxyChange: " + stores.join(", "));
     },
 
     /**
@@ -40,7 +42,7 @@ var ProxyChange = function(flux, stores) {
         payload: payload
       };
       messageChannel.send(message);
-      info("Dispatched to UI", { message: message });
+      logger.info("Dispatched to UI", { message: message });
     }
 
   }

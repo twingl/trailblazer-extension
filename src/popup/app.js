@@ -4,7 +4,9 @@ var _                     = require('lodash')
   , actions               = require('../actions')
   , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
   , constants             = require('../constants')
-  , info                  = require('debug')('popup/app.js:info');
+  , Logger                = require('../util/logger');
+
+var logger = new Logger('popup/app.js');
 
 // Components
 var Idle      = React.createFactory(require('../components/popup/idle'))
@@ -26,12 +28,12 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    info('render: Rendering with props', { props: this.props });
+    logger.info('render: Rendering with props', { props: this.props });
     return this.renderCurrentRoute();
   },
 
   componentDidMount: function () {
-    info('componentDidMount:', { props: this.props });
+    logger.info('componentDidMount:', { props: this.props });
 
     // Bind listeners
     chrome.runtime.onMessage.addListener( function (message) {
@@ -56,7 +58,7 @@ module.exports = React.createClass({
           }
           break;
         default:
-          info("Ignoring message " + message.action, message);
+          logger.info("Ignoring message " + message.action, message);
           return;
       }
     }.bind(this));
@@ -75,7 +77,7 @@ module.exports = React.createClass({
    * Default route, rendered when state is not yet present
    */
   loading: function () {
-    info('loading:', {
+    logger.info('loading:', {
       props: this.props,
       constants: constants,
       actions: actions
@@ -89,7 +91,7 @@ module.exports = React.createClass({
    * current tab
    */
   idle: function () {
-    info('idle:', { props: this.props });
+    logger.info('idle:', { props: this.props });
     return Idle({
       tabId: this.props.tabId,
       constants: constants,
@@ -103,7 +105,7 @@ module.exports = React.createClass({
    * in and recording the current tab.
    */
   recording: function () {
-    info('recording:', { props: this.props });
+    logger.info('recording:', { props: this.props });
     return Recording({
       tabId: this.props.tabId,
       node: this.props.node,
@@ -118,7 +120,7 @@ module.exports = React.createClass({
    * Displays the sign in form when not signed in
    */
   signIn: function () {
-    info('signIn:', { props: this.props });
+    logger.info('signIn:', { props: this.props });
     return SignIn({
       tabId: this.props.tabId,
       constants: constants,

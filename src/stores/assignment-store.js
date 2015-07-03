@@ -2,18 +2,18 @@ var _                             = require('lodash')
   , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
-  , info                          = require('debug')('stores/assignment-store.js:info')
-  , warn                          = require('debug')('stores/assignment-store.js:warn')
-  , error                         = require('debug')('stores/assignment-store.js:error');
+  , Logger                        = require('../util/logger');
+
+var logger = new Logger('stores/assignment-store.js');
 
 var AssignmentStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    info('initialize', { options: options })
+    logger.info('initialize', { options: options })
     var options             = options || {};
     this.db                 = options.db;
 
-    info('bindActions', { this: this })
+    logger.info('bindActions', { this: this })
 
     this.bindActions(
       constants.SIGN_OUT,                   this.handleSignOut,
@@ -58,7 +58,7 @@ var AssignmentStore = Fluxxor.createStore({
    * Updates an assignment record with a new title
    */
   handleUpdateAssignmentTitle: function (payload) {
-    info('handleUpdateAssignmentTitle', { payload: payload });
+    logger.info('handleUpdateAssignmentTitle', { payload: payload });
     this.db.assignments.db.transaction("readwrite", ["assignments"], function(err, tx) {
       var store = tx.objectStore("assignments")
         , oncomplete = [];
@@ -101,7 +101,7 @@ var AssignmentStore = Fluxxor.createStore({
   },
 
   handleMakeAssignmentVisible: function (payload) {
-    info('handleMakeAssignmentVisible');
+    logger.info('handleMakeAssignmentVisible');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {
       if (assignment && assignment.id) {
@@ -147,7 +147,7 @@ var AssignmentStore = Fluxxor.createStore({
   },
 
   handleMakeAssignmentHidden: function (payload) {
-    info('handleMakeAssignmentHidden');
+    logger.info('handleMakeAssignmentHidden');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {
       if (assignment && assignment.id) {

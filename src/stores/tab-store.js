@@ -1,10 +1,11 @@
 var _           = require('lodash')
-  , info        = require('debug')('stores/tab-store.js:info')
+  , Logger      = require('../util/logger')
   , camelize    = require('camelize')
   , constants   = require('../constants')
   , Fluxxor     = require('fluxxor')
   , RandomName  = require('../util/random-name');
 
+var logger = new Logger('stores/tab-store.js');
 
 var TabStore = Fluxxor.createStore({
 
@@ -50,7 +51,7 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleTabTitleUpdated: function (payload) {
-    info('handleTabTitleUpdated');
+    logger.info('handleTabTitleUpdated');
     this.db.nodes.index('tabId').get(payload.tabId).then(function(nodes) {
       var node = _.first(nodes);
 
@@ -61,7 +62,7 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleTabCreated: function (payload) {
-    info("handleTabCreated:", { payload: payload });
+    logger.info("handleTabCreated:", { payload: payload });
     var parentId = payload.parentTabId;
 
     // Look up parent tab (if present) to see if we're recording it
@@ -74,38 +75,38 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleTabFocused: function (payload) {
-    info("handleTabFocused:", { payload: payload });
+    logger.info("handleTabFocused:", { payload: payload });
     this.emit('change', this.getState());
   },
 
   handleCreatedNavigationTarget: function (payload) {
-    info("handleCreatedNavigationTarget:", { payload: payload });
+    logger.info("handleCreatedNavigationTarget:", { payload: payload });
     throw "NotImplementedError";
   },
 
   handleHistoryStateUpdated: function (payload) {
-    info("handleHistoryStateUpdated:", { payload: payload });
+    logger.info("handleHistoryStateUpdated:", { payload: payload });
     this.emit('change', this.getState());
   },
 
   handleTabUpdated: function (payload) {
-    info("handleTabUpdated:", { payload: payload });
+    logger.info("handleTabUpdated:", { payload: payload });
     this.emit('change', this.getState());
   },
 
   handleWebNavCommitted: function (payload) {
-    info("handleWebNavCommitted:", { payload: payload });
+    logger.info("handleWebNavCommitted:", { payload: payload });
     this.emit('change', this.getState());
   },
 
   handleTabClosed: function (payload) {
-    info("handleTabClosed:", { payload: payload });
+    logger.info("handleTabClosed:", { payload: payload });
     delete this.tabs[payload.tabId];
     this.emit('change', this.getState());
   },
 
   handleTabReplaced: function (payload) {
-    info("handleTabReplaced:", { payload: payload });
+    logger.info("handleTabReplaced:", { payload: payload });
     this.tabs[payload.newTabId] = this.tabs[payload.oldTabId];
     delete this.tabs[payload.oldTabId];
   },
@@ -113,7 +114,7 @@ var TabStore = Fluxxor.createStore({
   // Create an assignment and first node in a single transaction, marking the
   // tab as recording on success
   handleStartRecording: function (payload) {
-    info("handleStartRecording:", { payload: payload });
+    logger.info("handleStartRecording:", { payload: payload });
 
 
     this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], function(err, tx) {
@@ -157,7 +158,7 @@ var TabStore = Fluxxor.createStore({
       }.bind(this); //assignmentStore.add
 
       tx.oncomplete = function (evt) {
-        info("handleStartRecording: success");
+        logger.info("handleStartRecording: success");
         this.tabs[payload.tabId] = true;
         this.flux.actions.startRecordingSuccess(payload.tabId);
         _.each(successCallbacks, function(cb) { cb(); });
@@ -165,7 +166,7 @@ var TabStore = Fluxxor.createStore({
       }.bind(this);
 
       tx.onerror = function (evt) {
-        info("handleStartRecording: error");
+        logger.info("handleStartRecording: error");
         this.tabs[payload.tabId] = false;
         this.flux.actions.startRecordingFail(payload.tabId);
       }.bind(this);
@@ -173,25 +174,25 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleResumeRecording: function (payload) {
-    info("handleResumeRecording");
+    logger.info("handleResumeRecording");
 
     this.db.nodes.get(payload.localId).then(function(node) {
       if (payload.focus && node.tabId) {
-        info("handleResumeRecording: success");
+        logger.info("handleResumeRecording: success");
         this.tabs[node.tabId] = true;
         this.emit('change', this.getState());
       } else {
         chrome.tabs.create({ url: node.url }, function(tab) {
           this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
             tx.oncomplete = function (evt) {
-              info("handleResumeRecording: success");
+              logger.info("handleResumeRecording: success");
               this.tabs[tab.id] = true;
               this.emit('change', this.getState());
             }.bind(this);
 
             // Error handler
             tx.onerror = function (evt) {
-              info("handleResumeRecording: error");
+              logger.info("handleResumeRecording: error");
               this.flux.actions.resumeRecordingFail(payload.localId);
             }.bind(this);
 
@@ -213,14 +214,14 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleStopRecording: function (payload) {
-    info("handleStopRecording:", { payload: payload });
+    logger.info("handleStopRecording:", { payload: payload });
     this.tabs[payload.tabId] = false;
     this.flux.actions.stopRecordingSuccess(payload.tabId);
     this.emit('change', this.getState());
   },
 
   handleDestroyAssignment: function (payload) {
-    info("handleDestroyAssignment", { payload: payload });
+    logger.info("handleDestroyAssignment", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       tx.oncomplete = function() {
         this.emit('change', this.getState());
@@ -242,7 +243,7 @@ var TabStore = Fluxxor.createStore({
   },
 
   handleRequestTabState: function (payload) {
-    info("handleRequestTabState:", { payload: payload });
+    logger.info("handleRequestTabState:", { payload: payload });
     if (this.tabs[payload.tabId]) {
       var state = {
         recording: this.tabs[payload.tabId],

@@ -19,6 +19,7 @@ var size         = require('gulp-size');
 var source       = require('vinyl-source-stream');
 var uglify       = require('gulp-uglify');
 var watchify     = require('watchify');
+var babelify     = require('babelify');
 
 var ENV = process.env.NODE;
 
@@ -40,7 +41,7 @@ gulp.task('browserify', function(callback) {
       extensions: config.extensions,
       // Enable source maps!
       debug: config.debug
-    });
+    }).transform(babelify);
 
     var bundle = function() {
       // Log when bundling starts

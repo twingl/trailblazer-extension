@@ -2,15 +2,15 @@ var _         = require('lodash')
   , config    = require('../config').raven
   , Fluxxor   = require('fluxxor')
   , constants = require('../constants')
-  , info      = require('debug')('stores/error-store.js:info')
-  , warn      = require('debug')('stores/error-store.js:warn')
-  , error     = require('debug')('stores/error-store.js:error')
+  , Logger    = require('../util/logger')
   , Raven     = require('raven-js');
+
+var logger = new Logger('stores/error-store.js');
 
 var ErrorStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    info('initialize', { options: options });
+    logger.info('initialize', { options: options });
     var options = options || {};
 
     var actionHandlers = _.map([

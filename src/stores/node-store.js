@@ -2,10 +2,9 @@ var _           = require('lodash')
   , constants   = require('../constants')
   , Fluxxor     = require('fluxxor')
   , NodeHelper  = require('../helpers/node-helper')
-  , debug       = require('debug')
-  , info        = debug('stores/node-store.js:info')
-  , warn        = debug('stores/node-store.js:warn')
-  , error       = debug('stores/node-store.js:error');
+  , Logger      = require('../util/logger');
+
+var logger = new Logger('stores/node-store.js');
 
 var NodeStore = Fluxxor.createStore({
 
@@ -53,7 +52,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   getState: function () {
-    info('getting node state')
+    logger.info('getting node state')
     return {
       //NOTE: Unsure if this is needed when the all stores can access the main dbObj
       db: this.db,
@@ -107,7 +106,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleSetNodeTitle: function (payload) {
-    info('handleSetNodeTitle');
+    logger.info('handleSetNodeTitle');
 
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes")
@@ -182,7 +181,7 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleCreatedNavigationTarget: function (payload) {
-    info("handleCreatedNavigationTarget", { payload: payload });
+    logger.info("handleCreatedNavigationTarget", { payload: payload });
     throw "NotImplementedError";
   },
 
@@ -190,12 +189,12 @@ var NodeStore = Fluxxor.createStore({
    * Handle a tab's state update by mutating or creating nodes
    */
   handleTabUpdated: function (payload) {
-    info("handleTabUpdated:", { payload: payload });
+    logger.info("handleTabUpdated:", { payload: payload });
 
     // Find the parent + children of the tabId
     // Filter out any that don't have the same URL
     // Check that they don't have any tabIds already
-    // If any nodes remain, it's probably a back/forward nav 
+    // If any nodes remain, it's probably a back/forward nav
     //  - move the tabId over to the found node, removing it from the current one
     // If not, create a new node and move the tabId from the old one to the new one
 
@@ -270,14 +269,14 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleHistoryStateUpdated: function (payload) {
-    info("handleHistoryStateUpdated:", { payload: payload });
+    logger.info("handleHistoryStateUpdated:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
 
       var qualifiers = payload.transitionQualifiers;
 
       if (tabStore.getState().tabs[payload.tabId] && (
-          _.contains(qualifiers, "client_redirect") || 
+          _.contains(qualifiers, "client_redirect") ||
           _.contains(qualifiers, "server_redirect"))) {
         // If the payload is a redirect of some kind
         var updatedNode;
@@ -322,14 +321,14 @@ var NodeStore = Fluxxor.createStore({
   },
 
   handleWebNavCommitted: function (payload) {
-    info("handleWebNavCommitted:", { payload: payload });
+    logger.info("handleWebNavCommitted:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
 
       var qualifiers = payload.transitionQualifiers;
 
       if (tabStore.getState().tabs[payload.tabId] && (
-          _.contains(qualifiers, "client_redirect") || 
+          _.contains(qualifiers, "client_redirect") ||
           _.contains(qualifiers, "server_redirect"))) {
         // If the payload is a redirect of some kind
         var updatedNode;
@@ -377,7 +376,7 @@ var NodeStore = Fluxxor.createStore({
    * Remove the tabId from an existing node
    */
   handleTabClosed: function (payload) {
-    info("handleTabClosed:", { payload: payload });
+    logger.info("handleTabClosed:", { payload: payload });
 
     // Find the node, remove the tabId
     this.db.nodes.index('tabId').get(payload.tabId)
@@ -405,7 +404,7 @@ var NodeStore = Fluxxor.createStore({
    * tab
    */
   handleTabReplaced: function (payload) {
-    info("handleTabReplaced:", { payload: payload });
+    logger.info("handleTabReplaced:", { payload: payload });
     this.waitFor(["TabStore"], function(tabStore) {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
         var store = tx.objectStore("nodes");
@@ -426,7 +425,7 @@ var NodeStore = Fluxxor.createStore({
    * Update a node's rank
    */
   handleRankNodeWaypoint: function(payload) {
-    info("handleRankNodeWaypoint:", { payload: payload });
+    logger.info("handleRankNodeWaypoint:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
 
@@ -448,7 +447,7 @@ var NodeStore = Fluxxor.createStore({
    * Update a node's rank
    */
   handleRankNodeNeutral: function(payload) {
-    info("handleRankNodeNeutral:", { payload: payload });
+    logger.info("handleRankNodeNeutral:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
 

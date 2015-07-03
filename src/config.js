@@ -1,5 +1,4 @@
 module.exports = {
-  logging: process.env.LOGGING_ENABLED,
   keen: {
     enabled: process.env.KEEN_ENABLED,
     projectId: process.env.KEEN_PROJECT_ID,

@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 var ImageButton = require('./image-button');
 var Popover = require('./popover');

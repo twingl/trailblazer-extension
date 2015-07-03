@@ -1,10 +1,9 @@
 var _         = require('lodash')
   , constants = require('../constants')
-  , Fluxxor   = require('fluxxor');
+  , Fluxxor   = require('fluxxor')
+  , Logger    = require('../util/logger');
 
-var debug = require('debug')
-  , info  = debug('stores/authentication-store.js:info')
-  , warn  = debug('stores/authentication-store.js:warn');
+var logger = new Logger('stores/authentication-store.js');
 
 var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter');
 

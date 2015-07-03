@@ -1,46 +1,49 @@
 var constants       = require('./constants')
+  , Logger          = require('./util/logger')
   , info            = require('debug')('actions.js:info')
   , messageChannel  = require('./util/message-channel');
+
+var logger = new Logger('actions.js');
 
 module.exports = {
 
   requestAssignments: function () {
-    info('requestAssignments');
+    logger.info('requestAssignments');
     messageChannel.send({ action: constants.REQUEST_ASSIGNMENTS });
   },
 
   fetchAssignments: function () {
-    info('fetchAssignments');
+    logger.info('fetchAssignments');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS });
   },
 
   fetchAssignmentsSuccess: function (assignments) {
-    info('fetchAssignmentsSuccess');
+    logger.info('fetchAssignmentsSuccess');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_SUCCESS, payload: { assignments: assignments } });
   },
 
   fetchAssignmentsFail: function (error) {
-    info('fetchAssignmentsFail');
+    logger.info('fetchAssignmentsFail');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_FAIL, payload: { error: error } });
   },
 
   updateAssignmentCache: function (assignments) {
-    info('updateAssignmentCache');
+    logger.info('updateAssignmentCache');
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE, payload: { assignments: assignments } });
   },
 
   updateAssignmentCacheSuccess: function () {
-    info('updateAssignmentCacheSuccess');
+    logger.info('updateAssignmentCacheSuccess');
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS });
   },
 
   updateAssignmentCacheFail: function (error) {
-    info('updateAssignmentCacheFail', {error: error });
+    logger.info('updateAssignmentCacheFail', {error: error });
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
   updateAssignmentTitle: function (localId, title) {
-    info('updateAssignmentTitle', { localId: localId, title: title });
+    logger.info('updateAssignmentTitle', { localId: localId, title: title });
     messageChannel.send({
       action: constants.UPDATE_ASSIGNMENT_TITLE,
       payload: {
@@ -51,12 +54,12 @@ module.exports = {
   },
 
   assignmentsSynchronized: function () {
-    info('assignmentsSynchronized');
+    logger.info('assignmentsSynchronized');
     messageChannel.send({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
   },
 
   createAssignmentSuccess: function (assignment) {
-    info('createAssignmentSuccess');
+    logger.info('createAssignmentSuccess');
     messageChannel.send({
       action: constants.CREATE_ASSIGNMENT_SUCCESS,
       payload: {
@@ -66,7 +69,7 @@ module.exports = {
   },
 
   destroyAssignment: function (localId) {
-    info('destroyAssignment');
+    logger.info('destroyAssignment');
     messageChannel.send({
       action: constants.DESTROY_ASSIGNMENT,
       payload: {
@@ -76,14 +79,14 @@ module.exports = {
   },
 
   destroyAssignmentSuccess: function () {
-    info('destroyAssignmentSuccess');
+    logger.info('destroyAssignmentSuccess');
     messageChannel.send({
       action: constants.DESTROY_ASSIGNMENT_SUCCESS
     });
   },
 
   requestNodes: function (localAssignmentId) {
-    info('requestNodes');
+    logger.info('requestNodes');
     messageChannel.send({
       action: constants.REQUEST_NODES,
       payload: {
@@ -93,7 +96,7 @@ module.exports = {
   },
 
   fetchNodes: function (assignmentId) {
-    info('fetchNodes');
+    logger.info('fetchNodes');
     messageChannel.send({
       action: constants.FETCH_NODES,
       payload: {
@@ -103,7 +106,7 @@ module.exports = {
   },
 
   fetchNodesSuccess: function (assignmentId, nodes) {
-    info('fetchNodesSuccess');
+    logger.info('fetchNodesSuccess');
     messageChannel.send({
       action: constants.FETCH_NODES_SUCCESS,
       payload: {
@@ -114,12 +117,12 @@ module.exports = {
   },
 
   fetchNodesFail: function (error) {
-    info('fetchNodesFail');
+    logger.info('fetchNodesFail');
     messageChannel.send({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
   updateNodeCache: function (assignmentId, nodes) {
-    info('updateNodeCache');
+    logger.info('updateNodeCache');
     messageChannel.send({
       action: constants.UPDATE_NODE_CACHE,
       payload: {
@@ -130,7 +133,7 @@ module.exports = {
   },
 
   updateNodeCacheSuccess: function (assignment) {
-    info('updateNodeCacheSuccess');
+    logger.info('updateNodeCacheSuccess');
     messageChannel.send({
       action: constants.UPDATE_NODE_CACHE_SUCCESS,
       payload: {
@@ -140,12 +143,12 @@ module.exports = {
   },
 
   updateNodeCacheFail: function (error) {
-    info('updateNodeCacheFail');
+    logger.info('updateNodeCacheFail');
     messageChannel.send({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
   },
 
   nodesSynchronized: function (assignment) {
-    info('nodesSynchronized');
+    logger.info('nodesSynchronized');
     messageChannel.send({
       action: constants.NODES_SYNCHRONIZED,
       payload: {
@@ -156,7 +159,7 @@ module.exports = {
 
 
   createNodeSuccess: function (localId) {
-    info('createNodeSuccess');
+    logger.info('createNodeSuccess');
     chrome.runtime.sendMessage({
       action: constants.CREATE_NODE_SUCCESS,
       payload: {
@@ -166,7 +169,7 @@ module.exports = {
   },
 
   updateNodeSuccess: function (localId) {
-    info('updateNodeSuccess');
+    logger.info('updateNodeSuccess');
     chrome.runtime.sendMessage({
       action: constants.UPDATE_NODE_SUCCESS,
       payload: {
@@ -176,7 +179,7 @@ module.exports = {
   },
 
   destroyNode: function (localId) {
-    info('deleteNode');
+    logger.info('deleteNode');
     chrome.runtime.sendMessage({
       action: constants.DESTROY_NODE,
       payload: {
@@ -186,7 +189,7 @@ module.exports = {
   },
 
   tabTitleUpdated: function (tabId, url, title) {
-    info('tabTitleUpdated');
+    logger.info('tabTitleUpdated');
     messageChannel.send({
       action: constants.TAB_TITLE_UPDATED,
       payload: {
@@ -198,7 +201,7 @@ module.exports = {
   },
 
   setNodeTitle: function (localId, title) {
-    info('setNodeTitle');
+    logger.info('setNodeTitle');
     messageChannel.send({
       action: constants.SET_NODE_TITLE,
       payload: {
@@ -209,7 +212,7 @@ module.exports = {
   },
 
   tabCreated: function(tabId, url, title, parentTabId, tabObj) {
-    info('tabCreated');
+    logger.info('tabCreated');
     messageChannel.send({
       action: constants.TAB_CREATED,
       payload: {
@@ -223,7 +226,7 @@ module.exports = {
   },
 
   tabFocused: function(tabId) {
-    info('tabFocused');
+    logger.info('tabFocused');
     messageChannel.send({
       action: constants.TAB_FOCUSED,
       payload: {
@@ -233,7 +236,7 @@ module.exports = {
   },
 
   createdNavigationTarget: function(parentTabId, tabId, url, timestamp) {
-    info('createdNavigationTarget');
+    logger.info('createdNavigationTarget');
     chrome.tabs.get(tabId, function(tabObj) {
       messageChannel.send({
         action: constants.CREATED_NAVIGATION_TARGET,
@@ -249,7 +252,7 @@ module.exports = {
   },
 
   tabUpdated: function(tabId, url, title, tabObj) {
-    info('tabUpdated');
+    logger.info('tabUpdated');
     messageChannel.send({
       action: constants.TAB_UPDATED,
       payload: {
@@ -262,7 +265,7 @@ module.exports = {
   },
 
   historyStateUpdated: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
-    info('historyStateUpdated');
+    logger.info('historyStateUpdated');
     chrome.tabs.get(tabId, function(tabObj) {
       messageChannel.send({
         action: constants.HISTORY_STATE_UPDATED,
@@ -279,10 +282,10 @@ module.exports = {
   },
 
   webNavCommitted: function(tabId, url, transitionType, transitionQualifiers, timestamp) {
-    info('webNavCommitted');
+    logger.info('webNavCommitted');
     chrome.tabs.get(tabId, function(tabObj) {
       if (chrome.runtime.lastError) {
-        info('webNavCommitted: No tab with that id - assuming background web request and ignoring');
+        logger.info('webNavCommitted: No tab with that id - assuming background web request and ignoring');
       } else {
         messageChannel.send({
           action: constants.WEB_NAV_COMMITTED,
@@ -300,12 +303,12 @@ module.exports = {
   },
 
   tabClosed: function(tabId) {
-    info('tabClosed');
+    logger.info('tabClosed');
     messageChannel.send({ action: constants.TAB_CLOSED, payload: { tabId: tabId } });
   },
 
   tabReplaced: function(newTabId, oldTabId) {
-    info('tabReplaced');
+    logger.info('tabReplaced');
     messageChannel.send({
       action: constants.TAB_REPLACED,
       payload: {
@@ -318,12 +321,12 @@ module.exports = {
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
   //which then calls the *same* method in background. [Mind Blown]
   selectAssignment: function (assignmentId) {
-    info('selectAssignment');
+    logger.info('selectAssignment');
     messageChannel.send({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
   },
 
   requestTabState: function (tabId) {
-    info('requestTabState');
+    logger.info('requestTabState');
     messageChannel.send({
       action: constants.REQUEST_TAB_STATE,
       payload: {
@@ -333,7 +336,7 @@ module.exports = {
   },
 
   requestTabStateResponse: function (tabId, state) {
-    info('requestTabStateResponse');
+    logger.info('requestTabStateResponse');
     messageChannel.send({
       action: constants.REQUEST_TAB_STATE_RESPONSE,
       payload: {
@@ -344,7 +347,7 @@ module.exports = {
   },
 
   startRecording: function (tabId, tabObj) {
-    info('startRecording');
+    logger.info('startRecording');
     messageChannel.send({
       action: constants.START_RECORDING,
       payload: {
@@ -355,7 +358,7 @@ module.exports = {
   },
 
   startRecordingSuccess: function (tabId) {
-    info('startRecordingSuccess');
+    logger.info('startRecordingSuccess');
     messageChannel.send({
       action: constants.START_RECORDING_SUCCESS,
       payload: {
@@ -365,7 +368,7 @@ module.exports = {
   },
 
   startRecordingFail: function (tabId) {
-    info('startRecordingFail');
+    logger.info('startRecordingFail');
     messageChannel.send({
       action: constants.START_RECORDING_FAIL,
       payload: {
@@ -375,7 +378,7 @@ module.exports = {
   },
 
   resumeRecording: function (localId, focus) {
-    info('startRecording');
+    logger.info('startRecording');
     messageChannel.send({
       action: constants.RESUME_RECORDING,
       payload: {
@@ -386,7 +389,7 @@ module.exports = {
   },
 
   resumeRecordingFail: function (localId) {
-    info('startRecordingFail');
+    logger.info('startRecordingFail');
     messageChannel.send({
       action: constants.RESUME_RECORDING_FAIL,
       payload: {
@@ -396,7 +399,7 @@ module.exports = {
   },
 
   stopRecording: function (tabId) {
-    info('stopRecording');
+    logger.info('stopRecording');
     messageChannel.send({
       action: constants.STOP_RECORDING,
       payload: {
@@ -406,7 +409,7 @@ module.exports = {
   },
 
   stopRecordingSuccess: function (tabId) {
-    info('stopRecordingSuccess');
+    logger.info('stopRecordingSuccess');
     messageChannel.send({
       action: constants.STOP_RECORDING_SUCCESS,
       payload: {
@@ -416,7 +419,7 @@ module.exports = {
   },
 
   rankNodeWaypoint: function (localId) {
-    info('rankNodeWaypoint');
+    logger.info('rankNodeWaypoint');
     messageChannel.send({
       action: constants.RANK_NODE_WAYPOINT,
       payload: {
@@ -426,7 +429,7 @@ module.exports = {
   },
 
   rankNodeNeutral: function (localId) {
-    info('rankNodeNeutral');
+    logger.info('rankNodeNeutral');
     messageChannel.send({
       action: constants.RANK_NODE_NEUTRAL,
       payload: {
@@ -436,7 +439,7 @@ module.exports = {
   },
 
   makeAssignmentVisible: function (localId) {
-    info('makeAssignmentVisible');
+    logger.info('makeAssignmentVisible');
     messageChannel.send({
       action: constants.MAKE_ASSIGNMENT_VISIBLE,
       payload: {
@@ -446,7 +449,7 @@ module.exports = {
   },
 
   makeAssignmentHidden: function (localId) {
-    info('makeAssignmentHidden');
+    logger.info('makeAssignmentHidden');
     messageChannel.send({
       action: constants.MAKE_ASSIGNMENT_HIDDEN,
       payload: {
@@ -456,28 +459,28 @@ module.exports = {
   },
 
   signIn: function () {
-    info('signIn');
+    logger.info('signIn');
     messageChannel.send({
       action: constants.SIGN_IN
     });
   },
 
   signInSuccess: function () {
-    info('signInSuccess');
+    logger.info('signInSuccess');
     messageChannel.send({
       action: constants.SIGN_IN_SUCCESS
     });
   },
 
   signOut: function () {
-    info('signOut');
+    logger.info('signOut');
     messageChannel.send({
       action: constants.SIGN_OUT
     });
   },
 
   persistAssignment: function (localId) {
-    info('persistAssignment', { localId: localId });
+    logger.info('persistAssignment', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT,
       payload: {
@@ -487,7 +490,7 @@ module.exports = {
   },
 
   persistAssignmentSuccess: function (localId) {
-    info('persistAssignmentSuccess', { localId: localId });
+    logger.info('persistAssignmentSuccess', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT_SUCCESS,
       payload: {
@@ -497,7 +500,7 @@ module.exports = {
   },
 
   persistAssignmentFail: function (localId, error) {
-    info('persistAssignmentFail', { localId: localId, error: error });
+    logger.info('persistAssignmentFail', { localId: localId, error: error });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT_FAIL,
       payload: {
@@ -508,7 +511,7 @@ module.exports = {
   },
 
   persistNode: function (localId) {
-    info('persistNode', { localId: localId });
+    logger.info('persistNode', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_NODE,
       payload: {
@@ -518,7 +521,7 @@ module.exports = {
   },
 
   persistNodeSuccess: function (localId) {
-    info('persistNodeSuccess', { localId: localId });
+    logger.info('persistNodeSuccess', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_NODE_SUCCESS,
       payload: {
@@ -528,7 +531,7 @@ module.exports = {
   },
 
   saveMapLayout: function (localId, coordinates) {
-    info('saveMapLayout', { localId: localId, coordinates: coordinates });
+    logger.info('saveMapLayout', { localId: localId, coordinates: coordinates });
     messageChannel.send({
       action: constants.SAVE_MAP_LAYOUT,
       payload: {
@@ -539,7 +542,7 @@ module.exports = {
   },
 
   persistMapLayout: function (localId, coordinates) {
-    info('persistMapLayout', { localId: localId, coordinates: coordinates });
+    logger.info('persistMapLayout', { localId: localId, coordinates: coordinates });
     messageChannel.send({
       action: constants.PERSIST_MAP_LAYOUT,
       payload: {
@@ -550,7 +553,7 @@ module.exports = {
   },
 
   viewedMap: function (localId) {
-    info('viewedMap');
+    logger.info('viewedMap');
     messageChannel.send({
       action: constants.VIEWED_MAP,
       payload: {
@@ -560,21 +563,21 @@ module.exports = {
   },
 
   viewedAssignmentList: function () {
-    info('viewedAssignmentList');
+    logger.info('viewedAssignmentList');
     messageChannel.send({
       action: constants.VIEWED_ASSIGNMENT_LIST
     });
   },
 
   extensionInstalled: function () {
-    info('extensionInstalled');
+    logger.info('extensionInstalled');
     messageChannel.send({
       action: constants.EXTENSION_INSTALLED
     });
   },
 
   extensionUpdated: function (oldVersion) {
-    info('extensionUpdated');
+    logger.info('extensionUpdated');
     messageChannel.send({
       action: constants.EXTENSION_UPDATED,
       payload: {
@@ -584,14 +587,14 @@ module.exports = {
   },
 
   chromeUpdated: function () {
-    info('chromeUpdated');
+    logger.info('chromeUpdated');
     messageChannel.send({
       action: constants.CHROME_UPDATED
     });
   },
 
   completedOnboardingStep: function (step) {
-    info('completedOnboardingStep', { step: step });
+    logger.info('completedOnboardingStep', { step: step });
     messageChannel.send({
       action: constants.COMPLETED_ONBOARDING_STEP,
       payload: {

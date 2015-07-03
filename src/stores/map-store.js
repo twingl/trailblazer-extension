@@ -1,19 +1,18 @@
 var _                             = require('lodash')
   , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
-  , info                          = require('debug')('stores/map-store.js:info')
-  , warn                          = require('debug')('stores/map-store.js:warn')
-  , error                         = require('debug')('stores/map-store.js:error');
+  , Logger                        = require('../util/logger');
 
+var logger = new Logger('stores/map-store.js');
 
 var MapStore = Fluxxor.createStore({
 
   initialize: function (options) {
-    info('initialize', { options: options })
+    logger.info('initialize', { options: options })
     var options = options || {};
     this.db = options.db;
 
-    info('bindActions', { this: this });
+    logger.info('bindActions', { this: this });
 
     this.bindActions(constants.SAVE_MAP_LAYOUT, this.handleSaveMapLayout);
   },
@@ -29,7 +28,7 @@ var MapStore = Fluxxor.createStore({
    * Invokes the persistence event chain for a newly created Assignment.
    */
   handleSaveMapLayout: function (payload) {
-    info('handleSaveMapLayout', { payload: payload });
+    logger.info('handleSaveMapLayout', { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
 
