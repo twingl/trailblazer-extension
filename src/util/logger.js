@@ -36,9 +36,9 @@ export default class Logger {
   // printed at the whim of console.log
   log(message, level, ...additional) {
     if (typeof message === "string") {
-      console.log(`%c ${level} %c ${message}`, `color: white; background: ${this.levels[level]}`, `color: ${this.levels[level]}; font-weight: bold`, ...additional, `from ${this.filename}`);
+      console.log(`%c ${level} %c ${message}`, `color: white; background: ${this.levels[level]}`, `color: ${this.levels[level]}; font-weight: bold`, ...additional, `from ${this.filename}`, { stack: new Error().stack.split("\n") });
     } else {
-      console.log(`%c ${level} `, `color: white; background: ${this.levels[level]}`, message, ...additional, `from ${this.filename}`);
+      console.log(`%c ${level} `, `color: white; background: ${this.levels[level]}`, message, ...additional, `from ${this.filename}`, { stack: new Error().stack.split("\n") });
     }
   }
 }
