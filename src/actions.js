@@ -1,6 +1,5 @@
 var constants       = require('./constants')
   , Logger          = require('./util/logger')
-  , info            = require('debug')('actions.js:info')
   , messageChannel  = require('./util/message-channel');
 
 var logger = new Logger('actions.js');
