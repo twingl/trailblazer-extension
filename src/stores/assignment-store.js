@@ -1,63 +1,72 @@
 var _                             = require('lodash')
-  , Fluxxor                       = require('fluxxor')
   , constants                     = require('../constants')
   , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
   , Logger                        = require('../util/logger');
 
+import Store from '../lib/store';
+import { query, action } from '../decorators';
+
 var logger = new Logger('stores/assignment-store.js');
 
-var AssignmentStore = Fluxxor.createStore({
+class AssignmentStore extends Store {
 
-  initialize: function (options) {
-    logger.info('initialize', { options: options })
-    var options             = options || {};
+  constructor (options = {}) {
+    super(options);
+
     this.db                 = options.db;
+  }
 
-    logger.info('bindActions', { this: this })
+  @query
+  async getAssignments () {
+    var assignments = await this.db.assignments.all();
+    return assignments;
+  }
 
-    this.bindActions(
-      constants.SIGN_OUT,                   this.handleSignOut,
+  @query
+  async getAssignmentByLocalId (localId) {
+    var assignment = await this.db.assignments.get(localId);
+    return assignment;
+  }
 
-      constants.REQUEST_ASSIGNMENTS,        this.handleRequestAssignments,
+  @query
+  async getAssignmentByRemoteId (remoteId) {
+    var assignment = await this.db.assignments.index('id').get(remoteId);
+    return assignment;
+  }
 
-      constants.CREATE_ASSIGNMENT_SUCCESS,  this.handleCreateAssignmentSuccess,
-      constants.UPDATE_ASSIGNMENT_TITLE,    this.handleUpdateAssignmentTitle,
-      constants.DESTROY_ASSIGNMENT_SUCCESS, this.handleDestroyAssignmentSuccess,
-
-      constants.ASSIGNMENTS_SYNCHRONIZED,   this.handleAssignmentsSynchronized,
-      constants.MAKE_ASSIGNMENT_VISIBLE,    this.handleMakeAssignmentVisible,
-      constants.MAKE_ASSIGNMENT_HIDDEN,     this.handleMakeAssignmentHidden
-    );
-  },
-
-  handleSignOut: function () {
+  @action(constants.SIGN_OUT)
+  handleSignOut () {
     this.db.assignments.clear();
-  },
+  }
 
   /**
    * Emit all assignment data
    */
-  handleRequestAssignments: function () {
+  @action(constants.REQUEST_ASSIGNMENTS)
+  handleRequestAssignments () {
+    logger.warn("DEPRECATED");
     // Get the assignments from the DB, fire a change, and fire a fetch assignments
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
       this.flux.actions.fetchAssignments();
     }.bind(this));
-  },
+  }
 
   /**
    * Emit all assignment data
    */
-  handleCreateAssignmentSuccess: function () {
+  @action(constants.CREATE_ASSIGNMENT_SUCCESS)
+  handleCreateAssignmentSuccess () {
     this.db.assignments.all().then( function (assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
-  },
+  }
 
   /**
    * Updates an assignment record with a new title
    */
-  handleUpdateAssignmentTitle: function (payload) {
+  @action(constants.UPDATE_ASSIGNMENT_TITLE)
+  handleUpdateAssignmentTitle (payload) {
     logger.info('handleUpdateAssignmentTitle', { payload: payload });
     this.db.assignments.db.transaction("readwrite", ["assignments"], function(err, tx) {
       var store = tx.objectStore("assignments")
@@ -80,27 +89,30 @@ var AssignmentStore = Fluxxor.createStore({
         _.each(oncomplete, function(cb) { cb(); });
       }.bind(this);
     }.bind(this));
-  },
+  }
 
   /**
    * Emits a change with the assignment list
    */
-  handleDestroyAssignmentSuccess: function (payload) {
+  @action(constants.DESTROY_ASSIGNMENT_SUCCESS)
+  handleDestroyAssignmentSuccess (payload) {
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
-  },
+  }
 
   /**
    * Emits a change event from this store with the complete list of assignments
    */
-  handleAssignmentsSynchronized: function () {
+  @action(constants.ASSIGNMENTS_SYNCHRONIZED)
+  handleAssignmentsSynchronized () {
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
-  },
+  }
 
-  handleMakeAssignmentVisible: function (payload) {
+  @action(constants.MAKE_ASSIGNMENT_VISIBLE)
+  handleMakeAssignmentVisible (payload) {
     logger.info('handleMakeAssignmentVisible');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {
@@ -144,9 +156,10 @@ var AssignmentStore = Fluxxor.createStore({
           }.bind(this));
       }
     }.bind(this));
-  },
+  }
 
-  handleMakeAssignmentHidden: function (payload) {
+  @action(constants.MAKE_ASSIGNMENT_HIDDEN)
+  handleMakeAssignmentHidden (payload) {
     logger.info('handleMakeAssignmentHidden');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {
@@ -192,6 +205,6 @@ var AssignmentStore = Fluxxor.createStore({
     }.bind(this));
   }
 
-});
+};
 
-module.exports = AssignmentStore;
+export default AssignmentStore;

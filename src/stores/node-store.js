@@ -1,39 +1,21 @@
-var _           = require('lodash')
-  , constants   = require('../constants')
-  , Fluxxor     = require('fluxxor')
-  , NodeHelper  = require('../helpers/node-helper')
-  , Logger      = require('../util/logger');
+import _          from 'lodash';
+import constants  from '../constants';
+import NodeHelper from '../helpers/node-helper';
+import Logger     from '../util/logger';
+
+import Store from '../lib/store';
+import { query, action } from '../decorators';
 
 var logger = new Logger('stores/node-store.js');
 
-var NodeStore = Fluxxor.createStore({
+class NodeStore extends Store {
 
-  initialize: function (options) {
-    var options   = options || {};
+  constructor (options = {}) {
+    super(options);
 
     // Instance of IDBDatabase
     this.db       = options.db;
     this.error    = null;
-
-    this.bindActions(
-      constants.SIGN_OUT,                   this.handleSignOut,
-
-      constants.REQUEST_NODES,              this.handleRequestNodes,
-
-      constants.SET_NODE_TITLE,             this.handleSetNodeTitle,
-      constants.TAB_CREATED,                this.handleTabCreated,
-      constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
-      constants.TAB_UPDATED,                this.handleTabUpdated,
-      constants.HISTORY_STATE_UPDATED,      this.handleHistoryStateUpdated,
-      constants.WEB_NAV_COMMITTED,          this.handleWebNavCommitted,
-      constants.TAB_CLOSED,                 this.handleTabClosed,
-      constants.TAB_REPLACED,               this.handleTabReplaced,
-
-      constants.RANK_NODE_WAYPOINT,         this.handleRankNodeWaypoint,
-      constants.RANK_NODE_NEUTRAL,          this.handleRankNodeNeutral,
-
-      constants.NODES_SYNCHRONIZED,         this.handleNodesSynchronized
-    );
 
     // Assume we're booting, remove all tabId references from the DB
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -49,25 +31,53 @@ var NodeStore = Fluxxor.createStore({
         }
       };
     });
-  },
+  }
 
-  getState: function () {
+  @query
+  async getNodesByRemoteAssignmentId (assignmentId) {
+    var nodes = await this.db.nodes.index('assignmentId').get(assignmentId);
+    return nodes;
+  }
+
+  @query
+  async getNodesByLocalAssignmentId (localAssignmentId) {
+    var nodes = await this.db.nodes.index('localAssignmentId').get(localAssignmentId);
+    return nodes;
+  }
+
+  @query
+  async getNodeByRemoteId (id) {
+    var node = await this.db.nodes.index('id').get(id);
+    return node;
+  }
+
+  @query
+  async getNodeByLocalId (localId) {
+    var node = await this.db.nodes.get(localId);
+    return node;
+  }
+
+  @query
+  getState () {
     logger.info('getting node state')
     return {
       //NOTE: Unsure if this is needed when the all stores can access the main dbObj
       db: this.db,
       error: this.error
     };
-  },
+  }
 
-  handleSignOut: function () {
+  @action(constants.SIGN_OUT)
+  handleSignOut () {
     this.db.nodes.clear();
-  },
+  }
 
   /**
    * Emit a change event containing data for the specified assignment
    */
-  handleRequestNodes: function (payload) {
+  @action(constants.REQUEST_NODES)
+  handleRequestNodes (payload) {
+    logger.warn("DEPRECATED");
     this.db.assignments.get(payload.localAssignmentId)
       .then(function(assignment) {
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
@@ -83,12 +93,13 @@ var NodeStore = Fluxxor.createStore({
           this.flux.actions.fetchNodes(assignment.id);
         }
       }.bind(this));
-  },
+  }
 
   /**
    * Remove all nodes associated with the destroyed assignment
    */
-  handleDestroyAssignment: function (payload) {
+  @action(constants.DESTROY_ASSIGNMENT)
+  handleDestroyAssignment (payload) {
     this.waitFor(["AssignmentStore", "TabStore"], function() {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
         var nodeStore = tx.objectStore("nodes");
@@ -103,9 +114,10 @@ var NodeStore = Fluxxor.createStore({
         };
       });
     });
-  },
+  }
 
-  handleSetNodeTitle: function (payload) {
+  @action(constants.SET_NODE_TITLE)
+  handleSetNodeTitle (payload) {
     logger.info('handleSetNodeTitle');
 
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -129,12 +141,13 @@ var NodeStore = Fluxxor.createStore({
       };
 
     }.bind(this));
-  },
+  }
 
   /**
    * Create a record for a newly created tab
    */
-  handleTabCreated: function (payload) {
+  @action(constants.TAB_CREATED)
+  handleTabCreated (payload) {
     // Wait until we know if the tab is in a recording state
     this.waitFor(["TabStore"], function(tabStore) {
 
@@ -178,17 +191,19 @@ var NodeStore = Fluxxor.createStore({
         }.bind(this));
       }
     }.bind(this));
-  },
+  }
 
-  handleCreatedNavigationTarget: function (payload) {
+  @action(constants.CREATED_NAVIGATION_TARGET)
+  handleCreatedNavigationTarget (payload) {
     logger.info("handleCreatedNavigationTarget", { payload: payload });
     throw "NotImplementedError";
-  },
+  }
 
   /**
    * Handle a tab's state update by mutating or creating nodes
    */
-  handleTabUpdated: function (payload) {
+  @action(constants.TAB_UPDATED)
+  handleTabUpdated (payload) {
     logger.info("handleTabUpdated:", { payload: payload });
 
     // Find the parent + children of the tabId
@@ -266,9 +281,10 @@ var NodeStore = Fluxxor.createStore({
         _.each(oncomplete, function(cb) { cb(); });
       };
     }.bind(this)); //tx
-  },
+  }
 
-  handleHistoryStateUpdated: function (payload) {
+  @action(constants.HISTORY_STATE_UPDATED)
+  handleHistoryStateUpdated (payload) {
     logger.info("handleHistoryStateUpdated:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
@@ -318,9 +334,10 @@ var NodeStore = Fluxxor.createStore({
         }.bind(this));
       }
     }.bind(this));
-  },
+  }
 
-  handleWebNavCommitted: function (payload) {
+  @action(constants.WEB_NAV_COMMITTED)
+  handleWebNavCommitted (payload) {
     logger.info("handleWebNavCommitted:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
@@ -370,12 +387,13 @@ var NodeStore = Fluxxor.createStore({
         }.bind(this));
       }
     }.bind(this));
-  },
+  }
 
   /**
    * Remove the tabId from an existing node
    */
-  handleTabClosed: function (payload) {
+  @action(constants.TAB_CLOSED)
+  handleTabClosed (payload) {
     logger.info("handleTabClosed:", { payload: payload });
 
     // Find the node, remove the tabId
@@ -397,13 +415,14 @@ var NodeStore = Fluxxor.createStore({
 
         }); //transaction
       }.bind(this)); //then
-  },
+  }
 
   /**
    * Replaces an existing node's tabId with a new one when chrome replaces a
    * tab
    */
-  handleTabReplaced: function (payload) {
+  @action(constants.TAB_REPLACED)
+  handleTabReplaced (payload) {
     logger.info("handleTabReplaced:", { payload: payload });
     this.waitFor(["TabStore"], function(tabStore) {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -419,12 +438,13 @@ var NodeStore = Fluxxor.createStore({
         }
       });
     });
-  },
+  }
 
   /**
    * Update a node's rank
    */
-  handleRankNodeWaypoint: function(payload) {
+  @action(constants.RANK_NODE_WAYPOINT)
+  handleRankNodeWaypoint (payload) {
     logger.info("handleRankNodeWaypoint:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
@@ -441,12 +461,13 @@ var NodeStore = Fluxxor.createStore({
         }
       }.bind(this);
     }.bind(this));
-  },
+  }
 
   /**
    * Update a node's rank
    */
-  handleRankNodeNeutral: function(payload) {
+  @action(constants.RANK_NODE_NEUTRAL)
+  handleRankNodeNeutral (payload) {
     logger.info("handleRankNodeNeutral:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
@@ -463,13 +484,14 @@ var NodeStore = Fluxxor.createStore({
         }
       }.bind(this);
     }.bind(this));
-  },
+  }
 
   /**
    * Emit a change event containing the data associated with the specified
    * assignment
    */
-  handleNodesSynchronized: function (payload) {
+  @action(constants.NODES_SYNCHRONIZED)
+  handleNodesSynchronized (payload) {
     this.db.nodes.index('localAssignmentId')
       .get(payload.assignment.localId)
       .then(function(nodes) {
@@ -477,6 +499,6 @@ var NodeStore = Fluxxor.createStore({
       }.bind(this));
   }
 
-});
+};
 
-module.exports = NodeStore;
+export default NodeStore;

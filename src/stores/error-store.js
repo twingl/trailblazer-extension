@@ -1,17 +1,19 @@
-var _         = require('lodash')
-  , config    = require('../config').raven
-  , Fluxxor   = require('fluxxor')
-  , constants = require('../constants')
-  , Logger    = require('../util/logger')
-  , Raven     = require('raven-js');
+import _         from 'lodash';
+import constants from '../constants';
+import Logger    from '../util/logger';
+import Raven     from 'raven-js';
+
+import Store from '../lib/store';
+
+import globalConfig from '../config';
+var config = globalConfig.raven;
 
 var logger = new Logger('stores/error-store.js');
 
-var ErrorStore = Fluxxor.createStore({
+class ErrorStore extends Store {
 
-  initialize: function (options) {
-    logger.info('initialize', { options: options });
-    var options = options || {};
+  constructor (options = {}) {
+    super(options);
 
     var actionHandlers = _.map([
       constants.FETCH_ASSIGNMENTS_FAIL,
@@ -30,9 +32,9 @@ var ErrorStore = Fluxxor.createStore({
     }.bind(this));
 
     this.bindActions.apply(this, _.flatten(actionHandlers));
-  },
+  }
 
-  report: function (type, data) {
+  report (type, data) {
     data = data || {};
 
     data.manifest = chrome.runtime.getManifest();
@@ -49,6 +51,6 @@ var ErrorStore = Fluxxor.createStore({
       });
     });
   }
-});
+};
 
-module.exports = ErrorStore;
+export default ErrorStore;

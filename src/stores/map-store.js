@@ -1,21 +1,19 @@
-var _                             = require('lodash')
-  , Fluxxor                       = require('fluxxor')
-  , constants                     = require('../constants')
-  , Logger                        = require('../util/logger');
+import _         from 'lodash';
+import constants from '../constants';
+import Logger    from '../util/logger';
 
 var logger = new Logger('stores/map-store.js');
 
-var MapStore = Fluxxor.createStore({
+import Store from '../lib/store';
+import { action } from '../decorators';
 
-  initialize: function (options) {
-    logger.info('initialize', { options: options })
-    var options = options || {};
+class MapStore extends Store {
+
+  constructor (options = {}) {
+    super(options);
+
     this.db = options.db;
-
-    logger.info('bindActions', { this: this });
-
-    this.bindActions(constants.SAVE_MAP_LAYOUT, this.handleSaveMapLayout);
-  },
+  }
 
   //NOTES
   //When an XHR goes out, an entry is added to
@@ -27,7 +25,8 @@ var MapStore = Fluxxor.createStore({
   /**
    * Invokes the persistence event chain for a newly created Assignment.
    */
-  handleSaveMapLayout: function (payload) {
+  @action(constants.SAVE_MAP_LAYOUT)
+  handleSaveMapLayout (payload) {
     logger.info('handleSaveMapLayout', { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
@@ -47,6 +46,6 @@ var MapStore = Fluxxor.createStore({
     }.bind(this));
   }
 
-});
+};
 
-module.exports = MapStore;
+export default MapStore;

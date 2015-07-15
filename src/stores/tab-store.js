@@ -1,56 +1,39 @@
-var _           = require('lodash')
-  , Logger      = require('../util/logger')
-  , camelize    = require('camelize')
-  , constants   = require('../constants')
-  , Fluxxor     = require('fluxxor')
-  , RandomName  = require('../util/random-name');
+import _          from 'lodash';
+import Logger     from '../util/logger';
+import camelize   from 'camelize';
+import constants  from '../constants';
+import RandomName from '../util/random-name';
+
+import Store from '../lib/store';
+import { query, action } from '../decorators';
 
 var logger = new Logger('stores/tab-store.js');
 
-var TabStore = Fluxxor.createStore({
+class TabStore extends Store {
 
-  initialize: function (options) {
-    var options     = options || {};
+  constructor (options = {}) {
+    super(options);
+
     this.db         = options.db;
     this.tabs       = options.tabs || {};
+  }
 
-    this.bindActions(
-      constants.SIGN_OUT,                   this.handleSignOut,
-
-      constants.REQUEST_TAB_STATE,          this.handleRequestTabState,
-
-      constants.TAB_TITLE_UPDATED,          this.handleTabTitleUpdated,
-
-      constants.TAB_CREATED,                this.handleTabCreated,
-      constants.TAB_FOCUSED,                this.handleTabFocused,
-      constants.CREATED_NAVIGATION_TARGET,  this.handleCreatedNavigationTarget,
-      constants.HISTORY_STATE_UPDATED,      this.handleHistoryStateUpdated,
-      constants.WEB_NAV_COMMITTED,          this.handleWebNavCommitted,
-      constants.TAB_UPDATED,                this.handleTabUpdated,
-      constants.TAB_CLOSED,                 this.handleTabClosed,
-      constants.TAB_REPLACED,               this.handleTabReplaced,
-
-      constants.START_RECORDING,            this.handleStartRecording,
-      constants.RESUME_RECORDING,           this.handleResumeRecording,
-      constants.STOP_RECORDING,             this.handleStopRecording,
-      constants.DESTROY_ASSIGNMENT,         this.handleDestroyAssignment
-    );
-  },
-
-  getState: function () {
+  getState() {
     return {
       tabs: this.tabs
     };
-  },
+  }
 
-  handleSignOut: function () {
+  @action(constants.SIGN_OUT)
+  handleSignOut () {
     _.each(this.tabs, function(tab, index, tabs) {
       tabs[index] = false;
     });
     this.emit('change', this.getState());
-  },
+  }
 
-  handleTabTitleUpdated: function (payload) {
+  @action(constants.TAB_TITLE_UPDATED)
+  handleTabTitleUpdated (payload) {
     logger.info('handleTabTitleUpdated');
     this.db.nodes.index('tabId').get(payload.tabId).then(function(nodes) {
       var node = _.first(nodes);
@@ -59,9 +42,10 @@ var TabStore = Fluxxor.createStore({
         this.flux.actions.setNodeTitle(node.localId, payload.title);
       }
     }.bind(this));
-  },
+  }
 
-  handleTabCreated: function (payload) {
+  @action(constants.TAB_CREATED)
+  handleTabCreated (payload) {
     logger.info("handleTabCreated:", { payload: payload });
     var parentId = payload.parentTabId;
 
@@ -72,48 +56,56 @@ var TabStore = Fluxxor.createStore({
       this.tabs[payload.tabId] = true;
       this.emit('change', this.getState());
     }
-  },
+  }
 
-  handleTabFocused: function (payload) {
+  @action(constants.TAB_FOCUSED)
+  handleTabFocused (payload) {
     logger.info("handleTabFocused:", { payload: payload });
     this.emit('change', this.getState());
-  },
+  }
 
-  handleCreatedNavigationTarget: function (payload) {
+  @action(constants.CREATED_NAVIGATION_TARGET)
+  handleCreatedNavigationTarget (payload) {
     logger.info("handleCreatedNavigationTarget:", { payload: payload });
     throw "NotImplementedError";
-  },
+  }
 
-  handleHistoryStateUpdated: function (payload) {
+  @action(constants.HISTORY_STATE_UPDATED)
+  handleHistoryStateUpdated (payload) {
     logger.info("handleHistoryStateUpdated:", { payload: payload });
     this.emit('change', this.getState());
-  },
+  }
 
-  handleTabUpdated: function (payload) {
+  @action(constants.TAB_UPDATED)
+  handleTabUpdated (payload) {
     logger.info("handleTabUpdated:", { payload: payload });
     this.emit('change', this.getState());
-  },
+  }
 
-  handleWebNavCommitted: function (payload) {
+  @action(constants.WEB_NAV_COMMITTED)
+  handleWebNavCommitted (payload) {
     logger.info("handleWebNavCommitted:", { payload: payload });
     this.emit('change', this.getState());
-  },
+  }
 
-  handleTabClosed: function (payload) {
+  @action(constants.TAB_CLOSED)
+  handleTabClosed (payload) {
     logger.info("handleTabClosed:", { payload: payload });
     delete this.tabs[payload.tabId];
     this.emit('change', this.getState());
-  },
+  }
 
-  handleTabReplaced: function (payload) {
+  @action(constants.TAB_REPLACED)
+  handleTabReplaced (payload) {
     logger.info("handleTabReplaced:", { payload: payload });
     this.tabs[payload.newTabId] = this.tabs[payload.oldTabId];
     delete this.tabs[payload.oldTabId];
-  },
+  }
 
   // Create an assignment and first node in a single transaction, marking the
   // tab as recording on success
-  handleStartRecording: function (payload) {
+  @action(constants.START_RECORDING)
+  handleStartRecording (payload) {
     logger.info("handleStartRecording:", { payload: payload });
 
 
@@ -171,9 +163,10 @@ var TabStore = Fluxxor.createStore({
         this.flux.actions.startRecordingFail(payload.tabId);
       }.bind(this);
     }.bind(this)); //transaction
-  },
+  }
 
-  handleResumeRecording: function (payload) {
+  @action(constants.RESUME_RECORDING)
+  handleResumeRecording (payload) {
     logger.info("handleResumeRecording");
 
     this.db.nodes.get(payload.localId).then(function(node) {
@@ -211,16 +204,18 @@ var TabStore = Fluxxor.createStore({
       }
     }.bind(this));
 
-  },
+  }
 
-  handleStopRecording: function (payload) {
+  @action(constants.STOP_RECORDING)
+  handleStopRecording (payload) {
     logger.info("handleStopRecording:", { payload: payload });
     this.tabs[payload.tabId] = false;
     this.flux.actions.stopRecordingSuccess(payload.tabId);
     this.emit('change', this.getState());
-  },
+  }
 
-  handleDestroyAssignment: function (payload) {
+  @action(constants.DESTROY_ASSIGNMENT)
+  handleDestroyAssignment (payload) {
     logger.info("handleDestroyAssignment", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       tx.oncomplete = function() {
@@ -240,9 +235,11 @@ var TabStore = Fluxxor.createStore({
         }
       }.bind(this);
     }.bind(this));
-  },
+  }
 
-  handleRequestTabState: function (payload) {
+  @action(constants.REQUEST_TAB_STATE)
+  handleRequestTabState (payload) {
+    logger.warn("DEPRECATED");
     logger.info("handleRequestTabState:", { payload: payload });
     if (this.tabs[payload.tabId]) {
       var state = {
@@ -268,6 +265,6 @@ var TabStore = Fluxxor.createStore({
     }
   }
 
-});
+};
 
-module.exports = TabStore;
+export default TabStore;

@@ -1,21 +1,23 @@
-var _                             = require('lodash')
-  , config                        = require('../config')
-  , Fluxxor                       = require('fluxxor')
-  , constants                     = require('../constants')
-  , TrailblazerHTTPStorageAdapter = require('../adapter/trailblazer_http_storage_adapter')
-  , camelize                      = require('camelize')
-  , NodeHelper                    = require('../helpers/node-helper')
-  , AssignmentHelper              = require('../helpers/assignment-helper')
-  , Logger                        = require('../util/logger');
+import _                             from 'lodash';
+import config                        from '../config';
+import constants                     from '../constants';
+import TrailblazerHTTPStorageAdapter from '../adapter/trailblazer_http_storage_adapter';
+import camelize                      from 'camelize';
+import NodeHelper                    from '../helpers/node-helper';
+import AssignmentHelper              from '../helpers/assignment-helper';
+import Logger                        from '../util/logger';
+
+import Store from 'fluxxor/lib/store';
+import { action } from '../decorators';
 
 var logger = new Logger('stores/sync-store.js');
 
 
-var SyncStore = Fluxxor.createStore({
+class SyncStore extends Store {
 
-  initialize: function (options) {
-    logger.info('initialize', { options: options })
-    var options = options || {};
+  constructor (options = {}) {
+    super(options);
+
     this.db = options.db;
 
     this.pending = {
@@ -28,40 +30,11 @@ var SyncStore = Fluxxor.createStore({
       nodes: {}
     };
 
-    logger.info('bindActions', { this: this });
-
-    this.bindActions(
-      constants.CREATE_ASSIGNMENT_SUCCESS,        this.handleCreateAssignmentSuccess,
-      constants.CREATE_NODE_SUCCESS,              this.handleCreateNodeSuccess,
-
-      constants.UPDATE_NODE_SUCCESS,              this.handleUpdateNodeSuccess,
-
-      constants.DESTROY_NODE,                     this.handleDestroyNode,
-      constants.DESTROY_ASSIGNMENT,               this.handleDestroyAssignment,
-
-      constants.PERSIST_ASSIGNMENT,               this.handlePersistAssignment,
-      constants.PERSIST_ASSIGNMENT_SUCCESS,       this.handlePersistAssignmentSuccess,
-
-      constants.PERSIST_NODE,                     this.handlePersistNode,
-      constants.PERSIST_NODE_SUCCESS,             this.handlePersistNodeSuccess,
-
-      constants.PERSIST_MAP_LAYOUT,               this.handlePersistMapLayout,
-
-      constants.FETCH_ASSIGNMENTS,                this.handleFetchAssignments,
-      constants.FETCH_ASSIGNMENTS_SUCCESS,        this.handleFetchAssignmentsSuccess,
-      constants.FETCH_ASSIGNMENTS_FAIL,           this.handleFetchAssignmentsFail,
-      constants.UPDATE_ASSIGNMENT_CACHE,          this.handleUpdateAssignmentCache,
-      constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS,  this.handleUpdateAssignmentCacheSuccess,
-      constants.UPDATE_ASSIGNMENT_CACHE_FAIL,     this.handleUpdateAssignmentCacheFail,
-
-      constants.FETCH_NODES,                      this.handleFetchNodes,
-      constants.FETCH_NODES_SUCCESS,              this.handleFetchNodesSuccess,
-      constants.FETCH_NODES_FAIL,                 this.handleFetchNodesFail,
-      constants.UPDATE_NODE_CACHE,                this.handleUpdateNodeCache,
-      constants.UPDATE_NODE_CACHE_SUCCESS,        this.handleUpdateNodeCacheSuccess,
-      constants.UPDATE_NODE_CACHE_FAIL,           this.handleUpdateNodeCacheFail
-    );
-  },
+    // Bind the handlers for flux actions
+    for (var [action, handler] of this.fluxActions) {
+      this.bindActions(action, this[handler]);
+    }
+  }
 
   //NOTES
   //When an XHR goes out, an entry is added to
@@ -73,33 +46,37 @@ var SyncStore = Fluxxor.createStore({
   /**
    * Invokes the persistence event chain for a newly created Assignment.
    */
-  handleCreateAssignmentSuccess: function (payload) {
+  @action(constants.CREATE_ASSIGNMENT_SUCCESS)
+  handleCreateAssignmentSuccess (payload) {
     logger.info('handleCreateAssignmentSuccess', { payload: payload });
     this.flux.actions.persistAssignment(payload.assignment.localId);
-  },
+  }
 
   /**
    * Invokes the persistence event chain for a newly created Node.
    */
-  handleCreateNodeSuccess: function (payload) {
+  @action(constants.CREATE_NODE_SUCCESS)
+  handleCreateNodeSuccess (payload) {
     logger.info('handleCreateNodeSuccess', { payload: payload });
     this.db.nodes.get(payload.localId).then(function(node) {
       if (node.assignmentId) {
         this.flux.actions.persistNode(node.localId);
       }
     }.bind(this));
-  },
+  }
 
-  handleUpdateNodeSuccess: function (payload) {
+  @action(constants.UPDATE_NODE_SUCCESS)
+  handleUpdateNodeSuccess (payload) {
     logger.info('handleUpdateNodeSuccess', { payload: payload });
     this.db.nodes.get(payload.localId).then(function(node) {
       if (node.assignmentId) {
         this.flux.actions.persistNode(node.localId);
       }
     }.bind(this));
-  },
+  }
 
-  handleDestroyNode: function (payload) {
+  @action(constants.DESTROY_NODE)
+  handleDestroyNode (payload) {
     logger.info('handleDestroyNode', { payload: payload });
     var run = function() {
       this.db.nodes.get(payload.localId).then(function(node) {
@@ -118,9 +95,10 @@ var SyncStore = Fluxxor.createStore({
       // Otherwise run it now
       run();
     }
-  },
+  }
 
-  handleDestroyAssignment: function (payload) {
+  @action(constants.DESTROY_ASSIGNMENT)
+  handleDestroyAssignment (payload) {
     logger.info('handleDestroyAssignment', { payload: payload });
     var run = function() {
       this.db.assignments.get(payload.localId).then(function(assignment) {
@@ -141,7 +119,7 @@ var SyncStore = Fluxxor.createStore({
       // Otherwise run it now
       run();
     }
-  },
+  }
 
   /**
    * Starts the persistence process for a newly created Assignment
@@ -149,7 +127,8 @@ var SyncStore = Fluxxor.createStore({
    * assignment's localId, and search for un-persisted root nodes and invoke
    * the persistence process for them.
    */
-  handlePersistAssignment: function (payload) {
+  @action(constants.PERSIST_ASSIGNMENT)
+  handlePersistAssignment (payload) {
     logger.info('handlePersistAssignment');
     this.db.assignments.get(payload.localId).done(function(assignment) {
       console.log(assignment);
@@ -212,12 +191,13 @@ var SyncStore = Fluxxor.createStore({
     function () {
       delete this.pending.assignments[assignment.localId];
     });
-  },
+  }
 
   /**
    * Invokes the persistence process on any logical next targets (root nodes)
    */
-  handlePersistAssignmentSuccess: function (payload) {
+  @action(constants.PERSIST_ASSIGNMENT_SUCCESS)
+  handlePersistAssignmentSuccess (payload) {
     logger.info('handlePersistAssignmentSuccess');
 
     this.db.nodes.index('localAssignmentId').get(payload.localId)
@@ -226,7 +206,7 @@ var SyncStore = Fluxxor.createStore({
           if (!node.id) this.flux.actions.persistNode(node.localId);
         }.bind(this));
       }.bind(this));
-  },
+  }
 
   /**
    * Starts the persistence process for a newly created Node.
@@ -234,7 +214,8 @@ var SyncStore = Fluxxor.createStore({
    * invoke the persistence process for them. If the parent of the recently
    * created node isn't persisted, it will add itself to a pending list.
    */
-  handlePersistNode: function (payload) {
+  @action(constants.PERSIST_NODE)
+  handlePersistNode (payload) {
     logger.info('handlePersistNode');
 
     var persistNode = function(payload, node) {
@@ -314,12 +295,13 @@ var SyncStore = Fluxxor.createStore({
         persistNode(payload, node);
       }
     }.bind(this));
-  },
+  }
 
   /**
    * Invokes the persistence process on any logical next targets (children)
    */
-  handlePersistNodeSuccess: function (payload) {
+  @action(constants.PERSIST_NODE_SUCCESS)
+  handlePersistNodeSuccess (payload) {
     logger.info('handlePersistNodeSuccess');
     this.db.nodes.index('localParentId').get(payload.localId).then(function(nodes) {
       _.each(nodes, function(node) {
@@ -331,12 +313,13 @@ var SyncStore = Fluxxor.createStore({
       var run = this.queue.nodes[payload.localId].pop();
       run();
     };
-  },
+  }
 
   /**
    * Persists the map layout
    */
-  handlePersistMapLayout: function (payload) {
+  @action(constants.PERSIST_MAP_LAYOUT)
+  handlePersistMapLayout (payload) {
     logger.info('handlePersistMapLayout', { payload: payload });
 
     var assignmentId;
@@ -389,7 +372,7 @@ var SyncStore = Fluxxor.createStore({
       }.bind(this));
 
 
-  },
+  }
 
   /**
    * Fetches the assignments from Trailblazer's HTTP API
@@ -397,7 +380,8 @@ var SyncStore = Fluxxor.createStore({
    * Fires FETCH_ASSIGNMENTS_SUCCESS if successful, FETCH_ASSIGNMENTS_FAIL if
    * not
    */
-  handleFetchAssignments: function() {
+  @action(constants.FETCH_ASSIGNMENTS)
+  handleFetchAssignments () {
 
     // Request assignments from the storage adapter
     logger.info('handleFetchAssignments: Requesting /assignments')
@@ -416,24 +400,26 @@ var SyncStore = Fluxxor.createStore({
           this.flux.actions.fetchAssignmentsFail({ error: response.error });
         }.bind(this)
       );
-  },
+  }
 
   /**
    * Camelizes the object keys on the assignments in the payload before firing
    * UPDATE_ASSIGNMENT_CACHE
    */
-  handleFetchAssignmentsSuccess: function (payload) {
+  @action(constants.FETCH_ASSIGNMENTS_SUCCESS)
+  handleFetchAssignmentsSuccess (payload) {
     logger.info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
     var assignments = _.collect(payload.assignments, camelize);
 
     this.flux.actions.updateAssignmentCache(assignments);
-  },
+  }
 
   /**
    * Failure handler for FETCH_ASSIGNMENTS
    */
-  handleFetchAssignmentsFail: function (payload) {
-  },
+  @action(constants.FETCH_ASSIGNMENTS_FAIL)
+  handleFetchAssignmentsFail (payload) {
+  }
 
   /**
    * Updating the cache: logic summary
@@ -462,7 +448,8 @@ var SyncStore = Fluxxor.createStore({
    * collection of Assignments returned from the server (which may not have
    * `localId`s populated).
    */
-  handleUpdateAssignmentCache: function (payload) {
+  @action(constants.UPDATE_ASSIGNMENT_CACHE)
+  handleUpdateAssignmentCache (payload) {
     logger.info("handleUpdateAssignmentCache: Updating cache", { payload: payload });
 
     var assignments = payload.assignments;
@@ -525,29 +512,32 @@ var SyncStore = Fluxxor.createStore({
           this.flux.actions.updateAssignmentCacheFail(err);
         }.bind(this));
 
-  },
+  }
 
   /**
    * Success handler for UPDATE_ASSIGNMENT_CACHE
    *
    * Fires ASSIGNMENTS_SYNCHRONIZED
    */
-  handleUpdateAssignmentCacheSuccess: function () {
+  @action(constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS)
+  handleUpdateAssignmentCacheSuccess () {
     this.flux.actions.assignmentsSynchronized();
-  },
+  }
 
   /**
    * Failure handler for UPDATE_ASSIGNMENT_CACHE
    */
-  handleUpdateAssignmentCacheFail: function (payload) {
+  @action(constants.UPDATE_ASSIGNMENT_CACHE_FAIL)
+  handleUpdateAssignmentCacheFail (payload) {
     logger.error('updateAssignmentCacheFail', { error: payload.error });
-  },
+  }
 
   /**
    * Initiate the sync process for nodes associated with the specified
    * assignment by fetching the data from the API
    */
-  handleFetchNodes: function (payload) {
+  @action(constants.FETCH_NODES)
+  handleFetchNodes (payload) {
     var assignmentId = payload.assignmentId;
 
     // Request nodes from the storage adapter
@@ -567,24 +557,26 @@ var SyncStore = Fluxxor.createStore({
           this.flux.actions.fetchNodesFail(error);
         }.bind(this)
       );
-  },
+  }
 
   /**
    * Camelizes the object keys on the nodes in the payload before firing
    * UPDATE_NODE_CACHE
    */
-  handleFetchNodesSuccess: function (payload) {
+  @action(constants.FETCH_NODES_SUCCESS)
+  handleFetchNodesSuccess (payload) {
     logger.info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
     this.flux.actions.updateNodeCache(payload.assignmentId, nodes);
-  },
+  }
 
   /**
    * Failure handler for FETCH_NODES
    */
-  handleFetchNodesFail: function (payload) {
+  @action(constants.FETCH_NODES_FAIL)
+  handleFetchNodesFail (payload) {
     logger.warn('handleFetchNodesFail');
-  },
+  }
 
   /**
    * Expects payload: Object {nodes: Array, assignmentId: Integer}
@@ -615,7 +607,8 @@ var SyncStore = Fluxxor.createStore({
    * collection of Nodes returned from the server for that assignment (which
    * may not have `localId`s populated).
    */
-  handleUpdateNodeCache: function (payload) {
+  @action(constants.UPDATE_NODE_CACHE)
+  handleUpdateNodeCache (payload) {
     logger.info("handleUpdateNodeCache: Updating cache", { payload: payload });
     var nodes = payload.nodes;
 
@@ -712,22 +705,24 @@ var SyncStore = Fluxxor.createStore({
             }.bind(this));
 
       }.bind(this)); //assignments.index('id').get
-  },
+  }
 
   /**
    * Log an error when the cache update process fails
    */
-  handleUpdateNodeCacheFail: function (err) {
+  @action(constants.UPDATE_NODE_CACHE_FAIL)
+  handleUpdateNodeCacheFail (err) {
     logger.error('updateNodeCache Failed', { error: err })
-  },
+  }
 
   /**
    * Emit an event signifying that the cache has been updated successfully
    */
-  handleUpdateNodeCacheSuccess: function (payload) {
+  @action(constants.UPDATE_NODE_CACHE_SUCCESS)
+  handleUpdateNodeCacheSuccess (payload) {
     this.flux.actions.nodesSynchronized(payload.assignment);
-  },
+  }
 
-});
+};
 
-module.exports = SyncStore;
+export default SyncStore;
