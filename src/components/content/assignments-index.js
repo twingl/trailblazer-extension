@@ -1,6 +1,9 @@
 var _     = require('lodash')
   , React = require('react');
 
+import constants from '../../constants';
+import queries from '../../queries';
+
 var articles = {
   "http://en.wikipedia.org/wiki/Anthropodermic_bibliopegy": "Anthropodermic bibliopegy",
   "http://en.wikipedia.org/wiki/Elm_Farm_Ollie": "Elm Farm Ollie",
@@ -58,7 +61,23 @@ var AssignmentItem = require('../assignment-item');
 
 module.exports = React.createClass({
 
+  getInitialState: function () {
+    return { assignments: [] };
+  },
+
   componentDidMount: function () {
+    queries.AssignmentStore.getAssignments().then( (assignments) => {
+      this.setState({ assignments });
+    });
+
+    chrome.runtime.onMessage.addListener( (message) => {
+      if (message.action === constants.__change__ && message.storeName === "AssignmentStore") {
+        queries.AssignmentStore.getAssignments().then( (assignments) => {
+          this.setState({ assignments });
+        });
+      }
+    });
+
     this.props.actions.requestAssignments();
     this.props.actions.viewedAssignmentList();
   },
@@ -77,7 +96,7 @@ module.exports = React.createClass({
     document.title = "Resume a Trail";
 
     var list = [];
-    _.each(this.props.assignments, function (item) {
+    _.each(this.state.assignments, function (item) {
       list.push(React.createElement(AssignmentItem, {item: item, key: item.localId, actions: this.props.actions}))
     }.bind(this));
 
