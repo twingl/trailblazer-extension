@@ -70,16 +70,24 @@ module.exports = React.createClass({
       this.setState({ assignments });
     });
 
-    chrome.runtime.onMessage.addListener( (message) => {
+    let _assignmentListener = (message) => {
       if (message.action === constants.__change__ && message.storeName === "AssignmentStore") {
         queries.AssignmentStore.getAssignments().then( (assignments) => {
           this.setState({ assignments });
         });
       }
-    });
+    };
+
+    this.setState({ _assignmentListener });
+
+    chrome.runtime.onMessage.addListener(_assignmentListener);
 
     this.props.actions.requestAssignments();
     this.props.actions.viewedAssignmentList();
+  },
+
+  componentWillUnmount: function() {
+    chrome.runtime.onMessage.removeListener(this.state._assignmentListener);
   },
 
   startMeandering: function (evt) {

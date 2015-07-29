@@ -1,3 +1,5 @@
+import Logger from './util/logger';
+
 /**
  * Sets a list on the target's class (if not already present) and appends the
  * method's name to that list, indicating that it is one of a store's query
@@ -24,7 +26,22 @@ export function action(actionName) {
   }
 };
 
+/**
+ * Marks a function as deprecated, logging a warning each time it is called.
+ */
+export function deprecated(target, name, descriptor) {
+  let description = (target.constructor) ? `${target.constructor.name}::${name}` : name;
+  let logger = new Logger(description);
+  let fn = descriptor.value;
+
+  descriptor.value = function(...args) {
+    logger.warn("DEPRECATED");
+    fn.apply(this, args);
+  };
+};
+
 export default {
+  deprecated,
   action,
   query
 };

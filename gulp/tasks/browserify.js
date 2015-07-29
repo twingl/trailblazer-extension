@@ -23,8 +23,6 @@ var babelify     = require('babelify');
 
 var ENV = process.env.NODE;
 
-//Note remove gulp jsx
-
 gulp.task('browserify', function(callback) {
   var bundleQueue = config.bundleConfigs.length;
   var index = 0;

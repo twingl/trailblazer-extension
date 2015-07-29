@@ -1,0 +1,21 @@
+@import '../color';
+
+.button {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+
+  border: none;
+  border-radius: 2px;
+
+  padding: 6px 20px;
+
+  cursor: pointer;
+
+  background: $teal-1;
+  color: rgba(255, 255, 255, 0.9);
+
+  &:hover {
+    background: $teal-2;
+  }
+}

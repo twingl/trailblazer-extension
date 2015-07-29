@@ -62,6 +62,8 @@ module.exports = React.createClass({
 
     logger.info('assignmentsShow:', { props: this.props, state: this.state });
 
+    logger.debug(localId);
+
     return AssignmentsShow({
       localId: localId,
       actions: actions,

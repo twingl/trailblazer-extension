@@ -630,7 +630,7 @@ class SyncStore extends Store {
         //unique constraint on id)
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
           .then(function(localNodes) {
-            changes = {
+            var changes = {
               put: [],
               del: []
             };
@@ -667,7 +667,8 @@ class SyncStore extends Store {
               }
 
               if (remoteNode.parentId) {
-                remoteNode.localParentId = _.find(nodes, { 'id': remoteNode.parentId }).localId;
+                var parentNode = _.find(nodes, { 'id': remoteNode.parentId })
+                if (parentNode) remoteNode.localParentId = parentNode.localId;
               }
             });
 
@@ -694,15 +695,12 @@ class SyncStore extends Store {
             });
             return assignment;
           }.bind(this))
-          .done(
-            //success
-            function (assignment) {
-              this.flux.actions.updateNodeCacheSuccess(assignment);
-            }.bind(this),
-            //fail. If any methods up the chain throw an error they will propagate here.
-            function (err) {
-              this.flux.actions.updateNodeCacheFail(err);
-            }.bind(this));
+          .then(function (assignment) {
+            this.flux.actions.updateNodeCacheSuccess(assignment);
+          }.bind(this))
+          .catch(function (err) {
+            this.flux.actions.updateNodeCacheFail(err);
+          }.bind(this));
 
       }.bind(this)); //assignments.index('id').get
   }

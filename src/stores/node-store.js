@@ -4,7 +4,7 @@ import NodeHelper from '../helpers/node-helper';
 import Logger     from '../util/logger';
 
 import Store from '../lib/store';
-import { query, action } from '../decorators';
+import { query, action, deprecated } from '../decorators';
 
 var logger = new Logger('stores/node-store.js');
 
@@ -75,9 +75,9 @@ class NodeStore extends Store {
   /**
    * Emit a change event containing data for the specified assignment
    */
+  @deprecated
   @action(constants.REQUEST_NODES)
   handleRequestNodes (payload) {
-    logger.warn("DEPRECATED");
     this.db.assignments.get(payload.localAssignmentId)
       .then(function(assignment) {
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
@@ -191,6 +191,11 @@ class NodeStore extends Store {
         }.bind(this));
       }
     }.bind(this));
+  }
+
+  @action(constants.CREATE_NODE_SUCCESS)
+  handleCreateNodeSuccess (payload) {
+    this.emit('change');
   }
 
   @action(constants.CREATED_NAVIGATION_TARGET)

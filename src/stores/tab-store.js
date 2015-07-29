@@ -5,7 +5,7 @@ import constants  from '../constants';
 import RandomName from '../util/random-name';
 
 import Store from '../lib/store';
-import { query, action } from '../decorators';
+import { query, action, deprecated } from '../decorators';
 
 var logger = new Logger('stores/tab-store.js');
 
@@ -237,9 +237,9 @@ class TabStore extends Store {
     }.bind(this));
   }
 
+  @deprecated
   @action(constants.REQUEST_TAB_STATE)
   handleRequestTabState (payload) {
-    logger.warn("DEPRECATED");
     logger.info("handleRequestTabState:", { payload: payload });
     if (this.tabs[payload.tabId]) {
       var state = {

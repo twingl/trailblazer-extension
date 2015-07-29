@@ -3,9 +3,13 @@ var _ = require('lodash');
 
 //components
 var AssignmentTitle = require('./assignment-title');
-var Map = require('./map');
 var ShareMap = require('./share-map');
 var Legend = require('./legend');
+
+import Logger from '../util/logger';
+var logger = new Logger('map-view');
+
+import Trail from './trail';
 
 // var state = {
 //       nodeState: {
@@ -52,9 +56,7 @@ module.exports = React.createClass({
     return  <div className="map-view-wrapper" onClick={this.handleClick}>
               <a href="#!/assignments" className="nav-assignment-list"></a>
               <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={this.props.constants} />
-              <div id="map-container">
-                <Map id="map" width={960} height={500} selector="#map" data={data} actions={this.props.actions} constants={this.props.constants} />
-              </div>
+              <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} actions={this.props.actions} />
               <Legend />
               <span className="help">
                 <a
