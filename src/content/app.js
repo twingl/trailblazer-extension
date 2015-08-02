@@ -36,23 +36,6 @@ module.exports = React.createClass({
   componentDidMount: function () {
     logger.info('componentDidMount:', { props: this.props });
 
-    // Bind listeners
-    chrome.runtime.onMessage.addListener( function (message) {
-      switch (message.action) {
-        case constants.__change__:
-          if (message.storeName === "AssignmentStore" &&
-              message.payload.assignments) {
-            console.log("setting assignments: ", { assignments: message.payload.assignments });
-            if (this.isMounted()) this.setState({ assignments: message.payload.assignments });
-          }
-
-          if (message.storeName === "AuthenticationStore" &&
-              message.payload.authenticated !== true) {
-            // Show a sign in page
-          }
-      }
-    }.bind(this));
-
     new ChromeIdentityAdapter().isSignedIn().then(function (signedIn) {
       if (signedIn) {
         actions.requestTabState(this.props.tabId);
@@ -68,11 +51,7 @@ module.exports = React.createClass({
    */
   assignmentsIndex: function () {
     logger.info('assignmentsIndex:', { props: this.props, state: this.state });
-
-    return AssignmentsIndex({
-      assignments: this.state.assignments,
-      actions: actions
-    });
+    return AssignmentsIndex({ actions });
   },
 
   /**
@@ -82,6 +61,8 @@ module.exports = React.createClass({
     var localId = parseInt(localId);
 
     logger.info('assignmentsShow:', { props: this.props, state: this.state });
+
+    logger.debug(localId);
 
     return AssignmentsShow({
       localId: localId,

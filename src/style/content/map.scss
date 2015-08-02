@@ -1,5 +1,10 @@
+@import '../../../node_modules/sass-flex-mixin/flex.scss';
 @import 'legend';
 @import 'public-map';
+
+@import 'node';
+@import 'node-popover';
+@import 'link';
 
 .wrap.assignment-show *,
 .wrap.assignment-show *:after,
@@ -38,30 +43,6 @@ Gradient Combos
 #5CC8CB, #80E0D5
 #9bc5c3, #616161
 */
-
-/* tooltip */
-
-.tooltip {
-  padding: 12px;
-  background: #FAFAF3;
-  color: #28251D;
-  border-radius: 4px;
-  max-width: 320px;
-  text-align: center;
-  overflow: hidden;
-  font-size: 12px;
-}
-
-.tooltip p {
- margin: 0px;
-}
-
-.tooltip-url {
-	color:	#666;
-	font-size: 8px;
-	padding-top: 2px;
-
-}
 
 /* Temp !!! */
 .temp-help {
@@ -113,93 +94,6 @@ Gradient Combos
 	border-style: none;
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
-}
-
-/* Does the title need an arrow?
-
-.map-title h1:after {
-  content:"";
-  position:absolute;
-  border-style:solid;
-  top:11px;
-  left:-6px;
-  bottom:auto;
-  border-width:6px 6px 6px 0;
-  border-color:transparent #fff;
-}
-
-*/
-
-/* nodes */
-.node {
-	fill: #fff;
-	fill-rule: evenodd;
-	cursor: pointer;
-}
-.node-halo {
-	fill-opacity: 0;
-}
-.node-core {
-	opacity: 1;
-}
-
-/*
-.open .node-halo{
-	stroke: #44C0FF;
-	stroke-width: 1px;
-	stroke-opacity: .9;
-}
-*/
-
-@-webkit-keyframes pulse {
-  0% {
-    fill-opacity: .7;
-  }
-  50% {
-    fill-opacity: .5;
-  }
-  100% {
-    fill-opacity: .7;
-  }
-}
-
-.open .node-halo {
-	fill: #FFAAAA;
-	-webkit-animation-name: pulse;
-  	-webkit-animation-duration: 2s;
-  	-webkit-animation-iteration-count: infinite;
-  	-webkit-animation-direction: alternate;
-  	-webkit-animation-timing-function: ease-in-out;
-}
-
-.root .node-halo{
-	fill-opacity: 0.6;
-	fill: #4B4B4B;
-  stroke: rgba(255, 255, 255, 0.7);
-}
-
-.hub .node-halo{
-	fill-opacity: 0.6;
-}
-
-.waypoint .node-halo{
-	fill: gold;
-	fill-opacity: 0.8;
-
-}
-
-/* links */
-.link {
-	stroke: #fff;
-	stroke-width: 1px;
-	stroke-linecap: round;
-	opacity: .8;
-	vector-effect: non-scaling-stroke;
-}
-
-.overlay {
-  fill: none;
-  pointer-events: all;
 }
 
 /* dropdown */

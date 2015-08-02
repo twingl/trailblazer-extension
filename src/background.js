@@ -59,7 +59,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
 chrome.runtime.onMessage.addListener(function (message, sender, responder) {
-  logger.info('message listener', {message: message})
+  logger.info('message listener', { message });
   // if (message.action === "change") return;
   if (message.action) {
     var o = { type: message.action };
@@ -69,6 +69,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
 
     flux.dispatcher.dispatch(o);
     logger.info("Dispatched", o);
+  };
+
+  if (message.query) {
+    // TODO: query method currently needs to respond with a promise. This
+    // shouldn't be a requirement, or at least it shouldn't present itself in
+    // the source: synchronous methods should work seamlessly.
+    flux.store(message.store)[message.query](...message.args).then(responder);
+    logger.info("Queried", message);
+    return true;
   };
 });
 

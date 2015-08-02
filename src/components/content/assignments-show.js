@@ -1,7 +1,12 @@
-var React       = require('react')
-  , MapView     = require('../map-view');
+import React from 'react';
+import MapView from '../map-view';
+import _ from 'lodash';
 
-var _ = require('lodash');
+import queries from '../../queries';
+import constants from '../../constants';
+
+import Logger from '../../util/logger';
+var logger = new Logger('assignments-show');
 
 
 /**
@@ -9,45 +14,63 @@ var _ = require('lodash');
  *
  * Shows a single Assignment, rendering it as a MapView
  */
-module.exports = React.createClass({
+export default class AssignmentsShow extends React.Component {
 
-  getInitialState: function () {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       assignment: undefined,
       nodes: []
     };
-  },
+  }
 
-  componentDidMount: function () {
-    chrome.runtime.onMessage.addListener( function (message) {
-      switch (message.action) {
-        case this.props.constants.__change__:
-          if (message.storeName === "NodeStore" &&
-              message.payload.assignment &&
-              message.payload.assignment.localId === this.props.localId) {
+  componentWillReceiveProps(newProps) {
+    if (this.props.localId !== newProps.localId) {
+      queries.AssignmentStore.getAssignmentByLocalId(newProps.localId)
+        .then(assignment => this.setState({ assignment }));
 
-            if (this.isMounted()) this.setState({
-              assignment: message.payload.assignment,
-              nodes: message.payload.nodes
-            });
-          }
-          if (message.storeName === "AssignmentStore" &&
-              message.payload.assignment &&
-              message.payload.assignment.localId === this.props.localId) {
+      queries.NodeStore.getNodesByLocalAssignmentId(newProps.localId)
+        .then(nodes => this.setState({ nodes }));
+    }
+  }
 
-            if (this.isMounted()) this.setState({
-              assignment: message.payload.assignment
-            });
-          }
-          break;
-      }
-    }.bind(this));
+  getStateFromFlux(message) {
+    if (message.action === constants.__change__ && message.storeName === "AssignmentStore") {
+      console.log("setting state: assignment", this.props.localId);
+      queries.AssignmentStore.getAssignmentByLocalId(this.props.localId)
+        .then(assignment => this.setState({ assignment }));
+    }
+
+    if (message.action === constants.__change__ && message.storeName === "NodeStore") {
+      console.log("setting state: nodes", this.props.localId);
+      queries.NodeStore.getNodesByLocalAssignmentId(this.props.localId)
+        .then(nodes => this.setState({ nodes }));
+    }
+  }
+
+  componentDidMount() {
+    queries.AssignmentStore.getAssignmentByLocalId(this.props.localId)
+      .then(assignment => this.setState({ assignment }));
+
+    queries.NodeStore.getNodesByLocalAssignmentId(this.props.localId)
+      .then(nodes => this.setState({ nodes }));
+
+    var __fluxHandler = this.getStateFromFlux.bind(this);
+
+    chrome.runtime.onMessage.addListener(__fluxHandler);
+
+    this.setState({ __fluxHandler });
 
     this.props.actions.viewedMap(this.props.localId);
     this.props.actions.requestNodes(this.props.localId);
-  },
+  }
 
-  render: function () {
+  componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.state.__fluxHandler);
+  }
+
+  render() {
     var el;
     if (this.state.assignment) {
       document.title = this.state.assignment.title;
@@ -65,6 +88,7 @@ module.exports = React.createClass({
 
     return <div className="wrap assignment-show">{el}</div>
   }
-});
+
+};
 
 

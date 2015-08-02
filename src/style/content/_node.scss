@@ -1,0 +1,62 @@
+/* nodes */
+.node {
+	fill: #fff;
+	fill-rule: evenodd;
+}
+
+.node-halo {
+	fill-opacity: 0;
+}
+
+.node-core {
+	opacity: 1;
+}
+
+/*
+.open .node-halo{
+	stroke: #44C0FF;
+	stroke-width: 1px;
+	stroke-opacity: .9;
+}
+*/
+
+@-webkit-keyframes pulse {
+  0% {
+    fill-opacity: .7;
+  }
+  50% {
+    fill-opacity: .5;
+  }
+  100% {
+    fill-opacity: .7;
+  }
+}
+
+.open .node-halo {
+	fill: #FFAAAA;
+	-webkit-animation-name: pulse;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  -webkit-animation-timing-function: ease-in-out;
+	animation-name: pulse;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+}
+
+.root .node-halo {
+	fill-opacity: 0.6;
+	fill: #4B4B4B;
+  stroke: rgba(255, 255, 255, 0.7);
+}
+
+.hub .node-halo {
+	fill-opacity: 0.6;
+}
+
+.waypoint .node-halo {
+	fill: gold;
+	fill-opacity: 0.8;
+}

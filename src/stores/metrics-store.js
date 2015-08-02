@@ -1,40 +1,24 @@
-var _         = require('lodash')
-  , constants = require('../constants')
-  , Fluxxor   = require('fluxxor')
-  , config    = require('../config').keen
-  , KeenIO    = require('keen.io')
-  , uuid      = require('node-uuid')
-  , Logger = require('../util/logger');
+import _         from 'lodash';
+import constants from '../constants';
+import Store     from '../lib/store';
+import KeenIO    from 'keen.io';
+import uuid      from 'node-uuid';
+import Logger    from '../util/logger';;
+
+import { action } from '../decorators';
+
+import globalConfig from '../config';
+var config = globalConfig.keen;
 
 var logger = new Logger('stores/metrics-store.js')
 
-var MetricsStore = Fluxxor.createStore({
+class MetricsStore extends Store {
 
-  initialize: function (options) {
+  constructor (options = {}) {
+    super(options);
+
     this.uuid = {};
     this.db = options.db;
-
-    this.bindActions(
-      constants.SIGN_IN, this.handleSignIn,
-      constants.SIGN_IN_SUCCESS, this.handleSignInSuccess,
-      constants.SIGN_OUT, this.handleSignOut,
-      constants.START_RECORDING, this.handleStartRecording,
-      constants.START_RECORDING_SUCCESS, this.handleStartRecordingSuccess,
-      constants.STOP_RECORDING, this.handleStopRecording,
-      constants.VIEWED_ASSIGNMENT_LIST, this.handleViewedAssignmentList,
-      constants.VIEWED_MAP, this.handleViewedMap,
-      constants.RESUME_RECORDING, this.handleResumeRecording,
-      constants.RANK_NODE_WAYPOINT, this.handleRankNodeWaypoint,
-      constants.RANK_NODE_NEUTRAL, this.handleRankNodeNeutral,
-      constants.MAKE_ASSIGNMENT_VISIBLE, this.handleMakeAssignmentVisible,
-      constants.MAKE_ASSIGNMENT_HIDDEN, this.handleMakeAssignmentHidden,
-
-      constants.COMPLETED_ONBOARDING_STEP, this.handleCompletedOnboardingStep,
-
-      constants.EXTENSION_INSTALLED, this.handleExtensionInstalled,
-      constants.EXTENSION_UPDATED, this.handleExtensionUpdated,
-      constants.CHROME_UPDATED, this.handleChromeUpdated
-    );
 
     var initStoreUUID = function(storageType) {
       chrome.storage[storageType].get("uuid", function(res) {
@@ -104,35 +88,39 @@ var MetricsStore = Fluxxor.createStore({
         });
       }.bind(this));
     };
-  },
+  }
 
   /**
    * Main funnel
    */
-  handleSignIn: function() {
+  @action(constants.SIGN_IN)
+  handleSignIn (payload) {
     var collection = "extension.sign_in";
     var properties = {};
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleSignInSuccess: function() {
+  @action(constants.SIGN_IN_SUCCESS)
+  handleSignInSuccess (payload) {
     var collection = "extension.sign_in_success";
     var properties = {};
 
     this.initUserInfo(function() {
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleStartRecording: function (payload) {
+  @action(constants.START_RECORDING)
+  handleStartRecording (payload) {
     var collection = "extension.start_recording";
     var properties = {};
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleStartRecordingSuccess: function (payload) {
+  @action(constants.START_RECORDING_SUCCESS)
+  handleStartRecordingSuccess (payload) {
     var collection = "extension.start_recording_success";
     var properties = {};
 
@@ -152,16 +140,18 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleViewedAssignmentList: function (payload) {
+  @action(constants.VIEWED_ASSIGNMENT_LIST)
+  handleViewedAssignmentList (payload) {
     var collection = "extension.viewed_assignment_list";
     var properties = {};
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleViewedMap: function (payload) {
+  @action(constants.VIEWED_MAP)
+  handleViewedMap (payload) {
     var collection = "extension.viewed_map";
     var properties = {};
 
@@ -175,9 +165,10 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleResumeRecording: function (payload) {
+  @action(constants.RESUME_RECORDING)
+  handleResumeRecording (payload) {
     var collection = "extension.resume_recording";
     var properties = {};
 
@@ -196,21 +187,23 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
   /**
    * Additional actions
    */
-  handleSignOut: function() {
+  @action(constants.SIGN_OUT)
+  handleSignOut (payload) {
     var collection = "extension.sign_out";
     var properties = {};
 
     this.identity = {};
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleStopRecording: function (payload) {
+  @action(constants.STOP_RECORDING)
+  handleStopRecording (payload) {
     var collection = "extension.stop_recording";
     var properties = {};
 
@@ -230,9 +223,10 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleRankNodeWaypoint: function (payload) {
+  @action(constants.RANK_NODE_WAYPOINT)
+  handleRankNodeWaypoint (payload) {
     var collection = "extension.rank_node_waypoint";
     var properties = {};
 
@@ -250,9 +244,10 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleRankNodeNeutral: function (payload) {
+  @action(constants.RANK_NODE_NEUTRAL)
+  handleRankNodeNeutral (payload) {
     var collection = "extension.rank_node_neutral";
     var properties = {};
 
@@ -270,9 +265,10 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleMakeAssignmentVisible: function (payload) {
+  @action(constants.MAKE_ASSIGNMENT_VISIBLE)
+  handleMakeAssignmentVisible (payload) {
     var collection = "extension.make_assignment_visible";
     var properties = {};
 
@@ -286,9 +282,10 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleMakeAssignmentHidden: function (payload) {
+  @action(constants.MAKE_ASSIGNMENT_HIDDEN)
+  handleMakeAssignmentHidden (payload) {
     var collection = "extension.make_assignment_hidden";
     var properties = {};
 
@@ -302,25 +299,28 @@ var MetricsStore = Fluxxor.createStore({
 
       this.reportEvent(collection, properties);
     }.bind(this));
-  },
+  }
 
-  handleCompletedOnboardingStep: function (payload) {
+  @action(constants.COMPLETED_ONBOARDING_STEP)
+  handleCompletedOnboardingStep (payload) {
     var collection = "extension.completed_onboarding_step";
     var properties = {
       step: payload.step
     };
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleExtensionInstalled: function () {
+  @action(constants.EXTENSION_INSTALLED)
+  handleExtensionInstalled () {
     var collection = "extension.installed";
     var properties = {};
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleExtensionUpdated: function (payload) {
+  @action(constants.EXTENSION_UPDATED)
+  handleExtensionUpdated (payload) {
     var collection = "extension.updated";
     var properties = {
       extension: {
@@ -329,14 +329,15 @@ var MetricsStore = Fluxxor.createStore({
     };
 
     this.reportEvent(collection, properties);
-  },
+  }
 
-  handleChromeUpdated: function () {
+  @action(constants.CHROME_UPDATED)
+  handleChromeUpdated () {
     var collection = "extension.chrome_updated";
     var properties = {};
 
     this.reportEvent(collection, properties);
   }
-});
+};
 
-module.exports = MetricsStore;
+export default MetricsStore;

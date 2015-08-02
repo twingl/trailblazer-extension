@@ -1,0 +1,79 @@
+@import '../objects/button';
+
+$width: 320px;
+$min-height: 80px;
+
+$arrow-size: 8px;
+
+$background: #FFF;
+
+$offset: 10px;
+
+.node-popover {
+  width: $width;
+  min-height: $min-height;
+
+  position: absolute;
+  bottom: $arrow-size + $offset;
+  left: $width / -2;
+
+  background: $background;
+  border-radius: 2px;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+
+  .content {
+    padding: 16px;
+    box-sizing: border-box;
+
+    h1 {
+      font-size: 16px;
+      font-weight: normal;
+      word-break: break-word;
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .detail {
+      margin-bottom: 0.7rem;
+
+      .url {
+        overflow-x: hidden;
+        white-space: nowrap;
+        display: block;
+        text-overflow: ellipsis;
+
+        &, &:visited { color: #757575; }
+        &:hover { color: #1E88E5; }
+      }
+    }
+
+    .actions {
+      @include flexbox;
+      @include flex-direction($value: row);
+
+      .primary {
+        display: inline-block;
+      }
+
+      .secondary {
+        @include flex($fg: 1);
+      }
+
+      button {
+        @extend .button;
+      }
+    }
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    bottom: 1px - $arrow-size; // 1px adjustment
+    left: ($width / 2) - $arrow-size;
+    border-width: $arrow-size $arrow-size 0px $arrow-size;
+    border-color: $background transparent;
+  }
+
+}
+

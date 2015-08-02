@@ -23,8 +23,6 @@ var babelify     = require('babelify');
 
 var ENV = process.env.NODE;
 
-//Note remove gulp jsx
-
 gulp.task('browserify', function(callback) {
   var bundleQueue = config.bundleConfigs.length;
   var index = 0;
@@ -41,7 +39,7 @@ gulp.task('browserify', function(callback) {
       extensions: config.extensions,
       // Enable source maps!
       debug: config.debug
-    }).transform(babelify.configure({ optional: ["runtime"] }));
+    }).transform(babelify.configure({ optional: ["runtime", "es7.asyncFunctions", "es7.decorators"] }));
 
     var bundle = function() {
       // Log when bundling starts

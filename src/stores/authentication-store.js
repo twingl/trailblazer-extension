@@ -1,42 +1,41 @@
-var _         = require('lodash')
-  , constants = require('../constants')
-  , Fluxxor   = require('fluxxor')
-  , Logger    = require('../util/logger');
+import _         from 'lodash';
+import constants from '../constants';
+import Logger    from '../util/logger';
+
+import Store from '../lib/store';
+
+import { query, action } from '../decorators';
 
 var logger = new Logger('stores/authentication-store.js');
 
-var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter');
+import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
 
-var AuthenticationStore = Fluxxor.createStore({
+class AuthenticationStore extends Store {
 
-  initialize: function (options) {
-    var options = options || {};
+  constructor (options = {}) {
+    super(options);
 
     this.authenticated = false;
 
     this.db = options.db;
 
-    this.bindActions(
-      constants.SIGN_IN,  this.handleSignIn,
-      constants.SIGN_OUT, this.handleSignOut
-    );
-
     new ChromeIdentityAdapter().isSignedIn().then( function(signedIn) {
       this.authenticated = signedIn;
     }.bind(this));
 
-  },
+  }
 
-  getState: function () {
+  getState () {
     return {
       authenticated: this.authenticated
     };
-  },
+  }
 
   /**
    * Call on the ChromeIdentityAdapter to initiate the sign in process.
    */
-  handleSignIn: function () {
+  @action(constants.SIGN_IN)
+  handleSignIn () {
     new ChromeIdentityAdapter().signIn().done(
         function () {
           this.authenticated = true;
@@ -48,18 +47,19 @@ var AuthenticationStore = Fluxxor.createStore({
           this.authenticated = false;
           this.emit('change', this.getState());
         }.bind(this));
-  },
+  }
 
   /**
    * Call on the ChromeIdentityAdapter to invalidate the current session.
    */
-  handleSignOut: function () {
+  @action(constants.SIGN_OUT)
+  handleSignOut () {
     new ChromeIdentityAdapter().signOut().done(function () {
       this.authenticated = false;
       this.emit('change', this.getState());
     }.bind(this));
   }
 
-});
+};
 
-module.exports = AuthenticationStore;
+export default AuthenticationStore;
