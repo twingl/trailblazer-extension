@@ -136,10 +136,10 @@ export default class Trail extends React.Component {
         if (stable) this.onGraphStabilityReached();
         this.setState({ stable });
       }
-
-      this.updateNodePositions();
-      this.updateLinkPositions();
     }
+
+    this.updateNodePositions();
+    this.updateLinkPositions();
   }
 
   // This is sharing state between react components which is dicey at
