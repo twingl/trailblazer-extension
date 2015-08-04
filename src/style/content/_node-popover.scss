@@ -1,3 +1,4 @@
+@import '../color';
 @import '../objects/button';
 
 $width: 320px;
@@ -20,6 +21,28 @@ $offset: 10px;
   background: $background;
   border-radius: 2px;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+
+  &:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    bottom: 1px - $arrow-size; // 1px adjustment
+    left: ($width / 2) - $arrow-size;
+    border-width: $arrow-size $arrow-size 0px $arrow-size;
+    border-color: $background transparent;
+  }
+
+  &.delete-pending {
+    background: $red-500;
+    color: white;
+
+    .url {
+      &, &:visited { color: rgba(255, 255, 255, 0.7) !important; }
+      &:hover      { color: rgba(255, 255, 255, 0.9) !important; }
+    }
+
+    &:after { border-color: $red-500 transparent; }
+  }
 
   .content {
     padding: 16px;
@@ -47,32 +70,43 @@ $offset: 10px;
       }
     }
 
+    .warning {
+      font-size: 11px;
+      color: $red-100;
+      text-align: center;
+    }
+
     .actions {
       @include flexbox;
       @include flex-direction($value: row);
 
       .primary {
         display: inline-block;
+
+        .resume {
+          @extend .button;
+        }
+
+        .confirm-delete {
+          @extend .button;
+          @extend .button-danger-inverted;
+        }
       }
 
       .secondary {
         @include flex($fg: 1);
-      }
 
-      button {
-        @extend .button;
+        .delete {
+          @extend .button;
+          @extend .button-secondary;
+        }
+
+        .cancel-delete {
+          @extend .button;
+          @extend .button-secondary-inverted;
+        }
       }
     }
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    border-style: solid;
-    bottom: 1px - $arrow-size; // 1px adjustment
-    left: ($width / 2) - $arrow-size;
-    border-width: $arrow-size $arrow-size 0px $arrow-size;
-    border-color: $background transparent;
   }
 
 }

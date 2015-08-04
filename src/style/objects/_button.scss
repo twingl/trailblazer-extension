@@ -12,10 +12,31 @@
 
   cursor: pointer;
 
-  background: $teal-1;
   color: rgba(255, 255, 255, 0.9);
+  &       { background: $teal-300; }
+  &:hover { background: $teal-500; }
+}
 
-  &:hover {
-    background: $teal-2;
-  }
+.button-secondary {
+  color: rgba(255, 255, 255, 0.9);
+  &       { background: $blue-grey-400; }
+  &:hover { background: $blue-grey-600; }
+}
+
+.button-secondary-inverted {
+  color: $blue-grey-600;
+  &       { background: rgba(255, 255, 255, 0.9); }
+  &:hover { background: rgba(255, 255, 255, 0.7); }
+}
+
+.button-danger {
+  color: rgba(255, 255, 255, 0.9);
+  &       { background: $red-500; }
+  &:hover { background: $red-700; }
+}
+
+.button-danger-inverted {
+  color: $red-700;
+  &       { background: rgba(255, 255, 255, 0.9); }
+  &:hover { background: rgba(255, 255, 255, 0.7); }
 }

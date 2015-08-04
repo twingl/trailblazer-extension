@@ -161,6 +161,23 @@ export default class Trail extends React.Component {
     popover.softDismiss();
   }
 
+  onDeletePending(node, evt = null) {
+    let data = this.state.graph.getNode(node.id).data;
+    data.deletePending = true;
+    this.state.graph.addNode(node.id, data);
+    this.setState({ changed: true });
+  }
+
+  onDeleteConfirmed(node, evt = null) {
+  }
+
+  onDeleteCancelled(node, evt = null) {
+    let data = this.state.graph.getNode(node.id).data;
+    delete data.deletePending;
+    this.state.graph.addNode(node.id, data);
+    this.setState({ changed: true });
+  }
+
   render() {
     let nodes = [];
     let popovers = [];
@@ -177,6 +194,9 @@ export default class Trail extends React.Component {
             ref={popoverKey}
             node={n.data}
             position={position}
+            onDeletePending={this.onDeletePending.bind(this, n)}
+            onDeleteConfirmed={this.onDeleteConfirmed.bind(this, n)}
+            onDeleteCancelled={this.onDeleteCancelled.bind(this, n)}
             actions={this.props.actions}
       />);
 

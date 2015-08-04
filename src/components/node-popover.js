@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 export default class NodePopover extends React.Component {
   constructor(props) {
     super(props);
@@ -36,7 +38,7 @@ export default class NodePopover extends React.Component {
   softDismiss() {
     clearTimeout(this.dismissTimeout);
     this.dismissTimeout = setTimeout( () => {
-      if (!this.mouseInBounds && !this.mouseInParentBounts) {
+      if (!this.mouseInBounds && !this.mouseInParentBounts && !this.state.deletePending) {
         this.setState({ visible: false });
       }
     }, 100);
@@ -55,12 +57,59 @@ export default class NodePopover extends React.Component {
     this.props.actions.resumeRecording(this.props.node.localId);
   }
 
-  render() {
-    var content;
-    if (this.state.visible) {
-      let title = this.props.node.title || <i>No title</i>;
+  onDeleteClicked(evt) {
+    this.setState({ deletePending: true });
+    (this.props.onDeletePending || (() => {}))(evt);
+  }
 
-      content = <div className='node-popover'>
+  onConfirmDeleteClicked(evt) {
+    this.setState({ deletePending: false });
+    (this.props.onDeleteConfirmed || (() => {}))(evt);
+  }
+
+  onCancelDeleteClicked(evt) {
+    this.setState({ deletePending: false });
+    (this.props.onDeleteCancelled || (() => {}))(evt);
+  }
+
+  render() {
+    let content;
+    let actions;
+    let title = this.props.node.title || <i>No title</i>;
+
+    if (this.state.deletePending) {
+      actions = [
+        <p className='warning'>
+          This will delete all pages coloured red. Are you sure?
+        </p>,
+        <div className='actions'>
+          <div className='secondary'>
+            <button onClick={this.onCancelDeleteClicked.bind(this)} className='cancel-delete'>Cancel</button>
+          </div>
+          <div className='primary'>
+            <button onClick={this.onConfirmDeleteClicked.bind(this)} className='confirm-delete'>Delete</button>
+          </div>
+        </div>
+      ];
+    } else if (this.props.node.deletePending) {
+      // No actions while another node is being considered for deletion
+    } else {
+      actions = <div className='actions'>
+        <div className='secondary'>
+          <button onClick={this.onDeleteClicked.bind(this)} className='delete'>Delete</button>
+        </div>
+        <div className='primary'>
+          <button onClick={this.onResumeClicked.bind(this)} className='resume'>Resume</button>
+        </div>
+      </div>
+    }
+
+    if (this.state.visible) {
+      let classNames = classnames('node-popover', {
+        'delete-pending': this.state.deletePending
+      });
+
+      content = <div className={classNames}>
         <div className='content'>
 
           <h1>{title}</h1>
@@ -69,12 +118,7 @@ export default class NodePopover extends React.Component {
             <a className='url' target='_blank' href={this.props.node.url}>{this.props.node.url}</a>
           </div>
 
-          <div className='actions'>
-            <div className='secondary'></div>
-            <div className='primary'>
-              <button onClick={this.onResumeClicked.bind(this)} className='resume'>Resume</button>
-            </div>
-          </div>
+          {actions}
 
         </div>
       </div>;
@@ -86,4 +130,5 @@ export default class NodePopover extends React.Component {
       {content}
     </div>
   }
+
 };
