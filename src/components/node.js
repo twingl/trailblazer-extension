@@ -57,6 +57,7 @@ export default class Node extends React.Component {
 
   render() {
     var classes = classnames('node', {
+      'delete-pending': !!this.props.node.data.deletePending,
       hub: (this.props.node.links.length >= WAYPOINT_THRESHOLD),
       waypoint: (this.props.node.data.rank === 1),
       root: (!this.props.node.data.parentId && !this.props.node.data.localParentId),

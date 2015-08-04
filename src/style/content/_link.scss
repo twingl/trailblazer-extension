@@ -4,4 +4,8 @@
 	stroke-linecap: round;
 	opacity: .8;
 	vector-effect: non-scaling-stroke;
+
+  &.delete-pending {
+    stroke: $red-500;
+  }
 }

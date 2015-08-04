@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 export default class Link extends React.Component {
 
   constructor(props) {
@@ -25,7 +27,11 @@ export default class Link extends React.Component {
   }
 
   render() {
-    return <line className="link"
+    let classes = classnames('link', {
+      'delete-pending': !!this.props.link.data.deletePending
+    });
+
+    return <line className={classes}
       x1={this.position.from.x} y1={this.position.from.y}
       x2={this.position.to.x} y2={this.position.to.y} />;
   }

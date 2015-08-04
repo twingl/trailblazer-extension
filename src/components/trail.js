@@ -26,7 +26,9 @@ export default class Trail extends React.Component {
     // Prepare the initial graph data
     this.props.nodes.map(n => this.state.graph.addNode(n.localId, n));
     this.props.nodes.map((n) => {
-      if (n.localParentId) this.state.graph.addLink(n.localId, n.localParentId);
+      if (n.localParentId) {
+        this.state.graph.addLink(n.localParentId, n.localId, { deletePending: false });
+      }
     });
 
     let layout = createLayout(this.state.graph, {
@@ -80,8 +82,8 @@ export default class Trail extends React.Component {
     this.props.nodes.map((n) => {
       // Add in any links that are missing after the node updates, triggering a
       // change if needed
-      if (n.localParentId && !this.state.graph.hasLink(n.localId, n.localParentId)) {
-        this.state.graph.addLink(n.localId, n.localParentId);
+      if (n.localParentId && !this.state.graph.hasLink(n.localParentId, n.localId)) {
+        this.state.graph.addLink(n.localParentId, n.localId, { deletePending: false });
         changed = true;
       }
     });
@@ -162,9 +164,29 @@ export default class Trail extends React.Component {
   }
 
   onDeletePending(node, evt = null) {
-    let data = this.state.graph.getNode(node.id).data;
-    data.deletePending = true;
-    this.state.graph.addNode(node.id, data);
+    let fn = (nodeIds, processedIds) => {
+
+      let nextIds = _.flatten( _.without(nodeIds, ...processedIds).map((id) => {
+        let node = this.state.graph.getNode(id);
+        node.data.deletePending = true;
+        this.state.graph.addNode(node.id, node.data);
+
+        processedIds.push(node.id);
+
+        // Next set of IDs to process
+        return node.links.map((l) => {
+          if (l.toId !== node.id) {
+            l.data.deletePending = true;
+          }
+          return l.toId;
+        });
+      }));
+
+      if (nextIds.length > 0) fn(nextIds, processedIds);
+    };
+
+    fn([node.id], []);
+
     this.setState({ changed: true });
   }
 
@@ -172,9 +194,11 @@ export default class Trail extends React.Component {
   }
 
   onDeleteCancelled(node, evt = null) {
-    let data = this.state.graph.getNode(node.id).data;
-    delete data.deletePending;
-    this.state.graph.addNode(node.id, data);
+    this.state.graph.forEachNode((node) => {
+      delete node.data.deletePending;
+      node.links.map(l => l.data.deletePending = false);
+      this.state.graph.addNode(node.id, node.data);
+    });
     this.setState({ changed: true });
   }
 
@@ -215,7 +239,7 @@ export default class Trail extends React.Component {
       let position = this.state.layout.getLinkPosition(l.id);
       let key = `link-${l.id}`;
 
-      links.push(<Link key={key} ref={key} position={position} actions={this.props.actions} />);
+      links.push(<Link key={key} ref={key} link={l} position={position} actions={this.props.actions} />);
     });
 
     return <div id={this.props.id}>
