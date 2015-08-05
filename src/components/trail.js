@@ -71,6 +71,14 @@ export default class Trail extends React.Component {
 
   componentDidUpdate() {
     let changed = false;
+
+    this.state.graph.forEachNode((node) => {
+      if (!_.find(this.props.nodes, { localId: node.id})) {
+        this.state.graph.removeNode(node.id);
+        changed = true;
+      }
+    });
+
     this.props.nodes.map((n) => {
       // Trigger an update if a new node is added
       if (!this.state.graph.getNode(n.localId)) changed = true;
