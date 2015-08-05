@@ -18,7 +18,8 @@ export default class Trail extends React.Component {
     super(props);
 
     this.state = {
-      graph: createGraph()
+      graph: createGraph(),
+      nodesPendingDeletion: []
     };
   }
 
@@ -182,7 +183,11 @@ export default class Trail extends React.Component {
         });
       }));
 
-      if (nextIds.length > 0) fn(nextIds, processedIds);
+      if (nextIds.length > 0) {
+        fn(nextIds, processedIds);
+      } else {
+        this.setState({ nodesPendingDeletion: processedIds })
+      }
     };
 
     fn([node.id], []);
@@ -191,6 +196,8 @@ export default class Trail extends React.Component {
   }
 
   onDeleteConfirmed(node, evt = null) {
+    this.props.actions.bulkDestroyNodes(this.state.nodesPendingDeletion);
+    this.setState({ nodesPendingDeletion: [] });
   }
 
   onDeleteCancelled(node, evt = null) {
@@ -199,7 +206,7 @@ export default class Trail extends React.Component {
       node.links.map(l => l.data.deletePending = false);
       this.state.graph.addNode(node.id, node.data);
     });
-    this.setState({ changed: true });
+    this.setState({ changed: true, nodesPendingDeletion: [] });
   }
 
   render() {

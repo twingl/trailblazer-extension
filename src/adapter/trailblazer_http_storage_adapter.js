@@ -174,4 +174,23 @@ TrailblazerHTTPStorageAdapter.prototype.destroy = function(resourceName, id) {
   return this._request(url, "DELETE");
 };
 
+/**
+  * @todo Bulk destroy a resource
+  * @function TrailblazerHTTPStorageAdapter#bulkDestroy
+  */
+TrailblazerHTTPStorageAdapter.prototype.bulkDestroy = function(resourceName, ids) {
+  if (!resourceName) throw "You need to specify a resource";
+  if (!ids) throw "You need to specify some IDs";
+
+  var url = [
+    config.api.host,
+    config.api.nameSpace,
+    config.api.version,
+    resourceName,
+    'bulk_delete'
+  ].join("/");
+
+  return this._request(url, "DELETE", { params: `ids=${ids.join(',')}` });
+};
+
 module.exports = TrailblazerHTTPStorageAdapter;

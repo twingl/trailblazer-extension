@@ -721,6 +721,27 @@ class SyncStore extends Store {
     this.flux.actions.nodesSynchronized(payload.assignment);
   }
 
+  @action(constants.BULK_DESTROY_NODES)
+  handleBulkDestroyNodes(payload) {
+    // Block write access for other action handlers until we commit this tx
+    this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
+      let store = tx.objectStore("nodes");
+      var ids = [];
+
+      tx.oncomplete = () => {
+        new TrailblazerHTTPStorageAdapter().bulkDestroy('nodes', ids);
+        this.emit('change');
+      };
+
+      payload.localIds.map((id) => {
+        let req = store.get(id);
+        req.onsuccess = () => {
+          ids.push(req.result.id);
+        };
+      });
+    });
+  }
+
 };
 
 export default SyncStore;

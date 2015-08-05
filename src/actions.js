@@ -187,6 +187,16 @@ module.exports = {
     });
   },
 
+  bulkDestroyNodes: function(localIds) {
+    logger.info('bulkDestroyNodes', localIds);
+    chrome.runtime.sendMessage({
+      action: constants.BULK_DESTROY_NODES,
+      payload: {
+        localIds: localIds
+      }
+    });
+  },
+
   tabTitleUpdated: function (tabId, url, title) {
     logger.info('tabTitleUpdated');
     messageChannel.send({

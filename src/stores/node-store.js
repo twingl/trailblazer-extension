@@ -198,6 +198,20 @@ class NodeStore extends Store {
     this.emit('change');
   }
 
+  @action(constants.BULK_DESTROY_NODES)
+  handleBulkDestroyNodes(payload) {
+    this.waitFor(["SyncStore"], () => {
+      this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
+        let store = tx.objectStore("nodes");
+        tx.oncomplete = () => {
+          this.emit('change');
+        };
+
+        payload.localIds.map(id => store.delete(id));
+      });
+    });
+  }
+
   @action(constants.CREATED_NAVIGATION_TARGET)
   handleCreatedNavigationTarget (payload) {
     logger.info("handleCreatedNavigationTarget", { payload: payload });
