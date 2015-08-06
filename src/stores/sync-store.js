@@ -7,7 +7,7 @@ import NodeHelper                    from '../helpers/node-helper';
 import AssignmentHelper              from '../helpers/assignment-helper';
 import Logger                        from '../util/logger';
 
-import Store from 'fluxxor/lib/store';
+import Store from '../lib/store';
 import { action } from '../decorators';
 
 var logger = new Logger('stores/sync-store.js');
@@ -15,7 +15,7 @@ var logger = new Logger('stores/sync-store.js');
 
 class SyncStore extends Store {
 
-  constructor (options = {}) {
+  constructor(options = {}) {
     super(options);
 
     this.db = options.db;
@@ -29,11 +29,6 @@ class SyncStore extends Store {
       assignments: {},
       nodes: {}
     };
-
-    // Bind the handlers for flux actions
-    for (var [action, handler] of this.fluxActions) {
-      this.bindActions(action, this[handler]);
-    }
   }
 
   //NOTES

@@ -13,6 +13,8 @@ class Store extends FluxxorStore {
     }
   }
 
+  onBoot() { }
+
 }
 
 export default Store;

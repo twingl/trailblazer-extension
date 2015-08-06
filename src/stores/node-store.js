@@ -16,8 +16,12 @@ class NodeStore extends Store {
     // Instance of IDBDatabase
     this.db       = options.db;
     this.error    = null;
+  }
 
-    // Assume we're booting, remove all tabId references from the DB
+  // Called explicitly by background.js on extension startup
+  onBoot() {
+    // Remove all tabId references from the DB - we can't guarantee anything
+    // about tab state right now as we're booting.
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
       store.openCursor().onsuccess = function (evt) {

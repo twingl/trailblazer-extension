@@ -56,6 +56,11 @@ var stores = require('./stores');
 logger.info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
+_.each(stores, (s) => {
+  console.log(s.onBoot, s);
+  s.onBoot();
+});
+
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
 chrome.runtime.onMessage.addListener(function (message, sender, responder) {
