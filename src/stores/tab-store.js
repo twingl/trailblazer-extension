@@ -25,7 +25,7 @@ class TabStore extends Store {
   }
 
   @action(constants.SIGN_OUT)
-  handleSignOut () {
+  handleSignOut() {
     _.each(this.tabs, function(tab, index, tabs) {
       tabs[index] = false;
     });
@@ -33,7 +33,7 @@ class TabStore extends Store {
   }
 
   @action(constants.TAB_TITLE_UPDATED)
-  handleTabTitleUpdated (payload) {
+  handleTabTitleUpdated(payload) {
     logger.info('handleTabTitleUpdated');
     this.db.nodes.index('tabId').get(payload.tabId).then(function(nodes) {
       var node = _.first(nodes);
@@ -45,7 +45,7 @@ class TabStore extends Store {
   }
 
   @action(constants.TAB_CREATED)
-  handleTabCreated (payload) {
+  handleTabCreated(payload) {
     logger.info("handleTabCreated:", { payload: payload });
     var parentId = payload.parentTabId;
 
@@ -59,44 +59,44 @@ class TabStore extends Store {
   }
 
   @action(constants.TAB_FOCUSED)
-  handleTabFocused (payload) {
+  handleTabFocused(payload) {
     logger.info("handleTabFocused:", { payload: payload });
     this.emit('change', this.getState());
   }
 
   @action(constants.CREATED_NAVIGATION_TARGET)
-  handleCreatedNavigationTarget (payload) {
+  handleCreatedNavigationTarget(payload) {
     logger.info("handleCreatedNavigationTarget:", { payload: payload });
     throw "NotImplementedError";
   }
 
   @action(constants.HISTORY_STATE_UPDATED)
-  handleHistoryStateUpdated (payload) {
+  handleHistoryStateUpdated(payload) {
     logger.info("handleHistoryStateUpdated:", { payload: payload });
     this.emit('change', this.getState());
   }
 
   @action(constants.TAB_UPDATED)
-  handleTabUpdated (payload) {
+  handleTabUpdated(payload) {
     logger.info("handleTabUpdated:", { payload: payload });
     this.emit('change', this.getState());
   }
 
   @action(constants.WEB_NAV_COMMITTED)
-  handleWebNavCommitted (payload) {
+  handleWebNavCommitted(payload) {
     logger.info("handleWebNavCommitted:", { payload: payload });
     this.emit('change', this.getState());
   }
 
   @action(constants.TAB_CLOSED)
-  handleTabClosed (payload) {
+  handleTabClosed(payload) {
     logger.info("handleTabClosed:", { payload: payload });
     delete this.tabs[payload.tabId];
     this.emit('change', this.getState());
   }
 
   @action(constants.TAB_REPLACED)
-  handleTabReplaced (payload) {
+  handleTabReplaced(payload) {
     logger.info("handleTabReplaced:", { payload: payload });
     this.tabs[payload.newTabId] = this.tabs[payload.oldTabId];
     delete this.tabs[payload.oldTabId];
@@ -105,7 +105,7 @@ class TabStore extends Store {
   // Create an assignment and first node in a single transaction, marking the
   // tab as recording on success
   @action(constants.START_RECORDING)
-  handleStartRecording (payload) {
+  handleStartRecording(payload) {
     logger.info("handleStartRecording:", { payload: payload });
 
 
@@ -166,7 +166,7 @@ class TabStore extends Store {
   }
 
   @action(constants.RESUME_RECORDING)
-  handleResumeRecording (payload) {
+  handleResumeRecording(payload) {
     logger.info("handleResumeRecording");
 
     this.db.nodes.get(payload.localId).then(function(node) {
@@ -207,7 +207,7 @@ class TabStore extends Store {
   }
 
   @action(constants.STOP_RECORDING)
-  handleStopRecording (payload) {
+  handleStopRecording(payload) {
     logger.info("handleStopRecording:", { payload: payload });
     this.tabs[payload.tabId] = false;
     this.flux.actions.stopRecordingSuccess(payload.tabId);
@@ -215,7 +215,7 @@ class TabStore extends Store {
   }
 
   @action(constants.DESTROY_ASSIGNMENT)
-  handleDestroyAssignment (payload) {
+  handleDestroyAssignment(payload) {
     logger.info("handleDestroyAssignment", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       tx.oncomplete = function() {
@@ -239,7 +239,7 @@ class TabStore extends Store {
 
   @deprecated
   @action(constants.REQUEST_TAB_STATE)
-  handleRequestTabState (payload) {
+  handleRequestTabState(payload) {
     logger.info("handleRequestTabState:", { payload: payload });
     if (this.tabs[payload.tabId]) {
       var state = {

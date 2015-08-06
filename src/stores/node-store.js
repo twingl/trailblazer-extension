@@ -34,31 +34,31 @@ class NodeStore extends Store {
   }
 
   @query
-  async getNodesByRemoteAssignmentId (assignmentId) {
+  async getNodesByRemoteAssignmentId(assignmentId) {
     var nodes = await this.db.nodes.index('assignmentId').get(assignmentId);
     return nodes;
   }
 
   @query
-  async getNodesByLocalAssignmentId (localAssignmentId) {
+  async getNodesByLocalAssignmentId(localAssignmentId) {
     var nodes = await this.db.nodes.index('localAssignmentId').get(localAssignmentId);
     return nodes;
   }
 
   @query
-  async getNodeByRemoteId (id) {
+  async getNodeByRemoteId(id) {
     var node = await this.db.nodes.index('id').get(id);
     return node;
   }
 
   @query
-  async getNodeByLocalId (localId) {
+  async getNodeByLocalId(localId) {
     var node = await this.db.nodes.get(localId);
     return node;
   }
 
   @query
-  getState () {
+  getState() {
     logger.info('getting node state')
     return {
       //NOTE: Unsure if this is needed when the all stores can access the main dbObj
@@ -68,7 +68,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.SIGN_OUT)
-  handleSignOut () {
+  handleSignOut() {
     this.db.nodes.clear();
   }
 
@@ -77,7 +77,7 @@ class NodeStore extends Store {
    */
   @deprecated
   @action(constants.REQUEST_NODES)
-  handleRequestNodes (payload) {
+  handleRequestNodes(payload) {
     this.db.assignments.get(payload.localAssignmentId)
       .then(function(assignment) {
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
@@ -99,7 +99,7 @@ class NodeStore extends Store {
    * Remove all nodes associated with the destroyed assignment
    */
   @action(constants.DESTROY_ASSIGNMENT)
-  handleDestroyAssignment (payload) {
+  handleDestroyAssignment(payload) {
     this.waitFor(["AssignmentStore", "TabStore"], function() {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
         var nodeStore = tx.objectStore("nodes");
@@ -117,7 +117,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.SET_NODE_TITLE)
-  handleSetNodeTitle (payload) {
+  handleSetNodeTitle(payload) {
     logger.info('handleSetNodeTitle');
 
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -147,7 +147,7 @@ class NodeStore extends Store {
    * Create a record for a newly created tab
    */
   @action(constants.TAB_CREATED)
-  handleTabCreated (payload) {
+  handleTabCreated(payload) {
     // Wait until we know if the tab is in a recording state
     this.waitFor(["TabStore"], function(tabStore) {
 
@@ -194,7 +194,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.CREATE_NODE_SUCCESS)
-  handleCreateNodeSuccess (payload) {
+  handleCreateNodeSuccess(payload) {
     this.emit('change');
   }
 
@@ -213,7 +213,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.CREATED_NAVIGATION_TARGET)
-  handleCreatedNavigationTarget (payload) {
+  handleCreatedNavigationTarget(payload) {
     logger.info("handleCreatedNavigationTarget", { payload: payload });
     throw "NotImplementedError";
   }
@@ -222,7 +222,7 @@ class NodeStore extends Store {
    * Handle a tab's state update by mutating or creating nodes
    */
   @action(constants.TAB_UPDATED)
-  handleTabUpdated (payload) {
+  handleTabUpdated(payload) {
     logger.info("handleTabUpdated:", { payload: payload });
 
     // Find the parent + children of the tabId
@@ -303,7 +303,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.HISTORY_STATE_UPDATED)
-  handleHistoryStateUpdated (payload) {
+  handleHistoryStateUpdated(payload) {
     logger.info("handleHistoryStateUpdated:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
@@ -356,7 +356,7 @@ class NodeStore extends Store {
   }
 
   @action(constants.WEB_NAV_COMMITTED)
-  handleWebNavCommitted (payload) {
+  handleWebNavCommitted(payload) {
     logger.info("handleWebNavCommitted:", { payload: payload });
 
     this.waitFor(["TabStore"], function(tabStore) {
@@ -412,7 +412,7 @@ class NodeStore extends Store {
    * Remove the tabId from an existing node
    */
   @action(constants.TAB_CLOSED)
-  handleTabClosed (payload) {
+  handleTabClosed(payload) {
     logger.info("handleTabClosed:", { payload: payload });
 
     // Find the node, remove the tabId
@@ -441,7 +441,7 @@ class NodeStore extends Store {
    * tab
    */
   @action(constants.TAB_REPLACED)
-  handleTabReplaced (payload) {
+  handleTabReplaced(payload) {
     logger.info("handleTabReplaced:", { payload: payload });
     this.waitFor(["TabStore"], function(tabStore) {
       this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
@@ -463,7 +463,7 @@ class NodeStore extends Store {
    * Update a node's rank
    */
   @action(constants.RANK_NODE_WAYPOINT)
-  handleRankNodeWaypoint (payload) {
+  handleRankNodeWaypoint(payload) {
     logger.info("handleRankNodeWaypoint:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
@@ -486,7 +486,7 @@ class NodeStore extends Store {
    * Update a node's rank
    */
   @action(constants.RANK_NODE_NEUTRAL)
-  handleRankNodeNeutral (payload) {
+  handleRankNodeNeutral(payload) {
     logger.info("handleRankNodeNeutral:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");
@@ -510,7 +510,7 @@ class NodeStore extends Store {
    * assignment
    */
   @action(constants.NODES_SYNCHRONIZED)
-  handleNodesSynchronized (payload) {
+  handleNodesSynchronized(payload) {
     this.db.nodes.index('localAssignmentId')
       .get(payload.assignment.localId)
       .then(function(nodes) {

@@ -17,25 +17,25 @@ class AssignmentStore extends Store {
   }
 
   @query
-  async getAssignments () {
+  async getAssignments() {
     var assignments = await this.db.assignments.all();
     return assignments;
   }
 
   @query
-  async getAssignmentByLocalId (localId) {
+  async getAssignmentByLocalId(localId) {
     var assignment = await this.db.assignments.get(localId);
     return assignment;
   }
 
   @query
-  async getAssignmentByRemoteId (remoteId) {
+  async getAssignmentByRemoteId(remoteId) {
     var assignment = await this.db.assignments.index('id').get(remoteId);
     return assignment;
   }
 
   @action(constants.SIGN_OUT)
-  handleSignOut () {
+  handleSignOut() {
     this.db.assignments.clear();
   }
 
@@ -43,7 +43,7 @@ class AssignmentStore extends Store {
    * Emit all assignment data
    */
   @action(constants.REQUEST_ASSIGNMENTS)
-  handleRequestAssignments () {
+  handleRequestAssignments() {
     logger.warn("DEPRECATED");
     // Get the assignments from the DB, fire a change, and fire a fetch assignments
     this.db.assignments.all().then(function(assignments) {
@@ -56,7 +56,7 @@ class AssignmentStore extends Store {
    * Emit all assignment data
    */
   @action(constants.CREATE_ASSIGNMENT_SUCCESS)
-  handleCreateAssignmentSuccess () {
+  handleCreateAssignmentSuccess() {
     this.db.assignments.all().then( function (assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
@@ -66,7 +66,7 @@ class AssignmentStore extends Store {
    * Updates an assignment record with a new title
    */
   @action(constants.UPDATE_ASSIGNMENT_TITLE)
-  handleUpdateAssignmentTitle (payload) {
+  handleUpdateAssignmentTitle(payload) {
     logger.info('handleUpdateAssignmentTitle', { payload: payload });
     this.db.assignments.db.transaction("readwrite", ["assignments"], function(err, tx) {
       var store = tx.objectStore("assignments")
@@ -95,7 +95,7 @@ class AssignmentStore extends Store {
    * Emits a change with the assignment list
    */
   @action(constants.DESTROY_ASSIGNMENT_SUCCESS)
-  handleDestroyAssignmentSuccess (payload) {
+  handleDestroyAssignmentSuccess(payload) {
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
@@ -105,14 +105,14 @@ class AssignmentStore extends Store {
    * Emits a change event from this store with the complete list of assignments
    */
   @action(constants.ASSIGNMENTS_SYNCHRONIZED)
-  handleAssignmentsSynchronized () {
+  handleAssignmentsSynchronized() {
     this.db.assignments.all().then(function(assignments) {
       this.emit('change', { assignments: assignments });
     }.bind(this));
   }
 
   @action(constants.MAKE_ASSIGNMENT_VISIBLE)
-  handleMakeAssignmentVisible (payload) {
+  handleMakeAssignmentVisible(payload) {
     logger.info('handleMakeAssignmentVisible');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {
@@ -159,7 +159,7 @@ class AssignmentStore extends Store {
   }
 
   @action(constants.MAKE_ASSIGNMENT_HIDDEN)
-  handleMakeAssignmentHidden (payload) {
+  handleMakeAssignmentHidden(payload) {
     logger.info('handleMakeAssignmentHidden');
 
     this.db.assignments.get(payload.localId).then(function(assignment) {

@@ -26,7 +26,7 @@ class MapStore extends Store {
    * Invokes the persistence event chain for a newly created Assignment.
    */
   @action(constants.SAVE_MAP_LAYOUT)
-  handleSaveMapLayout (payload) {
+  handleSaveMapLayout(payload) {
     logger.info('handleSaveMapLayout', { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
       var store = tx.objectStore("nodes");

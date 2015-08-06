@@ -47,7 +47,7 @@ class SyncStore extends Store {
    * Invokes the persistence event chain for a newly created Assignment.
    */
   @action(constants.CREATE_ASSIGNMENT_SUCCESS)
-  handleCreateAssignmentSuccess (payload) {
+  handleCreateAssignmentSuccess(payload) {
     logger.info('handleCreateAssignmentSuccess', { payload: payload });
     this.flux.actions.persistAssignment(payload.assignment.localId);
   }
@@ -56,7 +56,7 @@ class SyncStore extends Store {
    * Invokes the persistence event chain for a newly created Node.
    */
   @action(constants.CREATE_NODE_SUCCESS)
-  handleCreateNodeSuccess (payload) {
+  handleCreateNodeSuccess(payload) {
     logger.info('handleCreateNodeSuccess', { payload: payload });
     this.db.nodes.get(payload.localId).then(function(node) {
       if (node.assignmentId) {
@@ -66,7 +66,7 @@ class SyncStore extends Store {
   }
 
   @action(constants.UPDATE_NODE_SUCCESS)
-  handleUpdateNodeSuccess (payload) {
+  handleUpdateNodeSuccess(payload) {
     logger.info('handleUpdateNodeSuccess', { payload: payload });
     this.db.nodes.get(payload.localId).then(function(node) {
       if (node.assignmentId) {
@@ -76,7 +76,7 @@ class SyncStore extends Store {
   }
 
   @action(constants.DESTROY_NODE)
-  handleDestroyNode (payload) {
+  handleDestroyNode(payload) {
     logger.info('handleDestroyNode', { payload: payload });
     var run = function() {
       this.db.nodes.get(payload.localId).then(function(node) {
@@ -98,7 +98,7 @@ class SyncStore extends Store {
   }
 
   @action(constants.DESTROY_ASSIGNMENT)
-  handleDestroyAssignment (payload) {
+  handleDestroyAssignment(payload) {
     logger.info('handleDestroyAssignment', { payload: payload });
     var run = function() {
       this.db.assignments.get(payload.localId).then(function(assignment) {
@@ -128,7 +128,7 @@ class SyncStore extends Store {
    * the persistence process for them.
    */
   @action(constants.PERSIST_ASSIGNMENT)
-  handlePersistAssignment (payload) {
+  handlePersistAssignment(payload) {
     logger.info('handlePersistAssignment');
     this.db.assignments.get(payload.localId).done(function(assignment) {
       console.log(assignment);
@@ -197,7 +197,7 @@ class SyncStore extends Store {
    * Invokes the persistence process on any logical next targets (root nodes)
    */
   @action(constants.PERSIST_ASSIGNMENT_SUCCESS)
-  handlePersistAssignmentSuccess (payload) {
+  handlePersistAssignmentSuccess(payload) {
     logger.info('handlePersistAssignmentSuccess');
 
     this.db.nodes.index('localAssignmentId').get(payload.localId)
@@ -215,7 +215,7 @@ class SyncStore extends Store {
    * created node isn't persisted, it will add itself to a pending list.
    */
   @action(constants.PERSIST_NODE)
-  handlePersistNode (payload) {
+  handlePersistNode(payload) {
     logger.info('handlePersistNode');
 
     var persistNode = function(payload, node) {
@@ -301,7 +301,7 @@ class SyncStore extends Store {
    * Invokes the persistence process on any logical next targets (children)
    */
   @action(constants.PERSIST_NODE_SUCCESS)
-  handlePersistNodeSuccess (payload) {
+  handlePersistNodeSuccess(payload) {
     logger.info('handlePersistNodeSuccess');
     this.db.nodes.index('localParentId').get(payload.localId).then(function(nodes) {
       _.each(nodes, function(node) {
@@ -319,7 +319,7 @@ class SyncStore extends Store {
    * Persists the map layout
    */
   @action(constants.PERSIST_MAP_LAYOUT)
-  handlePersistMapLayout (payload) {
+  handlePersistMapLayout(payload) {
     logger.info('handlePersistMapLayout', { payload: payload });
 
     var assignmentId;
@@ -381,7 +381,7 @@ class SyncStore extends Store {
    * not
    */
   @action(constants.FETCH_ASSIGNMENTS)
-  handleFetchAssignments () {
+  handleFetchAssignments() {
 
     // Request assignments from the storage adapter
     logger.info('handleFetchAssignments: Requesting /assignments')
@@ -407,7 +407,7 @@ class SyncStore extends Store {
    * UPDATE_ASSIGNMENT_CACHE
    */
   @action(constants.FETCH_ASSIGNMENTS_SUCCESS)
-  handleFetchAssignmentsSuccess (payload) {
+  handleFetchAssignmentsSuccess(payload) {
     logger.info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
     var assignments = _.collect(payload.assignments, camelize);
 
@@ -418,7 +418,7 @@ class SyncStore extends Store {
    * Failure handler for FETCH_ASSIGNMENTS
    */
   @action(constants.FETCH_ASSIGNMENTS_FAIL)
-  handleFetchAssignmentsFail (payload) {
+  handleFetchAssignmentsFail(payload) {
   }
 
   /**
@@ -449,7 +449,7 @@ class SyncStore extends Store {
    * `localId`s populated).
    */
   @action(constants.UPDATE_ASSIGNMENT_CACHE)
-  handleUpdateAssignmentCache (payload) {
+  handleUpdateAssignmentCache(payload) {
     logger.info("handleUpdateAssignmentCache: Updating cache", { payload: payload });
 
     var assignments = payload.assignments;
@@ -520,7 +520,7 @@ class SyncStore extends Store {
    * Fires ASSIGNMENTS_SYNCHRONIZED
    */
   @action(constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS)
-  handleUpdateAssignmentCacheSuccess () {
+  handleUpdateAssignmentCacheSuccess() {
     this.flux.actions.assignmentsSynchronized();
   }
 
@@ -528,7 +528,7 @@ class SyncStore extends Store {
    * Failure handler for UPDATE_ASSIGNMENT_CACHE
    */
   @action(constants.UPDATE_ASSIGNMENT_CACHE_FAIL)
-  handleUpdateAssignmentCacheFail (payload) {
+  handleUpdateAssignmentCacheFail(payload) {
     logger.error('updateAssignmentCacheFail', { error: payload.error });
   }
 
@@ -537,7 +537,7 @@ class SyncStore extends Store {
    * assignment by fetching the data from the API
    */
   @action(constants.FETCH_NODES)
-  handleFetchNodes (payload) {
+  handleFetchNodes(payload) {
     var assignmentId = payload.assignmentId;
 
     // Request nodes from the storage adapter
@@ -564,7 +564,7 @@ class SyncStore extends Store {
    * UPDATE_NODE_CACHE
    */
   @action(constants.FETCH_NODES_SUCCESS)
-  handleFetchNodesSuccess (payload) {
+  handleFetchNodesSuccess(payload) {
     logger.info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = _.collect(payload.nodes, camelize);
     this.flux.actions.updateNodeCache(payload.assignmentId, nodes);
@@ -574,7 +574,7 @@ class SyncStore extends Store {
    * Failure handler for FETCH_NODES
    */
   @action(constants.FETCH_NODES_FAIL)
-  handleFetchNodesFail (payload) {
+  handleFetchNodesFail(payload) {
     logger.warn('handleFetchNodesFail');
   }
 
@@ -608,7 +608,7 @@ class SyncStore extends Store {
    * may not have `localId`s populated).
    */
   @action(constants.UPDATE_NODE_CACHE)
-  handleUpdateNodeCache (payload) {
+  handleUpdateNodeCache(payload) {
     logger.info("handleUpdateNodeCache: Updating cache", { payload: payload });
     var nodes = payload.nodes;
 
@@ -709,7 +709,7 @@ class SyncStore extends Store {
    * Log an error when the cache update process fails
    */
   @action(constants.UPDATE_NODE_CACHE_FAIL)
-  handleUpdateNodeCacheFail (err) {
+  handleUpdateNodeCacheFail(err) {
     logger.error('updateNodeCache Failed', { error: err })
   }
 
@@ -717,7 +717,7 @@ class SyncStore extends Store {
    * Emit an event signifying that the cache has been updated successfully
    */
   @action(constants.UPDATE_NODE_CACHE_SUCCESS)
-  handleUpdateNodeCacheSuccess (payload) {
+  handleUpdateNodeCacheSuccess(payload) {
     this.flux.actions.nodesSynchronized(payload.assignment);
   }
 

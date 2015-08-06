@@ -94,7 +94,7 @@ class MetricsStore extends Store {
    * Main funnel
    */
   @action(constants.SIGN_IN)
-  handleSignIn (payload) {
+  handleSignIn(payload) {
     var collection = "extension.sign_in";
     var properties = {};
 
@@ -102,7 +102,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.SIGN_IN_SUCCESS)
-  handleSignInSuccess (payload) {
+  handleSignInSuccess(payload) {
     var collection = "extension.sign_in_success";
     var properties = {};
 
@@ -112,7 +112,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.START_RECORDING)
-  handleStartRecording (payload) {
+  handleStartRecording(payload) {
     var collection = "extension.start_recording";
     var properties = {};
 
@@ -120,7 +120,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.START_RECORDING_SUCCESS)
-  handleStartRecordingSuccess (payload) {
+  handleStartRecordingSuccess(payload) {
     var collection = "extension.start_recording_success";
     var properties = {};
 
@@ -143,7 +143,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.VIEWED_ASSIGNMENT_LIST)
-  handleViewedAssignmentList (payload) {
+  handleViewedAssignmentList(payload) {
     var collection = "extension.viewed_assignment_list";
     var properties = {};
 
@@ -151,7 +151,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.VIEWED_MAP)
-  handleViewedMap (payload) {
+  handleViewedMap(payload) {
     var collection = "extension.viewed_map";
     var properties = {};
 
@@ -168,7 +168,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.RESUME_RECORDING)
-  handleResumeRecording (payload) {
+  handleResumeRecording(payload) {
     var collection = "extension.resume_recording";
     var properties = {};
 
@@ -193,7 +193,7 @@ class MetricsStore extends Store {
    * Additional actions
    */
   @action(constants.SIGN_OUT)
-  handleSignOut (payload) {
+  handleSignOut(payload) {
     var collection = "extension.sign_out";
     var properties = {};
 
@@ -203,7 +203,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.STOP_RECORDING)
-  handleStopRecording (payload) {
+  handleStopRecording(payload) {
     var collection = "extension.stop_recording";
     var properties = {};
 
@@ -226,7 +226,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.RANK_NODE_WAYPOINT)
-  handleRankNodeWaypoint (payload) {
+  handleRankNodeWaypoint(payload) {
     var collection = "extension.rank_node_waypoint";
     var properties = {};
 
@@ -247,7 +247,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.RANK_NODE_NEUTRAL)
-  handleRankNodeNeutral (payload) {
+  handleRankNodeNeutral(payload) {
     var collection = "extension.rank_node_neutral";
     var properties = {};
 
@@ -268,7 +268,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.MAKE_ASSIGNMENT_VISIBLE)
-  handleMakeAssignmentVisible (payload) {
+  handleMakeAssignmentVisible(payload) {
     var collection = "extension.make_assignment_visible";
     var properties = {};
 
@@ -285,7 +285,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.MAKE_ASSIGNMENT_HIDDEN)
-  handleMakeAssignmentHidden (payload) {
+  handleMakeAssignmentHidden(payload) {
     var collection = "extension.make_assignment_hidden";
     var properties = {};
 
@@ -302,7 +302,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.COMPLETED_ONBOARDING_STEP)
-  handleCompletedOnboardingStep (payload) {
+  handleCompletedOnboardingStep(payload) {
     var collection = "extension.completed_onboarding_step";
     var properties = {
       step: payload.step
@@ -312,7 +312,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.EXTENSION_INSTALLED)
-  handleExtensionInstalled () {
+  handleExtensionInstalled() {
     var collection = "extension.installed";
     var properties = {};
 
@@ -320,7 +320,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.EXTENSION_UPDATED)
-  handleExtensionUpdated (payload) {
+  handleExtensionUpdated(payload) {
     var collection = "extension.updated";
     var properties = {
       extension: {
@@ -332,7 +332,7 @@ class MetricsStore extends Store {
   }
 
   @action(constants.CHROME_UPDATED)
-  handleChromeUpdated () {
+  handleChromeUpdated() {
     var collection = "extension.chrome_updated";
     var properties = {};
 
