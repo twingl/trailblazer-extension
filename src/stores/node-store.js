@@ -330,16 +330,12 @@ class NodeStore extends Store {
               store.get(node.localParentId).onsuccess = function(evt) {
                 var parentNode = evt.target.result;
 
-                node.localParentId  = parentNode.localParentId;
-                node.parentId       = parentNode.parentId;
                 node.redirect       = true;
                 node.redirectedFrom = parentNode.url;
 
                 store.put(node).onsuccess = function() {
                   updatedNode = node.localId;
                 };
-
-                this.flux.actions.destroyNode(parentNode.localId);
               }.bind(this);
             }
 
@@ -383,16 +379,12 @@ class NodeStore extends Store {
               store.get(node.localParentId).onsuccess = function(evt) {
                 var parentNode = evt.target.result;
 
-                node.localParentId  = parentNode.localParentId;
-                node.parentId       = parentNode.parentId;
                 node.redirect       = true;
                 node.redirectedFrom = parentNode.url;
 
                 store.put(node).onsuccess = function() {
                   updatedNode = node.localId;
                 };
-
-                this.flux.actions.destroyNode(parentNode.localId);
               }.bind(this);
             }
 
