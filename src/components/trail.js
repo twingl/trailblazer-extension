@@ -137,7 +137,7 @@ export default class Trail extends React.Component {
   }
 
   animationLoop() {
-    if (this.disposed) return;
+    if (this.disposed || this.state.stable) return;
     requestAnimationFrame(this.animationLoop.bind(this));
 
     if (this.state.layout && this.props.nodes.length > 0 && !this.state.stable) {
