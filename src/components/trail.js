@@ -48,7 +48,6 @@ export default class Trail extends React.Component {
       };
 
       setTimeout(fn, 30);
-      let debouncedFn = _.debounce(fn, 75);
     };
 
     this.svgPanZoom = svgPanZoom( React.findDOMNode(this.refs.svg), {
@@ -99,6 +98,7 @@ export default class Trail extends React.Component {
 
     if (changed) this.setState({ stable: false });
     this.animationLoop();
+    this.updateNodePositions();
   }
 
   updateNodePositions() {
