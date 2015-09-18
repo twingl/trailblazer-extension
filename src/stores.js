@@ -21,7 +21,7 @@ logger.info("Initializing Indexdb");
 var schema = treo.schema()
   .version(1)
     // Node storage
-    .addStore('nodes', { keyPath: 'localId', autoIncrement: true })
+    .addStore('nodes', { keyPath: 'localId', increment: true })
     .addIndex('id',                'id',                { unique: true })
     .addIndex('tabId',             'tabId',             { unique: false })
     .addIndex('assignmentId',      'assignmentId',      { unique: false })
@@ -29,7 +29,7 @@ var schema = treo.schema()
     .addIndex('url',               'url',               { unique: false })
 
     // Assignment storage
-    .addStore('assignments', { keyPath: 'localId', autoIncrement: true })
+    .addStore('assignments', { keyPath: 'localId', increment: true })
     .addIndex('id',                'id',                { unique: true })
   .version(2)
     // Node parent ID indices
