@@ -125,6 +125,14 @@ ChromeIdentityAdapter.prototype.signOut = function() {
       } else {
         resolve(); // there's no token
       }
+
+      var signOutUrl = [config.api.host, "sign_out"].join("/");
+      chrome.identity.launchWebAuthFlow({ url: signOutUrl, interactive: false }, (url) => {
+        // Ignore everything
+        console.log("The warning from chrome is fine - we don't want user intervention here as we're terminating a session",
+          chrome.runtime.lastError);
+      });
+
     }.bind(this)); //chrome.storage.sync.get
   }.bind(this)); //promise
 
