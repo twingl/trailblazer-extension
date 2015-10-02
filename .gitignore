@@ -10,3 +10,4 @@ doc/
 .env
 npm-debug.log
 release/
+.nvmrc
