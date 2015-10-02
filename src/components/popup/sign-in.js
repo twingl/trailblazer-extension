@@ -24,6 +24,8 @@ module.exports = React.createClass({
   },
 
   onSignInClicked: function (evt) {
+    if (this.props.working) return;
+
     var button = evt.currentTarget;
 
     // Set the working flag so the spinner shows on update
