@@ -6,14 +6,16 @@ build up a map, helping them make sense of the places they visit.
 ## Prerequisites
 
 You need to have Node.js or IO.js installed and npm available on the command
-line
+line.
+
+Currently only tested against node `0.10.26`
 
 You need to have Gulp installed globally to build the extension
 
     $ npm install -g gulp
 
 You also should have the [EditorConfig plugin](http://editorconfig.org/)
-installed for your editor before editing any source files.
+installed for your editor before editing any of the source.
 
 ## Setup
 
@@ -39,6 +41,21 @@ will build the application, ready to be loaded into Chrome.
 
 **If you change any dependencies (i.e. install any local npm packages), ensure
 you run `npm shrinkwrap --dev` and commit the changes**
+
+### Loading into Chrome
+
+- Visit [chrome://extensions](chrome://extensions) and check "Developer mode" if
+  not already checked.
+- Tap "Load unpacked extension..." which will open a file browser
+- Navigate to this repository and click OK
+
+You won't be able to sign in with it yet as we haven't whitelisted the
+Extension's ID.
+
+On [chrome://extensions](chrome://extensions), note that Trailblazer will have
+"Loaded from: /path/to/your/repo", as well as "ID: dahsodahniwuheihxamalwa..."
+Let us know your ID and we will whitelist your ID on the staging or production
+API, depending on your preference.
 
 ## Building for Release
 
@@ -100,26 +117,16 @@ address in the context of an Assignment. It houses information about the site,
 as well as meta-data such as when the address was first visited. In future it
 may also house information such as return visits and time spent viewing/idle.
 
-## Work flow
+## Workflow
 
-Git, GitHub, Pivotal work flow for a Chrome Extension
+Git, GitHub workflow for this Chrome Extension
 
-This list of steps assumes that features have been prioritised and assigned a
-point value.
-
-1. Tap `Start` on a story in Pivotal.
-2. Pull from GitHub so the local copy of `master` is up to date.
-3. Start a feature branch, named appropriate to the story (e.g. the story may
+1. Pull from GitHub so the local copy of `master` is up to date.
+2. Start a feature branch, named appropriate to the story (e.g. the story may
    be called "Assignment list", so the branch is named `assignment-list`).
-4. \[Do work things\].
-5. When the feature is finished and is ready to go for code review, **prefix the
-   branch with "[needs review]", open a new Pull Request and tap `Finish` in
-   Pivotal**.
-6. Someone else reviews the changes and either **closes the PR, merges the
-   branch and taps `Deliver`**, or gives **feedback to action before it can be
+3. \[Do work things\].
+4. When the feature is finished and is ready to go for code review, **prefix the
+   branch with "[needs review]", open a new Pull Request**.
+5. Someone else reviews the changes and either **closes the PR, merges the
+   branch**, or gives **feedback to action before it can be
    closed/merged/delivered**.
-7. The product owner then steps in at some point in the future and checks if
-   the story in `master` fits the product goals, **tapping `Accept` if so or
-   tapping `Reject` if not**.
-8. If rejected, the product owner **includes a description of what needs to be
-   done** in order to accept the story and the process starts again from **1.**
