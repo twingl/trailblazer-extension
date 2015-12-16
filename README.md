@@ -5,14 +5,23 @@ build up a map, helping them make sense of the places they visit.
 
 ## Prerequisites
 
-You need to have Node.js or IO.js installed and npm available on the command
-line.
+### Node
 
-Currently only tested against node `0.10.26`
+For now, you need to have Node.js `0.10.26` installed. We're going to move to a newer version, but there's a lot of broken stuff at the moment preventing that.
+
+If you have a modern version of node, grab `nvm` and install `0.10.26`
+
+Install nvm: https://github.com/creationix/nvm#install-script
+
+Install `0.10.26`: `$ nvm install 0.10.26`
+
+### Gulp
 
 You need to have Gulp installed globally to build the extension
 
     $ npm install -g gulp
+
+### EditorConfig 
 
 You also should have the [EditorConfig plugin](http://editorconfig.org/)
 installed for your editor before editing any of the source.
