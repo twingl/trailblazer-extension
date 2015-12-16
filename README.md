@@ -15,6 +15,14 @@ Install nvm: https://github.com/creationix/nvm#install-script
 
 Install `0.10.26`: `$ nvm install 0.10.26`
 
+When it has finished installing, create a file that will tell it to use the correct version of node:
+
+`$ echo 0.10.26 > .nvmrc`
+
+Now you can run `$ nvm use` and it will set up that terminal session with the correct version of node.
+
+> ed: acutely aware that this process is tedious and fragile; the intention is to improve it along with #92
+
 ### Gulp
 
 You need to have Gulp installed globally to build the extension
