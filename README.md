@@ -42,7 +42,33 @@ installed for your editor before editing any of the source.
 
     $ npm install
 
-Set up the environment configuration based on the example
+At this point you should open Chrome and load the unpacked extension. Don't
+worry that it hasn't been built yet; we just need to get the ID that is
+assigned to it by Chrome.
+
+Visit chrome://extensions, check developer mode, and tap "Load unpacked
+extension..."
+
+When the file picker opens, navigate to the root of the git repo and tap "OK"
+
+You should see the extension in the list now, and take note of the ID that
+Chrome has assigned to it (referred to as CHROME_ID from now on)
+
+Generate your API credentials:
+
+Visit https://app.trailblazer.io/oauth/applications and create a new
+application; it will ask for a name (choose anything), and a callback URL which
+is based on the ID we got from loading the extension in Chrome.
+
+Add this as a callback URL:
+
+    https://CHROME_ID.chromiumapp.org/
+
+Noting that CHROME_ID is what is displayed in the list of extensions.
+
+When the app is created, you'll have an application ID.
+
+Now we can set up the environment configuration based on the example
 
     $ cp .env-example .env
 
