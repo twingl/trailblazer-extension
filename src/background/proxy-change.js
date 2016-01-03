@@ -3,7 +3,7 @@ var _               = require('lodash')
   , constants       = require('../constants')
   , messageChannel  = require('../util/message-channel');
 
-var logger = new Logger('background/proxy-change.js');
+var logger = Logger('background/proxy-change.js');
 
 /**
  * This listens for 'change' events in the background, and sends them over

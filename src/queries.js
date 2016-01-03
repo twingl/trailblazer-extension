@@ -14,7 +14,7 @@ import Logger         from './util/logger';
 import stores         from './stores';
 import _              from 'lodash';
 
-var logger = new Logger('queries.js');
+var logger = Logger('queries.js');
 
 var sendMessage = function(message) {
   return new Promise(function(resolve, reject) {

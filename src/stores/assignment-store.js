@@ -6,7 +6,7 @@ var _                             = require('lodash')
 import Store from '../lib/store';
 import { query, action } from '../decorators';
 
-var logger = new Logger('stores/assignment-store.js');
+var logger = Logger('stores/assignment-store.js');
 
 class AssignmentStore extends Store {
 

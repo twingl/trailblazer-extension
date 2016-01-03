@@ -6,7 +6,7 @@ var _                     = require('lodash')
   , constants             = require('../constants')
   , Logger                = require('../util/logger');
 
-var logger = new Logger('popup/app.js');
+var logger = Logger('popup/app.js');
 
 // Components
 var Idle      = React.createFactory(require('../components/popup/idle'))

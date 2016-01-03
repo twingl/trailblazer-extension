@@ -6,7 +6,7 @@ import queries from '../../queries';
 import constants from '../../constants';
 
 import Logger from '../../util/logger';
-var logger = new Logger('assignments-show');
+var logger = Logger('assignments-show');
 
 
 /**

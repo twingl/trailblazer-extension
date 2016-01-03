@@ -6,7 +6,7 @@ import Store from '../lib/store';
 
 import { query, action } from '../decorators';
 
-var logger = new Logger('stores/authentication-store.js');
+var logger = Logger('stores/authentication-store.js');
 
 import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
 

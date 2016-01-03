@@ -6,7 +6,7 @@ import Logger     from '../util/logger';
 import Store from '../lib/store';
 import { query, action, deprecated } from '../decorators';
 
-var logger = new Logger('stores/node-store.js');
+var logger = Logger('stores/node-store.js');
 
 class NodeStore extends Store {
 

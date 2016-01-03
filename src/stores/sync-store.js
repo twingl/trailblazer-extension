@@ -10,7 +10,7 @@ import Logger                        from '../util/logger';
 import Store from '../lib/store';
 import { action } from '../decorators';
 
-var logger = new Logger('stores/sync-store.js');
+var logger = Logger('stores/sync-store.js');
 
 
 class SyncStore extends Store {

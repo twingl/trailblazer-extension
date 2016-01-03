@@ -10,7 +10,7 @@ import { action } from '../decorators';
 import globalConfig from '../config';
 var config = globalConfig.keen;
 
-var logger = new Logger('stores/metrics-store.js')
+var logger = Logger('stores/metrics-store.js')
 
 class MetricsStore extends Store {
 

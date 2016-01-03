@@ -15,7 +15,7 @@ var Logger              = require('./util/logger')
   , MapStore            = require('./stores/map-store')
   , ErrorStore          = require('./stores/error-store');
 
-var logger = new Logger('stores.js');
+var logger = Logger('stores.js');
 
 logger.info("Initializing Indexdb");
 var schema = treo.schema()

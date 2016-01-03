@@ -8,7 +8,7 @@ import Store from '../lib/store';
 import globalConfig from '../config';
 var config = globalConfig.raven;
 
-var logger = new Logger('stores/error-store.js');
+var logger = Logger('stores/error-store.js');
 
 class ErrorStore extends Store {
 

@@ -2,7 +2,7 @@ import _         from 'lodash';
 import constants from '../constants';
 import Logger    from '../util/logger';
 
-var logger = new Logger('stores/map-store.js');
+var logger = Logger('stores/map-store.js');
 
 import Store from '../lib/store';
 import { action } from '../decorators';

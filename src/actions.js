@@ -2,7 +2,7 @@ var constants       = require('./constants')
   , Logger          = require('./util/logger')
   , messageChannel  = require('./util/message-channel');
 
-var logger = new Logger('actions.js');
+var logger = Logger('actions.js');
 
 module.exports = {
 

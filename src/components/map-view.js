@@ -7,7 +7,7 @@ var ShareMap = require('./share-map');
 var Legend = require('./legend');
 
 import Logger from '../util/logger';
-var logger = new Logger('map-view');
+var logger = Logger('map-view');
 
 import Trail from './trail';
 

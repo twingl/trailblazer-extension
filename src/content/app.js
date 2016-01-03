@@ -6,7 +6,7 @@ var _                     = require('lodash')
   , constants             = require('../constants')
   , Logger                = require('../util/logger');
 
-var logger = new Logger('content/app.js');
+var logger = Logger('content/app.js');
 
 //components
 var AssignmentsIndex = React.createFactory(require('../components/content/assignments-index'));

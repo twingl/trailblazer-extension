@@ -7,7 +7,7 @@ import RandomName from '../util/random-name';
 import Store from '../lib/store';
 import { query, action, deprecated } from '../decorators';
 
-var logger = new Logger('stores/tab-store.js');
+var logger = Logger('stores/tab-store.js');
 
 class TabStore extends Store {
 

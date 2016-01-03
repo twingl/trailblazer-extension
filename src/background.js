@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 // Initialize our logger
 import Logger from './util/logger';
-var logger = new Logger('background.js');
+var logger = Logger('background.js');
 
 // Start tracking errors
 var Raven = require('raven-js');
