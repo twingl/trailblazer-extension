@@ -1,10 +1,10 @@
-var React = require('react');
-var _ = require('lodash');
+import React from 'react';
+import _ from 'lodash';
 
 //components
-var AssignmentTitle = require('./assignment-title');
-var ShareMap = require('./share-map');
-var Legend = require('./legend');
+import AssignmentTitle from './assignment-title';
+import ShareMap from './share-map';
+import Legend from './legend';
 
 import Logger from '../util/logger';
 var logger = Logger('map-view');
@@ -26,15 +26,17 @@ import Trail from './trail';
 // };
 
 
-module.exports = React.createClass({
+export default class MapView extends React.Component {
 
-  getInitialState: function () {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       sharePopoverState: false
-    }
-  },
+    };
+  }
 
-  render: function () {
+  render() {
     var nodeObj = {};
     _.each(this.props.nodes, function (node) {
       nodeObj[node.localId] = node;
@@ -53,7 +55,7 @@ module.exports = React.createClass({
       assignment: this.props.assignment
     };
 
-    return  <div className="map-view-wrapper" onClick={this.handleClick}>
+    return  <div className="map-view-wrapper" onClick={this.handleClick.bind(this)}>
               <a href="#!/assignments" className="nav-assignment-list"></a>
               <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={this.props.constants} />
               <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} actions={this.props.actions} />
@@ -79,23 +81,21 @@ module.exports = React.createClass({
                   mapURL={url}
                   popover={this.state.sharePopoverState}
                   actions={this.props.actions}
-                  togglePopover={this.togglePopover} />
+                  togglePopover={this.togglePopover.bind(this)} />
               </span>
             </div>;
-  },
+  }
 
-  handleClick: function (evt) {
-
+  handleClick(evt) {
     //remove popover when clicking anywhere else
     if (this.state.sharePopoverState &&
         !document.getElementById('share-popover').contains(evt.target)) {
       this.setState({sharePopoverState: false});
     };
-  },
+  }
 
-  togglePopover: function () {
+  togglePopover() {
     var bool = !this.state.sharePopoverState;
     this.setState({sharePopoverState: bool});
   }
-});
-
+};

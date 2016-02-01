@@ -1,6 +1,5 @@
 import _         from 'lodash';
 import constants from '../constants';
-import Logger    from '../util/logger';
 import Raven     from 'raven-js';
 
 import Store from '../lib/store';
@@ -8,6 +7,7 @@ import Store from '../lib/store';
 import globalConfig from '../config';
 var config = globalConfig.raven;
 
+import Logger from '../util/logger';
 var logger = Logger('stores/error-store.js');
 
 class ErrorStore extends Store {
@@ -23,13 +23,13 @@ class ErrorStore extends Store {
       constants.PERSIST_ASSIGNMENT_FAIL,
       constants.START_RECORDING_FAIL,
       constants.RESUME_RECORDING_FAIL
-    ], function(action) {
-      var reporter = function(payload) {
+    ], (action) => {
+      var reporter = (payload) => {
         this.report(action, payload);
-      }.bind(this);
+      };
 
       return [action, reporter];
-    }.bind(this));
+    });
 
     this.bindActions.apply(this, _.flatten(actionHandlers));
   }
@@ -39,7 +39,7 @@ class ErrorStore extends Store {
 
     data.manifest = chrome.runtime.getManifest();
 
-    chrome.runtime.getPlatformInfo(function(platformInfo) {
+    chrome.runtime.getPlatformInfo((platformInfo) => {
       data.platformInfo = platformInfo;
 
       Raven.captureMessage("Action Failed: " + type, {

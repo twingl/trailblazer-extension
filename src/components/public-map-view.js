@@ -1,14 +1,15 @@
-var React = require('react');
+import React from 'react';
 
 //components
-var PublicMapTitle = require('./public-map-title');
-var ShareMap = require('./share-map');
-var Legend = require('./legend');
+import PublicMapTitle from './public-map-title';
+import ShareMap from './share-map';
+import Legend from './legend';
 
 import Trail from './trail';
 
-module.exports = React.createClass({
-  render: function () {
+export default class PublicMapView extends React.Component {
+
+  render() {
     var visible, shareText, title, url;
 
     visible       = this.props.assignment.visible; //state
@@ -25,4 +26,4 @@ module.exports = React.createClass({
             </div>;
   }
 
-});
+};

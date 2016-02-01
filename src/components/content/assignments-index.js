@@ -1,5 +1,5 @@
-var _     = require('lodash')
-  , React = require('react');
+import _     from 'lodash';
+import React from 'react';
 
 import constants from '../../constants';
 import queries from '../../queries';
@@ -57,15 +57,19 @@ var articles = {
   "http://en.wikipedia.org/wiki/SL-1": "SL-1"
 }
 
-var AssignmentItem = require('../assignment-item');
+import AssignmentItem from '../assignment-item';
 
-module.exports = React.createClass({
+export default class AssignmentsIndex extends React.Component {
 
-  getInitialState: function () {
-    return { assignments: [] };
-  },
+  constructor(props) {
+    super(props);
 
-  componentDidMount: function () {
+    this.state = {
+      assignments: []
+    };
+  }
+
+  componentDidMount() {
     queries.AssignmentStore.getAssignments().then( (assignments) => {
       this.setState({ assignments });
     });
@@ -84,29 +88,29 @@ module.exports = React.createClass({
 
     this.props.actions.requestAssignments();
     this.props.actions.viewedAssignmentList();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     chrome.runtime.onMessage.removeListener(this.state._assignmentListener);
-  },
+  }
 
-  startMeandering: function (evt) {
+  startMeandering(evt) {
     evt.preventDefault();
 
     var url = evt.currentTarget.href;
 
-    chrome.tabs.create({ url: url, active: true }, function(tab) {
+    chrome.tabs.create({ url: url, active: true }, (tab) => {
       this.props.actions.startRecording(tab.id, tab);
-    }.bind(this));
-  },
+    });
+  }
 
-  render: function () {
+  render() {
     document.title = "Resume a Trail";
 
     var list = [];
-    _.each(this.state.assignments, function (item) {
+    _.each(this.state.assignments, (item) => {
       list.push(React.createElement(AssignmentItem, {item: item, key: item.localId, actions: this.props.actions}))
-    }.bind(this));
+    });
 
     if (list.length > 0) {
       return <div className="wrap assignment-index">
@@ -125,8 +129,8 @@ module.exports = React.createClass({
           Oops, there's nothing here yet.
         </p>
         <p>
-          Perhaps you might like to start by checking out <strong><a onClick={this.startMeandering} className="primary" href={link}>{title}</a></strong> on Wikipedia?<br />
-          We found it on a list of 50 interesting Wiki articles <a onClick={this.startMeandering} className="primary" href="http://hollybrockwell.com/2009/09/29/50-more-of-wikipedias-most-interesting-articles/"> here</a> (thanks Holly and Ray)
+          Perhaps you might like to start by checking out <strong><a onClick={this.startMeandering.bind(this)} className="primary" href={link}>{title}</a></strong> on Wikipedia?<br />
+          We found it on a list of 50 interesting Wiki articles <a onClick={this.startMeandering.bind(this)} className="primary" href="http://hollybrockwell.com/2009/09/29/50-more-of-wikipedias-most-interesting-articles/"> here</a> (thanks Holly and Ray)
         </p>
         <p>
           The links above will start you on a new trail, so you can get straight into exploring!
@@ -135,4 +139,4 @@ module.exports = React.createClass({
     }
   }
 
-});
+};

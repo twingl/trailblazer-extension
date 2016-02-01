@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   __change__:                       'change', // NOTE: reserved for emit('change')
 
   COMPLETED_ONBOARDING_STEP: "COMPLETED_ONBOARDING_STEP",

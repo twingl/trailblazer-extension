@@ -1,12 +1,14 @@
-var React           = require('react')
-  , navigate        = require('react-mini-router').navigate
-  , Star            = require('../star')
-  , AssignmentTitle = require('../assignment-title');
+import React           from 'react';
+import Star            from '../star';
+import AssignmentTitle from '../assignment-title';
 
-module.exports = React.createClass({
-  componentDidMount: function () {
+var navigate = require('react-mini-router').navigate
+
+export default class Recording extends React.Component {
+
+  componentDidMount() {
     // Bind listener
-    chrome.runtime.onMessage.addListener( function (message) {
+    chrome.runtime.onMessage.addListener((message) => {
       switch (message.action) {
         case this.props.constants.__change__:
 
@@ -20,30 +22,30 @@ module.exports = React.createClass({
         default:
           break;
       }
-    }.bind(this));
-  },
+    });
+  }
 
-  onStopRecordingClicked: function (evt) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+  onStopRecordingClicked(evt) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       var tab = tabs[0];
       this.props.actions.stopRecording(tab.id);
-    }.bind(this));
-  },
+    });
+  }
 
-  onSignOutClicked: function (evt) {
+  onSignOutClicked(evt) {
     this.props.actions.signOut();
-  },
+  }
 
-  onTutorialClicked: function (evt) {
+  onTutorialClicked(evt) {
     chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour/sign-in.html") });
-  },
+  }
 
-  onViewTrailClicked: function (evt) {
+  onViewTrailClicked(evt) {
     var url = chrome.runtime.getURL("/build/content.html#!/assignments/" + this.props.assignment.localId);
     chrome.tabs.create({ url: url });
-  },
+  }
 
-  render: function () {
+  render() {
     return <div className="wrap recording">
       <div className="recording-title" id="map-title">
         <AssignmentTitle
@@ -55,12 +57,12 @@ module.exports = React.createClass({
       <h2 className="recording-title state">Recording</h2>
 
       <a  className="button button-view-trail open-map"
-          onClick={this.onViewTrailClicked}>
+          onClick={this.onViewTrailClicked.bind(this)}>
         View Trail
       </a>
 
       <a  className="button button-stop stop-recording"
-          onClick={this.onStopRecordingClicked}>
+          onClick={this.onStopRecordingClicked.bind(this)}>
         <img src="/assets/icons/stop-icon.svg" />
       </a>
 
@@ -74,17 +76,18 @@ module.exports = React.createClass({
 
       <a  className="sign-out"
           title="Sign Out"
-          onClick={this.onSignOutClicked}>
+          onClick={this.onSignOutClicked.bind(this)}>
 
         <img src="/assets/icons/sign-out-icon.svg" />
       </a>
 
       <a  className="tutorial"
           title="How to use Trailblazer"
-          onClick={this.onTutorialClicked}>
+          onClick={this.onTutorialClicked.bind(this)}>
 
         <img src="/assets/icons/tutorial-icon.svg" />
       </a>
     </div>;
   }
-});
+
+};

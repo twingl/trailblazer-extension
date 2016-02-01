@@ -36,4 +36,3 @@ export default class Link extends React.Component {
       x2={this.position.to.x} y2={this.position.to.y} />;
   }
 };
-

@@ -1,7 +1,7 @@
 import _         from 'lodash';
 import constants from '../constants';
-import Logger    from '../util/logger';
 
+import Logger from '../util/logger';
 var logger = Logger('stores/map-store.js');
 
 import Store from '../lib/store';
@@ -28,11 +28,11 @@ class MapStore extends Store {
   @action(constants.SAVE_MAP_LAYOUT)
   handleSaveMapLayout(payload) {
     logger.info('handleSaveMapLayout', { payload: payload });
-    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+    this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
       var store = tx.objectStore("nodes");
 
-      _.each(payload.coordinates, function(coord, key) {
-        store.get(parseInt(key)).onsuccess = function(evt) {
+      _.each(payload.coordinates, (coord, key) => {
+        store.get(parseInt(key)).onsuccess = (evt) => {
           var node = evt.target.result;
           node.x = coord.x;
           node.y = coord.y;
@@ -40,10 +40,10 @@ class MapStore extends Store {
         };
       });
 
-      tx.oncomplete = function() {
+      tx.oncomplete = () => {
         this.flux.actions.persistMapLayout(payload.localId, payload.coordinates);
-      }.bind(this);
-    }.bind(this));
+      };
+    });
   }
 
 };

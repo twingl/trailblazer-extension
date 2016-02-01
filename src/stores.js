@@ -3,18 +3,19 @@
  * object ready to be passed to flux.
  */
 
-var Logger              = require('./util/logger')
-  , treo                = require('treo')
-  , treoPromise         = require('treo/plugins/treo-promise')
-  , TabStore            = require('./stores/tab-store')
-  , NodeStore           = require('./stores/node-store')
-  , AssignmentStore     = require('./stores/assignment-store')
-  , AuthenticationStore = require('./stores/authentication-store')
-  , SyncStore           = require('./stores/sync-store')
-  , MetricsStore        = require('./stores/metrics-store')
-  , MapStore            = require('./stores/map-store')
-  , ErrorStore          = require('./stores/error-store');
+import treo                from 'treo';
+import treoPromise         from 'treo/plugins/treo-promise';
 
+import TabStore            from './stores/tab-store';
+import NodeStore           from './stores/node-store';
+import AssignmentStore     from './stores/assignment-store';
+import AuthenticationStore from './stores/authentication-store';
+import SyncStore           from './stores/sync-store';
+import MetricsStore        from './stores/metrics-store';
+import MapStore            from './stores/map-store';
+import ErrorStore          from './stores/error-store';
+
+import Logger from './util/logger';
 var logger = Logger('stores.js');
 
 logger.info("Initializing Indexdb");
@@ -50,7 +51,7 @@ var objectStores = {
 /**
  * Initialize the Flux stores
  */
-var fluxStores = {
+export default {
   TabStore: new TabStore({ db: objectStores }),
   NodeStore: new NodeStore({ db: objectStores }),
   AssignmentStore: new AssignmentStore({ db: objectStores }),
@@ -60,5 +61,3 @@ var fluxStores = {
   MapStore: new MapStore({ db: objectStores }),
   ErrorStore: new ErrorStore()
 };
-
-module.exports = fluxStores;

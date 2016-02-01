@@ -1,15 +1,17 @@
-var React           = require('react')
-  , messageChannel  = require('../util/message-channel');
+import React           from 'react';
+import messageChannel  from '../util/message-channel';
 
-module.exports = React.createClass({
-  //TODO remove state from this class and place in higher level 'popup' parent component.
-  getInitialState: function () {
-    return {
-      rank: this.props.node.rank
-    }
-  },
+export default class Star extends React.Component {
 
-  componentDidMount: function () {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rank: props.node.rank
+    };
+  }
+
+  componentDidMount() {
     // listen for `change` evts for the current node
     messageChannel.listen( function (message) {
       switch (message.action) {
@@ -22,16 +24,16 @@ module.exports = React.createClass({
           break;
       }
     }.bind(this));
-  },
+  }
 
-  render: function () {
+  render() {
     var width = this.props.width + "px";
     var height= this.props.height + "px";
     var viewBox = "0 0 " + this.props.width  + " " + this.props.height;
     var waypointClass = this.state.rank === 1 ? "waypoint-active" : "waypoint";
 
     return  <a
-              onClick={this.onClick}
+              onClick={this.onClick.bind(this)}
               className={waypointClass} >
               <svg
                 width={width}
@@ -43,9 +45,9 @@ module.exports = React.createClass({
                   </polygon>
               </svg>
             </a>;
-  },
+  }
 
-  onClick: function () {
+  onClick() {
     messageChannel.send({
       action: "trackUIEvent",
       eventName: "ui.popup.waypoint.toggle",
@@ -58,4 +60,5 @@ module.exports = React.createClass({
       this.props.actions.rankNodeWaypoint(this.props.node.localId);
     }
   }
-});
+
+};

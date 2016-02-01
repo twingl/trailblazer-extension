@@ -1,40 +1,43 @@
-var React       = require('react')
- ,  navigate    = require('react-mini-router').navigate;
+import React from 'react';
+var navigate = require('react-mini-router').navigate;
 
 
-module.exports = React.createClass({
-  getInitialState: function () {
-    return {
+export default class AssignmentItem extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       show: true
-    }
-  },
+    };
+  }
 
-  render: function () {
+  render() {
     var klass = this.state.show ? 'show' : 'destroy';
 
                 //TODO change path
     return  <div className={klass} >
-              <li key={this.props.item.id} onClick={this.onClick}>
+              <li key={this.props.item.id} onClick={this.onClick.bind(this)}>
 
                 {this.props.item.title}
 
-                <a onClick={this.onClickDestroy}>
+                <a onClick={this.onClickDestroy.bind(this)}>
                   <img src="/assets/icons/delete-icon.svg" />
                 </a>
               </li>
             </div>;
-  },
+  }
 
-  componentDidMount: function () {
+  componentDidMount() {
     this.getDOMNode().addEventListener('webkitTransitionEnd', this.destroy)
-  },
+  }
 
-  onClick: function () {
+  onClick() {
     var id = this.props.item.localId;
     navigate('/assignments/' + id);
-  },
+  }
 
-  onClickDestroy: function (evt) {
+  onClickDestroy(evt) {
     evt.stopPropagation();
 
     var confirmation = window.confirm("Are you sure you want to delete " + this.props.item.title + "?");
@@ -44,4 +47,5 @@ module.exports = React.createClass({
       this.props.actions.destroyAssignment(this.props.item.localId);
     }
   }
-});
+
+};

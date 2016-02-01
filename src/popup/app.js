@@ -1,11 +1,11 @@
-var _                     = require('lodash')
-  , React                 = require('react/addons')
-  , router                = require('react-mini-router')
-  , actions               = require('../actions')
-  , ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
-  , constants             = require('../constants')
-  , Logger                = require('../util/logger');
+import _                     from 'lodash';
+import React                 from 'react/addons';
+import router                from 'react-mini-router';
+import actions               from '../actions';
+import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
+import constants             from '../constants';
 
+import Logger from '../util/logger';
 var logger = Logger('popup/app.js');
 
 // Components
@@ -18,7 +18,7 @@ var Idle      = React.createFactory(require('../components/popup/idle'))
 var RouterMixin = router.RouterMixin
   , navigate    = router.navigate;
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [ RouterMixin ],
   routes: {
     '/':          'loading',

@@ -1,4 +1,4 @@
-var actions = require('../actions');
+import actions from '../actions';;
 
 chrome.runtime.onMessage.addListener(function(message, senderInfo, respond) {
   if (message.type === "content_script" && message.role === "title") {
@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(function(message, senderInfo, respond) {
   }
 });
 
-chrome.webNavigation.onHistoryStateUpdated.addListener( function(details) {
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
   if (details.frameId === 0) {
     window.setTimeout( function() {
       chrome.tabs.executeScript(details.tabId, { file: "/build/page-title.js" });
@@ -22,7 +22,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener( function(details) {
   }
 });
 
-chrome.webNavigation.onDOMContentLoaded.addListener( function (details) {
+chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
   if (details.frameId === 0) {
     chrome.tabs.executeScript(details.tabId, { file: "/build/page-title.js" });
   }

@@ -1,7 +1,7 @@
-var actions = require('../actions')
-  , domready = require('domready');
+import actions from '../actions';
+import domready from 'domready';
 
-domready(function() {
+domready(() => {
   var title = document.title
     , url   = window.location.href;
 

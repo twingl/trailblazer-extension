@@ -1,8 +1,8 @@
-var React       = require('react')
-  , navigate    = require('react-mini-router').navigate;
+import React from 'react';
+var navigate = require('react-mini-router').navigate;
 
-module.exports = React.createClass({
-  render: function () {
+export default class Loading extends React.Component {
+  render() {
     return <div className="wrap loading"></div>;
   }
-});
+};

@@ -1,8 +1,8 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
+export default class Popover extends React.Component {
 
-  render: function () {
+  render() {
     var arrowStyle = this.props.arrowStyle;
     var display = this.props.display ? 'block' : 'none';
     var inlineStyle = {
@@ -19,4 +19,4 @@ module.exports = React.createClass({
               </div>
             </div>;
   }
-})
+};

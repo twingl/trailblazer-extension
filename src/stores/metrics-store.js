@@ -3,13 +3,13 @@ import constants from '../constants';
 import Store     from '../lib/store';
 import KeenIO    from 'keen.io';
 import uuid      from 'node-uuid';
-import Logger    from '../util/logger';;
 
 import { action } from '../decorators';
 
 import globalConfig from '../config';
 var config = globalConfig.keen;
 
+import Logger from '../util/logger';
 var logger = Logger('stores/metrics-store.js')
 
 class MetricsStore extends Store {
@@ -20,30 +20,30 @@ class MetricsStore extends Store {
     this.uuid = {};
     this.db = options.db;
 
-    var initStoreUUID = function(storageType) {
-      chrome.storage[storageType].get("uuid", function(res) {
+    var initStoreUUID = (storageType) => {
+      chrome.storage[storageType].get("uuid", (res) => {
         if (res.uuid) {
           this.uuid[storageType] = res.uuid;
         } else {
           this.uuid[storageType] = uuid.v4();
           chrome.storage[storageType].set({ uuid: this.uuid[storageType] });
         }
-      }.bind(this));
-    }.bind(this);
+      });
+    };
 
     initStoreUUID("sync");
     initStoreUUID("local");
 
-    this.initUserInfo = function(cb) {
-      chrome.storage.sync.get(function(res) {
+    this.initUserInfo = (cb) => {
+      chrome.storage.sync.get((res) => {
         if (res.token) {
           this.identity = JSON.parse(res.token);
         } else {
           this.identity = {};
         }
         if (cb) cb();
-      }.bind(this));
-    }.bind(this);
+      });
+    };
 
     this.initUserInfo();
 
@@ -55,11 +55,11 @@ class MetricsStore extends Store {
     } else {
       this.keen = {
         // Just execute the callback straight away - we're not tracking anything
-        addEvent: function(collection, properties, cb) { cb(); }
+        addEvent: (collection, properties, cb) => { cb(); }
       }
     }
 
-    this.reportEvent = function(collection, properties) {
+    this.reportEvent = (collection, properties) => {
       properties = properties || {};
 
       properties.uuid = properties.uuid || {};
@@ -67,7 +67,7 @@ class MetricsStore extends Store {
       if (this.uuid.sync)  properties.uuid.sync  = this.uuid.sync;
       if (this.uuid.local) properties.uuid.local = this.uuid.local;
 
-      chrome.runtime.getPlatformInfo(function(platformInfo) {
+      chrome.runtime.getPlatformInfo((platformInfo) => {
         var manifest = chrome.runtime.getManifest();
 
         properties.extension = properties.extension || {};
@@ -81,12 +81,12 @@ class MetricsStore extends Store {
           properties: properties
         });
 
-        this.keen.addEvent(collection, properties, function(err, res) {
+        this.keen.addEvent(collection, properties, (err, res) => {
           if (err) {
             logger.error("Failed to report event to keen:", { error: err });
           }
         });
-      }.bind(this));
+      });
     };
   }
 
@@ -106,9 +106,9 @@ class MetricsStore extends Store {
     var collection = "extension.sign_in_success";
     var properties = {};
 
-    this.initUserInfo(function() {
+    this.initUserInfo(() => {
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.START_RECORDING)
@@ -124,7 +124,7 @@ class MetricsStore extends Store {
     var collection = "extension.start_recording_success";
     var properties = {};
 
-    this.db.nodes.index("tabId").get(payload.tabId).then(function(nodes) {
+    this.db.nodes.index("tabId").get(payload.tabId).then((nodes) => {
       var node = _.first(nodes);
 
       if (node) {
@@ -139,7 +139,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.VIEWED_ASSIGNMENT_LIST)
@@ -155,7 +155,7 @@ class MetricsStore extends Store {
     var collection = "extension.viewed_map";
     var properties = {};
 
-    this.db.assignments.get(payload.localId).then(function(assignment) {
+    this.db.assignments.get(payload.localId).then((assignment) => {
       if (assignment) {
         properties.assignment = {
           id:      assignment.id,
@@ -164,7 +164,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.RESUME_RECORDING)
@@ -173,7 +173,7 @@ class MetricsStore extends Store {
     var properties = {};
 
 
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (node) {
         properties.assignment = {
           id:      node.assignmentId,
@@ -186,7 +186,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   /**
@@ -207,7 +207,7 @@ class MetricsStore extends Store {
     var collection = "extension.stop_recording";
     var properties = {};
 
-    this.db.nodes.index("tabId").get(payload.tabId).then(function(nodes) {
+    this.db.nodes.index("tabId").get(payload.tabId).then((nodes) => {
       var node = _.first(nodes);
 
       if (node) {
@@ -222,7 +222,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.RANK_NODE_WAYPOINT)
@@ -230,7 +230,7 @@ class MetricsStore extends Store {
     var collection = "extension.rank_node_waypoint";
     var properties = {};
 
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (node) {
         properties.assignment = {
           id:      node.assignmentId,
@@ -243,7 +243,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.RANK_NODE_NEUTRAL)
@@ -251,7 +251,7 @@ class MetricsStore extends Store {
     var collection = "extension.rank_node_neutral";
     var properties = {};
 
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (node) {
         properties.assignment = {
           id:      node.assignmentId,
@@ -264,7 +264,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.MAKE_ASSIGNMENT_VISIBLE)
@@ -272,7 +272,7 @@ class MetricsStore extends Store {
     var collection = "extension.make_assignment_visible";
     var properties = {};
 
-    this.db.assignments.get(payload.localId).then(function(assignment) {
+    this.db.assignments.get(payload.localId).then((assignment) => {
       if (assignment) {
         properties.assignment = {
           id:      assignment.id,
@@ -281,7 +281,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.MAKE_ASSIGNMENT_HIDDEN)
@@ -289,7 +289,7 @@ class MetricsStore extends Store {
     var collection = "extension.make_assignment_hidden";
     var properties = {};
 
-    this.db.assignments.get(payload.localId).then(function(assignment) {
+    this.db.assignments.get(payload.localId).then((assignment) => {
       if (assignment) {
         properties.assignment = {
           id:      assignment.id,
@@ -298,7 +298,7 @@ class MetricsStore extends Store {
       }
 
       this.reportEvent(collection, properties);
-    }.bind(this));
+    });
   }
 
   @action(constants.COMPLETED_ONBOARDING_STEP)

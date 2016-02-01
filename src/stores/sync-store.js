@@ -5,11 +5,11 @@ import TrailblazerHTTPStorageAdapter from '../adapter/trailblazer_http_storage_a
 import camelize                      from 'camelize';
 import NodeHelper                    from '../helpers/node-helper';
 import AssignmentHelper              from '../helpers/assignment-helper';
-import Logger                        from '../util/logger';
 
 import Store from '../lib/store';
 import { action } from '../decorators';
 
+import Logger from '../util/logger';
 var logger = Logger('stores/sync-store.js');
 
 
@@ -53,34 +53,34 @@ class SyncStore extends Store {
   @action(constants.CREATE_NODE_SUCCESS)
   handleCreateNodeSuccess(payload) {
     logger.info('handleCreateNodeSuccess', { payload: payload });
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (node.assignmentId) {
         this.flux.actions.persistNode(node.localId);
       }
-    }.bind(this));
+    });
   }
 
   @action(constants.UPDATE_NODE_SUCCESS)
   handleUpdateNodeSuccess(payload) {
     logger.info('handleUpdateNodeSuccess', { payload: payload });
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (node.assignmentId) {
         this.flux.actions.persistNode(node.localId);
       }
-    }.bind(this));
+    });
   }
 
   @action(constants.DESTROY_NODE)
   handleDestroyNode(payload) {
     logger.info('handleDestroyNode', { payload: payload });
-    var run = function() {
-      this.db.nodes.get(payload.localId).then(function(node) {
+    var run = () => {
+      this.db.nodes.get(payload.localId).then((node) => {
         if (node.id) {
           new TrailblazerHTTPStorageAdapter().destroy("nodes", node.id);
         }
         this.db.nodes.del(node.localId);
-      }.bind(this));
-    }.bind(this);
+      });
+    };
 
     if (this.pending.nodes[payload.localId]) {
       // If there's a transaction pending, queue the deletion
@@ -95,16 +95,16 @@ class SyncStore extends Store {
   @action(constants.DESTROY_ASSIGNMENT)
   handleDestroyAssignment(payload) {
     logger.info('handleDestroyAssignment', { payload: payload });
-    var run = function() {
-      this.db.assignments.get(payload.localId).then(function(assignment) {
+    var run = () => {
+      this.db.assignments.get(payload.localId).then((assignment) => {
         if (assignment.id) {
           new TrailblazerHTTPStorageAdapter().destroy("assignments", assignment.id);
         }
-        this.db.assignments.del(assignment.localId).then(function() {
+        this.db.assignments.del(assignment.localId).then(() => {
           this.flux.actions.destroyAssignmentSuccess();
-        }.bind(this));
-      }.bind(this));
-    }.bind(this);
+        });
+      });
+    };
 
     if (this.pending.assignments[payload.localId]) {
       // If there's a transaction pending, queue the deletion
@@ -125,7 +125,7 @@ class SyncStore extends Store {
   @action(constants.PERSIST_ASSIGNMENT)
   handlePersistAssignment(payload) {
     logger.info('handlePersistAssignment');
-    this.db.assignments.get(payload.localId).done(function(assignment) {
+    this.db.assignments.get(payload.localId).done((assignment) => {
       console.log(assignment);
       var data = AssignmentHelper.getAPIData(assignment);
 
@@ -140,12 +140,12 @@ class SyncStore extends Store {
         }
 
         promise.then(
-              function(response) {
-                this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], function(err, tx) {
+              (response) => {
+                this.db.nodes.db.transaction("readwrite", ["assignments", "nodes"], (err, tx) => {
                   var nodeStore       = tx.objectStore("nodes")
                     , assignmentStore = tx.objectStore("assignments");
 
-                  assignmentStore.get(assignment.localId).onsuccess = function(evt) {
+                  assignmentStore.get(assignment.localId).onsuccess = (evt) => {
                     var assignment  = evt.target.result;
                     assignment.id   = response.id;
                     assignmentStore.put(assignment);
@@ -153,7 +153,7 @@ class SyncStore extends Store {
 
                   // Get nodes and add the newly created assignmentId to them
                   nodeStore.index('localAssignmentId')
-                    .openCursor(IDBKeyRange.only(assignment.localId)).onsuccess = function(evt) {
+                    .openCursor(IDBKeyRange.only(assignment.localId)).onsuccess = (evt) => {
                       var cursor = evt.target.result;
                       if (cursor) {
                         var node = cursor.value;
@@ -162,28 +162,28 @@ class SyncStore extends Store {
 
                         cursor.continue();
                       }
-                    }.bind(this);
+                    };
 
                   // Fire the success event when the transaction is finished
-                  tx.oncomplete = function() {
+                  tx.oncomplete = () => {
                     delete this.pending.assignments[assignment.localId];
                     this.flux.actions.persistAssignmentSuccess(assignment.localId);
-                  }.bind(this);
+                  };
 
-                  tx.onerror = function() {
+                  tx.onerror = () => {
                     delete this.pending.assignments[assignment.localId];
                     // error
-                  }.bind(this);
+                  };
 
-                }.bind(this));
-              }.bind(this),
-              function(error, response) {
+                });
+              },
+              (error, response) => {
                 this.flux.actions.persistAssignmentFail(assignment.localId, error);
                 delete this.pending.assignments[assignment.localId];
-              }.bind(this));
+              });
       }
-    }.bind(this),
-    function () {
+    },
+    () => {
       delete this.pending.assignments[assignment.localId];
     });
   }
@@ -196,11 +196,11 @@ class SyncStore extends Store {
     logger.info('handlePersistAssignmentSuccess');
 
     this.db.nodes.index('localAssignmentId').get(payload.localId)
-      .then(function(nodes) {
-        _.each(nodes, function(node) {
+      .then((nodes) => {
+        _.each(nodes, (node) => {
           if (!node.id) this.flux.actions.persistNode(node.localId);
-        }.bind(this));
-      }.bind(this));
+        });
+      });
   }
 
   /**
@@ -213,7 +213,7 @@ class SyncStore extends Store {
   handlePersistNode(payload) {
     logger.info('handlePersistNode');
 
-    var persistNode = function(payload, node) {
+    var persistNode = (payload, node) => {
       var data = NodeHelper.getAPIData(node);
 
       if (!this.pending.nodes[payload.localId]) {
@@ -231,14 +231,14 @@ class SyncStore extends Store {
           });
         }
         promise.then(
-          function(response) {
+          (response) => {
             delete this.pending.nodes[payload.localId];
-            this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+            this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
               var store = tx.objectStore("nodes");
 
               var toPersist = [];
 
-              store.get(payload.localId).onsuccess = function(evt) {
+              store.get(payload.localId).onsuccess = (evt) => {
                 var node = evt.target.result;
 
                 // If the node still exists
@@ -246,9 +246,9 @@ class SyncStore extends Store {
                   node.id = response.id;
                   store.put(node);
                 }
-              }.bind(this);
+              };
 
-              store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+              store.index("localParentId").openCursor(IDBKeyRange.only(payload.localId)).onsuccess = (evt) => {
                 var cursor = evt.target.result;
 
                 if (cursor) {
@@ -259,26 +259,26 @@ class SyncStore extends Store {
 
                   cursor.continue();
                 }
-              }.bind(this);
+              };
 
-              tx.oncomplete = function() {
+              tx.oncomplete = () => {
                 this.flux.actions.persistNodeSuccess(node.localId);
-              }.bind(this)
+              }
 
-            }.bind(this));
-          }.bind(this),
-          function(response) {
+            });
+          },
+          (response) => {
             delete this.pending.nodes[payload.localId];
 
             if (this.queue.nodes[payload.localId] && this.queue.nodes[payload.localId].length > 0) {
               var run = this.queue.nodes[payload.localId].pop();
               run();
             };
-          }.bind(this));
+          });
       }
-    }.bind(this);
+    };
 
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (!node.localParentId && !node.id) {
         // Persist root nodes that don't have IDs
         persistNode(payload, node);
@@ -289,7 +289,7 @@ class SyncStore extends Store {
         // Persist the node - updating it
         persistNode(payload, node);
       }
-    }.bind(this));
+    });
   }
 
   /**
@@ -298,11 +298,11 @@ class SyncStore extends Store {
   @action(constants.PERSIST_NODE_SUCCESS)
   handlePersistNodeSuccess(payload) {
     logger.info('handlePersistNodeSuccess');
-    this.db.nodes.index('localParentId').get(payload.localId).then(function(nodes) {
-      _.each(nodes, function(node) {
+    this.db.nodes.index('localParentId').get(payload.localId).then((nodes) => {
+      _.each(nodes, (node) => {
         this.flux.actions.persistNode(node.localId);
-      }.bind(this));
-    }.bind(this));
+      });
+    });
 
     if (this.queue.nodes[payload.localId] && this.queue.nodes[payload.localId].length > 0) {
       var run = this.queue.nodes[payload.localId].pop();
@@ -320,12 +320,12 @@ class SyncStore extends Store {
     var assignmentId;
 
     this.db.assignments.get(payload.localId)
-      .then(function(assignment) {
+      .then((assignment) => {
         assignmentId = assignment.id;
 
         this.db.nodes.index('assignmentId')
           .get(assignmentId)
-          .then(function(nodes) {
+          .then((nodes) => {
             var url = [
               config.api.host,
               config.api.nameSpace,
@@ -343,9 +343,9 @@ class SyncStore extends Store {
               }
             };
 
-            var localIds = _.collect(payload.coordinates, function(v,k) { return parseInt(k); });
+            var localIds = _.collect(payload.coordinates, (v,k) => { return parseInt(k); });
 
-            _.each(nodes, function(node) {
+            _.each(nodes, (node) => {
               if (_.contains(localIds, node.localId)) {
                 opts.data.nodes[node.id] = payload.coordinates[node.localId];
               }
@@ -355,16 +355,16 @@ class SyncStore extends Store {
               ._request(url, "PUT", opts)
               .then(
                 // Success
-                function(response) {
+                (response) => {
                   logger.info('handlePersistMapLayout: Success', { response: response });
-                }.bind(this),
+                },
 
                 // Error
-                function(response) {
+                (response) => {
                   logger.warn('handlePersistMapLayout: Unsuccessful response', { response: response });
-                }.bind(this));
-          }.bind(this));
-      }.bind(this));
+                });
+          });
+      });
 
 
   }
@@ -384,16 +384,16 @@ class SyncStore extends Store {
       .list("assignments")
       .then(
         // Success
-        function(response) {
+        (response) => {
           logger.info('handleFetchAssignments: Assignments received', { response: response });
           this.flux.actions.fetchAssignmentsSuccess(response.assignments);
-        }.bind(this),
+        },
 
         // Error
-        function(response) {
+        (response) => {
           logger.warn('handleFetchAssignments: Unsuccessful response', { response: response });
           this.flux.actions.fetchAssignmentsFail({ error: response.error });
-        }.bind(this)
+        }
       );
   }
 
@@ -451,7 +451,7 @@ class SyncStore extends Store {
 
     //TODO this sync process should be in one transaction
     this.db.assignments.all()
-      .then(function(localAssignments) {
+      .then((localAssignments) => {
         var changes = {
           put: [],
           del: []
@@ -464,7 +464,7 @@ class SyncStore extends Store {
         // checking if they still exist on the server. If they do, set
         // the `localId` on the server's response so we can update our
         // local copy. If not, push it to the delete queue.
-        _.each(persistedAssignments, function(localAssignment) {
+        _.each(persistedAssignments, (localAssignment) => {
           if (localAssignment.id && remoteIds.indexOf(localAssignment.id) >= 0) {
             var remoteAssignment = _.find(assignments, { 'id': localAssignment.id });
             // Set the localId on the remoteAssignment we just received
@@ -479,7 +479,7 @@ class SyncStore extends Store {
 
         return changes;
       })
-      .then(function (changes) {
+      .then((changes) => {
         // We're doing this in a manual transaction instead of a single `batch`
         // call as there are bugs in Treo's batch function.
         // When passing in an array of records incorrect primary keys are used
@@ -487,25 +487,25 @@ class SyncStore extends Store {
         // records, keys are stringified (again, Object.keys) and so no records
         // are deleted
         var storeName = this.db.assignments.name;
-        this.db.assignments.db.transaction("readwrite", [storeName], function(err, tx) {
+        this.db.assignments.db.transaction("readwrite", [storeName], (err, tx) => {
           var store = tx.objectStore(storeName);
 
           logger.info("handleUpdateAssignmentCache: Deleting records", { del: changes.del });
-          _.each(changes.del, function(key) { store.delete(key); });
+          _.each(changes.del, (key) => { store.delete(key); });
 
           logger.info("handleUpdateAssignmentCache: Putting records", { put: changes.put });
-          _.each(changes.put, function(record) { store.put(record); });
+          _.each(changes.put, (record) => { store.put(record); });
         });
-      }.bind(this))
+      })
       .done(
         //success
-        function () {
+        () => {
           this.flux.actions.updateAssignmentCacheSuccess();
-        }.bind(this),
+        },
         //fail. If any methods up the chain throw an error they will propagate here.
-        function (err) {
+        (err) => {
           this.flux.actions.updateAssignmentCacheFail(err);
-        }.bind(this));
+        });
 
   }
 
@@ -541,16 +541,16 @@ class SyncStore extends Store {
       .list(["assignments", assignmentId, "nodes"].join("/"))
       .then(
         // Success
-        function(response) {
+        (response) => {
           logger.info('handleFetchNodes: Nodes received', { response: response });
           this.flux.actions.fetchNodesSuccess(assignmentId, response.nodes);
-        }.bind(this),
+        },
 
         // Error
-        function(response) {
+        (response) => {
           logger.warn('handleFetchNodes: Unsuccessful response', { response: response });
           this.flux.actions.fetchNodesFail(error);
-        }.bind(this)
+        }
       );
   }
 
@@ -615,16 +615,16 @@ class SyncStore extends Store {
 
     //TODO this sync process should be in one transaction
     this.db.assignments.index('id').get(payload.assignmentId)
-      .then(function(assignment) {
+      .then((assignment) => {
         if (!assignment) throw "Unsynchronised Assignment";
         return assignment;
       })
-      .then(function(assignment) {
+      .then((assignment) => {
         //FIXME breaks when the nodes exist locally but the assignment doesn't
         //exist locally (i.e. new node records can't be created due to the
         //unique constraint on id)
         this.db.nodes.index('localAssignmentId').get(assignment.localId)
-          .then(function(localNodes) {
+          .then((localNodes) => {
             var changes = {
               put: [],
               del: []
@@ -637,7 +637,7 @@ class SyncStore extends Store {
             // still exist on the server. If they do, set the `localId` on the
             // server's response so we can update our local copy. If not, push it
             // to the delete queue.
-            _.each(persistedNodes, function(localNode) {
+            _.each(persistedNodes, (localNode) => {
               if (localNode.id && remoteIds.indexOf(localNode.id) >= 0) {
                 var remoteNode = _.find(nodes, { 'id': localNode.id });
                 // Set the localId on the remoteNode we just received
@@ -648,7 +648,7 @@ class SyncStore extends Store {
               }
             });
 
-            _.each(nodes, function(remoteNode) {
+            _.each(nodes, (remoteNode) => {
               var localNode = _.find(localNodes, { 'localId': remoteNode.localId });
 
               remoteNode.localAssignmentId = assignment.localId;
@@ -672,32 +672,32 @@ class SyncStore extends Store {
 
             return changes;
           })
-          .then(function(changes) {
+          .then((changes) => {
             // We're doing this in a manual transaction instead of a single `batch`
             // call as there are bugs in Treo's batch function.
             // When passing in an array of records incorrect primary keys are used
             // (because Object.keys). When passing in an object to batch delete
             // records, keys are stringified (again, Object.keys) and so no records
             // are deleted
-            this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
+            this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
               var store = tx.objectStore("nodes");
 
               logger.info("handleUpdateNodeCache: Deleting records", { del: changes.del });
-              _.each(changes.del, function(key) { store.delete(key); });
+              _.each(changes.del, (key) => { store.delete(key); });
 
               logger.info("handleUpdateNodeCache: Putting records", { put: changes.put });
-              _.each(changes.put, function(record) { store.put(record) });
+              _.each(changes.put, (record) => { store.put(record) });
             });
             return assignment;
-          }.bind(this))
-          .then(function (assignment) {
+          })
+          .then((assignment) => {
             this.flux.actions.updateNodeCacheSuccess(assignment);
-          }.bind(this))
-          .catch(function (err) {
+          })
+          .catch((err) => {
             this.flux.actions.updateNodeCacheFail(err);
-          }.bind(this));
+          });
 
-      }.bind(this)); //assignments.index('id').get
+      }); //assignments.index('id').get
   }
 
   /**

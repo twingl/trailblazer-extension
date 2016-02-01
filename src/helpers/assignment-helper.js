@@ -1,4 +1,4 @@
-var AssignmentHelper = {
+export default {
   getAPIData: function (assignment) {
     var data = {
       assignment: {
@@ -12,5 +12,3 @@ var AssignmentHelper = {
     return data;
   }
 };
-
-module.exports = AssignmentHelper;

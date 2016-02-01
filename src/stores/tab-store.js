@@ -1,5 +1,4 @@
 import _          from 'lodash';
-import Logger     from '../util/logger';
 import camelize   from 'camelize';
 import constants  from '../constants';
 import RandomName from '../util/random-name';
@@ -7,6 +6,7 @@ import RandomName from '../util/random-name';
 import Store from '../lib/store';
 import { query, action, deprecated } from '../decorators';
 
+import Logger from '../util/logger';
 var logger = Logger('stores/tab-store.js');
 
 class TabStore extends Store {
@@ -26,7 +26,7 @@ class TabStore extends Store {
 
   @action(constants.SIGN_OUT)
   handleSignOut() {
-    _.each(this.tabs, function(tab, index, tabs) {
+    _.each(this.tabs, (tab, index, tabs) => {
       tabs[index] = false;
     });
     this.emit('change', this.getState());
@@ -35,13 +35,13 @@ class TabStore extends Store {
   @action(constants.TAB_TITLE_UPDATED)
   handleTabTitleUpdated(payload) {
     logger.info('handleTabTitleUpdated');
-    this.db.nodes.index('tabId').get(payload.tabId).then(function(nodes) {
+    this.db.nodes.index('tabId').get(payload.tabId).then((nodes) => {
       var node = _.first(nodes);
 
       if (node && node.url === payload.url) {
         this.flux.actions.setNodeTitle(node.localId, payload.title);
       }
-    }.bind(this));
+    });
   }
 
   @action(constants.TAB_CREATED)
@@ -109,7 +109,7 @@ class TabStore extends Store {
     logger.info("handleStartRecording:", { payload: payload });
 
 
-    this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], function(err, tx) {
+    this.db.nodes.db.transaction("readwrite", ["nodes", "assignments"], (err, tx) => {
 
       // Create a queue of callbacks to execute when the transaction completes
       var successCallbacks = [];
@@ -122,14 +122,14 @@ class TabStore extends Store {
         description:  "Created " + new Date().toDateString()
       };
 
-      assignmentStore.add(assignment).onsuccess = function (evt) {
+      assignmentStore.add(assignment).onsuccess = (evt) => {
         // Update the object with the new local ID
         assignment.localId = evt.target.result;
 
-        successCallbacks.push( function() {
+        successCallbacks.push( () => {
           // Notify listeners that an assignment was created locally
           this.flux.actions.createAssignmentSuccess(assignment);
-        }.bind(this));
+        });
 
         var node = {
           localAssignmentId: evt.target.result,
@@ -138,60 +138,60 @@ class TabStore extends Store {
           url:               payload.tabObj.url
         };
 
-        nodeStore.add(node).onsuccess = function (evt) {
+        nodeStore.add(node).onsuccess = (evt) => {
           // Update the object with the new local ID
           node.localId = evt.target.result;
 
           // Notify listeners that a node was created locally
-          successCallbacks.push( function() {
+          successCallbacks.push( () => {
             this.flux.actions.createNodeSuccess(node);
-          }.bind(this));
-        }.bind(this); //nodeStore.add
-      }.bind(this); //assignmentStore.add
+          });
+        }; //nodeStore.add
+      }; //assignmentStore.add
 
-      tx.oncomplete = function (evt) {
+      tx.oncomplete = (evt) => {
         logger.info("handleStartRecording: success");
         this.tabs[payload.tabId] = true;
         this.flux.actions.startRecordingSuccess(payload.tabId);
-        _.each(successCallbacks, function(cb) { cb(); });
+        _.each(successCallbacks, (cb) => { cb(); });
         this.emit('change', this.getState());
-      }.bind(this);
+      };
 
-      tx.onerror = function (evt) {
+      tx.onerror = (evt) => {
         logger.info("handleStartRecording: error");
         this.tabs[payload.tabId] = false;
         this.flux.actions.startRecordingFail(payload.tabId);
-      }.bind(this);
-    }.bind(this)); //transaction
+      };
+    }); //transaction
   }
 
   @action(constants.RESUME_RECORDING)
   handleResumeRecording(payload) {
     logger.info("handleResumeRecording");
 
-    this.db.nodes.get(payload.localId).then(function(node) {
+    this.db.nodes.get(payload.localId).then((node) => {
       if (payload.focus && node.tabId) {
         logger.info("handleResumeRecording: success");
         this.tabs[node.tabId] = true;
         this.emit('change', this.getState());
       } else {
-        chrome.tabs.create({ url: node.url }, function(tab) {
-          this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
-            tx.oncomplete = function (evt) {
+        chrome.tabs.create({ url: node.url }, (tab) => {
+          this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
+            tx.oncomplete = (evt) => {
               logger.info("handleResumeRecording: success");
               this.tabs[tab.id] = true;
               this.emit('change', this.getState());
-            }.bind(this);
+            };
 
             // Error handler
-            tx.onerror = function (evt) {
+            tx.onerror = (evt) => {
               logger.info("handleResumeRecording: error");
               this.flux.actions.resumeRecordingFail(payload.localId);
-            }.bind(this);
+            };
 
             var nodeStore = tx.objectStore("nodes");
 
-            nodeStore.get(payload.localId).onsuccess = function(evt) {
+            nodeStore.get(payload.localId).onsuccess = (evt) => {
               var node = evt.target.result;
 
               node.tabId = tab.id;
@@ -199,10 +199,10 @@ class TabStore extends Store {
               // Update the node record
               nodeStore.put(node);
             };
-          }.bind(this)); //tx
-        }.bind(this));//create tab
+          }); //tx
+        });//create tab
       }
-    }.bind(this));
+    });
 
   }
 
@@ -217,14 +217,14 @@ class TabStore extends Store {
   @action(constants.DESTROY_ASSIGNMENT)
   handleDestroyAssignment(payload) {
     logger.info("handleDestroyAssignment", { payload: payload });
-    this.db.nodes.db.transaction("readwrite", ["nodes"], function(err, tx) {
-      tx.oncomplete = function() {
+    this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
+      tx.oncomplete = () => {
         this.emit('change', this.getState());
-      }.bind(this);
+      };
       // Get all nodes associated w/ asgmt, remove from tab array
       var nodeStore = tx.objectStore("nodes");
 
-      nodeStore.index('localAssignmentId').openCursor(IDBKeyRange.only(payload.localId)).onsuccess = function(evt) {
+      nodeStore.index('localAssignmentId').openCursor(IDBKeyRange.only(payload.localId)).onsuccess = (evt) => {
         var cursor = evt.target.result;
         if (cursor) {
           if (cursor.value.tabId) {
@@ -233,8 +233,8 @@ class TabStore extends Store {
           }
           cursor.continue();
         }
-      }.bind(this);
-    }.bind(this));
+      };
+    });
   }
 
   @deprecated
@@ -248,15 +248,15 @@ class TabStore extends Store {
         node: undefined
       };
       this.db.nodes.index('tabId').get(payload.tabId)
-        .then(function(nodes) {
+        .then((nodes) => {
           var node = _.first(nodes);
           this.db.assignments.get(node.localAssignmentId)
-            .then(function(assignment) {
+            .then((assignment) => {
               state.assignment = assignment;
               state.node = node;
               this.flux.actions.requestTabStateResponse(payload.tabId, state);
-            }.bind(this));
-        }.bind(this));
+            });
+        });
     } else {
       var state = {
         recording: false
