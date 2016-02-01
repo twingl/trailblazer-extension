@@ -69,8 +69,7 @@
     "pretty-hrtime": "^0.2.2",
     "promise": "^6.0.1",
     "raven-js": "^1.1.18",
-    "react": "~0.13.0",
-    "react-mini-router": "~1.0.0",
+    "react": "^0.14.7",
     "require-dir": "~0.1.0",
     "sass-flex-mixin": "^1.0.0",
     "superagent": "^0.20.0",
@@ -79,6 +78,11 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.0.0",
-    "yargs": "^3.6.0"
+    "yargs": "^3.6.0",
+    "react-router": "^2.0.0-rc5",
+    "react-helmet": "^2.3.1",
+    "react-dom": "^0.14.7",
+    "history": "^2.0.0-rc2",
+    "react-mini-router": "https://registry.npmjs.org/react-mini-router/-/react-mini-router-1.0.0.tgz"
   }
 }

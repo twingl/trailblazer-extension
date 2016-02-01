@@ -1,23 +1,42 @@
+import React    from 'react';
+import ReactDOM from 'react-dom';
+import domready from 'domready';
+import { Router, Route, Redirect, useRouterHistory } from 'react-router';
+import { createHashHistory } from 'history';
+
+import Layout from '../components/layouts/tour.jsx';
+
+import * as Tour from '../components/views/tour';
+
 // Start tracking errors
-var Raven = require('raven-js')
-  , config    = require('../config').raven;
+import Raven from 'raven-js';
+import { raven as config } from '../config';
+
 if (config.url) Raven.config(config.url).install();
 
-var scripts = document.getElementsByTagName('script');
+var routes = <Route component={Layout}>
+  <Route path='/sign-in' component={Tour.SignIn} />
+  <Route path='/step-1' component={Tour.Step1} />
+  <Route path='/step-2' component={Tour.Step2} />
+  <Route path='/step-3' component={Tour.Step3} />
+  <Route path='/step-4' component={Tour.Step4} />
+  <Route path='/step-5' component={Tour.Step5} />
+  <Route path='/step-6' component={Tour.Step6} />
+  <Route path='/step-7' component={Tour.Step7} />
 
-for (var i = 0; i < scripts.length; i += 1) {
-  var queryString = scripts[i].src.replace(/^[^\?]+\??/,'');
+  <Redirect from='/' to='/sign-in' />
+</Route>;
 
-  if (queryString.match(/sign-in/)) { require('../tour/sign-in') };
-  if (queryString.match(/1/)) { require('../tour/1') };
-  if (queryString.match(/2/)) { require('../tour/2') };
-  if (queryString.match(/3/)) { require('../tour/3') };
-  if (queryString.match(/4/)) { require('../tour/4') };
-  if (queryString.match(/5/)) { require('../tour/5') };
-  if (queryString.match(/6/)) { require('../tour/6') };
-  if (queryString.match(/7/)) { require('../tour/7') };
-};
+domready(() => {
+  let container = document.getElementById('container');
 
-window.setTimeout(() => {
-  require('../content-scripts/page-title');
-}, 1000);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'container';
+    document.body.appendChild(container);
+  }
+
+  let appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
+
+  ReactDOM.render(<Router routes={routes} history={appHistory} />, container);
+});

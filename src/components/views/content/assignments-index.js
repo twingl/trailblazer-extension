@@ -1,8 +1,8 @@
 import _     from 'lodash';
 import React from 'react';
 
-import constants from '../../constants';
-import queries from '../../queries';
+import constants from '../../../constants';
+import queries from '../../../queries';
 
 var articles = {
   "http://en.wikipedia.org/wiki/Anthropodermic_bibliopegy": "Anthropodermic bibliopegy",
@@ -57,7 +57,7 @@ var articles = {
   "http://en.wikipedia.org/wiki/SL-1": "SL-1"
 }
 
-import AssignmentItem from '../assignment-item';
+import AssignmentItem from '../../assignment-item';
 
 export default class AssignmentsIndex extends React.Component {
 

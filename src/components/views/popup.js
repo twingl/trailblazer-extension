@@ -1,18 +1,18 @@
 import _                     from 'lodash';
 import React                 from 'react/addons';
 import router                from 'react-mini-router';
-import actions               from '../actions';
-import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
-import constants             from '../constants';
+import actions               from '../../actions';
+import ChromeIdentityAdapter from '../../adapter/chrome_identity_adapter';
+import constants             from '../../constants';
 
-import Logger from '../util/logger';
+import Logger from '../../util/logger';
 var logger = Logger('popup/app.js');
 
 // Components
-var Idle      = React.createFactory(require('../components/popup/idle'))
-  , Loading   = React.createFactory(require('../components/popup/loading'))
-  , SignIn    = React.createFactory(require('../components/popup/sign-in'))
-  , Recording = React.createFactory(require('../components/popup/recording'));
+var Idle      = React.createFactory(require('./popup/idle'))
+  , Loading   = React.createFactory(require('./popup/loading'))
+  , SignIn    = React.createFactory(require('./popup/sign-in'))
+  , Recording = React.createFactory(require('./popup/recording'));
 
 // Set up routes
 var RouterMixin = router.RouterMixin

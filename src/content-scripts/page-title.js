@@ -1,7 +1,6 @@
-import actions from '../actions';
 import domready from 'domready';
 
-domready(() => {
+export function sendPageTitle() {
   var title = document.title
     , url   = window.location.href;
 
@@ -15,4 +14,6 @@ domready(() => {
     role: "title",
     payload: payload
   });
-});
+}
+
+domready(sendPageTitle);

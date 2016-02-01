@@ -7,7 +7,7 @@ var Raven = require('raven-js');
 if (config.url) Raven.config(config.url).install();
 
 // Content 'App' component
-var App = React.createFactory(require('../content/app'));
+var App = React.createFactory(require('../components/views/content'));
 
 domready(function() {
   React.render( App({ history: false }), document.body);

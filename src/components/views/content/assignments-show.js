@@ -1,11 +1,11 @@
 import React from 'react';
-import MapView from '../map-view';
+import MapView from '../../map-view';
 import _ from 'lodash';
 
-import queries from '../../queries';
-import constants from '../../constants';
+import queries from '../../../queries';
+import constants from '../../../constants';
 
-import Logger from '../../util/logger';
+import Logger from '../../../util/logger';
 var logger = Logger('assignments-show');
 
 

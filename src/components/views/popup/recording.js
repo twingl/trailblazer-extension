@@ -1,6 +1,6 @@
 import React           from 'react';
-import Star            from '../star';
-import AssignmentTitle from '../assignment-title';
+import Star            from '../../star';
+import AssignmentTitle from '../../assignment-title';
 
 var navigate = require('react-mini-router').navigate
 

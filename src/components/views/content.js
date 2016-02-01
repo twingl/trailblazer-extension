@@ -1,16 +1,16 @@
 import _                     from 'lodash';
 import React                 from 'react';
 import router                from 'react-mini-router';
-import actions               from '../actions';
-import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
-import constants             from '../constants';
+import actions               from '../../actions';
+import ChromeIdentityAdapter from '../../adapter/chrome_identity_adapter';
+import constants             from '../../constants';
 
-import Logger from '../util/logger';
+import Logger from '../../util/logger';
 var logger = Logger('content/app.js');
 
 //components
-var AssignmentsIndex = React.createFactory(require('../components/content/assignments-index'));
-var AssignmentsShow  = React.createFactory(require('../components/content/assignments-show'));
+var AssignmentsIndex = React.createFactory(require('./content/assignments-index'));
+var AssignmentsShow  = React.createFactory(require('./content/assignments-show'));
 
 //setup routes
 var RouterMixin     = router.RouterMixin

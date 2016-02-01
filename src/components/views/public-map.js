@@ -1,13 +1,13 @@
 import React from 'react';
 
 //components
-import PublicMapTitle from './public-map-title';
-import ShareMap from './share-map';
-import Legend from './legend';
+import PublicMapTitle from '../public-map-title';
+import ShareMap from '../share-map';
+import Legend from '../legend';
 
-import Trail from './trail';
+import Trail from '../trail';
 
-export default class PublicMapView extends React.Component {
+export default class PublicMap extends React.Component {
 
   render() {
     var visible, shareText, title, url;

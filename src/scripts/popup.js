@@ -7,7 +7,7 @@ var Raven = require('raven-js');
 if (config.url) Raven.config(config.url).install();
 
 // Popup 'App' component
-var App = React.createFactory(require('../popup/app'));
+var App = React.createFactory(require('../components/views/popup'));
 
 domready(function() {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
