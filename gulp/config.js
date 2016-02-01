@@ -14,17 +14,17 @@ module.exports = {
     bundles: [
       {
         name: "popup.css",
-        src: src + "/style/popup/**/*",
+        src: src + "/style/popup.manifest.scss",
         dest: dest
       },
       {
         name: "content.css",
-        src: src + "/style/content/**/*",
+        src: src + "/style/content.manifest.scss",
         dest: dest
       },
       {
         name: "tour.css",
-        src: src + "/style/tour/**/*",
+        src: src + "/style/tour.manifest.scss",
         dest: dest
       }
     ]
@@ -34,7 +34,7 @@ module.exports = {
   //   dest: dest + "/images"
   // },
   markup: {
-    src: src + "/htdocs/**",
+    src: src + "/markup/**",
     dest: dest
   },
   browserify: {
@@ -46,17 +46,17 @@ module.exports = {
     // bundle config in the list below
     bundleConfigs: [
       {
-        entries: './src/background.js',
+        entries: './src/scripts/background.js',
         dest: dest,
         outputName: 'background.js'
       },
       {
-        entries: './src/content.js',
+        entries: './src/scripts/content.js',
         dest: dest,
         outputName: 'content.js'
       },
       {
-        entries: './src/popup.js',
+        entries: './src/scripts/popup.js',
         dest: dest,
         outputName: 'popup.js'
       },
@@ -66,12 +66,12 @@ module.exports = {
         outputName: 'page-title.js'
       },
       {
-        entries: './src/public-map.js',
+        entries: './src/scripts/public-map.js',
         dest: dest,
         outputName: 'public-map.js'
       },
       {
-        entries: './src/tour.js',
+        entries: './src/scripts/tour.js',
         dest: dest,
         outputName: 'tour.js'
       }

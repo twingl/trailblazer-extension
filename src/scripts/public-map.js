@@ -3,7 +3,7 @@ var React = require('react');
 var _ = require('lodash');
 
 //components
-var PublicMapView = require('./components/public-map-view');
+var PublicMapView = require('../components/public-map-view');
 
 window.renderMap = function(assignment, nodes) {
   var data = {
