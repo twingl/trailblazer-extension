@@ -71,7 +71,7 @@ module.exports = {
         outputName: 'public-map.js'
       },
       {
-        entries: './src/scripts/tour.js',
+        entries: './src/scripts/tour.jsx',
         dest: dest,
         outputName: 'tour.js'
       }
