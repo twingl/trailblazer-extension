@@ -1,30 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router';
 import _ from 'lodash';
+
+import Constants from '../constants';
 
 //components
 import AssignmentTitle from './assignment-title';
 import ShareMap from './share-map';
 import Legend from './legend';
+import Trail from './trail';
 
 import Logger from '../util/logger';
 var logger = Logger('map-view');
-
-import Trail from './trail';
-
-// var state = {
-//       nodeState: {
-//         loading: false,
-//         error: null,
-//         nodeIndex: {}
-//       },
-//       assignmentState: {
-//         loading: false,
-//         error: null,
-//         assignmentsIndex: {},
-//         currentAssignment: null
-//       }
-// };
-
 
 export default class MapView extends React.Component {
 
@@ -56,8 +43,8 @@ export default class MapView extends React.Component {
     };
 
     return  <div className="map-view-wrapper" onClick={this.handleClick.bind(this)}>
-              <a href="#!/assignments" className="nav-assignment-list"></a>
-              <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={this.props.constants} />
+              <Link to="/assignments" className="nav-assignment-list"></Link>
+              <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={Constants} />
               <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} actions={this.props.actions} />
               <Legend />
               <span className="help">
@@ -70,7 +57,7 @@ export default class MapView extends React.Component {
                 </a>
                 <a
                   className="tutorial"
-                  href="/build/tour/sign-in.html"
+                  href="/build/tour.html"
                   title="How do I use Trailblazer?"
                   target="_blank" >
                   <img src="/assets/icons/tutorial-icon-light.svg" />

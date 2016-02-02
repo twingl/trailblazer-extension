@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Constants from '../constants';
+
 export default class AssignmentTitle extends React.Component {
 
   constructor(props) {
@@ -14,12 +16,11 @@ export default class AssignmentTitle extends React.Component {
   componentDidMount() {
     chrome.runtime.onMessage.addListener((message) => {
       switch (message.action) {
-        case this.props.constants.__change__:
+        case Constants.__change__:
           if (message.storeName === "AssignmentStore" &&
               message.payload.assignment &&
               message.payload.assignment.localId === this.props.assignment.localId) {
-            this.props.assignment = message.payload.assignment;
-            this.setState({ title: this.props.assignment.title });
+            this.setState({ title: message.payload.assignment.title });
             this.forceUpdate();
           }
       }

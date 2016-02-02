@@ -1,7 +1,7 @@
 import _     from 'lodash';
 import React from 'react';
 
-import constants from '../../../constants';
+import Constants from '../../../constants';
 import queries from '../../../queries';
 
 var articles = {
@@ -59,7 +59,7 @@ var articles = {
 
 import AssignmentItem from '../../assignment-item';
 
-export default class AssignmentsIndex extends React.Component {
+class Index extends React.Component {
 
   constructor(props) {
     super(props);
@@ -70,12 +70,13 @@ export default class AssignmentsIndex extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this);
     queries.AssignmentStore.getAssignments().then( (assignments) => {
       this.setState({ assignments });
     });
 
     let _assignmentListener = (message) => {
-      if (message.action === constants.__change__ && message.storeName === "AssignmentStore") {
+      if (message.action === Constants.__change__ && message.storeName === "AssignmentStore") {
         queries.AssignmentStore.getAssignments().then( (assignments) => {
           this.setState({ assignments });
         });
@@ -86,12 +87,16 @@ export default class AssignmentsIndex extends React.Component {
 
     chrome.runtime.onMessage.addListener(_assignmentListener);
 
-    this.props.actions.requestAssignments();
-    this.props.actions.viewedAssignmentList();
+    this.props.route.actions.requestAssignments();
+    this.props.route.actions.viewedAssignmentList();
   }
 
   componentWillUnmount() {
     chrome.runtime.onMessage.removeListener(this.state._assignmentListener);
+  }
+
+  onAssignmentClicked(assignment, evt) {
+    console.log(assignment, evt);
   }
 
   startMeandering(evt) {
@@ -100,16 +105,19 @@ export default class AssignmentsIndex extends React.Component {
     var url = evt.currentTarget.href;
 
     chrome.tabs.create({ url: url, active: true }, (tab) => {
-      this.props.actions.startRecording(tab.id, tab);
+      this.props.route.actions.startRecording(tab.id, tab);
     });
   }
 
   render() {
     document.title = "Resume a Trail";
 
-    var list = [];
-    _.each(this.state.assignments, (item) => {
-      list.push(React.createElement(AssignmentItem, {item: item, key: item.localId, actions: this.props.actions}))
+    var list = this.state.assignments.map((item) => {
+      return <AssignmentItem
+        item={item}
+        key={item.localId}
+        actions={this.props.route.actions}
+        onClick={this.onAssignmentClicked.bind(this, item)} />
     });
 
     if (list.length > 0) {
@@ -140,3 +148,9 @@ export default class AssignmentsIndex extends React.Component {
   }
 
 };
+
+Index.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
+
+export default Index;

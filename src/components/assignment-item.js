@@ -1,8 +1,6 @@
 import React from 'react';
-var navigate = require('react-mini-router').navigate;
 
-
-export default class AssignmentItem extends React.Component {
+class AssignmentItem extends React.Component {
 
   constructor(props) {
     super(props);
@@ -33,8 +31,7 @@ export default class AssignmentItem extends React.Component {
   }
 
   onClick() {
-    var id = this.props.item.localId;
-    navigate('/assignments/' + id);
+    this.context.router.push(`/assignments/${this.props.item.localId}`);
   }
 
   onClickDestroy(evt) {
@@ -49,3 +46,9 @@ export default class AssignmentItem extends React.Component {
   }
 
 };
+
+AssignmentItem.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
+
+export default AssignmentItem;

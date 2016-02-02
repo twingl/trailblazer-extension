@@ -18,8 +18,8 @@ module.exports = {
         dest: dest
       },
       {
-        name: "content.css",
-        src: src + "/style/content.manifest.scss",
+        name: "main-ui.css",
+        src: src + "/style/main-ui.manifest.scss",
         dest: dest
       },
       {
@@ -51,9 +51,9 @@ module.exports = {
         outputName: 'background.js'
       },
       {
-        entries: './src/scripts/content.js',
+        entries: './src/scripts/main-ui.jsx',
         dest: dest,
-        outputName: 'content.js'
+        outputName: 'main-ui.js'
       },
       {
         entries: './src/scripts/popup.js',

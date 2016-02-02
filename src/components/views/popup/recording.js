@@ -41,7 +41,7 @@ export default class Recording extends React.Component {
   }
 
   onViewTrailClicked(evt) {
-    var url = chrome.runtime.getURL("/build/content.html#!/assignments/" + this.props.assignment.localId);
+    var url = chrome.runtime.getURL("/build/main-ui.html#!/assignments/" + this.props.assignment.localId);
     chrome.tabs.create({ url: url });
   }
 

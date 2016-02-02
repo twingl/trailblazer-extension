@@ -40,7 +40,7 @@ export default class Idle extends React.Component {
   }
 
   onViewTrailsClicked(evt) {
-    chrome.tabs.create({ url: "/build/content.html" });
+    chrome.tabs.create({ url: "/build/main-ui.html" });
   }
 
   onSignOutClicked(evt) {
