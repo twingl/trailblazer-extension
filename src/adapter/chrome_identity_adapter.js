@@ -99,9 +99,8 @@ export default class ChromeIdentityAdapter {
 
   /**
   * Terminate the currently authenticated session. Returns a promise which
-  * resolves if the token was successfully revoked (passing no parameters) and
-  * rejects if an error occurred, passing the failed request as its only
-  * parameter.
+  * resolves if the token was successfully revoked (passing no parameters).
+  *
   * @function ChromeIdentityAdapter#signOut
   * @returns {Promise}
   */
@@ -111,25 +110,21 @@ export default class ChromeIdentityAdapter {
         if (token.token) {
           var token = JSON.parse(token.token);
 
+          this._clearToken().then(resolve);
+
+          // Best effort
           superagent.post(config.api.host + "/oauth/revoke")
             .send({ token: token.access_token })
             .set("Content-Type", "application/x-www-form-urlencoded")
-            .end((response) => {
-              if (response.ok) {
-                this._clearToken();
-                resolve();
-              } else {
-                reject(response);
-              }
-            }); //superagent
+            .end();
         } else {
-          resolve(); // there's no token
+          resolve();
         }
 
         var signOutUrl = [config.api.host, "sign_out"].join("/");
         chrome.identity.launchWebAuthFlow({ url: signOutUrl, interactive: false }, (url) => {
           // Ignore everything
-          console.log("The warning from chrome is fine - we don't want user intervention here as we're terminating a session",
+          console.log("The warning from chrome is fine - we don't want user intervention here as we're terminating a session inside the auth frame",
             chrome.runtime.lastError);
         });
 
