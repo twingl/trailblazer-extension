@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Actions from '../actions';
 import Constants from '../constants';
 
 export default class AssignmentTitle extends React.Component {
@@ -76,7 +77,7 @@ export default class AssignmentTitle extends React.Component {
   onBlur(evt) {
     this.setState({editable: false});
     if (this.state.title !== this.props.assignment.title) {
-      this.props.actions.updateAssignmentTitle(this.props.assignment.localId, this.state.title);
+      Actions.updateAssignmentTitle(this.props.assignment.localId, this.state.title);
     };
   }
 

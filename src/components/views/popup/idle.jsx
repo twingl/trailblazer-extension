@@ -1,36 +1,12 @@
 import React from 'react';
-var navigate = require('react-mini-router').navigate;
+
+import Constants from '../../../constants';
 
 /**
  * The Idle popup view.
  * Displayed when the user is signed in, but the current tab is not recording.
  */
-export default class Idle extends React.Component {
-
-  componentDidMount() {
-    // Bind listener
-    chrome.runtime.onMessage.addListener((message) => {
-      switch (message.action) {
-
-        // If we hear a successful response then show the recording UI
-        case this.props.constants.START_RECORDING_SUCCESS:
-          if (message.payload.tabId === this.props.tabId) {
-            this.props.actions.requestTabState(this.props.tabId);
-          }
-          break;
-
-        // If we hear a fail response then show some error
-        case this.props.constants.START_RECORDING_FAIL:
-          if (message.payload.tabId === this.props.tabId) {
-            // show an error
-          }
-          break;
-
-        default:
-          break;
-      }
-    });
-  }
+class Idle extends React.Component {
 
   onRecordClicked(evt) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -84,3 +60,5 @@ export default class Idle extends React.Component {
   }
 
 };
+
+export default Idle;

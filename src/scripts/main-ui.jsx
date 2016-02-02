@@ -1,4 +1,4 @@
-import React    from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import domready from 'domready';
 import { Router, Route, Redirect, useRouterHistory } from 'react-router';

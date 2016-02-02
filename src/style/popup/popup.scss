@@ -10,12 +10,12 @@ body {
 	font-size: 14px;
 }
 
-body>.wrap {
+body .wrap {
 	width: 160px;
 	padding: 34px 18px 10px 18px;
 }
 
-body>.wrap.loading {
+body .wrap.loading {
   height: 290px;
 }
 
@@ -77,7 +77,7 @@ a {
 	color: #aaa;
 	font-size: 10px;
 	font-weight: 400;
-	margin-bottom: 30px; 
+	margin-bottom: 30px;
 }
 
 /* Buttons */
@@ -134,7 +134,7 @@ a {
 	fill: #989898;
 }
 
-/* Retain? - Consider after removing tutorial element 
+/* Retain? - Consider after removing tutorial element
 
 .waypoint:hover:after {
 	content: "Waypoint";

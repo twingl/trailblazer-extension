@@ -56,7 +56,7 @@ module.exports = {
         outputName: 'main-ui.js'
       },
       {
-        entries: './src/scripts/popup.js',
+        entries: './src/scripts/popup.jsx',
         dest: dest,
         outputName: 'popup.js'
       },

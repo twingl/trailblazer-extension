@@ -1,5 +1,8 @@
 import React           from 'react';
+
 import messageChannel  from '../util/message-channel';
+import Actions from '../actions';
+import Constants from '../constants';
 
 export default class Star extends React.Component {
 
@@ -15,7 +18,7 @@ export default class Star extends React.Component {
     // listen for `change` evts for the current node
     messageChannel.listen( function (message) {
       switch (message.action) {
-        case this.props.constants.__change__:
+        case Constants.__change__:
           if (message.payload.store === "NodeStore" &&
               message.payload.node.localId === this.props.node.localId) {
             this.props.node.rank = message.payload.node.rank;
@@ -55,9 +58,9 @@ export default class Star extends React.Component {
     });
 
     if (this.props.node.rank === 1) {
-      this.props.actions.rankNodeNeutral(this.props.node.localId);
+      Actions.rankNodeNeutral(this.props.node.localId);
     } else {
-      this.props.actions.rankNodeWaypoint(this.props.node.localId);
+      Actions.rankNodeWaypoint(this.props.node.localId);
     }
   }
 
