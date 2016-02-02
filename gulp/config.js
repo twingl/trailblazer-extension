@@ -66,7 +66,7 @@ module.exports = {
         outputName: 'page-title.js'
       },
       {
-        entries: './src/scripts/public-map.js',
+        entries: './src/scripts/public-map.jsx',
         dest: dest,
         outputName: 'public-map.js'
       },

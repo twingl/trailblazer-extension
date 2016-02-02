@@ -1,6 +1,5 @@
 //helpers
-var React = require('react');
-var _ = require('lodash');
+var ReactDOM = require('react-dom');
 
 //components
 var PublicMapView = require('../components/views/public-map');
@@ -13,7 +12,7 @@ window.renderMap = function(assignment, nodes) {
 
   data.assignment = assignment;
 
-  _.each(nodes, function(node) {
+  nodes.map((node) => {
     node.localId            = node.id;
 
     node.parentId           = node.parent_id;
@@ -27,7 +26,7 @@ window.renderMap = function(assignment, nodes) {
 
   console.log(data);
 
-  React.render(
+  ReactDOM.render(
     <PublicMapView
         assignment={data.assignment}
         nodes={data.nodes} />,
