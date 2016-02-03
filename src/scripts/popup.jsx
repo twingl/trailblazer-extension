@@ -1,3 +1,6 @@
+import styles from '../style/popup.manifest.scss';
+import markup from '../markup/popup.html';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import domready from 'domready';

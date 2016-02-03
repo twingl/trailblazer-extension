@@ -1,3 +1,6 @@
+import styles from '../style/tour.manifest.scss';
+import markup from '../markup/tour.html';
+
 import React    from 'react';
 import ReactDOM from 'react-dom';
 import domready from 'domready';

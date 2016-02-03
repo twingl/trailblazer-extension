@@ -25,9 +25,7 @@ export default class MapView extends React.Component {
 
   render() {
     var nodeObj = {};
-    _.each(this.props.nodes, function (node) {
-      nodeObj[node.localId] = node;
-    });
+    this.props.nodes.map(node => nodeObj[node.localId] = node);
 
     var visible, shareText, title, url;
 

@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import constants from '../../../constants';
 import Identity from '../../../adapter/chrome_identity_adapter';
 
-import { sendPageTitle } from '../../../content-scripts/page-title';
+import { sendPageTitle } from '../../../util/send-page-title';
 
 class SignIn extends React.Component {
 

@@ -12,7 +12,7 @@ export default class Legend extends React.Component {
 
   render() {
     var active;
-    if (!_.contains(this.props.hide, "active")) {
+    if (!_.includes(this.props.hide, "active")) {
       active = <li className="active-node">
         <svg width={iconWidth} height={iconHeight}>
           <g className="node open" transform={iconTransform}>

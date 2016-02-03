@@ -18,6 +18,8 @@ class TabStore extends Store {
     this.tabs       = options.tabs || {};
   }
 
+  onBoot() {}
+
   getState() {
     return {
       tabs: this.tabs

@@ -315,8 +315,8 @@ class NodeStore extends Store {
       var qualifiers = payload.transitionQualifiers;
 
       if (tabStore.getState().tabs[payload.tabId] && (
-          _.contains(qualifiers, "client_redirect") ||
-          _.contains(qualifiers, "server_redirect"))) {
+          _.includes(qualifiers, "client_redirect") ||
+          _.includes(qualifiers, "server_redirect"))) {
         // If the payload is a redirect of some kind
         var updatedNode;
 
@@ -364,8 +364,8 @@ class NodeStore extends Store {
       var qualifiers = payload.transitionQualifiers;
 
       if (tabStore.getState().tabs[payload.tabId] && (
-          _.contains(qualifiers, "client_redirect") ||
-          _.contains(qualifiers, "server_redirect"))) {
+          _.includes(qualifiers, "client_redirect") ||
+          _.includes(qualifiers, "server_redirect"))) {
         // If the payload is a redirect of some kind
         var updatedNode;
 

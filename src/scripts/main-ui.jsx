@@ -1,3 +1,6 @@
+import styles from '../style/main-ui.manifest.scss';
+import markup from '../markup/main-ui.html';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import domready from 'domready';

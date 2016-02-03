@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import actions   from '../../../actions';
 import constants from '../../../constants';
 
-import { sendPageTitle } from '../../../content-scripts/page-title';
+import { sendPageTitle } from '../../../util/send-page-title';
 
 export default class Step4 extends React.Component {
 

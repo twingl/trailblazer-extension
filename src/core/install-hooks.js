@@ -1,8 +1,7 @@
 import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
 import actions from '../actions';
 
-
-export default function(details) {
+function onInstall(details) {
   switch(details.reason) {
     case "update":
       var identity = new ChromeIdentityAdapter();
@@ -12,7 +11,7 @@ export default function(details) {
 
     case "install":
       // Show onboarding
-      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour/sign-in.html") });
+      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour.html") });
       actions.extensionInstalled();
       break;
 
@@ -21,3 +20,6 @@ export default function(details) {
       break;
   }
 };
+
+export { onInstall }
+export default onInstall;

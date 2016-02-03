@@ -343,7 +343,7 @@ class SyncStore extends Store {
               }
             };
 
-            var localIds = _.collect(payload.coordinates, (v,k) => { return parseInt(k); });
+            var localIds = payload.coordinates.map((v,k) => { return parseInt(k); });
 
             _.each(nodes, (node) => {
               if (_.contains(localIds, node.localId)) {
@@ -404,7 +404,7 @@ class SyncStore extends Store {
   @action(constants.FETCH_ASSIGNMENTS_SUCCESS)
   handleFetchAssignmentsSuccess(payload) {
     logger.info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
-    var assignments = _.collect(payload.assignments, camelize);
+    var assignments = payload.assignments.map(camelize);
 
     this.flux.actions.updateAssignmentCache(assignments);
   }
@@ -457,7 +457,7 @@ class SyncStore extends Store {
           del: []
         };
 
-        var remoteIds = _.pluck(assignments, 'id');
+        var remoteIds = assignments.map(a => a.id);
         var persistedAssignments = _.filter(localAssignments, 'id');
 
         // Iterate over the local assignments that have a server ID,
@@ -561,7 +561,7 @@ class SyncStore extends Store {
   @action(constants.FETCH_NODES_SUCCESS)
   handleFetchNodesSuccess(payload) {
     logger.info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
-    var nodes = _.collect(payload.nodes, camelize);
+    var nodes = payload.nodes.map(camelize);
     this.flux.actions.updateNodeCache(payload.assignmentId, nodes);
   }
 
@@ -607,7 +607,7 @@ class SyncStore extends Store {
     logger.info("handleUpdateNodeCache: Updating cache", { payload: payload });
     var nodes = payload.nodes;
 
-    var remoteIds = _.pluck(nodes, 'id');
+    var remoteIds = nodes.map(n => n.id);
 
     //synch local nodes with remote
     // 1. remove nonexisting nodes
@@ -630,7 +630,7 @@ class SyncStore extends Store {
               del: []
             };
 
-            var remoteIds = _.pluck(nodes, 'id');
+            var remoteIds = nodes.map(n => n.id);
             var persistedNodes = _.filter(localNodes, 'id');
 
             // Iterate over the local nodes that have a server ID, checking if they

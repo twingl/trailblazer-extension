@@ -10,14 +10,14 @@ import Logger from '../util/logger';
 var logger = Logger('background.js');
 
 // Start tracking errors
-var Raven = require('raven-js');
+import Raven from 'raven-js';
 if (config.raven.url) Raven.config(config.raven.url).install();
 
 /**
  * Main dependencies.
  */
-var actions               = require('../actions')
-  , Fluxxor               = require('fluxxor');
+import actions from '../actions'
+import Fluxxor from 'fluxxor';
 
 logger.info("Initializing Trailblazer!");
 
@@ -27,11 +27,12 @@ logger.info("Initializing Trailblazer!");
  * Set the initial UI state and run the install hooks
  */
 logger.info("Initializing extension UI state");
-var extensionUIState = require('../core/extension-ui-state');
+import extensionUIState from '../core/extension-ui-state';
 extensionUIState.init();
 
 logger.info("Running install hooks");
-chrome.runtime.onInstalled.addListener(require('../core/install-hooks'));
+import onInstall from '../core/install-hooks';
+chrome.runtime.onInstalled.addListener(onInstall);
 
 // Listen for recording changes that will change the extension state
 chrome.runtime.onMessage.addListener(function (message, sender, responder) {
@@ -52,7 +53,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
  * dispatches to the console.
  */
 
-var stores = require('../stores');
+import stores from '../stores';
 logger.info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
@@ -63,7 +64,7 @@ _.each(stores, (s) => {
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages
 // FIXME Candidate for refactor/extraction into a better location
-chrome.runtime.onMessage.addListener(function (message, sender, responder) {
+chrome.runtime.onMessage.addListener(function(message, sender, responder) {
   logger.info('message listener', { message });
   // if (message.action === "change") return;
   if (message.action) {
@@ -87,7 +88,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, responder) {
 });
 
 // Allow 'change' events to proxy through chrome.runtime messaging to the UI
-require('../background/proxy-change')(flux, [
+import proxyChange from '../background/proxy-change';
+proxyChange(flux, [
     'AssignmentStore',
     'TabStore',
     'NodeStore',
@@ -97,7 +99,7 @@ require('../background/proxy-change')(flux, [
 ]);
 
 // Wire up Chrome events to fire the appropriate actions
-require('../background/chrome-events');
+import chromeEvents from '../background/chrome-events';
 
 // Inject content-scripts into pages
-require('../background/content-scripts');
+import contentScripts from '../background/content-scripts';
