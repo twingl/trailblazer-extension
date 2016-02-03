@@ -2,26 +2,8 @@
   "name": "trailblazer-wash",
   "version": "0.0.0",
   "description": "Trailblazer \"Wash\" Chrome extension",
-  "watch": {
-    "watching": "{node_modules/app/**,ui/pages/js/src,ui/popup/js/src}/*"
-  },
   "scripts": {
-    "components": "jsx -x js --follow-requires node_modules/app/src node_modules/app/components",
-    "watch-map": "browserify src/ui/pages/js/src/map.js -o src/ui/pages/js/build/map.js --debug --verbose",
-    "watch-trails": "browserify src/ui/pages/js/src/trails.js -o src/ui/pages/js/build/trails.js --debug --verbose",
-    "watch-popup": "browserify src/ui/popup/js/src/popup.js -o src/ui/popup/js/build/popup.js --debug --verbose",
-    "build-map": "browserify -g uglifyify src/ui/pages/js/src/map.js -o src/ui/pages/js/build/map.js --verbose",
-    "build-public-map": "npm run components && browserify -g uglifyify src/ui/pages/js/src/public-map.js -o ui/pages/js/build/public-map.js --verbose",
-    "build-trails": "browserify -g uglifyify src/ui/pages/js/src/trails.js -o src/ui/pages/js/build/trails.js --verbose",
-    "build-popup": "browserify -g uglifyify src/ui/popup/js/src/popup.js -o src/ui/popup/js/build/popup.js --verbose",
-    "watching": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup",
-    "watch": "npm run components && npm run watch-map & npm run watch-trails & npm run watch-popup && npm-watch",
-    "build": "npm run components && npm run build-map & npm run build-trails & npm run build-popup"
-  },
-  "browserify": {
-    "transform": [
-      "envify"
-    ]
+    "build": "echo todo"
   },
   "repository": {
     "type": "git",
@@ -30,34 +12,13 @@
   "bugs": {
     "url": "https://github.com/twingl/trailblazer-wash/issues"
   },
-  "homepage": "http://twin.gl",
+  "homepage": "http://trailblazer.io",
   "devDependencies": {
-    "babel-runtime": "^5.6.15",
-    "babelify": "^6.1.2",
-    "browserify": "^5.11.2",
     "camelize": "~1.0.0",
     "classnames": "https://registry.npmjs.org/classnames/-/classnames-2.1.3.tgz",
     "domready": "^1.0.7",
     "dotenv": "^1.2.0",
-    "envify": "^3.0.0",
     "fluxxor": "^1.5.0",
-    "gulp": "^3.8.8",
-    "gulp-bump": "^0.1.11",
-    "gulp-changed": "^1.0.0",
-    "gulp-concat": "~2.4.1",
-    "gulp-filter": "^1.0.2",
-    "gulp-if": "^1.2.5",
-    "gulp-imagemin": "^1.2.1",
-    "gulp-notify": "^2.0.0",
-    "gulp-preprocess": "^1.1.1",
-    "gulp-run": "^1.6.4",
-    "gulp-sass": "^1.3.2",
-    "gulp-size": "^1.1.0",
-    "gulp-sourcemaps": "https://registry.npmjs.org/gulp-sourcemaps/-/gulp-sourcemaps-1.2.4.tgz",
-    "gulp-uglify": "^1.0.1",
-    "gulp-util": "^3.0.1",
-    "gulp-zip": "^2.0.2",
-    "jquery": "^2.1.3",
     "jsdoc": "~3.3.0-alpha9",
     "keen.io": "^0.1.3",
     "lodash": "^2.4.1",
@@ -65,7 +26,6 @@
     "ngraph.forcelayout": "0.0.21",
     "ngraph.graph": "0.0.11",
     "node-uuid": "~1.4.1",
-    "npm-watch": "0.0.0",
     "pretty-hrtime": "^0.2.2",
     "promise": "^6.0.1",
     "raven-js": "^1.1.18",
@@ -75,9 +35,6 @@
     "superagent": "^0.20.0",
     "svg-pan-zoom": "^3.2.2",
     "treo": "0.5.1",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0",
-    "watchify": "^2.0.0",
     "yargs": "^3.6.0",
     "react-router": "^2.0.0-rc5",
     "react-helmet": "^2.3.1",
