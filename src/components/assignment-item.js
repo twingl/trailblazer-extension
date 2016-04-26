@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 class AssignmentItem extends React.Component {
 
@@ -27,7 +28,7 @@ class AssignmentItem extends React.Component {
   }
 
   componentDidMount() {
-    this.getDOMNode().addEventListener('webkitTransitionEnd', this.destroy)
+    ReactDOM.getDOMNode(this).addEventListener('webkitTransitionEnd', this.destroy)
   }
 
   onClick() {
@@ -40,7 +41,7 @@ class AssignmentItem extends React.Component {
     var confirmation = window.confirm("Are you sure you want to delete " + this.props.item.title + "?");
 
     if (confirmation) {
-      if (this.isMounted()) this.setState({show: false});
+      this.setState({show: false});
       this.props.actions.destroyAssignment(this.props.item.localId);
     }
   }
