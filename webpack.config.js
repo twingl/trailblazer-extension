@@ -53,7 +53,7 @@ module.exports = {
   plugins: (argv.production || argv.staging)
     // Staging/Production plugins
     ? [
-      new webpack.optimize.UglifyJsPlugin({ minimize: true }),
+      // new webpack.optimize.UglifyJsPlugin({ minimize: true }),
       cssExtractor,
       htmlExtractor
     ]
