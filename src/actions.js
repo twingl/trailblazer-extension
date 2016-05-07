@@ -10,6 +10,10 @@ const messageChannel = {
 }
 
 export default {
+  getMessageSender: function() {
+    return messageChannel.send;
+  },
+
   setMessageSender: function(func) {
     messageChannel.send = func;
   },

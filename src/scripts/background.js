@@ -57,6 +57,21 @@ import stores from '../stores';
 logger.info("Initializing Flux", { stores: stores, actions: actions });
 var flux = new Fluxxor.Flux(stores, actions);
 
+var send = actions.getMessageSender();
+actions.setMessageSender(function(message) {
+  if (message.action) {
+    var e = {
+      type: message.action,
+      payload: message.payload || {}
+    }
+    flux.dispatcher.dispatch(e);
+    logger.info("Dispatched Background Event", e);
+  }
+
+  // Send through old channel as well
+  send(message);
+});
+
 _.each(stores, (s) => {
   console.log(s.onBoot, s);
   s.onBoot();
@@ -81,8 +96,11 @@ chrome.runtime.onMessage.addListener(function(message, sender, responder) {
     // TODO: query method currently needs to respond with a promise. This
     // shouldn't be a requirement, or at least it shouldn't present itself in
     // the source: synchronous methods should work seamlessly.
-    flux.store(message.store)[message.query](...message.args).then(responder);
-    logger.info("Queried", message);
+    flux.store(message.store)[message.query](...message.args).then(res => {
+      logger.info(`Query response: ${message.store}.${message.query}`, res);
+      responder(res);
+    });
+    logger.info(`Query: ${message.store}.${message.query}`, message);
     return true;
   };
 });
