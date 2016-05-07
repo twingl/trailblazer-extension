@@ -1,5 +1,3 @@
-import domready from 'domready';
-
 export function sendPageTitle() {
   var title = document.title
     , url   = window.location.href;
