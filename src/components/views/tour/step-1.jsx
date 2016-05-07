@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 
 import actions   from '../../../actions';
 import constants from '../../../constants';
+import queries from '../../../queries';
 
 import { sendPageTitle } from '../../../util/send-page-title';
 
@@ -17,11 +18,6 @@ class Step1 extends React.Component {
     if (msg.action === constants.START_RECORDING_SUCCESS) {
       this.revealNextStep();
     }
-
-    if (msg.action === constants.REQUEST_TAB_STATE_RESPONSE
-        && msg.payload.state.recording === true) {
-      this.revealNextStep();
-    }
   }
 
   componentDidMount() {
@@ -30,7 +26,9 @@ class Step1 extends React.Component {
 
     // Check if we're already recording
     chrome.tabs.getCurrent((tab) => {
-      actions.requestTabState(tab.id);
+      queries.TabStore.getTabState(this.props.tabId).then(({ recording }) => {
+        if (recording) this.revealNextStep();
+      });
     });
 
     sendPageTitle();

@@ -26,6 +26,23 @@ class TabStore extends Store {
     };
   }
 
+  @query
+  getTabState(tabId) {
+    return new Promise((resolve, reject) => {
+      if (this.tabs[tabId]) {
+        this.db.nodes.index('tabId').get(tabId).then(nodes => {
+          let node = _.first(nodes);
+
+          this.db.assignments.get(node.localAssignmentId).then(assignment => {
+            resolve({ recording: this.tabs[tabId], node, assignment });
+          });
+        });
+      } else {
+        resolve({ recording: false });
+      }
+    });
+  }
+
   @action(constants.SIGN_OUT)
   handleSignOut() {
     _.each(this.tabs, (tab, index, tabs) => {
@@ -238,35 +255,6 @@ class TabStore extends Store {
       };
     });
   }
-
-  @deprecated
-  @action(constants.REQUEST_TAB_STATE)
-  handleRequestTabState(payload) {
-    logger.info("handleRequestTabState:", { payload: payload });
-    if (this.tabs[payload.tabId]) {
-      var state = {
-        recording: this.tabs[payload.tabId],
-        assignment: undefined,
-        node: undefined
-      };
-      this.db.nodes.index('tabId').get(payload.tabId)
-        .then((nodes) => {
-          var node = _.first(nodes);
-          this.db.assignments.get(node.localAssignmentId)
-            .then((assignment) => {
-              state.assignment = assignment;
-              state.node = node;
-              this.flux.actions.requestTabStateResponse(payload.tabId, state);
-            });
-        });
-    } else {
-      var state = {
-        recording: false
-      };
-      this.flux.actions.requestTabStateResponse(payload.tabId, state);
-    }
-  }
-
 };
 
 export default TabStore;

@@ -342,27 +342,6 @@ export default {
     messageChannel.send({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
   },
 
-  requestTabState: function(tabId) {
-    logger.info('requestTabState');
-    messageChannel.send({
-      action: constants.REQUEST_TAB_STATE,
-      payload: {
-        tabId: tabId
-      }
-    });
-  },
-
-  requestTabStateResponse: function(tabId, state) {
-    logger.info('requestTabStateResponse');
-    messageChannel.send({
-      action: constants.REQUEST_TAB_STATE_RESPONSE,
-      payload: {
-        tabId: tabId,
-        state: state
-      }
-    });
-  },
-
   startRecording: function(tabId, tabObj) {
     logger.info('startRecording');
     messageChannel.send({

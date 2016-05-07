@@ -19,8 +19,6 @@ export default {
    */
   REQUEST_ASSIGNMENTS:              'REQUEST_ASSIGNMENTS',
   REQUEST_NODES:                    'REQUEST_NODES',
-  REQUEST_TAB_STATE:                'REQUEST_TAB_STATE',
-  REQUEST_TAB_STATE_RESPONSE:       'REQUEST_TAB_STATE_RESPONSE',
 
   /**
    * Synchronisation actions
