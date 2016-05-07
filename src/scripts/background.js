@@ -99,7 +99,8 @@ proxyChange(flux, [
 ]);
 
 // Wire up Chrome events to fire the appropriate actions
-import chromeEvents from '../background/chrome-events';
+import bindChromeEvents from '../background/chrome-events';
+bindChromeEvents(flux);
 
 // Inject content-scripts into pages
 import contentScripts from '../background/content-scripts';

@@ -1,10 +1,18 @@
 import constants      from './constants';
-import messageChannel from './util/message-channel';
+import { send as sendMessage, receive as receiveMessage } from './util/message-channel';
 
 import Logger from './util/logger';
 var logger = Logger('actions.js');
 
+const messageChannel = {
+  send: sendMessage,
+  receive: receiveMessage
+}
+
 export default {
+  setMessageSender: function(func) {
+    messageChannel.send = func;
+  },
 
   requestAssignments: function() {
     logger.info('requestAssignments');
