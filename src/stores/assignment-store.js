@@ -80,7 +80,7 @@ class AssignmentStore extends Store {
           this.emit('change', { assignment: assignment });
 
           oncomplete.push(() => {
-            this.flux.actions.persistAssignment(assignment.localId);
+            setTimeout(() => this.flux.actions.persistAssignment(assignment.localId));
           });
         };
       };

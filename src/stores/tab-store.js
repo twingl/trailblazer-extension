@@ -154,7 +154,7 @@ class TabStore extends Store {
       tx.oncomplete = (evt) => {
         logger.info("handleStartRecording: success");
         this.tabs[payload.tabId] = true;
-        this.flux.actions.startRecordingSuccess(payload.tabId);
+        setTimeout(() => this.flux.actions.startRecordingSuccess(payload.tabId));
         _.each(successCallbacks, (cb) => { cb(); });
         this.emit('change', this.getState());
       };
@@ -162,7 +162,7 @@ class TabStore extends Store {
       tx.onerror = (evt) => {
         logger.info("handleStartRecording: error");
         this.tabs[payload.tabId] = false;
-        this.flux.actions.startRecordingFail(payload.tabId);
+        setTimeout(() => this.flux.actions.startRecordingFail(payload.tabId));
       };
     }); //transaction
   }
@@ -212,7 +212,7 @@ class TabStore extends Store {
   handleStopRecording(payload) {
     logger.info("handleStopRecording:", { payload: payload });
     this.tabs[payload.tabId] = false;
-    this.flux.actions.stopRecordingSuccess(payload.tabId);
+    setTimeout(() => this.flux.actions.stopRecordingSuccess(payload.tabId));
     this.emit('change', this.getState());
   }
 

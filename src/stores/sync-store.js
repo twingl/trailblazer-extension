@@ -44,7 +44,7 @@ class SyncStore extends Store {
   @action(constants.CREATE_ASSIGNMENT_SUCCESS)
   handleCreateAssignmentSuccess(payload) {
     logger.info('handleCreateAssignmentSuccess', { payload: payload });
-    this.flux.actions.persistAssignment(payload.assignment.localId);
+    setTimeout(() => this.flux.actions.persistAssignment(payload.assignment.localId));
   }
 
   /**
