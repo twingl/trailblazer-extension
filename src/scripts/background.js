@@ -34,18 +34,6 @@ logger.info("Running install hooks");
 import onInstall from '../core/install-hooks';
 chrome.runtime.onInstalled.addListener(onInstall);
 
-// Listen for recording changes that will change the extension state
-chrome.runtime.onMessage.addListener(function (message, sender, responder) {
-  if (message.action === constants.__change__ && message.storeName === 'TabStore') {
-    logger.info("Tabstore state change!");
-    if (message.payload.tabs) {
-      _.each(message.payload.tabs, function(val, key) {
-        extensionUIState.update(parseInt(key), (val) ? "recording" : "idle");
-      });
-    }
-  }
-});
-
 /**
  * Set up Flux.
  *
@@ -75,6 +63,13 @@ actions.setMessageSender(function(message) {
 _.each(stores, (s) => {
   console.log(s.onBoot, s);
   s.onBoot();
+});
+
+flux.store('TabStore').on('change', () => {
+  const state = flux.store('TabStore').getState();
+  _.each(state.tabs, (val, key) => {
+    extensionUIState.update(parseInt(key), (val) ? "recording" : "idle");
+  });
 });
 
 // Wire up Flux's dispatcher to listen for chrome.runtime messages

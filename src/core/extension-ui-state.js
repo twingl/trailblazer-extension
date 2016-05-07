@@ -1,6 +1,10 @@
 import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
 import extensionStates from './extension-states';
 
+// Initialize our logger
+import Logger from '../util/logger';
+var logger = Logger('core/extension-ui-sctate.js');
+
 /**
  * Sets the initial extension UI state based on authentication state
  */
@@ -27,6 +31,7 @@ export function init() {
    * Updates the extension state on the supplied tab ID
    */
 export function update(tabId, state) {
+  logger.info('Updating extension UI state', tabId, state);
   switch (state) {
     case "recording":
     case "notAuthenticated":
