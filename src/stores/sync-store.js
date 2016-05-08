@@ -406,7 +406,7 @@ class SyncStore extends Store {
     logger.info('handleFetchAssignmentsSuccess: Camelizing assignment attribute keys');
     var assignments = payload.assignments.map(camelize);
 
-    this.flux.actions.updateAssignmentCache(assignments);
+    setTimeout(() => this.flux.actions.updateAssignmentCache(assignments));
   }
 
   /**
@@ -516,7 +516,7 @@ class SyncStore extends Store {
    */
   @action(constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS)
   handleUpdateAssignmentCacheSuccess() {
-    this.flux.actions.assignmentsSynchronized();
+    setTimeout(() => this.flux.actions.assignmentsSynchronized());
   }
 
   /**
@@ -562,7 +562,7 @@ class SyncStore extends Store {
   handleFetchNodesSuccess(payload) {
     logger.info('handleFetchNodesSuccess: Camelizing assignment attribute keys');
     var nodes = payload.nodes.map(camelize);
-    this.flux.actions.updateNodeCache(payload.assignmentId, nodes);
+    setTimeout(() => this.flux.actions.updateNodeCache(payload.assignmentId, nodes));
   }
 
   /**
@@ -713,7 +713,7 @@ class SyncStore extends Store {
    */
   @action(constants.UPDATE_NODE_CACHE_SUCCESS)
   handleUpdateNodeCacheSuccess(payload) {
-    this.flux.actions.nodesSynchronized(payload.assignment);
+    setTimeout(() => this.flux.actions.nodesSynchronized(payload.assignment));
   }
 
   @action(constants.BULK_DESTROY_NODES)
