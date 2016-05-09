@@ -1,0 +1,283 @@
+@import '../../../node_modules/sass-flex-mixin/flex.scss';
+@import 'legend';
+@import 'public-map';
+
+@import 'node';
+@import 'node-popover';
+@import 'link';
+
+.wrap.assignment-show *,
+.wrap.assignment-show *:after,
+.wrap.assignment-show *:before {
+	box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	font-smoothing:antialiased;
+	text-rendering:optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+html, body, .wrap.assignment-show, .map-view-wrapper {
+  width: 100vw;
+  height: 100vh;
+}
+
+body .wrap.assignment-show {
+  background-color: #3E3C37;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+  overflow: hidden;
+}
+
+/*
+Gradient Combos
+
+#757F9A, #D7DDE8
+#DE6262, #FFB88C
+#5CC8CB, #80E0D5
+#9bc5c3, #616161
+*/
+
+/* Temp !!! */
+.temp-help {
+	padding-top: 8px;
+	color: #F57584;
+}
+
+#map-container {
+	width: 100%;
+	height: 100%;
+}
+
+.nav-assignment-list {
+  position: absolute;
+  top: 34px;
+  left: 34px;
+
+  display: block;
+  width: 30px;
+  height: 30px;
+
+  background-image:url(/assets/icons/logo-watermark.svg);
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+  background-position: center;
+}
+
+.map-title {
+	text-decoration: none;
+	color: #4D4D4D;
+	background-color: #fff;
+	border-radius: 2px;
+	position: absolute;
+	font-size: 12px;
+	font-weight: 400;
+	padding: 8px 12px;
+	top: 32px;
+	left: 74px;
+}
+
+.map-title img {
+	position: relative;
+	top: 1px;
+	right: -6px;
+	padding-right: 4px;
+}
+
+.map-title:focus {
+	border-style: none;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+}
+
+/* dropdown */
+/* temp made invisable untill in working order */
+
+.click-nav {
+	margin:30px auto;
+	width:200px;
+	position: fixed;
+	left: 0;
+	right: 0;
+	display: none;
+}
+.click-nav ul {
+	font-weight:900;
+}
+.click-nav ul li {
+	position:relative;
+	list-style:none;
+	cursor:pointer;
+}
+.click-nav ul li ul {
+	position:absolute;
+	left:0;
+	right:0;
+}
+.click-nav ul .clicker {
+	background: #444;
+	color:#FFF;
+}
+
+.click-nav ul .clicker img {
+	float: right;
+	padding: 6px 6px 6px 6px;
+}
+
+.click-nav ul .clicker:hover,
+.click-nav ul .active {
+	background:#333;
+}
+
+.click-nav ul li a {
+	transition:background-color 0.2s ease-in-out;
+	-webkit-transition:background-color 0.2s ease-in-out;
+	-moz-transition:background-color 0.2s ease-in-out;
+	display:block;
+	padding:12px 12px 12px 16px;
+	background:#FFF;
+	color:#333;
+	text-decoration:none;
+}
+.click-nav ul li a:hover {
+	background:#ddd;
+}
+/* Fallbacks */
+.click-nav .no-js ul {
+	display:none;
+}
+.click-nav .no-js:hover ul {
+	display:block;
+}
+
+.help {
+	position: fixed;
+	right: 30px;
+	bottom: 24px;
+	font-size: 14px;
+  color: rgb(255, 255, 255);
+}
+
+.help a {
+	opacity: 0.5;
+}
+
+.help a:hover {
+	opacity: 0.6;
+}
+
+.tutorial {
+	padding-left: 1px;
+	float: right;
+	position: fixed;
+	bottom: 30px;
+	right: 126px;
+}
+
+.tutorial path{
+	fill-rule: evenodd;
+
+}
+
+.tutorial path{
+	fill: #000;
+}
+
+.feedback {
+	position: relative;
+	bottom: 3px;
+	text-decoration: none;
+	color: inherit;
+	float: right;
+	position: fixed;
+	bottom: 33px;
+	right: 146px;
+}
+
+.popover {
+	padding: 18px;
+	border-radius: 2px;
+	background-color: #fff;
+	position: fixed;
+	bottom: 70px;
+	right:	30px;
+}
+
+.popover:after {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  bottom:-8px; /* controls vertical position */
+  right:30px; /* value = - border-left-width - border-right-width */
+  border-width:8px 8px 0px 8px;
+  border-color:#fff transparent;
+
+
+}
+
+
+.btn {
+	border: none;
+	border-radius: 2px;
+	font-size: 14px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	padding: 6px;
+}
+
+.btn-share {
+	color: #4D4D4D;
+	background-color: rgba(255, 255, 255, 0.5);
+	width: 76px;
+	position: fixed;
+	bottom: 27px;
+	right: 30px;
+}
+
+.btn-share:hover{
+	background-color: rgba(255, 255, 255, 0.7);
+
+}
+
+.btn-share:focus {
+	outline: none;
+
+}
+
+.share-message {
+	font-size: 12px;
+	color: #777;
+	padding-bottom: 6px;
+
+}
+
+.share-url {
+	text-align: center;
+	color: #555;
+	padding-bottom: 12px;
+}
+
+.share-url a {
+  color: inherit;
+  text-decoration: inherit;
+  opacity: 1;
+}
+
+.btn-make-private {
+	float: right;
+	color: #fff;
+	background-color: #FFAAAA;
+	padding: 6px 8px;
+	font-size: 12px;
+
+}
+
+
+

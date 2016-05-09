@@ -1,4 +1,4 @@
-var NodeHelper = {
+export default {
   isChild: function(node, candidateChild) {
     return (candidateChild.localParentId && candidateChild.localParentId === node.localId);
   },
@@ -25,5 +25,3 @@ var NodeHelper = {
     return data;
   }
 }
-
-module.exports = NodeHelper;

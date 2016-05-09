@@ -1,30 +1,34 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-  getInitialState: function () {
-    //TODO remove state from this class and place in higher level 'popup' parent component.
-    return {
+import Actions from '../actions';
+import Constants from '../constants';
+
+export default class AssignmentTitle extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       editable: false,
-      title: this.props.assignment.title
+      title: props.assignment.title
     };
-  },
+  }
 
-  componentDidMount: function () {
-    chrome.runtime.onMessage.addListener( function (message) {
+  componentDidMount() {
+    chrome.runtime.onMessage.addListener((message) => {
       switch (message.action) {
-        case this.props.constants.__change__:
+        case Constants.__change__:
           if (message.storeName === "AssignmentStore" &&
               message.payload.assignment &&
               message.payload.assignment.localId === this.props.assignment.localId) {
-            this.props.assignment = message.payload.assignment;
-            this.setState({ title: this.props.assignment.title });
+            this.setState({ title: message.payload.assignment.title });
             this.forceUpdate();
           }
       }
-    }.bind(this));
-  },
+    });
+  }
 
-  render: function () {
+  render() {
     var editable = this.state.editable;
 
 
@@ -34,46 +38,47 @@ module.exports = React.createClass({
               type="text"
               autoFocus
               value={this.state.title}
-              onChange={this.onChange}
-              onBlur={this.onBlur}
-              onFocus={this.onFocus}
-              onKeyPress={this.onKeyPress} />;
+              onChange={this.onChange.bind(this)}
+              onBlur={this.onBlur.bind(this)}
+              onFocus={this.onFocus.bind(this)}
+              onKeyPress={this.onKeyPress.bind(this)} />;
     } else {
-      return <a href="#" onClick={this.onIconClick} className="map-title">
+      return <a href="#" onClick={this.onIconClick.bind(this)} className="map-title">
                 <span>{this.state.title}</span>
                 <img
-                  onClick={this.onIconClick}
+                  onClick={this.onIconClick.bind(this)}
                   src="/assets/icons/editable-icon.svg" />
               </a>;
     };
-  },
+  }
 
-  onFocus: function(evt) {
+  onFocus(evt) {
     evt.target.select();
-  },
+  }
 
-  onKeyPress: function(evt) {
+  onKeyPress(evt) {
     if (evt.key === 'Enter') this.onBlur();
     if (evt.key === 'Escape') {
       this.setState({title: this.props.assignment.title});
       this.setState({editable: false});
       this.onBlur();
     }
-  },
+  }
 
-  onIconClick: function (evt) {
+  onIconClick(evt) {
     evt.preventDefault();
     this.setState({editable: true});
-  },
+  }
 
-  onChange: function (evt) {
+  onChange(evt) {
     this.setState({title: evt.target.value});
-  },
+  }
 
-  onBlur: function (evt) {
+  onBlur(evt) {
     this.setState({editable: false});
     if (this.state.title !== this.props.assignment.title) {
-      this.props.actions.updateAssignmentTitle(this.props.assignment.localId, this.state.title);
+      Actions.updateAssignmentTitle(this.props.assignment.localId, this.state.title);
     };
   }
-});
+
+};

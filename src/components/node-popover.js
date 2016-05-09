@@ -3,6 +3,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 export default class NodePopover extends React.Component {
+
   constructor(props) {
     super(props);
 

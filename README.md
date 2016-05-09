@@ -7,27 +7,9 @@ build up a map, helping them make sense of the places they visit.
 
 ### Node
 
-For now, you need to have Node.js `0.10.26` installed. We're going to move to a newer version, but there's a lot of broken stuff at the moment preventing that.
-
-If you have a modern version of node, grab `nvm` and install `0.10.26`
-
-Install nvm: https://github.com/creationix/nvm#install-script
-
-Install `0.10.26`: `$ nvm install 0.10.26`
-
-When it has finished installing, create a file that will tell it to use the correct version of node:
-
-`$ echo 0.10.26 > .nvmrc`
-
-Now you can run `$ nvm use` and it will set up that terminal session with the correct version of node.
-
-> ed: acutely aware that this process is tedious and fragile; the intention is to improve it along with #92
-
-### Gulp
-
-You need to have Gulp installed globally to build the extension
-
-    $ npm install -g gulp
+If you have a modern version of node, excellent - you're good to go. This has
+been tested on 5.x so far so if you run into problems create an issue and we
+can address it.
 
 ### EditorConfig 
 
@@ -78,7 +60,7 @@ Now we can set up the environment configuration based on the example
 
 From the root directory
 
-    $ gulp build
+    $ npm run build
 
 will build the application, ready to be loaded into Chrome.
 
@@ -99,26 +81,6 @@ On [chrome://extensions](chrome://extensions), note that Trailblazer will have
 "Loaded from: /path/to/your/repo", as well as "ID: dahsodahniwuheihxamalwa..."
 Let us know your ID and we will whitelist your ID on the staging or production
 API, depending on your preference.
-
-## Building for Release
-
-First of all, ensure you have a `.env-production` file with the production
-credentials in place. To set this up, contact [Greg](greg@twin.gl)
-
-From the root directory, run the following
-
-    $ gulp release --production
-
-This will do the following:
-
-- Bump the patch version of the extension in the manifest
-  - You can perform a `--major` `--minor` or `--patch (default)` bump with the
-    appropriate command line switch
-- Create a release commit at that version
-- Tag the release version against the commit
-- Build the extension using production configuration
-- Create an archive containing the extension ready to upload to the
-  [Chrome Web Store](://chrome.google.com/webstore/developer/dashboard)
 
 ## API
 

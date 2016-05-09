@@ -10,7 +10,7 @@ import NodePopover from "./node-popover";
 import Link from "./link";
 
 import Logger from '../util/logger';
-var logger = new Logger('trail.js');
+var logger = Logger('trail.js');
 
 export default class Trail extends React.Component {
 

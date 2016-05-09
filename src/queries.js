@@ -10,11 +10,11 @@
  * @query decorator
  */
 import Promise        from 'promise';
-import Logger         from './util/logger';
 import stores         from './stores';
 import _              from 'lodash';
 
-var logger = new Logger('queries.js');
+var logger = Logger('queries.js');
+import Logger from './util/logger';
 
 var sendMessage = function(message) {
   return new Promise(function(resolve, reject) {

@@ -1,12 +1,12 @@
 // config
-var config = require('../config');
+import config from '../config';
 
 // adapters
-var ChromeIdentityAdapter = require('./chrome_identity_adapter');
+import ChromeIdentityAdapter from './chrome_identity_adapter';
 
 // helpers
-var Promise    = require('promise');
-var superagent = require('superagent');
+import Promise    from 'promise';
+import superagent from 'superagent';
 
 /**
  * Creates a new TrailblazerHTTPStorageAdapter
@@ -18,179 +18,181 @@ var superagent = require('superagent');
  * update, destroy, and list).
  */
 
-var TrailblazerHTTPStorageAdapter = function() { };
+export default class TrailblazerHTTPStorageAdapter {
 
-/**
- * Make an HTTP request. Used to implement the CRUD methods.
- * @function TrailblazerHTTPStorageAdapter#_request
- * @param {string} url
- * @param {string} httpMethod
- * @param {Object} opts
- * @param {Object} opts.params - Parameters to append to the request URL
- * @param {Object} opts.data - Data to send with the request (i.e. request
- * body)
- * @private
- */
-TrailblazerHTTPStorageAdapter.prototype._request = function(url, httpMethod, opts) {
-  var httpMethod = httpMethod || "GET"
-    , opts   = opts   || {};
+  /**
+  * Make an HTTP request. Used to implement the CRUD methods.
+  * @function TrailblazerHTTPStorageAdapter#_request
+  * @param {string} url
+  * @param {string} httpMethod
+  * @param {Object} opts
+  * @param {Object} opts.params - Parameters to append to the request URL
+  * @param {Object} opts.data - Data to send with the request (i.e. request
+  * body)
+  * @private
+  */
+  _request(url, httpMethod, opts) {
+    var httpMethod = httpMethod || "GET"
+      , opts   = opts   || {};
 
-  // To make an authenticated request we must ensure that we are signed in
-  var promise = new Promise(function(resolve, reject) {
-    new ChromeIdentityAdapter().getToken().then(function(auth) {
-      superagent(httpMethod, url)
-        .set("Authorization", "Bearer " + auth.access_token)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .send(opts.data || {})
-        .query(opts.params || {})
-        .end(function(error, response) {
-          if (error) {
-            reject(error, response);
-          } else {
-            if (response.ok) {
-              resolve(response.body);
-            } else {
+    // To make an authenticated request we must ensure that we are signed in
+    var promise = new Promise((resolve, reject) => {
+      new ChromeIdentityAdapter().getToken().then((auth) => {
+        superagent(httpMethod, url)
+          .set("Authorization", "Bearer " + auth.access_token)
+          .set("Content-Type", "application/json")
+          .set("Accept", "application/json")
+          .send(opts.data || {})
+          .query(opts.params || {})
+          .end((error, response) => {
+            if (error) {
               reject(error, response);
+            } else {
+              if (response.ok) {
+                resolve(response.body);
+              } else {
+                reject(error, response);
+              }
             }
-          }
-        }); //superagent
-    }.bind(this), function() {
-      throw "Tried to make authenticated request without token!";
-    }); //_stateManager.signIn()
-  }.bind(this)); //promise
+          }); //superagent
+      }, () => {
+        throw "Tried to make authenticated request without token!";
+      }); //_stateManager.signIn()
+    }); //promise
 
-  return promise;
-};
+    return promise;
+  }
 
-/**
- * Read a resource from the server. Makes a request `GET
- * http(s)://server.com/resource/id` with optional URL params
- * @function TrailblazerHTTPStorageAdapter#read
- * @param {string} resourceName - Name of the resource to fetch
- * @param {string} id - (Optional) id of the resource
- * @param {Object} params - URL params to append to the request
- * @returns {Promise}
- */
-TrailblazerHTTPStorageAdapter.prototype.read = function(resourceName, id, params) {
-  if (!resourceName) throw "You need to specify a resource";
-  if (!id) throw "You need to specify an ID - maybe you want list instead";
-
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version,
-    resourceName,
-    id
-  ].join("/");
-
-  return this._request(url, "GET", { params: params });
-};
-
-/**
-  * Retrieve a list of resources from the server. Makes a request `GET
-  * http(s)://server.com/resource` with optional URL params
-  * @function TrailblazerHTTPStorageAdapter#list
+  /**
+  * Read a resource from the server. Makes a request `GET
+  * http(s)://server.com/resource/id` with optional URL params
+  * @function TrailblazerHTTPStorageAdapter#read
   * @param {string} resourceName - Name of the resource to fetch
+  * @param {string} id - (Optional) id of the resource
   * @param {Object} params - URL params to append to the request
+  * @returns {Promise}
   */
-TrailblazerHTTPStorageAdapter.prototype.list = function(resourceName, params) {
-  if (!resourceName) throw "You need to specify a resource";
+  read(resourceName, id, params) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!id) throw "You need to specify an ID - maybe you want list instead";
 
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version,
-    resourceName
-  ].join("/");
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version,
+      resourceName,
+      id
+    ].join("/");
 
-  return this._request(url, "GET", { params: params });
-};
+    return this._request(url, "GET", { params: params });
+  }
 
-/**
-  * @todo Create a new resource
-  * @function TrailblazerHTTPStorageAdapter#create
-  */
-TrailblazerHTTPStorageAdapter.prototype.create = function(resourceName, props, options) {
-  if (!resourceName) throw "You need to specify a resource";
+  /**
+    * Retrieve a list of resources from the server. Makes a request `GET
+    * http(s)://server.com/resource` with optional URL params
+    * @function TrailblazerHTTPStorageAdapter#list
+    * @param {string} resourceName - Name of the resource to fetch
+    * @param {Object} params - URL params to append to the request
+    */
+  list(resourceName, params) {
+    if (!resourceName) throw "You need to specify a resource";
 
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version
-  ];
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version,
+      resourceName
+    ].join("/");
 
-  if (options.parentResource) {
-    url.push(options.parentResource.name, options.parentResource.id);
-  };
+    return this._request(url, "GET", { params: params });
+  }
 
-  url.push(resourceName);
+  /**
+    * @todo Create a new resource
+    * @function TrailblazerHTTPStorageAdapter#create
+    */
+  create(resourceName, props, options) {
+    if (!resourceName) throw "You need to specify a resource";
 
-  url = url.join("/");
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version
+    ];
 
-  return this._request(url, "POST", { data: props });
-};
+    if (options.parentResource) {
+      url.push(options.parentResource.name, options.parentResource.id);
+    };
 
-/**
-  * @todo Update a resource
-  * @function TrailblazerHTTPStorageAdapter#update
-  */
-TrailblazerHTTPStorageAdapter.prototype.update = function(resourceName, id, props, options) {
-  if (!resourceName) throw "You need to specify a resource";
-  if (!id) throw "You need to specify an ID";
+    url.push(resourceName);
 
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version
-  ];
+    url = url.join("/");
 
-  if (options.parentResource) {
-    url.push(options.parentResource.name, options.parentResource.id);
-  };
+    return this._request(url, "POST", { data: props });
+  }
 
-  url.push(resourceName, id);
-  url = url.join("/");
+  /**
+    * @todo Update a resource
+    * @function TrailblazerHTTPStorageAdapter#update
+    */
+  update(resourceName, id, props, options) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!id) throw "You need to specify an ID";
 
-  return this._request(url, "PUT", { data: props });
-};
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version
+    ];
 
-/**
-  * @todo Destroy a resource
-  * @function TrailblazerHTTPStorageAdapter#destroy
-  */
-TrailblazerHTTPStorageAdapter.prototype.destroy = function(resourceName, id) {
-  if (!resourceName) throw "You need to specify a resource";
-  if (!id) throw "You need to specify an ID";
+    if (options.parentResource) {
+      url.push(options.parentResource.name, options.parentResource.id);
+    };
 
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version,
-    resourceName,
-    id
-  ].join("/");
+    url.push(resourceName, id);
+    url = url.join("/");
 
-  return this._request(url, "DELETE");
-};
+    return this._request(url, "PUT", { data: props });
+  }
 
-/**
-  * @todo Bulk destroy a resource
-  * @function TrailblazerHTTPStorageAdapter#bulkDestroy
-  */
-TrailblazerHTTPStorageAdapter.prototype.bulkDestroy = function(resourceName, ids) {
-  if (!resourceName) throw "You need to specify a resource";
-  if (!ids) throw "You need to specify some IDs";
+  /**
+    * @todo Destroy a resource
+    * @function TrailblazerHTTPStorageAdapter#destroy
+    */
+  destroy(resourceName, id) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!id) throw "You need to specify an ID";
 
-  var url = [
-    config.api.host,
-    config.api.nameSpace,
-    config.api.version,
-    resourceName,
-    'bulk_delete'
-  ].join("/");
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version,
+      resourceName,
+      id
+    ].join("/");
 
-  return this._request(url, "DELETE", { params: `ids=${ids.join(',')}` });
+    return this._request(url, "DELETE");
+  }
+
+  /**
+    * @todo Bulk destroy a resource
+    * @function TrailblazerHTTPStorageAdapter#bulkDestroy
+    */
+  bulkDestroy(resourceName, ids) {
+    if (!resourceName) throw "You need to specify a resource";
+    if (!ids) throw "You need to specify some IDs";
+
+    var url = [
+      config.api.host,
+      config.api.nameSpace,
+      config.api.version,
+      resourceName,
+      'bulk_delete'
+    ].join("/");
+
+    return this._request(url, "DELETE", { params: `ids=${ids.join(',')}` });
+  }
+
 };
 
 module.exports = TrailblazerHTTPStorageAdapter;
