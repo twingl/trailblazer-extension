@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Trailblazer",
-  "version": "0.2.6",
+  "version": "0.2.13",
   "minimum_chrome_version": "29",
   "permissions": [
     "*://api.keen.io/",

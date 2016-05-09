@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   __change__:                       'change', // NOTE: reserved for emit('change')
 
   COMPLETED_ONBOARDING_STEP: "COMPLETED_ONBOARDING_STEP",
@@ -19,8 +19,6 @@ module.exports = {
    */
   REQUEST_ASSIGNMENTS:              'REQUEST_ASSIGNMENTS',
   REQUEST_NODES:                    'REQUEST_NODES',
-  REQUEST_TAB_STATE:                'REQUEST_TAB_STATE',
-  REQUEST_TAB_STATE_RESPONSE:       'REQUEST_TAB_STATE_RESPONSE',
 
   /**
    * Synchronisation actions

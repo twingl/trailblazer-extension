@@ -31,7 +31,7 @@ export function action(actionName) {
  */
 export function deprecated(target, name, descriptor) {
   let description = (target.constructor) ? `${target.constructor.name}::${name}` : name;
-  let logger = new Logger(description);
+  let logger = Logger(description);
   let fn = descriptor.value;
 
   descriptor.value = function(...args) {

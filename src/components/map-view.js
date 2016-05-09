@@ -1,44 +1,31 @@
-var React = require('react');
-var _ = require('lodash');
+import React from 'react';
+import { Link } from 'react-router';
+import _ from 'lodash';
+
+import Constants from '../constants';
 
 //components
-var AssignmentTitle = require('./assignment-title');
-var ShareMap = require('./share-map');
-var Legend = require('./legend');
-
-import Logger from '../util/logger';
-var logger = new Logger('map-view');
-
+import AssignmentTitle from './assignment-title';
+import ShareMap from './share-map';
+import Legend from './legend';
 import Trail from './trail';
 
-// var state = {
-//       nodeState: {
-//         loading: false,
-//         error: null,
-//         nodeIndex: {}
-//       },
-//       assignmentState: {
-//         loading: false,
-//         error: null,
-//         assignmentsIndex: {},
-//         currentAssignment: null
-//       }
-// };
+import Logger from '../util/logger';
+var logger = Logger('map-view');
 
+export default class MapView extends React.Component {
 
-module.exports = React.createClass({
+  constructor(props) {
+    super(props);
 
-  getInitialState: function () {
-    return {
+    this.state = {
       sharePopoverState: false
-    }
-  },
+    };
+  }
 
-  render: function () {
+  render() {
     var nodeObj = {};
-    _.each(this.props.nodes, function (node) {
-      nodeObj[node.localId] = node;
-    });
+    this.props.nodes.map(node => nodeObj[node.localId] = node);
 
     var visible, shareText, title, url;
 
@@ -53,9 +40,9 @@ module.exports = React.createClass({
       assignment: this.props.assignment
     };
 
-    return  <div className="map-view-wrapper" onClick={this.handleClick}>
-              <a href="#!/assignments" className="nav-assignment-list"></a>
-              <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={this.props.constants} />
+    return  <div className="map-view-wrapper" onClick={this.handleClick.bind(this)}>
+              <Link to="/assignments" className="nav-assignment-list"></Link>
+              <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={Constants} />
               <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} actions={this.props.actions} />
               <Legend />
               <span className="help">
@@ -68,7 +55,7 @@ module.exports = React.createClass({
                 </a>
                 <a
                   className="tutorial"
-                  href="/build/tour/sign-in.html"
+                  href="/build/tour.html"
                   title="How do I use Trailblazer?"
                   target="_blank" >
                   <img src="/assets/icons/tutorial-icon-light.svg" />
@@ -79,23 +66,21 @@ module.exports = React.createClass({
                   mapURL={url}
                   popover={this.state.sharePopoverState}
                   actions={this.props.actions}
-                  togglePopover={this.togglePopover} />
+                  togglePopover={this.togglePopover.bind(this)} />
               </span>
             </div>;
-  },
+  }
 
-  handleClick: function (evt) {
-
+  handleClick(evt) {
     //remove popover when clicking anywhere else
     if (this.state.sharePopoverState &&
         !document.getElementById('share-popover').contains(evt.target)) {
       this.setState({sharePopoverState: false});
     };
-  },
+  }
 
-  togglePopover: function () {
+  togglePopover() {
     var bool = !this.state.sharePopoverState;
     this.setState({sharePopoverState: bool});
   }
-});
-
+};

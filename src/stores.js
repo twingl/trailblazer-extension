@@ -1,56 +1,23 @@
 /**
- * Initializes the IDB Object stores, Flux stores, and exports them in an
- * object ready to be passed to flux.
+ * Initializes the Flux stores, and exports them in an object ready
+ * to be passed to flux.
  */
 
-var Logger              = require('./util/logger')
-  , treo                = require('treo')
-  , treoPromise         = require('treo/plugins/treo-promise')
-  , TabStore            = require('./stores/tab-store')
-  , NodeStore           = require('./stores/node-store')
-  , AssignmentStore     = require('./stores/assignment-store')
-  , AuthenticationStore = require('./stores/authentication-store')
-  , SyncStore           = require('./stores/sync-store')
-  , MetricsStore        = require('./stores/metrics-store')
-  , MapStore            = require('./stores/map-store')
-  , ErrorStore          = require('./stores/error-store');
+import { objectStores } from './db';
 
-var logger = new Logger('stores.js');
-
-logger.info("Initializing Indexdb");
-var schema = treo.schema()
-  .version(1)
-    // Node storage
-    .addStore('nodes', { keyPath: 'localId', increment: true })
-    .addIndex('id',                'id',                { unique: true })
-    .addIndex('tabId',             'tabId',             { unique: false })
-    .addIndex('assignmentId',      'assignmentId',      { unique: false })
-    .addIndex('localAssignmentId', 'localAssignmentId', { unique: false })
-    .addIndex('url',               'url',               { unique: false })
-
-    // Assignment storage
-    .addStore('assignments', { keyPath: 'localId', increment: true })
-    .addIndex('id',                'id',                { unique: true })
-  .version(2)
-    // Node parent ID indices
-    .getStore('nodes')
-    .addIndex('parentId',          'parentId',          { unique: false })
-    .addIndex('localParentId',     'localParentId',     { unique: false })
-
-//initialize db and provide a wrapper object around the treo api
-var db = treo('trailblazer-wash', schema)
-  .use(treoPromise());
-
-var objectStores = {
-  assignments: db.store('assignments'),
-  nodes: db.store('nodes')
-};
-
+import TabStore            from './stores/tab-store';
+import NodeStore           from './stores/node-store';
+import AssignmentStore     from './stores/assignment-store';
+import AuthenticationStore from './stores/authentication-store';
+import SyncStore           from './stores/sync-store';
+import MetricsStore        from './stores/metrics-store';
+import MapStore            from './stores/map-store';
+import ErrorStore          from './stores/error-store';
 
 /**
  * Initialize the Flux stores
  */
-var fluxStores = {
+export default {
   TabStore: new TabStore({ db: objectStores }),
   NodeStore: new NodeStore({ db: objectStores }),
   AssignmentStore: new AssignmentStore({ db: objectStores }),
@@ -60,5 +27,3 @@ var fluxStores = {
   MapStore: new MapStore({ db: objectStores }),
   ErrorStore: new ErrorStore()
 };
-
-module.exports = fluxStores;

@@ -1,19 +1,24 @@
-var React           = require('react')
-  , messageChannel  = require('../util/message-channel');
+import React           from 'react';
 
-module.exports = React.createClass({
-  //TODO remove state from this class and place in higher level 'popup' parent component.
-  getInitialState: function () {
-    return {
-      rank: this.props.node.rank
-    }
-  },
+import messageChannel  from '../util/message-channel';
+import Actions from '../actions';
+import Constants from '../constants';
 
-  componentDidMount: function () {
+export default class Star extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rank: props.node.rank
+    };
+  }
+
+  componentDidMount() {
     // listen for `change` evts for the current node
     messageChannel.listen( function (message) {
       switch (message.action) {
-        case this.props.constants.__change__:
+        case Constants.__change__:
           if (message.payload.store === "NodeStore" &&
               message.payload.node.localId === this.props.node.localId) {
             this.props.node.rank = message.payload.node.rank;
@@ -22,16 +27,16 @@ module.exports = React.createClass({
           break;
       }
     }.bind(this));
-  },
+  }
 
-  render: function () {
+  render() {
     var width = this.props.width + "px";
     var height= this.props.height + "px";
     var viewBox = "0 0 " + this.props.width  + " " + this.props.height;
     var waypointClass = this.state.rank === 1 ? "waypoint-active" : "waypoint";
 
     return  <a
-              onClick={this.onClick}
+              onClick={this.onClick.bind(this)}
               className={waypointClass} >
               <svg
                 width={width}
@@ -43,9 +48,9 @@ module.exports = React.createClass({
                   </polygon>
               </svg>
             </a>;
-  },
+  }
 
-  onClick: function () {
+  onClick() {
     messageChannel.send({
       action: "trackUIEvent",
       eventName: "ui.popup.waypoint.toggle",
@@ -53,9 +58,10 @@ module.exports = React.createClass({
     });
 
     if (this.props.node.rank === 1) {
-      this.props.actions.rankNodeNeutral(this.props.node.localId);
+      Actions.rankNodeNeutral(this.props.node.localId);
     } else {
-      this.props.actions.rankNodeWaypoint(this.props.node.localId);
+      Actions.rankNodeWaypoint(this.props.node.localId);
     }
   }
-});
+
+};

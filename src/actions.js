@@ -1,47 +1,59 @@
-var constants       = require('./constants')
-  , Logger          = require('./util/logger')
-  , messageChannel  = require('./util/message-channel');
+import constants      from './constants';
+import { send as sendMessage, receive as receiveMessage } from './util/message-channel';
 
-var logger = new Logger('actions.js');
+import Logger from './util/logger';
+var logger = Logger('actions.js');
 
-module.exports = {
+const messageChannel = {
+  send: sendMessage,
+  receive: receiveMessage
+}
 
-  requestAssignments: function () {
+export default {
+  getMessageSender: function() {
+    return messageChannel.send;
+  },
+
+  setMessageSender: function(func) {
+    messageChannel.send = func;
+  },
+
+  requestAssignments: function() {
     logger.info('requestAssignments');
     messageChannel.send({ action: constants.REQUEST_ASSIGNMENTS });
   },
 
-  fetchAssignments: function () {
+  fetchAssignments: function() {
     logger.info('fetchAssignments');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS });
   },
 
-  fetchAssignmentsSuccess: function (assignments) {
+  fetchAssignmentsSuccess: function(assignments) {
     logger.info('fetchAssignmentsSuccess');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_SUCCESS, payload: { assignments: assignments } });
   },
 
-  fetchAssignmentsFail: function (error) {
+  fetchAssignmentsFail: function(error) {
     logger.info('fetchAssignmentsFail');
     messageChannel.send({ action: constants.FETCH_ASSIGNMENTS_FAIL, payload: { error: error } });
   },
 
-  updateAssignmentCache: function (assignments) {
+  updateAssignmentCache: function(assignments) {
     logger.info('updateAssignmentCache');
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE, payload: { assignments: assignments } });
   },
 
-  updateAssignmentCacheSuccess: function () {
+  updateAssignmentCacheSuccess: function() {
     logger.info('updateAssignmentCacheSuccess');
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_SUCCESS });
   },
 
-  updateAssignmentCacheFail: function (error) {
+  updateAssignmentCacheFail: function(error) {
     logger.info('updateAssignmentCacheFail', {error: error });
     messageChannel.send({ action: constants.UPDATE_ASSIGNMENT_CACHE_FAIL, payload: { error: error } });
   },
 
-  updateAssignmentTitle: function (localId, title) {
+  updateAssignmentTitle: function(localId, title) {
     logger.info('updateAssignmentTitle', { localId: localId, title: title });
     messageChannel.send({
       action: constants.UPDATE_ASSIGNMENT_TITLE,
@@ -52,12 +64,12 @@ module.exports = {
     });
   },
 
-  assignmentsSynchronized: function () {
+  assignmentsSynchronized: function() {
     logger.info('assignmentsSynchronized');
     messageChannel.send({ action: constants.ASSIGNMENTS_SYNCHRONIZED });
   },
 
-  createAssignmentSuccess: function (assignment) {
+  createAssignmentSuccess: function(assignment) {
     logger.info('createAssignmentSuccess');
     messageChannel.send({
       action: constants.CREATE_ASSIGNMENT_SUCCESS,
@@ -67,7 +79,7 @@ module.exports = {
     });
   },
 
-  destroyAssignment: function (localId) {
+  destroyAssignment: function(localId) {
     logger.info('destroyAssignment');
     messageChannel.send({
       action: constants.DESTROY_ASSIGNMENT,
@@ -77,14 +89,14 @@ module.exports = {
     });
   },
 
-  destroyAssignmentSuccess: function () {
+  destroyAssignmentSuccess: function() {
     logger.info('destroyAssignmentSuccess');
     messageChannel.send({
       action: constants.DESTROY_ASSIGNMENT_SUCCESS
     });
   },
 
-  requestNodes: function (localAssignmentId) {
+  requestNodes: function(localAssignmentId) {
     logger.info('requestNodes');
     messageChannel.send({
       action: constants.REQUEST_NODES,
@@ -94,7 +106,7 @@ module.exports = {
     });
   },
 
-  fetchNodes: function (assignmentId) {
+  fetchNodes: function(assignmentId) {
     logger.info('fetchNodes');
     messageChannel.send({
       action: constants.FETCH_NODES,
@@ -104,7 +116,7 @@ module.exports = {
     });
   },
 
-  fetchNodesSuccess: function (assignmentId, nodes) {
+  fetchNodesSuccess: function(assignmentId, nodes) {
     logger.info('fetchNodesSuccess');
     messageChannel.send({
       action: constants.FETCH_NODES_SUCCESS,
@@ -115,12 +127,12 @@ module.exports = {
     });
   },
 
-  fetchNodesFail: function (error) {
+  fetchNodesFail: function(error) {
     logger.info('fetchNodesFail');
     messageChannel.send({ action: constants.FETCH_NODES_FAIL, payload: { error: error } });
   },
 
-  updateNodeCache: function (assignmentId, nodes) {
+  updateNodeCache: function(assignmentId, nodes) {
     logger.info('updateNodeCache');
     messageChannel.send({
       action: constants.UPDATE_NODE_CACHE,
@@ -131,7 +143,7 @@ module.exports = {
     });
   },
 
-  updateNodeCacheSuccess: function (assignment) {
+  updateNodeCacheSuccess: function(assignment) {
     logger.info('updateNodeCacheSuccess');
     messageChannel.send({
       action: constants.UPDATE_NODE_CACHE_SUCCESS,
@@ -141,12 +153,12 @@ module.exports = {
     });
   },
 
-  updateNodeCacheFail: function (error) {
+  updateNodeCacheFail: function(error) {
     logger.info('updateNodeCacheFail');
     messageChannel.send({ action: constants.UPDATE_NODE_CACHE_FAIL, payload: { error: error } });
   },
 
-  nodesSynchronized: function (assignment) {
+  nodesSynchronized: function(assignment) {
     logger.info('nodesSynchronized');
     messageChannel.send({
       action: constants.NODES_SYNCHRONIZED,
@@ -157,7 +169,7 @@ module.exports = {
   },
 
 
-  createNodeSuccess: function (localId) {
+  createNodeSuccess: function(localId) {
     logger.info('createNodeSuccess');
     chrome.runtime.sendMessage({
       action: constants.CREATE_NODE_SUCCESS,
@@ -167,7 +179,7 @@ module.exports = {
     });
   },
 
-  updateNodeSuccess: function (localId) {
+  updateNodeSuccess: function(localId) {
     logger.info('updateNodeSuccess');
     chrome.runtime.sendMessage({
       action: constants.UPDATE_NODE_SUCCESS,
@@ -177,7 +189,7 @@ module.exports = {
     });
   },
 
-  destroyNode: function (localId) {
+  destroyNode: function(localId) {
     logger.info('deleteNode');
     chrome.runtime.sendMessage({
       action: constants.DESTROY_NODE,
@@ -197,7 +209,7 @@ module.exports = {
     });
   },
 
-  tabTitleUpdated: function (tabId, url, title) {
+  tabTitleUpdated: function(tabId, url, title) {
     logger.info('tabTitleUpdated');
     messageChannel.send({
       action: constants.TAB_TITLE_UPDATED,
@@ -209,7 +221,7 @@ module.exports = {
     });
   },
 
-  setNodeTitle: function (localId, title) {
+  setNodeTitle: function(localId, title) {
     logger.info('setNodeTitle');
     messageChannel.send({
       action: constants.SET_NODE_TITLE,
@@ -329,33 +341,12 @@ module.exports = {
 
   //UI ACTIONS. Dispatch is overwritten in UI and passes a message through runtime
   //which then calls the *same* method in background. [Mind Blown]
-  selectAssignment: function (assignmentId) {
+  selectAssignment: function(assignmentId) {
     logger.info('selectAssignment');
     messageChannel.send({ action: constants.SELECT_ASSIGNMENT, payload: { assignmentId: assignmentId } });
   },
 
-  requestTabState: function (tabId) {
-    logger.info('requestTabState');
-    messageChannel.send({
-      action: constants.REQUEST_TAB_STATE,
-      payload: {
-        tabId: tabId
-      }
-    });
-  },
-
-  requestTabStateResponse: function (tabId, state) {
-    logger.info('requestTabStateResponse');
-    messageChannel.send({
-      action: constants.REQUEST_TAB_STATE_RESPONSE,
-      payload: {
-        tabId: tabId,
-        state: state
-      }
-    });
-  },
-
-  startRecording: function (tabId, tabObj) {
+  startRecording: function(tabId, tabObj) {
     logger.info('startRecording');
     messageChannel.send({
       action: constants.START_RECORDING,
@@ -366,7 +357,7 @@ module.exports = {
     });
   },
 
-  startRecordingSuccess: function (tabId) {
+  startRecordingSuccess: function(tabId) {
     logger.info('startRecordingSuccess');
     messageChannel.send({
       action: constants.START_RECORDING_SUCCESS,
@@ -376,7 +367,7 @@ module.exports = {
     });
   },
 
-  startRecordingFail: function (tabId) {
+  startRecordingFail: function(tabId) {
     logger.info('startRecordingFail');
     messageChannel.send({
       action: constants.START_RECORDING_FAIL,
@@ -386,7 +377,7 @@ module.exports = {
     });
   },
 
-  resumeRecording: function (localId, focus) {
+  resumeRecording: function(localId, focus) {
     logger.info('startRecording');
     messageChannel.send({
       action: constants.RESUME_RECORDING,
@@ -397,7 +388,7 @@ module.exports = {
     });
   },
 
-  resumeRecordingFail: function (localId) {
+  resumeRecordingFail: function(localId) {
     logger.info('startRecordingFail');
     messageChannel.send({
       action: constants.RESUME_RECORDING_FAIL,
@@ -407,7 +398,7 @@ module.exports = {
     });
   },
 
-  stopRecording: function (tabId) {
+  stopRecording: function(tabId) {
     logger.info('stopRecording');
     messageChannel.send({
       action: constants.STOP_RECORDING,
@@ -417,7 +408,7 @@ module.exports = {
     });
   },
 
-  stopRecordingSuccess: function (tabId) {
+  stopRecordingSuccess: function(tabId) {
     logger.info('stopRecordingSuccess');
     messageChannel.send({
       action: constants.STOP_RECORDING_SUCCESS,
@@ -427,7 +418,7 @@ module.exports = {
     });
   },
 
-  rankNodeWaypoint: function (localId) {
+  rankNodeWaypoint: function(localId) {
     logger.info('rankNodeWaypoint');
     messageChannel.send({
       action: constants.RANK_NODE_WAYPOINT,
@@ -437,7 +428,7 @@ module.exports = {
     });
   },
 
-  rankNodeNeutral: function (localId) {
+  rankNodeNeutral: function(localId) {
     logger.info('rankNodeNeutral');
     messageChannel.send({
       action: constants.RANK_NODE_NEUTRAL,
@@ -447,7 +438,7 @@ module.exports = {
     });
   },
 
-  makeAssignmentVisible: function (localId) {
+  makeAssignmentVisible: function(localId) {
     logger.info('makeAssignmentVisible');
     messageChannel.send({
       action: constants.MAKE_ASSIGNMENT_VISIBLE,
@@ -457,7 +448,7 @@ module.exports = {
     });
   },
 
-  makeAssignmentHidden: function (localId) {
+  makeAssignmentHidden: function(localId) {
     logger.info('makeAssignmentHidden');
     messageChannel.send({
       action: constants.MAKE_ASSIGNMENT_HIDDEN,
@@ -467,28 +458,28 @@ module.exports = {
     });
   },
 
-  signIn: function () {
+  signIn: function() {
     logger.info('signIn');
     messageChannel.send({
       action: constants.SIGN_IN
     });
   },
 
-  signInSuccess: function () {
+  signInSuccess: function() {
     logger.info('signInSuccess');
     messageChannel.send({
       action: constants.SIGN_IN_SUCCESS
     });
   },
 
-  signOut: function () {
+  signOut: function() {
     logger.info('signOut');
     messageChannel.send({
       action: constants.SIGN_OUT
     });
   },
 
-  persistAssignment: function (localId) {
+  persistAssignment: function(localId) {
     logger.info('persistAssignment', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT,
@@ -498,7 +489,7 @@ module.exports = {
     });
   },
 
-  persistAssignmentSuccess: function (localId) {
+  persistAssignmentSuccess: function(localId) {
     logger.info('persistAssignmentSuccess', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT_SUCCESS,
@@ -508,7 +499,7 @@ module.exports = {
     });
   },
 
-  persistAssignmentFail: function (localId, error) {
+  persistAssignmentFail: function(localId, error) {
     logger.info('persistAssignmentFail', { localId: localId, error: error });
     messageChannel.send({
       action: constants.PERSIST_ASSIGNMENT_FAIL,
@@ -519,7 +510,7 @@ module.exports = {
     });
   },
 
-  persistNode: function (localId) {
+  persistNode: function(localId) {
     logger.info('persistNode', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_NODE,
@@ -529,7 +520,7 @@ module.exports = {
     });
   },
 
-  persistNodeSuccess: function (localId) {
+  persistNodeSuccess: function(localId) {
     logger.info('persistNodeSuccess', { localId: localId });
     messageChannel.send({
       action: constants.PERSIST_NODE_SUCCESS,
@@ -539,7 +530,7 @@ module.exports = {
     });
   },
 
-  saveMapLayout: function (localId, coordinates) {
+  saveMapLayout: function(localId, coordinates) {
     logger.info('saveMapLayout', { localId: localId, coordinates: coordinates });
     messageChannel.send({
       action: constants.SAVE_MAP_LAYOUT,
@@ -550,7 +541,7 @@ module.exports = {
     });
   },
 
-  persistMapLayout: function (localId, coordinates) {
+  persistMapLayout: function(localId, coordinates) {
     logger.info('persistMapLayout', { localId: localId, coordinates: coordinates });
     messageChannel.send({
       action: constants.PERSIST_MAP_LAYOUT,
@@ -561,7 +552,7 @@ module.exports = {
     });
   },
 
-  viewedMap: function (localId) {
+  viewedMap: function(localId) {
     logger.info('viewedMap');
     messageChannel.send({
       action: constants.VIEWED_MAP,
@@ -571,21 +562,21 @@ module.exports = {
     });
   },
 
-  viewedAssignmentList: function () {
+  viewedAssignmentList: function() {
     logger.info('viewedAssignmentList');
     messageChannel.send({
       action: constants.VIEWED_ASSIGNMENT_LIST
     });
   },
 
-  extensionInstalled: function () {
+  extensionInstalled: function() {
     logger.info('extensionInstalled');
     messageChannel.send({
       action: constants.EXTENSION_INSTALLED
     });
   },
 
-  extensionUpdated: function (oldVersion) {
+  extensionUpdated: function(oldVersion) {
     logger.info('extensionUpdated');
     messageChannel.send({
       action: constants.EXTENSION_UPDATED,
@@ -595,14 +586,14 @@ module.exports = {
     });
   },
 
-  chromeUpdated: function () {
+  chromeUpdated: function() {
     logger.info('chromeUpdated');
     messageChannel.send({
       action: constants.CHROME_UPDATED
     });
   },
 
-  completedOnboardingStep: function (step) {
+  completedOnboardingStep: function(step) {
     logger.info('completedOnboardingStep', { step: step });
     messageChannel.send({
       action: constants.COMPLETED_ONBOARDING_STEP,

@@ -1,20 +1,17 @@
-var ChromeIdentityAdapter = require('../adapter/chrome_identity_adapter')
-  , actions = require('../actions');
+import ChromeIdentityAdapter from '../adapter/chrome_identity_adapter';
+import actions from '../actions';
 
-
-module.exports = function(details) {
+function onInstall(details) {
   switch(details.reason) {
     case "update":
       var identity = new ChromeIdentityAdapter();
-      identity.getToken().then(function(token) {
-        identity.storeToken(token);
-      });
+      identity.getToken().then(token => identity.storeToken(token));
       actions.extensionUpdated(details.previousVersion);
       break;
 
     case "install":
       // Show onboarding
-      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour/sign-in.html") });
+      chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour.html") });
       actions.extensionInstalled();
       break;
 
@@ -23,3 +20,6 @@ module.exports = function(details) {
       break;
   }
 };
+
+export { onInstall }
+export default onInstall;
