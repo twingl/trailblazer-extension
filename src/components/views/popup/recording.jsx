@@ -18,7 +18,7 @@ class Recording extends React.Component {
   }
 
   onTutorialClicked(evt) {
-    chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour/sign-in.html") });
+    chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour.html") });
   }
 
   onViewTrailClicked(evt) {
