@@ -18,69 +18,7 @@ installed for your editor before editing any of the source.
 
 ## Setup
 
-    $ git clone git://github.com/twingl/trailblazer-wash.git
-
-    $ cd trailblazer-wash
-
-    $ npm install
-
-At this point you should open Chrome and load the unpacked extension. Don't
-worry that it hasn't been built yet; we just need to get the ID that is
-assigned to it by Chrome.
-
-Visit chrome://extensions, check developer mode, and tap "Load unpacked
-extension..."
-
-When the file picker opens, navigate to the root of the git repo and tap "OK"
-
-You should see the extension in the list now, and take note of the ID that
-Chrome has assigned to it (referred to as CHROME_ID from now on)
-
-Generate your API credentials:
-
-Visit https://app.trailblazer.io/oauth/applications and create a new
-application; it will ask for a name (choose anything), and a callback URL which
-is based on the ID we got from loading the extension in Chrome.
-
-Add this as a callback URL:
-
-    https://CHROME_ID.chromiumapp.org/
-
-Noting that CHROME_ID is what is displayed in the list of extensions.
-
-When the app is created, you'll have an application ID.
-
-Now we can set up the environment configuration based on the example
-
-    $ cp .env-example .env
-
-    $ vim .env # and insert your API credentials, configuration
-
-## Building for Development
-
-From the root directory
-
-    $ npm run build
-
-will build the application, ready to be loaded into Chrome.
-
-**If you change any dependencies (i.e. install any local npm packages), ensure
-you run `npm shrinkwrap --dev` and commit the changes**
-
-### Loading into Chrome
-
-- Visit [chrome://extensions](chrome://extensions) and check "Developer mode" if
-  not already checked.
-- Tap "Load unpacked extension..." which will open a file browser
-- Navigate to this repository and click OK
-
-You won't be able to sign in with it yet as we haven't whitelisted the
-Extension's ID.
-
-On [chrome://extensions](chrome://extensions), note that Trailblazer will have
-"Loaded from: /path/to/your/repo", as well as "ID: dahsodahniwuheihxamalwa..."
-Let us know your ID and we will whitelist your ID on the staging or production
-API, depending on your preference.
+See the [Getting Started](https://github.com/twingl/trailblazer-wash/wiki/Getting-Started) guide
 
 ## API
 
