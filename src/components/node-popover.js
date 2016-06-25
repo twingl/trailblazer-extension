@@ -113,7 +113,7 @@ export default class NodePopover extends React.Component {
       content = <div className={classNames}>
         <div className='content'>
 
-          <h1>{title}</h1>
+          <h1>{this.isGoogleUrl(title, this.props.node.url)}</h1>
 
           <div className='detail'>
             <a className='url' target='_blank' href={this.props.node.url}>{this.props.node.url}</a>
@@ -130,6 +130,23 @@ export default class NodePopover extends React.Component {
       onMouseLeave={this.onMouseLeave.bind(this)}>
       {content}
     </div>
+  }
+
+  isGoogleUrl(title, url){
+      var res = url;
+      if( url.indexOf("https://www.google") == 0 ){
+          var qpos = url.indexOf("#q")
+          if( qpos > -1 ) {
+              res = url.slice(qpos, url.length);
+              res = res.replace('#q=', '')
+              res = res.replace(/\+/g, ' ')
+              return res;
+          }else{
+              return title;
+          }
+      }else{
+          return title;
+      }
   }
 
 };
