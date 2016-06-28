@@ -92,8 +92,6 @@ export default class NodePopover extends React.Component {
             <a className='url' target='_blank' href={this.props.node.url}>{this.props.node.url}</a>
           </div>
 
-          {actions}
-
         </div>
       </div>;
     }
