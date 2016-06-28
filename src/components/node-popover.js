@@ -89,7 +89,7 @@ export default class NodePopover extends React.Component {
           <h1>{this.isGoogleUrl(title, this.props.node.url)}</h1>
 
           <div className='detail'>
-            <a className='url' target='_blank' href={this.props.node.url}>{this.props.node.url}</a>
+            <a className='url' target='_blank' href={this.props.node.url}>{ this.getTLD( this.props.node.url) }</a>
           </div>
 
         </div>
@@ -118,6 +118,13 @@ export default class NodePopover extends React.Component {
       }else{
           return title;
       }
+  }
+
+  // Get TLD (Primary Domain)
+  getTLD( url ) {
+    let arr = url.split("/");
+    let result = arr[2];
+    return result;
   }
 
 };
