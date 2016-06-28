@@ -1,13 +1,15 @@
 This repo contains the Chrome extension for Trailblazer.
 
-Please look through the code, open up discussions in our forum
+Please check out our wiki (https://github.com/twingl/trailblazer-wash/wiki),
+look through the code, open up discussions in our forum
 (https://trailblazing.community/), fork the repo and make changes.
 
-If you open a pull request with a feature, fix, or tweak; make sure you
-include a description of what you've changed and why.
+If you open a pull request (PR) with a feature, fix, or tweak; make sure you
+include a description of what you've changed and why. For visual changes, a 
+screenshot of them would be appreciated too.
 
-Once you've opened a PR, you'll need to make sure you've signed the CLA (a bot
-should handle most of this), and gone through any other process before the code
-can be integrated into the project.
+Once you've opened a PR, a handy little bot should automatically ask you to
+e-sign our CLA. With that confirmed (and a healthy measure of peer-review)
+your contributions will be ready to be integrated into the project.
 
 Happy hacking!
