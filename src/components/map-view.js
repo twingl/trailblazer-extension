@@ -9,6 +9,7 @@ import AssignmentTitle from './assignment-title';
 import ShareMap from './share-map';
 import Legend from './legend';
 import Trail from './trail';
+import Sidebar from './sidebar';
 
 import Logger from '../util/logger';
 var logger = Logger('map-view');
@@ -68,6 +69,7 @@ export default class MapView extends React.Component {
                   actions={this.props.actions}
                   togglePopover={this.togglePopover.bind(this)} />
               </span>
+              <Sidebar />
             </div>;
   }
 

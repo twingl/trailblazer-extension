@@ -281,3 +281,80 @@ Gradient Combos
 
 
 
+/* Sidebar */
+/* The animation code */
+@-webkit-keyframes slidein {
+    from {transform: translateX(100%);}
+    to {transform: translateX(0%);}
+}
+@-webkit-keyframes slideout {
+    from {transform: translateX(0%);}
+    to {transform: translateX(100%);}
+}
+
+#sidebar{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    padding: 20px;
+    transform: translateX(100%);
+    color: #FFF;
+    background: rgba(0,0,0,.7);
+
+}
+
+#sidebar.slidein{
+    -webkit-animation: slidein .5s forwards;
+}
+#sidebar.slideout{
+    -webkit-animation: slideout .5s forwards;
+}
+
+#sidebar .title{
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 10px;
+}
+
+#sidebar .url{
+    margin-bottom: 30px;
+}
+
+#sidebar .voting{
+    margin:10px 0;
+}
+#sidebar .voting span{
+    display: inline-block;
+    width: 30%;
+    margin-left: 5%;
+    padding: 5px;
+    background: #eee;
+    border-radius: 5px;
+    text-align: center;
+    color: #333;
+    cursor: pointer;
+}
+#sidebar .voting span:first-child{
+    margin-left: 0;
+}
+#sidebar .voting span:hover{
+    color: #FFF;
+    background: #333;
+}
+#sidebar .close{
+    padding-bottom: 15px;
+}
+#sidebar .btn{
+    display: inline-block;
+    font-size: 12px;
+    line-height: 12px;
+    border: 1px solid #FFF;
+    padding: 4px;
+    cursor: pointer;
+}
+#sidebar .title{margin-right:5px;}
+
+#sidebar .hide{display:none;}
+#sidebar .show{display:inline-block;}
