@@ -2,7 +2,7 @@
 
 /* nodes */
 .node {
-	fill: #fff;
+	fill: #eee;
 	fill-rule: evenodd;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .open .node-halo {
-	fill: #FFAAAA;
+	fill: #FB4949;
 	-webkit-animation-name: pulse;
   -webkit-animation-duration: 2s;
   -webkit-animation-iteration-count: infinite;
@@ -55,12 +55,12 @@
 }
 
 .hub .node-halo {
-	fill-opacity: 0.6;
+	fill-opacity: 1;
 }
 
 .waypoint .node-halo {
 	fill: gold;
-	fill-opacity: 0.8;
+	fill-opacity: 1;
 }
 
 .delete-pending .node-halo {
