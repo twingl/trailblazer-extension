@@ -41,7 +41,7 @@
     "merge-stream": "^0.1.7",
     "ngraph.forcelayout": "0.0.21",
     "ngraph.graph": "0.0.11",
-    "node-sass": "^3.4.2",
+    "node-sass": "^3.8.0",
     "node-uuid": "~1.4.1",
     "pretty-hrtime": "^0.2.2",
     "promise": "^6.0.1",
