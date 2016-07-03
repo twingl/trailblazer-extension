@@ -18,6 +18,7 @@ export default class Node extends React.Component {
     super(props);
 
     this.position = props.position;
+    this.openSidebar = false;
   }
 
   // We want to set the dom attributes ourselves to avoid triggering React's
@@ -41,47 +42,11 @@ export default class Node extends React.Component {
     }
   }
 
-  setSidebarData( node ){
-
-      var sidebar = document.getElementById('sidebar')
-      sidebar.dataset.current_node_id = node.data.localId
-
-      var title = sidebar.querySelector('.title')
-      title.innerHTML = node.data.title
-
-      var titleInput = document.getElementById('title-input')
-      titleInput.value = node.data.title
-
-      var url = sidebar.querySelector('.url')
-      var domain = node.data.url.split('/');
-      url.innerHTML = domain[0] + '//' + domain[1] + domain [2]
-
-  }
-
   // trigger resume?-- trigger event callback on parent.
   onClick(evt) {
-    (this.props.onClick || (() => {}))(evt);
-
-        var sidebar = document.getElementById('sidebar')
-
-        // Toggle sidebar
-        if( sidebar.classList.contains('slidein') ){
-
-            if( sidebar.dataset.current_node_id == this.props.node.data.localId ){
-                sidebar.classList.remove('slidein')
-                sidebar.classList.add('slideout')
-            }else{
-                this.setSidebarData( this.props.node )
-            }
-
-        }else{
-
-            sidebar.classList.remove('slideout')
-            sidebar.classList.add('slidein')
-            this.setSidebarData( this.props.node )
-
-        }
-
+    //(this.props.onClick || (() => {}))(evt);
+    this.openSidebar = !this.openSidebar;
+    this.props.onClicked(this);
   }
 
   // trigger a popup-- trigger event callback on parent.

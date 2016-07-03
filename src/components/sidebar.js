@@ -21,6 +21,7 @@ export default class Sidebar extends React.Component {
     this.state = {
       sharePopoverState: false
     };
+
   }
 
   render() {
@@ -40,16 +41,26 @@ export default class Sidebar extends React.Component {
 //      assignment: this.props.assignment
 //    };
 
-    return <div className="sidebar" id="sidebar">
+    var title   = '';
+    var url     = '';
+    var classes = 'sidebar';
+
+    if( this.props.node ){
+        title   = this.props.node.props.node.data.title;
+        url     = this.props.node.props.node.data.url;
+        classes = (this.props.visible) ? 'sidebar slidein' : 'sidebar slideout';
+    }
+
+    return <div className={classes} id="sidebar">
             <div className="close" onClick={this.close}>
                 <span className="btn">close</span>
             </div>
             <div className="title-wrap">
-                <span id="title" className="title"></span>
-                <input id="title-input" className="hide" type="text" defaultValue="..." />
+                <span id="title" className="title">{title}</span>
+                <input id="title-input" className="hide" type="text" defaultValue={title} />
                 <span id="edit-title" onClick={this.editTitle} className="btn">edit</span>
             </div>
-            <div className="url"></div>
+            <div className="url">{url}</div>
             <div className="intro"></div>
             <div className="voting">
                 <span className="up">Up</span><span className="neutral">Neutral</span><span className="down">Down</span>
@@ -69,7 +80,6 @@ export default class Sidebar extends React.Component {
 
     title.classList.toggle('hide')
     titleInput.classList.toggle('hide')
-
   }
 
 };

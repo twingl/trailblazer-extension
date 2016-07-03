@@ -245,6 +245,7 @@ export default class Trail extends React.Component {
             node={n}
             position={position}
             actions={this.props.actions}
+            onClicked={this.props.onNodeClicked.bind(this)}
             onMouseEnter={this.activatePopover.bind(this, n)}
             onMouseLeave={this.softDismissPopover.bind(this, n)}
       />);
