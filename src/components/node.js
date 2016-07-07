@@ -18,7 +18,6 @@ export default class Node extends React.Component {
     super(props);
 
     this.position = props.position;
-    this.openSidebar = false;
   }
 
   // We want to set the dom attributes ourselves to avoid triggering React's
@@ -44,9 +43,7 @@ export default class Node extends React.Component {
 
   // trigger resume?-- trigger event callback on parent.
   onClick(evt) {
-    //(this.props.onClick || (() => {}))(evt);
-    this.openSidebar = !this.openSidebar;
-    this.props.onClicked(this);
+    (this.props.onClicked(this) || (() => {}))(evt);
   }
 
   // trigger a popup-- trigger event callback on parent.

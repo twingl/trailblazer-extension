@@ -24,31 +24,16 @@ export default class Sidebar extends React.Component {
 
   }
 
-  render() {
-//    var nodeObj = {};
-//    this.props.nodes.map(node => nodeObj[node.localId] = node);
-//
-//    var visible, shareText, title, url;
-//
-//    visible       = this.props.assignment.visible; //state
-//    shareText     = (visible) ? "Shared" : "Share"; //state
-//    title         = this.props.assignment.title;
-//    url           = this.props.assignment.url;
-//
-//    //nodes are immutable
-//    var data = {
-//      nodeObj: nodeObj,
-//      assignment: this.props.assignment
-//    };
+  render(){
 
     var title   = '';
     var url     = '';
-    var classes = 'sidebar';
+    var classes = (this.props.node === null) ? 'sidebar' : 'sidebar slideout';
 
     if( this.props.node ){
         title   = this.props.node.props.node.data.title;
         url     = this.props.node.props.node.data.url;
-        classes = (this.props.visible) ? 'sidebar slidein' : 'sidebar slideout';
+        classes = 'sidebar slidein';
     }
 
     return <div className={classes} id="sidebar">

@@ -21,7 +21,7 @@ export default class MapView extends React.Component {
 
     this.state = {
       sharePopoverState: false,
-      currentNode: false,
+      currentNode: null,
       sidebarVisible: false
     };
   }
@@ -71,7 +71,7 @@ export default class MapView extends React.Component {
                   actions={this.props.actions}
                   togglePopover={this.togglePopover.bind(this)} />
               </span>
-              <Sidebar node={this.state.currentNode} visible={this.state.sidebarVisible} />
+              <Sidebar node={this.state.currentNode} />
             </div>;
   }
 
@@ -90,8 +90,7 @@ export default class MapView extends React.Component {
 
   onNodeClicked(node) {
     this.setState({
-      currentNode: node,
-      sidebarVisible: node.openSidebar
+      currentNode: (this.state.currentNode == node) ? false : node
     });
   }
 
