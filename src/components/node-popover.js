@@ -78,33 +78,6 @@ export default class NodePopover extends React.Component {
     let actions;
     let title = this.props.node.title || <i>No title</i>;
 
-    if (this.state.deletePending) {
-      actions = [
-        <p className='warning'>
-          This will delete all pages coloured red. Are you sure?
-        </p>,
-        <div className='actions'>
-          <div className='secondary'>
-            <button onClick={this.onCancelDeleteClicked.bind(this)} className='cancel-delete'>Cancel</button>
-          </div>
-          <div className='primary'>
-            <button onClick={this.onConfirmDeleteClicked.bind(this)} className='confirm-delete'>Delete</button>
-          </div>
-        </div>
-      ];
-    } else if (this.props.node.deletePending) {
-      // No actions while another node is being considered for deletion
-    } else {
-      actions = <div className='actions'>
-        <div className='secondary'>
-          <button onClick={this.onDeleteClicked.bind(this)} className='delete'>Delete</button>
-        </div>
-        <div className='primary'>
-          <button onClick={this.onResumeClicked.bind(this)} className='resume'>Resume</button>
-        </div>
-      </div>
-    }
-
     if (this.state.visible) {
       let classNames = classnames('node-popover', {
         'delete-pending': this.state.deletePending
@@ -116,10 +89,8 @@ export default class NodePopover extends React.Component {
           <h1>{this.isGoogleUrl(title, this.props.node.url)}</h1>
 
           <div className='detail'>
-            <a className='url' target='_blank' href={this.props.node.url}>{this.props.node.url}</a>
+            <a className='url' target='_blank' href={this.props.node.url}>{ this.getTLD( this.props.node.url) }</a>
           </div>
-
-          {actions}
 
         </div>
       </div>;
@@ -147,6 +118,13 @@ export default class NodePopover extends React.Component {
       }else{
           return title;
       }
+  }
+
+  // Get TLD (Primary Domain)
+  getTLD( url ) {
+    let arr = url.split("/");
+    let result = arr[2];
+    return result;
   }
 
 };
