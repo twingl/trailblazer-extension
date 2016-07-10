@@ -138,6 +138,7 @@ export default class NodePopover extends React.Component {
           var qpos = url.indexOf("#q")
           if( qpos > -1 ) {
               res = url.slice(qpos, url.length);
+              res = decodeURI(res)
               res = res.replace('#q=', '')
               res = res.replace(/\+/g, ' ')
               return res;
