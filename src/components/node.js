@@ -43,7 +43,7 @@ export default class Node extends React.Component {
 
   // trigger resume?-- trigger event callback on parent.
   onClick(evt) {
-    (this.props.onClick || (() => {}))(evt);
+    (this.props.onClicked(this) || (() => {}))(evt);
   }
 
   // trigger a popup-- trigger event callback on parent.

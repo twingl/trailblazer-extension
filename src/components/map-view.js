@@ -9,6 +9,7 @@ import AssignmentTitle from './assignment-title';
 import ShareMap from './share-map';
 import Legend from './legend';
 import Trail from './trail';
+import Sidebar from './sidebar';
 
 import Logger from '../util/logger';
 var logger = Logger('map-view');
@@ -19,7 +20,9 @@ export default class MapView extends React.Component {
     super(props);
 
     this.state = {
-      sharePopoverState: false
+      sharePopoverState: false,
+      currentNode: null,
+      sidebarVisible: false
     };
   }
 
@@ -43,7 +46,7 @@ export default class MapView extends React.Component {
     return  <div className="map-view-wrapper" onClick={this.handleClick.bind(this)}>
               <Link to="/assignments" className="nav-assignment-list"></Link>
               <AssignmentTitle assignment={this.props.assignment} actions={this.props.actions} constants={Constants} />
-              <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} actions={this.props.actions} />
+              <Trail id="map-container" svgId="map" assignment={this.props.assignment} nodes={this.props.nodes} onNodeClicked={this.onNodeClicked.bind(this)} actions={this.props.actions} />
               <Legend />
               <span className="help">
                 <a
@@ -68,6 +71,7 @@ export default class MapView extends React.Component {
                   actions={this.props.actions}
                   togglePopover={this.togglePopover.bind(this)} />
               </span>
+              <Sidebar node={this.state.currentNode} />
             </div>;
   }
 
@@ -83,4 +87,11 @@ export default class MapView extends React.Component {
     var bool = !this.state.sharePopoverState;
     this.setState({sharePopoverState: bool});
   }
+
+  onNodeClicked(node) {
+    this.setState({
+      currentNode: (this.state.currentNode == node) ? false : node
+    });
+  }
+
 };
