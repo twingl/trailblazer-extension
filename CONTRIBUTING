@@ -9,7 +9,8 @@ include a description of what you've changed and why. For visual changes, a
 screenshot of them would be appreciated too.
 
 Once you've opened a PR, a handy little bot should automatically ask you to
-e-sign our CLA. With that confirmed (and a healthy measure of peer-review)
-your contributions will be ready to be integrated into the project.
+e-sign our CLA (https://gist.github.com/4f7d2735ced6d47533bac601a785becc). 
+With that confirmed (and a healthy measure of peer-review) your contributions 
+will be ready to be integrated into the project.
 
 Happy hacking!
