@@ -65,7 +65,7 @@ export default class Legend extends React.Component {
               <path d={nodeCoreD} className="node-core" />
             </g>
           </svg>
-          This page is important (a waypoint)
+          This page is important (a favourite)
         </li>
       </ul>
     </div>;
