@@ -14,7 +14,7 @@ class Step5 extends React.Component {
   }
 
   onMessage(msg) {
-    if (msg.action === constants.RANK_NODE_WAYPOINT) this.revealNextStep();
+    if (msg.action === constants.RANK_NODE_FAVOURITE) this.revealNextStep();
   }
 
   componentDidMount() {
@@ -40,7 +40,7 @@ class Step5 extends React.Component {
       <div className="task">
         <p>When you come across something you find important, you can make it stand out.</p>
 
-        <p>Give it a try now: Tap the Trailblazer icon <span className="trailblazer-button"></span> and Favourite <span className="waypoint-button"></span> this page</p>
+        <p>Give it a try now: Tap the Trailblazer icon <span className="trailblazer-button"></span> and Favourite <span className="favourite-button"></span> this page</p>
       </div>
     </div>;
   }

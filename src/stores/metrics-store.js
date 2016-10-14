@@ -225,9 +225,9 @@ class MetricsStore extends Store {
     });
   }
 
-  @action(constants.RANK_NODE_WAYPOINT)
-  handleRankNodeWaypoint(payload) {
-    var collection = "extension.rank_node_waypoint";
+  @action(constants.RANK_NODE_FAVOURITE)
+  handleRankNodeFavourite(payload) {
+    var collection = "extension.rank_node_favourite";
     var properties = {};
 
     this.db.nodes.get(payload.localId).then((node) => {

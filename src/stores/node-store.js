@@ -458,9 +458,9 @@ class NodeStore extends Store {
   /**
    * Update a node's rank
    */
-  @action(constants.RANK_NODE_WAYPOINT)
-  handleRankNodeWaypoint(payload) {
-    logger.info("handleRankNodeWaypoint:", { payload: payload });
+  @action(constants.RANK_NODE_FAVOURITE)
+  handleRankNodeFavourite(payload) {
+    logger.info("handleRankNodeFavourite:", { payload: payload });
     this.db.nodes.db.transaction("readwrite", ["nodes"], (err, tx) => {
       var store = tx.objectStore("nodes");
 

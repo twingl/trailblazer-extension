@@ -44,7 +44,7 @@ class Recording extends React.Component {
         <img src="/assets/icons/stop-icon.svg" />
       </a>
 
-      <div id="waypoint-div" title="Favourite this page" >
+      <div id="favourite-div" title="Favourite this page" >
         <Star node={this.props.node} width={16} height={15} />
       </div>
 

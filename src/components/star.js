@@ -33,11 +33,11 @@ export default class Star extends React.Component {
     var width = this.props.width + "px";
     var height= this.props.height + "px";
     var viewBox = "0 0 " + this.props.width  + " " + this.props.height;
-    var waypointClass = this.state.rank === 1 ? "waypoint-active" : "waypoint";
+    var favouriteClass = this.state.rank === 1 ? "favourite-active" : "favourite";
 
     return  <a
               onClick={this.onClick.bind(this)}
-              className={waypointClass} >
+              className={favouriteClass} >
               <svg
                 width={width}
                 height={height}
@@ -53,14 +53,14 @@ export default class Star extends React.Component {
   onClick() {
     messageChannel.send({
       action: "trackUIEvent",
-      eventName: "ui.popup.waypoint.toggle",
+      eventName: "ui.popup.favourite.toggle",
       eventData: { }
     });
 
     if (this.props.node.rank === 1) {
       Actions.rankNodeNeutral(this.props.node.localId);
     } else {
-      Actions.rankNodeWaypoint(this.props.node.localId);
+      Actions.rankNodeFavourite(this.props.node.localId);
     }
   }
 
