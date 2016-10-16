@@ -123,21 +123,21 @@ a {
 
 .folder img {margin-bottom: 8px}
 
-.waypoint {
+.favourite {
 	fill: #C5C5C5;
 	text-decoration: none;
 	float: left;
   margin-right: 1em;
 }
 
-.waypoint:hover {
+.favourite:hover {
 	fill: #989898;
 }
 
 /* Retain? - Consider after removing tutorial element
 
-.waypoint:hover:after {
-	content: "Waypoint";
+.favourite:hover:after {
+	content: "Favourite";
 	font-size: 10px;
 	color: #989898;
 	position: relative;
@@ -146,7 +146,7 @@ a {
 
  /Retain? */
 
-.waypoint-active {
+.favourite-active {
 	fill: #FFD463;
 	float: left;
   margin-right: 1em;

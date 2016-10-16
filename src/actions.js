@@ -418,10 +418,10 @@ export default {
     });
   },
 
-  rankNodeWaypoint: function(localId) {
-    logger.info('rankNodeWaypoint');
+  rankNodeFavourite: function(localId) {
+    logger.info('rankNodeFavourite');
     messageChannel.send({
-      action: constants.RANK_NODE_WAYPOINT,
+      action: constants.RANK_NODE_FAVOURITE,
       payload: {
         localId: localId
       }

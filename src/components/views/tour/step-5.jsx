@@ -14,7 +14,7 @@ class Step5 extends React.Component {
   }
 
   onMessage(msg) {
-    if (msg.action === constants.RANK_NODE_WAYPOINT) this.revealNextStep();
+    if (msg.action === constants.RANK_NODE_FAVOURITE) this.revealNextStep();
   }
 
   componentDidMount() {
@@ -31,16 +31,16 @@ class Step5 extends React.Component {
   render() {
     return <div className="tour--step5">
 
-      <Helmet title='Waypointing' />
+      <Helmet title='Favouriting' />
 
       <h1>Welcome back</h1>
 
-      <p>Now that we've got that extra tab under control, let's talk about something called Waypointing.</p>
+      <p>Now that we've got that extra tab under control, let's talk about something called Favouriting.</p>
 
       <div className="task">
         <p>When you come across something you find important, you can make it stand out.</p>
 
-        <p>Give it a try now: Tap the Trailblazer icon <span className="trailblazer-button"></span> and Waypoint <span className="waypoint-button"></span> this page</p>
+        <p>Give it a try now: Tap the Trailblazer icon <span className="trailblazer-button"></span> and Favourite <span className="favourite-button"></span> this page</p>
       </div>
     </div>;
   }

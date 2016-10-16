@@ -58,14 +58,14 @@ export default class Legend extends React.Component {
           This page split off into many directions
         </li>
 
-        <li className="waypoint-node">
+        <li className="favourite-node">
           <svg width={iconWidth} height={iconHeight}>
-            <g className="node waypoint" transform={iconTransform}>
+            <g className="node favourite" transform={iconTransform}>
               <path d={nodeHaloD} className="node-halo" />
               <path d={nodeCoreD} className="node-core" />
             </g>
           </svg>
-          This page is important (a waypoint)
+          This page is important (a favourite)
         </li>
       </ul>
     </div>;

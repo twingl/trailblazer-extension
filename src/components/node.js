@@ -8,7 +8,7 @@ const CORE = "M18.2007195 11.2 L24.9141649 15.1 C25.2495669 15.3 25.5 15.8 25.5 
 const OFFSET_X = 17.5;
 const OFFSET_Y = 21;
 
-const WAYPOINT_THRESHOLD = 4; // # links until considered waypoint (includes link to parent)
+const FAVOURITE_THRESHOLD = 4; // # links until considered favourite (includes link to parent)
 
 const VIEWER_ENVIRONMENT = chrome.windows ? "extension" : "public";
 
@@ -58,8 +58,8 @@ export default class Node extends React.Component {
   render() {
     var classes = classnames('node', {
       'delete-pending': !!this.props.node.data.deletePending,
-      hub: (this.props.node.links.length >= WAYPOINT_THRESHOLD),
-      waypoint: (this.props.node.data.rank === 1),
+      hub: (this.props.node.links.length >= FAVOURITE_THRESHOLD),
+      favourite: (this.props.node.data.rank === 1),
       root: (!this.props.node.data.parentId && !this.props.node.data.localParentId),
       open: (!!this.props.node.data.tabId)
     });
