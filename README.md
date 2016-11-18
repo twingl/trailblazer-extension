@@ -1,4 +1,6 @@
-# Trailblazer "Wash"
+**Repository name change! If you have a copy of the extension that points to `github.com/twingl/trailblazer-wash` you will want to update that to the new one**
+
+# Trailblazer Extension
 
 Trailblazer is a Chrome extension built to track a user's browsing activity and
 build up a map, helping them make sense of the places they visit.
