@@ -8,12 +8,13 @@ var htmlExtractor = new ExtractTextPlugin('html', '[name].html');
 module.exports = {
   context: __dirname + '/src',
   entry: {
-    'background': './scripts/background.js',
-    'main-ui':    './scripts/main-ui.jsx',
-    'popup':      './scripts/popup.jsx',
-    'public-map': './scripts/public-map.jsx',
-    'tour':       './scripts/tour.jsx',
-    'page-title': './content-scripts/page-title.js'
+    'background':   './scripts/background.js',
+    'main-ui':      './scripts/main-ui.jsx',
+    'offline-data': './scripts/offline-data.jsx',
+    'popup':        './scripts/popup.jsx',
+    'public-map':   './scripts/public-map.jsx',
+    'tour':         './scripts/tour.jsx',
+    'page-title':   './content-scripts/page-title.js'
   },
 
   output: {

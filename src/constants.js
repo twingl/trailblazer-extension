@@ -15,6 +15,11 @@ export default {
   },
 
   /**
+   * Importing data
+   */
+  IMPORT_DATA:                      'IMPORT_DATA',
+
+  /**
    * Actions to request 'change' be emitted with current data
    */
   REQUEST_ASSIGNMENTS:              'REQUEST_ASSIGNMENTS',

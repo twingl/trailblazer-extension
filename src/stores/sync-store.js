@@ -31,6 +31,33 @@ class SyncStore extends Store {
     };
   }
 
+  @action(constants.IMPORT_DATA)
+  handleImportData({ assignments, nodes }) {
+    logger.info('handleImportData', { assignments, nodes });
+    const assignmentsStoreName = this.db.assignments.name;
+    const nodesStoreName = this.db.nodes.name;
+
+    this.db.assignments.db.transaction("readwrite", [assignmentsStoreName, nodesStoreName], (err, tx) => {
+      const assignmentStore = tx.objectStore(assignmentsStoreName);
+      const nodeStore       = tx.objectStore(nodesStoreName);
+
+      Promise.all([
+        assignmentStore.clear(),
+        nodeStore.clear()
+      ]).then(_ => {
+        Promise.all([
+          Promise.all(assignments.map(assignment => assignmentStore.put(assignment))),
+          Promise.all(nodes.map(node => nodeStore.put(node)))
+        ]).then(([assignments, nodes]) => {
+          logger.debug({ assignments, nodes });
+          logger.info('handleImportData: complete!', { assignments, nodes });
+          setTimeout(() => this.flux.actions.assignmentsSynchronized());
+          this.emit('change')
+        })
+      }).catch(error => logger.warn('handleImportData: error!', error));
+    });
+  }
+
   //NOTES
   //When an XHR goes out, an entry is added to
   //SyncStore.pending.{assignment,node} specifying the localId. When the

@@ -18,6 +18,10 @@ export default {
     messageChannel.send = func;
   },
 
+  importData: function({ assignments, nodes }) {
+    messageChannel.send({ action: constants.IMPORT_DATA, payload: { assignments, nodes } });
+  },
+
   requestAssignments: function() {
     logger.info('requestAssignments');
     messageChannel.send({ action: constants.REQUEST_ASSIGNMENTS });

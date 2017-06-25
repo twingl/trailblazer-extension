@@ -9,14 +9,16 @@ class AssignmentItem extends React.Component {
     this.state = {
       show: true
     };
+
+    this.onClick = this.onClick.bind(this);
   }
 
   render() {
     var klass = this.state.show ? 'show' : 'destroy';
 
                 //TODO change path
-    return  <div className={klass} >
-              <li key={this.props.item.id} onClick={this.onClick.bind(this)}>
+    return  <div className={klass}  onClick={this.onClick}>
+              <li key={this.props.item.id}>
 
                 {this.props.item.title}
 
@@ -32,6 +34,7 @@ class AssignmentItem extends React.Component {
   }
 
   onClick() {
+    console.log(this.props.item.localId);
     this.context.router.push(`/assignments/${this.props.item.localId}`);
   }
 

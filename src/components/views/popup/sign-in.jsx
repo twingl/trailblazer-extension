@@ -34,23 +34,39 @@ class SignIn extends React.Component {
     chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/tour.html") });
   }
 
+  onManageDataClicked(evt) {
+    evt.preventDefault();
+    chrome.tabs.create({ active: true, url: chrome.runtime.getURL("/build/offline-data.html") });
+  }
+
   render() {
     let classes = Classnames('login', 'button', 'sign-in', {
       'throbber': this.state.working
     });
 
-    return <div className="wrap">
-      <a className={classes}
-          onClick={this.onSignInClicked.bind(this)}>
-        {this.state.buttonText}
-      </a>
+    return <div>
+      <div style={{width: "100%", background: "#323232", color: "#EFEFEF", textAlign: "center", contain: "content", padding: "1rem 0"}}>
+        <p>Trailblazer is shutting down</p>
+        <p style={{marginTop: "2rem"}}>
+          <a style={{background: "#EFEFEF", color: "#323232", padding: "8px 12px", borderRadius: "3px", textDecoration: "none"}}
+            onClick={this.onManageDataClicked.bind(this)}
+            href="/build/offline-data.html">Manage your data</a>
+        </p>
+      </div>
 
-      <a className="tutorial"
-          title="How to use Trailblazer"
-          onClick={this.onTutorialClicked.bind(this)}>
+      <div className="wrap">
+        <a className={classes}
+            onClick={this.onSignInClicked.bind(this)}>
+          {this.state.buttonText}
+        </a>
 
-        <img src="/assets/icons/tutorial-icon.svg" />
-      </a>
+        <a className="tutorial"
+            title="How to use Trailblazer"
+            onClick={this.onTutorialClicked.bind(this)}>
+
+          <img src="/assets/icons/tutorial-icon.svg" />
+        </a>
+      </div>
     </div>;
   }
 };

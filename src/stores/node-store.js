@@ -38,6 +38,12 @@ class NodeStore extends Store {
   }
 
   @query
+  async getNodes() {
+    var nodes = await this.db.nodes.all();
+    return nodes;
+  }
+
+  @query
   async getNodesByRemoteAssignmentId(assignmentId) {
     var nodes = await this.db.nodes.index('assignmentId').get(assignmentId);
     return nodes;
