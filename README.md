@@ -22,13 +22,6 @@ installed for your editor before editing any of the source.
 
 See the [Getting Started](https://github.com/twingl/trailblazer-wash/wiki/Getting-Started) guide
 
-## API
-
-Documentation for the API that backs the extension can be found here:
-
-- [Authentication](http://docs.trailblazerauthentication.apiary.io/)
-- [Resource API](http://docs.trailblazerapiv1.apiary.io/)
-
 ## Domain Concepts
 
 ### Map / Trail
